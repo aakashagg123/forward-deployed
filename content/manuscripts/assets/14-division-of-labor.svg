@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="What the AI does versus what the operator does inside a deployment">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.item{font-size:15px;fill:#1C1D20}
+.dim{font-size:13px;fill:#7A7B82}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 14.1 — THE DIVISION OF LABOUR</text>
+<text class="t h" x="64" y="112">One column compresses. The other never has.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<text class="t col" x="64" y="196">THE MACHINE</text>
+<text class="t dim" x="64" y="216">minutes to hours</text>
+<line x1="64" y1="232" x2="540" y2="232" stroke="#C5C4C0"/>
+
+<text class="t col" x="660" y="196">THE OPERATOR</text>
+<text class="t dim" x="660" y="216">days to weeks — does not compress</text>
+<line x1="660" y1="232" x2="1136" y2="232" stroke="#C5C4C0"/>
+
+<line x1="600" y1="176" x2="600" y2="656" stroke="#D2D1CD"/>
+
+<text class="t item" x="64" y="280">First-draft matching / reconciliation logic</text>
+<text class="t item" x="660" y="280">The domain fact that makes the draft correct</text>
+
+<text class="t item" x="64" y="332">Cleaning and structuring messy data</text>
+<text class="t item" x="660" y="332">Learning why the mess exists in the first place</text>
+
+<text class="t item" x="64" y="384">Testing against historical records</text>
+<text class="t item" x="660" y="384">Judging whether the mismatch count is real</text>
+
+<text class="t item" x="64" y="436">Drafting the security posture documentation</text>
+<text class="t item" x="660" y="436">Earning the CISO's trust in the room</text>
+
+<text class="t item" x="64" y="488">Flagging anomalies in the data</text>
+<text class="t item" x="660" y="488">Deciding which anomaly is worth acting on</text>
+
+<text class="t item" x="64" y="540">Iterating a fix in minutes, on request</text>
+<text class="t item" x="660" y="540">Deciding when the correction cycle is done</text>
+
+<text class="t item" x="64" y="592">Producing a technically complete system</text>
+<text class="t item" x="660" y="592">Getting the team to actually trust and use it</text>
+
+<line x1="64" y1="628" x2="1136" y2="628" stroke="#D2D1CD"/>
+<text class="t" x="64" y="660" font-size="16" fill="#4A4B50">The unit did not get replaced. It got smaller — because the part that was pure engineering labour compressed, and the part that was trust did not.</text>
+</svg>

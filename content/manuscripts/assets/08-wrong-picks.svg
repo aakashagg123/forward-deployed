@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620">
+  <style>
+    .bg{fill:#F7F6F3}
+    .label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+    .body{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:13.5px}
+    .body-dim{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:12.5px}
+    .amber{fill:#B8952B}
+    .red{fill:#C8553D}
+    .title{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600}
+    .col-head{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:600}
+    .col-sub{fill:#C8553D;font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:500;letter-spacing:0.06em}
+    .right-pick{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:600}
+    .divider{stroke:#D2D1CD;stroke-width:1}
+    .card{fill:#EBEAE6;rx:6;ry:6}
+    .card-border-red{stroke:#C8553D;stroke-width:1.5}
+    .card-border-amber{stroke:#B8952B;stroke-width:1.5}
+  </style>
+  <rect class="bg" width="1200" height="620"/>
+
+  <text class="label" x="60" y="48">Figure 8.2</text>
+  <text class="title" x="60" y="82">The Three Wrong Picks</text>
+
+  <!-- Wrong pick 1: CEO's priority -->
+  <rect class="card card-border-red" x="60" y="120" width="330" height="260"/>
+  <text class="col-head" x="84" y="156">The CEO's priority</text>
+  <text class="col-sub" x="84" y="178">FATAL: SCOPE</text>
+  <text class="body" x="84" y="210">Looks like: "Enterprise-wide</text>
+  <text class="body" x="84" y="230">supply chain visibility"</text>
+  <text class="body-dim" x="84" y="262">Requires 6 departments</text>
+  <text class="body-dim" x="84" y="282">Acquires a steering committee</text>
+  <text class="body-dim" x="84" y="302">Becomes an 18-month programme</text>
+  <text class="body-dim" x="84" y="322">Operator spends time in reviews</text>
+  <text class="body-dim" x="84" y="342">Dies of correct process</text>
+  <text class="red" x="84" y="366" style="font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:600">PRODUCES: a programme, not a sentence</text>
+
+  <!-- Wrong pick 2: Interesting problem -->
+  <rect class="card card-border-red" x="430" y="120" width="330" height="260"/>
+  <text class="col-head" x="454" y="156">The interesting problem</text>
+  <text class="col-sub" x="454" y="178">FATAL: TIME</text>
+  <text class="body" x="454" y="210">Looks like: "Logistics routing</text>
+  <text class="body" x="454" y="230">optimisation across 12 depots"</text>
+  <text class="body-dim" x="454" y="262">Technically fascinating</text>
+  <text class="body-dim" x="454" y="282">Requires data from 3 systems</text>
+  <text class="body-dim" x="454" y="302">Takes 6 months minimum</text>
+  <text class="body-dim" x="454" y="322">Owner won't act on the output</text>
+  <text class="body-dim" x="454" y="342">Operator enjoys the work</text>
+  <text class="red" x="454" y="366" style="font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:600">PRODUCES: a model, not a change</text>
+
+  <!-- Wrong pick 3: Visible problem -->
+  <rect class="card card-border-red" x="800" y="120" width="330" height="260"/>
+  <text class="col-head" x="824" y="156">The visible problem</text>
+  <text class="col-sub" x="824" y="178">FATAL: POLITICS</text>
+  <text class="body" x="824" y="210">Looks like: "Fix the dealer</text>
+  <text class="body" x="824" y="230">complaints everyone talks about"</text>
+  <text class="body-dim" x="824" y="262">Politically charged</text>
+  <text class="body-dim" x="824" y="282">Has constituencies protecting it</text>
+  <text class="body-dim" x="824" y="302">Fixing it changes someone's status</text>
+  <text class="body-dim" x="824" y="322">Antibodies arrive in force</text>
+  <text class="body-dim" x="824" y="342">Surprise is impossible</text>
+  <text class="red" x="824" y="366" style="font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:600">PRODUCES: a fight, not evidence</text>
+
+  <!-- The right pick -->
+  <rect class="card card-border-amber" x="60" y="420" width="1070" height="160"/>
+  <text class="right-pick" x="84" y="458">The right pick: the invisible, boring, bleeding wound</text>
+  <text class="body" x="84" y="490">The credit team re-keys four documents per file, sixty files a week, thirty percent come back with errors.</text>
+  <text class="body" x="84" y="514">Nobody is protecting it. Nobody's status depends on it. The owner wants it fixed because their work is painful.</text>
+  <text class="body-dim" x="84" y="546">Fixed with a parser, a validation rule, and a changed approval — in six weeks.</text>
+  <text class="amber" x="84" y="566" style="font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:600">PRODUCES: the sentence that opens the next door</text>
+</svg>

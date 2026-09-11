@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="Build capability versus room-reading ability — the sparse intersection">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.note{font-size:13px;fill:#7A7B82}
+.tick{font-size:11.5px;letter-spacing:1.4px;fill:#6A6B72}
+.lbl{font-size:15px;fill:#1C1D20}
+.qlbl{font-size:14px;fill:#7A7B82}
+</style>
+<rect width="1200" height="720" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 11.1 — THE OPERATOR INTERSECTION</text>
+<text class="t h" x="64" y="112">Both capabilities are abundant. The overlap is not.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- axes -->
+<line x1="200" y1="580" x2="1060" y2="580" stroke="#1C1D20" stroke-width="2"/>
+<line x1="200" y1="580" x2="200" y2="190" stroke="#1C1D20" stroke-width="2"/>
+
+<!-- axis labels -->
+<text class="t col" x="630" y="616">BUILD CAPABILITY</text>
+<text class="t note" x="240" y="616">low</text>
+<text class="t note" x="1020" y="616" text-anchor="end">high</text>
+
+<text class="t col" x="80" y="390" transform="rotate(-90,80,390)">ROOM-READING ABILITY</text>
+<text class="t note" x="186" y="570" text-anchor="end">low</text>
+<text class="t note" x="186" y="206" text-anchor="end">high</text>
+
+<!-- quadrant dividers -->
+<line x1="620" y1="190" x2="620" y2="580" stroke="#D2D1CD" stroke-dasharray="6 5"/>
+<line x1="200" y1="390" x2="1060" y2="390" stroke="#D2D1CD" stroke-dasharray="6 5"/>
+
+<!-- Q1: low build, low room — bottom left -->
+<text class="t qlbl" x="360" y="500" text-anchor="middle">Neither capability</text>
+<text class="t note" x="360" y="522" text-anchor="middle">Not in the pipeline</text>
+
+<!-- Q2: high build, low room — bottom right -->
+<text class="t qlbl" x="830" y="480" text-anchor="middle">Build without context</text>
+<text class="t note" x="830" y="502" text-anchor="middle">Product engineers</text>
+<text class="t note" x="830" y="520" text-anchor="middle">Services firm developers</text>
+<!-- scatter dots -->
+<circle cx="740" cy="530" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="790" cy="545" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="850" cy="520" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="900" cy="555" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="770" cy="560" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="830" cy="540" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="920" cy="530" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="870" cy="560" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="810" cy="555" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="950" cy="545" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="970" cy="520" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="690" cy="550" r="4" fill="#6A6B72" opacity="0.5"/>
+
+<!-- Q3: low build, high room — top left -->
+<text class="t qlbl" x="370" y="290" text-anchor="middle">Context without build</text>
+<text class="t note" x="370" y="312" text-anchor="middle">Management consultants</text>
+<text class="t note" x="370" y="330" text-anchor="middle">Relationship managers</text>
+<!-- scatter dots -->
+<circle cx="280" cy="250" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="320" cy="270" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="350" cy="240" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="400" cy="260" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="370" cy="350" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="300" cy="310" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="430" cy="280" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="340" cy="300" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="260" cy="340" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="450" cy="320" r="4" fill="#6A6B72" opacity="0.5"/>
+<circle cx="500" cy="290" r="4" fill="#6A6B72" opacity="0.5"/>
+
+<!-- Q4: high build, high room — top right — THE OPERATOR -->
+<rect x="660" y="210" width="360" height="148" rx="8" fill="#B8952B" opacity="0.12" stroke="#B8952B" stroke-width="1.5"/>
+<text class="t lbl" x="840" y="246" text-anchor="middle" fill="#B8952B" font-size="16">THE OPERATOR</text>
+<text class="t note" x="840" y="270" text-anchor="middle">Builds production code</text>
+<text class="t note" x="840" y="290" text-anchor="middle">Reads the room independently</text>
+<text class="t note" x="840" y="310" text-anchor="middle">Earns trust by being present</text>
+<text class="t note" x="840" y="340" text-anchor="middle" fill="#B8952B">Sparse — not produced by any existing career path</text>
+<!-- sparse scatter dots -->
+<circle cx="720" cy="255" r="5" fill="#B8952B"/>
+<circle cx="870" cy="235" r="5" fill="#B8952B"/>
+<circle cx="950" cy="310" r="5" fill="#B8952B"/>
+
+<line x1="64" y1="656" x2="1136" y2="656" stroke="#D2D1CD"/>
+<text class="t" x="64" y="688" font-size="16" fill="#4A4B50">The career paths that develop each capability actively discourage the other. The intersection must be built deliberately.</text>
+</svg>

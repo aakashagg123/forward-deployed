@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="What the operator prepares before meeting each antibody">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.note{font-size:13px;fill:#7A7B82}
+.lbl{font-size:15px;fill:#1C1D20}
+.prep{font-size:13.5px;fill:#1C1D20}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 12.2 — THE ARRIVAL CHECKLIST</text>
+<text class="t h" x="64" y="112">Arrive with the answer already written.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<text class="t col" x="64" y="196">ANTIBODY</text>
+<text class="t col" x="300" y="196">WHAT THE OPERATOR BRINGS</text>
+<text class="t col" x="790" y="196">FORMAT</text>
+<line x1="64" y1="212" x2="1136" y2="212" stroke="#D2D1CD"/>
+
+<!-- Row 1 -->
+<rect x="64" y="228" width="1072" height="76" rx="4" fill="#EBEAE6"/>
+<rect x="74" y="252" width="8" height="8" rx="1" fill="#B8952B"/>
+<text class="t lbl" x="94" y="260">Procurement</text>
+<text class="t prep" x="300" y="252">Time-and-capability contract with 4-week break clause</text>
+<text class="t prep" x="300" y="272">Vendor comparison sheet (FD vs consulting vs do-nothing)</text>
+<text class="t note" x="790" y="252">Commercial proposal in</text>
+<text class="t note" x="790" y="272">procurement's existing template</text>
+
+<!-- Row 2 -->
+<rect x="64" y="318" width="1072" height="76" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
+<rect x="74" y="342" width="8" height="8" rx="1" fill="#B8952B"/>
+<text class="t lbl" x="94" y="350">IT Governance</text>
+<text class="t prep" x="300" y="342">Architecture note showing no new tech introduced</text>
+<text class="t prep" x="300" y="362">Named IT co-owner already in design sessions</text>
+<text class="t note" x="790" y="342">1-page architecture note,</text>
+<text class="t note" x="790" y="362">co-signed by IT team member</text>
+
+<!-- Row 3 -->
+<rect x="64" y="408" width="1072" height="76" rx="4" fill="#EBEAE6"/>
+<rect x="74" y="432" width="8" height="8" rx="1" fill="#B8952B"/>
+<text class="t lbl" x="94" y="440">Data Security</text>
+<text class="t prep" x="300" y="432">SOC 2 report, pen test, cyber insurance</text>
+<text class="t prep" x="300" y="452">Minimum-viable-access proposal with audit logging</text>
+<text class="t note" x="790" y="432">Security posture pack +</text>
+<text class="t note" x="790" y="452">field-level access request</text>
+
+<!-- Row 4 -->
+<rect x="64" y="498" width="1072" height="76" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
+<rect x="74" y="522" width="8" height="8" rx="1" fill="#B8952B"/>
+<text class="t lbl" x="94" y="530">Compliance</text>
+<text class="t prep" x="300" y="522">Regulatory mapping of the specific workflow</text>
+<text class="t prep" x="300" y="542">Brief showing automation preserves compliance</text>
+<text class="t note" x="790" y="522">Pre-classification as</text>
+<text class="t note" x="790" y="542">"process improvement"</text>
+
+<!-- Row 5 -->
+<rect x="64" y="588" width="1072" height="76" rx="4" fill="#EBEAE6"/>
+<rect x="74" y="612" width="8" height="8" rx="1" fill="#B8952B"/>
+<text class="t lbl" x="94" y="620">PMO</text>
+<text class="t prep" x="300" y="612">Deployment sized below the project governance threshold</text>
+<text class="t prep" x="300" y="632">Lightweight governance alternative (monthly 1-pager)</text>
+<text class="t note" x="790" y="612">Operational improvement,</text>
+<text class="t note" x="790" y="632">not a project</text>
+
+<line x1="64" y1="680" x2="1136" y2="680" stroke="#D2D1CD"/>
+</svg>

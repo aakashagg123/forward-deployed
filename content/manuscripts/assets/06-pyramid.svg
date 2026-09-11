@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" role="img" aria-label="The consulting pyramid problem">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.label{font-size:14px;fill:#F7F6F3;letter-spacing:1px}
+.note{font-size:12.5px;fill:#7A7B82}
+</style>
+<rect width="1200" height="760" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 6.2 — THE PYRAMID PROBLEM</text>
+<text class="t h" x="64" y="112">The base is the revenue. The base is what the machine absorbed.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<line x1="600" y1="176" x2="600" y2="600" stroke="#E4E3DF"/>
+
+<!-- LEFT: THE PYRAMID -->
+<text class="t col" x="64" y="204">THE CONSULTING PYRAMID</text>
+
+<!-- pyramid shape -->
+<polygon points="300,250 120,530 480,530" fill="none" stroke="#C5C4C0" stroke-width="1.6"/>
+
+<!-- tier lines -->
+<line x1="168" y1="420" x2="432" y2="420" stroke="#C5C4C0"/>
+<line x1="228" y1="340" x2="372" y2="340" stroke="#C5C4C0"/>
+
+<!-- labels -->
+<text class="t" x="300" y="306" text-anchor="middle" font-size="13" fill="#1C1D20" letter-spacing="1.6">PARTNERS</text>
+<text class="t note" x="300" y="326" text-anchor="middle" font-size="11">sell the work</text>
+
+<text class="t" x="300" y="386" text-anchor="middle" font-size="13" fill="#1C1D20" letter-spacing="1.6">MANAGERS</text>
+<text class="t note" x="300" y="406" text-anchor="middle" font-size="11">scope &amp; oversee</text>
+
+<text class="t" x="300" y="470" text-anchor="middle" font-size="13" fill="#C8553D" letter-spacing="1.6">JUNIOR CONSULTANTS</text>
+<text class="t note" x="300" y="490" text-anchor="middle" font-size="11" fill="#C8553D">execute — analysis, data, slides</text>
+<text class="t note" x="300" y="510" text-anchor="middle" font-size="11" fill="#C8553D">this is the revenue base</text>
+
+<!-- revenue arrow -->
+<text class="t note" x="500" y="374" fill="#C8553D">revenue =</text>
+<text class="t note" x="500" y="394" fill="#C8553D">people × rate</text>
+
+<!-- damage marks -->
+<line x1="140" y1="510" x2="460" y2="510" stroke="#C8553D" stroke-width="2" stroke-dasharray="8 6"/>
+<text class="t note" x="120" y="558" fill="#C8553D">↑ Machine absorbs this layer's work</text>
+<text class="t note" x="120" y="578" fill="#7A7B82">Pyramid gets shorter. Shorter = less revenue.</text>
+
+<!-- RIGHT: WHY THEY CANNOT FOLLOW -->
+<text class="t col" x="660" y="204">WHY THEY CANNOT FOLLOW</text>
+
+<g class="t">
+<rect x="660" y="234" width="470" height="72" fill="none" stroke="#C5C4C0" stroke-width="1"/>
+<text x="680" y="258" font-size="13" letter-spacing="2" fill="#C8553D">BASE COLLAPSES</text>
+<text x="680" y="280" font-size="12.5" fill="#4A4B50">Junior work is exactly what AI absorbs first.</text>
+<text x="680" y="296" font-size="12.5" fill="#7A7B82">Each productivity gain makes the pyramid shorter.</text>
+
+<rect x="660" y="322" width="470" height="72" fill="none" stroke="#C5C4C0" stroke-width="1"/>
+<text x="680" y="346" font-size="13" letter-spacing="2" fill="#C8553D">ENGAGEMENT MINIMUM</text>
+<text x="680" y="368" font-size="12.5" fill="#4A4B50">Floor is ~$500k. The thousand wounds are $40–80k each.</text>
+<text x="680" y="384" font-size="12.5" fill="#7A7B82">Cannot sell them, staff them, or bill them.</text>
+
+<rect x="660" y="410" width="470" height="72" fill="none" stroke="#C5C4C0" stroke-width="1"/>
+<text x="680" y="434" font-size="13" letter-spacing="2" fill="#C8553D">LEARNING IS LINEAR</text>
+<text x="680" y="456" font-size="12.5" fill="#4A4B50">Knowledge walks out with the team. Next engagement starts cold.</text>
+<text x="680" y="472" font-size="12.5" fill="#7A7B82">No compounding. No return path.</text>
+
+<rect x="660" y="498" width="470" height="72" fill="none" stroke="#C5C4C0" stroke-width="1"/>
+<text x="680" y="522" font-size="13" letter-spacing="2" fill="#C8553D">INCENTIVE INVERTED</text>
+<text x="680" y="544" font-size="12.5" fill="#4A4B50">Paid for people deployed, not workflows changed.</text>
+<text x="680" y="560" font-size="12.5" fill="#7A7B82">Efficiency reduces revenue. Activity increases it.</text>
+</g>
+
+<!-- bottom -->
+<rect x="64" y="620" width="1072" height="60" fill="#B8952B" opacity="0.10"/>
+<text class="t" x="84" y="642" font-size="12.5" letter-spacing="2.6" fill="#B8952B">THE FORWARD-DEPLOYED UNIT</text>
+<text class="t note" x="84" y="666" fill="#4A4B50">No pyramid. One operator. Revenue scales with deployments, not headcount. Margin comes from the gap between cost and value, not from billing hours.</text>
+
+<text class="t note" x="64" y="726" font-size="13" fill="#7A7B82">This is not a criticism of consulting. It is a description of a business model that was built for a world where the team was the irreducible unit. That world ended.</text>
+</svg>

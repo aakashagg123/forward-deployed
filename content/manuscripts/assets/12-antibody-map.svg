@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="The five antibodies and their protective functions">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.note{font-size:13px;fill:#7A7B82}
+.lbl{font-size:15px;fill:#1C1D20}
+.kill{font-size:12.5px;fill:#C8553D}
+</style>
+<rect width="1200" height="720" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 12.1 — THE FIVE ANTIBODIES</text>
+<text class="t h" x="64" y="112">Each one protects something real. Each one can kill.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Column headers -->
+<text class="t col" x="64" y="196">ANTIBODY</text>
+<text class="t col" x="350" y="196">PROTECTS AGAINST</text>
+<text class="t col" x="730" y="196">KILL MECHANISM</text>
+<line x1="64" y1="212" x2="1136" y2="212" stroke="#D2D1CD"/>
+
+<!-- Row 1: Procurement -->
+<rect x="64" y="228" width="1072" height="76" rx="4" fill="#EBEAE6"/>
+<text class="t lbl" x="84" y="256">Procurement</text>
+<text class="t note" x="84" y="276">Commercial gate</text>
+<text class="t note" x="350" y="256">Unvetted vendors, maverick spend,</text>
+<text class="t note" x="350" y="276">unfavourable terms</text>
+<text class="t kill" x="730" y="256">90-DAY CYCLE</text>
+<text class="t note" x="730" y="276">Scope-and-deliverable template cannot</text>
+<text class="t note" x="730" y="293">accommodate iterative model</text>
+
+<!-- Row 2: IT Governance -->
+<rect x="64" y="318" width="1072" height="76" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
+<text class="t lbl" x="84" y="346">IT Governance</text>
+<text class="t note" x="84" y="366">Technology gate</text>
+<text class="t note" x="350" y="346">Shadow IT, unsanctioned systems,</text>
+<text class="t note" x="350" y="366">integration risk</text>
+<text class="t kill" x="730" y="346">MONTHLY COMMITTEE</text>
+<text class="t note" x="730" y="366">Miss the meeting, wait another month;</text>
+<text class="t note" x="730" y="383">default is "request more information"</text>
+
+<!-- Row 3: Data Security -->
+<rect x="64" y="408" width="1072" height="76" rx="4" fill="#EBEAE6"/>
+<text class="t lbl" x="84" y="436">Data Security</text>
+<text class="t note" x="84" y="456">Access gate</text>
+<text class="t note" x="350" y="436">Breaches, regulatory violations,</text>
+<text class="t note" x="350" y="456">IP leakage</text>
+<text class="t kill" x="730" y="436">DEFAULT IS NO</text>
+<text class="t note" x="730" y="456">Saying no has zero downside; saying yes</text>
+<text class="t note" x="730" y="473">has career-ending downside</text>
+
+<!-- Row 4: Compliance -->
+<rect x="64" y="498" width="1072" height="76" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
+<text class="t lbl" x="84" y="526">Compliance</text>
+<text class="t note" x="84" y="546">Regulatory gate</text>
+<text class="t note" x="350" y="526">Audit findings, consent order</text>
+<text class="t note" x="350" y="546">violations, licence conditions</text>
+<text class="t kill" x="730" y="526">RECURSIVE DELAY</text>
+<text class="t note" x="730" y="546">Review → risk assessment → input from</text>
+<text class="t note" x="730" y="563">three functions → quarterly committee</text>
+
+<!-- Row 5: PMO -->
+<rect x="64" y="588" width="1072" height="76" rx="4" fill="#EBEAE6"/>
+<text class="t lbl" x="84" y="616">PMO</text>
+<text class="t note" x="84" y="636">Coordination gate</text>
+<text class="t note" x="350" y="616">Initiative proliferation, resource</text>
+<text class="t note" x="350" y="636">conflicts, uncoordinated change</text>
+<text class="t kill" x="730" y="616">DILUTION</text>
+<text class="t note" x="730" y="636">Project code + Gantt chart + weekly</text>
+<text class="t note" x="730" y="653">status = 3 days governance, 2 days work</text>
+
+<line x1="64" y1="684" x2="1136" y2="684" stroke="#D2D1CD"/>
+<text class="t" x="64" y="710" font-size="16" fill="#4A4B50">The operator who fights them loses. The operator who prepares for them passes through. There is no third option.</text>
+</svg>

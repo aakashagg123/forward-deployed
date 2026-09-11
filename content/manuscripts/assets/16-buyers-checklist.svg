@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="Four demands for the enterprise buyer, traced to their source chapters">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.lbl{font-size:16px;fill:#1C1D20}
+.note{font-size:13px;fill:#7A7B82}
+.src{font-size:12px;letter-spacing:1.4px;fill:#B8952B}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 16.1 — THE BUYER'S CHECKLIST</text>
+<text class="t h" x="64" y="112">Four demands. Missing any one, it isn't this model.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Row 1 -->
+<rect x="64" y="180" width="1072" height="110" rx="8" fill="#EBEAE6"/>
+<circle cx="104" cy="220" r="16" fill="#1C1D20"/>
+<text class="t" x="104" y="226" text-anchor="middle" font-size="14" fill="#F7F6F3">1</text>
+<text class="t lbl" x="136" y="215">The deployment card, filled in, before anything starts</text>
+<text class="t note" x="136" y="238">A real person's name, a real number, a real site — or the wound hasn't been found yet</text>
+<text class="t src" x="136" y="264">CHAPTER 8 · PICK THE WOUND, NOT THE VISION</text>
+
+<!-- Row 2 -->
+<rect x="64" y="304" width="1072" height="110" rx="8" fill="#F7F6F3" stroke="#EBEAE6"/>
+<circle cx="104" cy="344" r="16" fill="#1C1D20"/>
+<text class="t" x="104" y="350" text-anchor="middle" font-size="14" fill="#F7F6F3">2</text>
+<text class="t lbl" x="136" y="339">Presence, and real access — not a sanitised extract</text>
+<text class="t note" x="136" y="362">Clear the badge, the credentials, the introduction to who actually runs the process</text>
+<text class="t src" x="136" y="388">CHAPTER 5 &amp; 10 · THE OPERATOR &amp; UNDERWRITING TRUST</text>
+
+<!-- Row 3 -->
+<rect x="64" y="428" width="1072" height="110" rx="8" fill="#EBEAE6"/>
+<circle cx="104" cy="468" r="16" fill="#1C1D20"/>
+<text class="t" x="104" y="474" text-anchor="middle" font-size="14" fill="#F7F6F3">3</text>
+<text class="t lbl" x="136" y="463">Your own antibodies, named and disclosed on day one</text>
+<text class="t note" x="136" y="486">Tell them which functions sign off, what they care about, who the human is</text>
+<text class="t src" x="136" y="512">CHAPTER 12 · THE ANTIBODIES</text>
+
+<!-- Row 4 -->
+<rect x="64" y="552" width="1072" height="110" rx="8" fill="#F7F6F3" stroke="#EBEAE6"/>
+<circle cx="104" cy="592" r="16" fill="#1C1D20"/>
+<text class="t" x="104" y="598" text-anchor="middle" font-size="14" fill="#F7F6F3">4</text>
+<text class="t lbl" x="136" y="587">Outcome-based pricing — be suspicious of anyone who won't</text>
+<text class="t note" x="136" y="610">A base-plus-value-share structure aligns their incentive with your outcome</text>
+<text class="t src" x="136" y="636">CHAPTER 13 · THE NEW CONSULTING IS NOT CONSULTING</text>
+
+<line x1="64" y1="686" x2="1136" y2="686" stroke="#D2D1CD"/>
+</svg>

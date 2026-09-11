@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="The four adjacent models and the gap between them">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.note{font-size:12.5px;fill:#7A7B82}
+.modelname{font-size:14px;letter-spacing:1.6px;fill:#1C1D20}
+</style>
+<rect width="1200" height="800" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 7.1 — FOUR MODELS AND A GAP</text>
+<text class="t h" x="64" y="112">Each sells a different deliverable. None sells a changed workflow.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- headers -->
+<text class="t col" x="88" y="198">MODEL</text>
+<text class="t col" x="320" y="198">SELLS</text>
+<text class="t col" x="576" y="198">REVENUE</text>
+<text class="t col" x="790" y="198">INCENTIVE</text>
+<text class="t col" x="1000" y="198">LEAVES BEHIND</text>
+<line x1="64" y1="214" x2="1136" y2="214" stroke="#C5C4C0"/>
+
+<!-- Row 1: Consulting -->
+<text class="t modelname" x="88" y="262">CONSULTING</text>
+<text class="t note" x="320" y="254" fill="#4A4B50">A recommendation</text>
+<text class="t note" x="320" y="272" fill="#7A7B82">diagnosis + conviction</text>
+<text class="t note" x="576" y="262" fill="#4A4B50">People × rate</text>
+<text class="t note" x="790" y="254" fill="#4A4B50">Deploy more people</text>
+<text class="t note" x="790" y="272" fill="#7A7B82">activity = revenue</text>
+<text class="t note" x="1000" y="254" fill="#C8553D">A report</text>
+<text class="t note" x="1000" y="272" fill="#7A7B82">knowledge walks out</text>
+<line x1="88" y1="294" x2="1112" y2="294" stroke="#E0DFDB"/>
+
+<!-- Row 2: Systems integration -->
+<text class="t modelname" x="88" y="342">SI / INTEGRATOR</text>
+<text class="t note" x="320" y="334" fill="#4A4B50">A system to spec</text>
+<text class="t note" x="320" y="352" fill="#7A7B82">build to a specification</text>
+<text class="t note" x="576" y="342" fill="#4A4B50">Milestones</text>
+<text class="t note" x="790" y="334" fill="#4A4B50">Build to spec exactly</text>
+<text class="t note" x="790" y="352" fill="#7A7B82">deviation = risk</text>
+<text class="t note" x="1000" y="334" fill="#C8553D">A system</text>
+<text class="t note" x="1000" y="352" fill="#7A7B82">spec was the problem</text>
+<line x1="88" y1="374" x2="1112" y2="374" stroke="#E0DFDB"/>
+
+<!-- Row 3: Outsourcing -->
+<text class="t modelname" x="88" y="422">OUTSOURCING</text>
+<text class="t note" x="320" y="414" fill="#4A4B50">A process running</text>
+<text class="t note" x="320" y="432" fill="#7A7B82">same process, lower cost</text>
+<text class="t note" x="576" y="422" fill="#4A4B50">Per transaction</text>
+<text class="t note" x="790" y="414" fill="#4A4B50">Standardise</text>
+<text class="t note" x="790" y="432" fill="#7A7B82">change = risk to margin</text>
+<text class="t note" x="1000" y="414" fill="#C8553D">The same process</text>
+<text class="t note" x="1000" y="432" fill="#7A7B82">preserved, not changed</text>
+<line x1="88" y1="454" x2="1112" y2="454" stroke="#E0DFDB"/>
+
+<!-- Row 4: SaaS -->
+<text class="t modelname" x="88" y="502">SAAS</text>
+<text class="t note" x="320" y="494" fill="#4A4B50">A product</text>
+<text class="t note" x="320" y="512" fill="#7A7B82">generic, scalable</text>
+<text class="t note" x="576" y="502" fill="#4A4B50">Per seat</text>
+<text class="t note" x="790" y="494" fill="#4A4B50">Generalise</text>
+<text class="t note" x="790" y="512" fill="#7A7B82">specificity = cost</text>
+<text class="t note" x="1000" y="494" fill="#C8553D">A capability</text>
+<text class="t note" x="1000" y="512" fill="#7A7B82">not in the path</text>
+<line x1="88" y1="534" x2="1112" y2="534" stroke="#C5C4C0"/>
+
+<!-- Gap row -->
+<rect x="64" y="554" width="1072" height="90" fill="#B8952B" opacity="0.10"/>
+<text class="t modelname" x="88" y="590" fill="#B8952B">FORWARD-DEPLOYED</text>
+<text class="t note" x="320" y="582" fill="#B8952B">A changed workflow</text>
+<text class="t note" x="320" y="600" fill="#4A4B50">measured, owned, persists</text>
+<text class="t note" x="576" y="590" fill="#B8952B">Per outcome</text>
+<text class="t note" x="790" y="582" fill="#B8952B">Solve cheaply</text>
+<text class="t note" x="790" y="600" fill="#4A4B50">efficiency = margin</text>
+<text class="t note" x="1000" y="582" fill="#B8952B">A different Tuesday</text>
+<text class="t note" x="1000" y="600" fill="#4A4B50">owned internally</text>
+
+<!-- bottom annotation -->
+<text class="t note" x="64" y="686" font-size="13" fill="#7A7B82">Every model above the line is honest about what it does. None of them sells the thing the enterprise actually needs,</text>
+<text class="t note" x="64" y="706" font-size="13" fill="#7A7B82">which is a workflow that runs differently after the provider leaves. That is the gap. The forward-deployed firm sits in it.</text>
+
+<rect x="64" y="730" width="1072" height="46" fill="#C8553D" opacity="0.10"/>
+<text class="t note" x="84" y="758" fill="#C8553D">The confusion between them is not academic. It is the single most common reason forward-deployed firms die — they drift into an adjacent model without noticing.</text>
+</svg>

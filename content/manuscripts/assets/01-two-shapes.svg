@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 740" width="1200" height="740" role="img" aria-label="Centre-out transformation versus perimeter-in deployment">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.mut{font-size:14px;fill:#7A7B82}
+.tiny{font-size:11px;letter-spacing:1.6px;fill:#F7F6F3}
+</style>
+<rect width="1200" height="740" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 1.3 — TWO SHAPES OF CHANGE</text>
+<text class="t h" x="64" y="112">Same objective. Opposite topology.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<line x1="600" y1="176" x2="600" y2="700" stroke="#E4E3DF"/>
+
+<!-- LEFT: centre-out -->
+<text class="t col" x="64" y="200">CENTRE-OUT</text>
+<circle cx="320" cy="420" r="245" fill="none" stroke="#1C1D20" stroke-width="1.6"/>
+<circle cx="320" cy="420" r="150" fill="none" stroke="#DDDCD8"/>
+<circle cx="320" cy="420" r="90" fill="none" stroke="#DDDCD8"/>
+<g stroke="#1C1D20" stroke-width="1.4" opacity="0.42">
+<line x1="368" y1="420" x2="490" y2="420"/>
+<line x1="353.9" y1="386.1" x2="440.2" y2="299.8"/>
+<line x1="320" y1="372" x2="320" y2="250"/>
+<line x1="286.1" y1="386.1" x2="199.8" y2="299.8"/>
+<line x1="272" y1="420" x2="150" y2="420"/>
+<line x1="286.1" y1="453.9" x2="199.8" y2="540.2"/>
+<line x1="320" y1="468" x2="320" y2="590"/>
+<line x1="353.9" y1="453.9" x2="440.2" y2="540.2"/>
+</g>
+<circle cx="320" cy="420" r="44" fill="#1C1D20"/>
+<text class="t tiny" x="320" y="418" text-anchor="middle">TRANSF.</text>
+<text class="t tiny" x="320" y="432" text-anchor="middle">OFFICE</text>
+<text class="t mut" x="320" y="700" text-anchor="middle" fill="#7A7B82">Resolution lost at every ring.</text>
+<text class="t mut" x="320" y="722" text-anchor="middle" font-size="13" fill="#7A7B82">The instruction never reaches the perimeter.</text>
+<text class="t mut" x="320" y="192" text-anchor="middle" fill="#7A7B82" font-size="12" letter-spacing="2">THE WORK ↓ lives out here</text>
+
+<!-- RIGHT: perimeter-in -->
+<text class="t col" x="660" y="200">PERIMETER-IN</text>
+<circle cx="880" cy="420" r="245" fill="none" stroke="#1C1D20" stroke-width="1.6"/>
+<circle cx="880" cy="420" r="150" fill="none" stroke="#DDDCD8"/>
+<circle cx="880" cy="420" r="90" fill="none" stroke="#DDDCD8"/>
+<circle cx="880" cy="420" r="40" fill="none" stroke="#C5C4C0"/>
+<!-- operator node on the perimeter -->
+<circle cx="1067" cy="262" r="15" fill="#B8952B"/>
+<text class="t mut" x="1050" y="222" text-anchor="end" fill="#B8952B" font-size="13" letter-spacing="1.6">OPERATOR</text>
+<line x1="1046" y1="232" x2="1060" y2="248" stroke="#B8952B" stroke-width="1"/>
+<!-- pull inward -->
+<path d="M1052 276 L 998 322" stroke="#B8952B" stroke-width="1.6" marker-end="url(#a)"/>
+<!-- expansion along the perimeter -->
+<path d="M1067 262 A 245 245 0 0 1 1010 570" stroke="#B8952B" stroke-width="1.4" fill="none" stroke-dasharray="5 6" opacity="0.75"/>
+<path d="M1067 262 A 245 245 0 0 0 830 178" stroke="#B8952B" stroke-width="1.4" fill="none" stroke-dasharray="5 6" opacity="0.75"/>
+<defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#B8952B"/></marker></defs>
+<text class="t mut" x="880" y="700" text-anchor="middle" fill="#7A7B82">Starts at the work. Pulls the org toward what already runs.</text>
+<text class="t mut" x="880" y="722" text-anchor="middle" font-size="13" fill="#7A7B82">Expands along the perimeter, not down from the centre.</text>
+</svg>

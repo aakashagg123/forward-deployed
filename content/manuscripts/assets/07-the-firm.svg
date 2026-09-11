@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="1200" height="780" role="img" aria-label="The forward-deployed firm versus its drift modes">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.note{font-size:12.5px;fill:#7A7B82}
+</style>
+<rect width="1200" height="780" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 7.3 — THE FIRM AND ITS DRIFT MODES</text>
+<text class="t h" x="64" y="112">Every drift is toward an incentive that rewards activity over change.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Centre: the firm -->
+<rect x="400" y="200" width="400" height="200" fill="#B8952B" opacity="0.08" stroke="#B8952B" stroke-width="1.6"/>
+<text class="t" x="600" y="236" text-anchor="middle" font-size="14" letter-spacing="2.4" fill="#B8952B">THE FORWARD-DEPLOYED FIRM</text>
+<line x1="440" y1="252" x2="760" y2="252" stroke="#B8952B" opacity="0.3"/>
+<text class="t note" x="600" y="280" text-anchor="middle" fill="#4A4B50">Sells a changed workflow</text>
+<text class="t note" x="600" y="302" text-anchor="middle" fill="#4A4B50">On a fixed clock</text>
+<text class="t note" x="600" y="324" text-anchor="middle" fill="#4A4B50">Compounds what it learns</text>
+<text class="t note" x="600" y="346" text-anchor="middle" fill="#4A4B50">Measures Tuesday tests passed</text>
+<text class="t note" x="600" y="376" text-anchor="middle" fill="#B8952B" font-size="13" letter-spacing="1.6">Revenue scales with deployments, not headcount</text>
+
+<!-- Drift arrows and boxes -->
+
+<!-- Top-left: Consulting drift -->
+<line x1="400" y1="260" x2="220" y2="200" stroke="#C8553D" stroke-width="1.2" stroke-dasharray="6 4"/>
+<rect x="64" y="170" width="240" height="90" fill="none" stroke="#C8553D" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="t" x="84" y="196" font-size="12" letter-spacing="2" fill="#C8553D">DRIFT → CONSULTING</text>
+<text class="t note" x="84" y="218" fill="#7A7B82">Selling assessments</text>
+<text class="t note" x="84" y="236" fill="#7A7B82">without deployment</text>
+<text class="t note" x="84" y="254" fill="#7A7B82">diagnosis becomes revenue</text>
+
+<!-- Top-right: Platform drift -->
+<line x1="800" y1="260" x2="960" y2="200" stroke="#C8553D" stroke-width="1.2" stroke-dasharray="6 4"/>
+<rect x="896" y="170" width="240" height="90" fill="none" stroke="#C8553D" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="t" x="916" y="196" font-size="12" letter-spacing="2" fill="#C8553D">DRIFT → PLATFORM</text>
+<text class="t note" x="916" y="218" fill="#7A7B82">Productising the tooling</text>
+<text class="t note" x="916" y="236" fill="#7A7B82">instead of deploying it</text>
+<text class="t note" x="916" y="254" fill="#7A7B82">the GE mistake, smaller</text>
+
+<!-- Bottom-left: Body shop drift -->
+<line x1="400" y1="380" x2="220" y2="460" stroke="#C8553D" stroke-width="1.2" stroke-dasharray="6 4"/>
+<rect x="64" y="430" width="240" height="90" fill="none" stroke="#C8553D" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="t" x="84" y="456" font-size="12" letter-spacing="2" fill="#C8553D">DRIFT → BODY SHOP</text>
+<text class="t note" x="84" y="478" fill="#7A7B82">Leaving operators in</text>
+<text class="t note" x="84" y="496" fill="#7A7B82">place permanently</text>
+<text class="t note" x="84" y="514" fill="#7A7B82">staff aug at consulting rates</text>
+
+<!-- Bottom-right: Venture drift -->
+<line x1="800" y1="380" x2="960" y2="460" stroke="#C8553D" stroke-width="1.2" stroke-dasharray="6 4"/>
+<rect x="896" y="430" width="240" height="90" fill="none" stroke="#C8553D" stroke-width="1" stroke-dasharray="4 4"/>
+<text class="t" x="916" y="456" font-size="12" letter-spacing="2" fill="#C8553D">DRIFT → VENTURE</text>
+<text class="t note" x="916" y="478" fill="#7A7B82">Building products for</text>
+<text class="t note" x="916" y="496" fill="#7A7B82">every workflow fixed</text>
+<text class="t note" x="916" y="514" fill="#7A7B82">each is a different company</text>
+
+<!-- The fixes -->
+<rect x="64" y="570" width="1072" height="140" fill="none" stroke="#C5C4C0" stroke-width="1"/>
+<text class="t col" x="88" y="600">THE DISCIPLINES THAT PREVENT DRIFT</text>
+<line x1="88" y1="614" x2="1112" y2="614" stroke="#E0DFDB"/>
+
+<g class="t note">
+<text x="88" y="642" fill="#B8952B">Never sell an assessment without a deployment.</text>
+<text x="88" y="666" fill="#4A4B50">If the client wants a standalone diagnosis, introduce them to a consultant.</text>
+
+<text x="88" y="694" fill="#B8952B">Keep the tooling internal. The product is the changed workflow.</text>
+</g>
+
+<text class="t note" x="600" y="642" fill="#B8952B">Enforce the kill date. Every time.</text>
+<text class="t note" x="600" y="666" fill="#4A4B50">An operator who stays permanently has become staff augmentation.</text>
+
+<text class="t note" x="600" y="694" fill="#B8952B">Hand product opportunities to the client. Stay focused on deployment.</text>
+
+<!-- Bottom annotation -->
+<text class="t note" x="64" y="746" font-size="13" fill="#7A7B82">Each drift is toward a legitimate business model. Each is also a departure from the one thing that makes the firm worth existing:</text>
+<text class="t note" x="64" y="766" font-size="13" fill="#B8952B">a Tuesday that runs differently, owned by someone inside, that persists after you leave.</text>
+</svg>

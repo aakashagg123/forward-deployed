@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640">
+  <style>
+    .bg{fill:#F7F6F3}
+    .label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+    .body{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:13.5px}
+    .body-dim{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:12px}
+    .amber{fill:#B8952B}
+    .red{fill:#C8553D}
+    .title{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600}
+    .quad-head{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:14px;font-weight:600;letter-spacing:0.04em}
+    .question{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:14px;font-style:italic}
+    .example{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:12.5px}
+    .cell{fill:#EBEAE6}
+    .grid-line{stroke:#D2D1CD;stroke-width:1}
+    .icon{fill:none;stroke:#B8952B;stroke-width:2;stroke-linecap:round}
+    .icon-red{fill:none;stroke:#C8553D;stroke-width:2;stroke-linecap:round}
+  </style>
+  <rect class="bg" width="1200" height="640"/>
+
+  <text class="label" x="60" y="48">Figure 8.3</text>
+  <text class="title" x="60" y="82">Where Wounds Live — Four Diagnostics</text>
+  <text class="body-dim" x="60" y="106">Each diagnostic is a question an operator asks in the first week at a site</text>
+
+  <!-- 2x2 grid -->
+  <rect class="cell" x="60" y="140" width="520" height="220" rx="6" ry="6"/>
+  <rect class="cell" x="620" y="140" width="520" height="220" rx="6" ry="6"/>
+  <rect class="cell" x="60" y="380" width="520" height="220" rx="6" ry="6"/>
+  <rect class="cell" x="620" y="380" width="520" height="220" rx="6" ry="6"/>
+
+  <!-- Quadrant 1: Re-keying -->
+  <text class="quad-head" x="92" y="178">Follow the re-keying</text>
+  <text class="question" x="92" y="208">"Where is data entered twice?"</text>
+  <text class="body" x="92" y="240">Any manual transcription between systems</text>
+  <text class="body" x="92" y="260">is a wound. Hours lost, errors introduced,</text>
+  <text class="body" x="92" y="280">accepted as normal because no one with</text>
+  <text class="body" x="92" y="300">build capability ever stood close enough.</text>
+  <text class="example" x="92" y="330">e.g. Branch re-enters dealer orders into ERP because</text>
+  <text class="example" x="92" y="348">the dealer management system does not integrate</text>
+
+  <!-- Quadrant 2: WhatsApp -->
+  <text class="quad-head" x="652" y="178">Follow the WhatsApp group</text>
+  <text class="question" x="652" y="208">"Where has the process moved to chat?"</text>
+  <text class="body" x="652" y="240">Every workflow on WhatsApp migrated there</text>
+  <text class="body" x="652" y="260">because the formal system is too slow or</text>
+  <text class="body" x="652" y="280">too rigid. The gap between the chat and</text>
+  <text class="body" x="652" y="300">the system is the wound.</text>
+  <text class="example" x="652" y="330">e.g. Dealer order confirmed via WhatsApp thumbs-up,</text>
+  <text class="example" x="652" y="348">ERP updated hours or days later — sometimes never</text>
+
+  <!-- Quadrant 3: Month-end -->
+  <text class="quad-head" x="92" y="418">Follow the month-end panic</text>
+  <text class="question" x="92" y="448">"What breaks in the last five days?"</text>
+  <text class="body" x="92" y="480">Processes that work for 25 days and break</text>
+  <text class="body" x="92" y="500">catastrophically at month-end. Volume spikes</text>
+  <text class="body" x="92" y="520">expose manual workarounds that were</text>
+  <text class="body" x="92" y="540">tolerable at steady state.</text>
+  <text class="example" x="92" y="570">e.g. GST reconciliation, dealer outstanding settlement —</text>
+  <text class="example" x="92" y="588">team works until midnight for three days every quarter</text>
+
+  <!-- Quadrant 4: Apology -->
+  <text class="quad-head" x="652" y="418">Follow the apology</text>
+  <text class="question" x="652" y="448">"What do you apologise to dealers for?"</text>
+  <text class="body" x="652" y="480">The answer is the process failure that has</text>
+  <text class="body" x="652" y="500">become a relationship cost. In a dealer-driven</text>
+  <text class="body" x="652" y="520">business, relationship costs are existential —</text>
+  <text class="body" x="652" y="540">dealers switch for respect, not for price.</text>
+  <text class="example" x="652" y="570">e.g. Credit note processing takes 5 days, dealer calls</text>
+  <text class="example" x="652" y="588">three times to chase it — the apology is the diagnostic</text>
+</svg>

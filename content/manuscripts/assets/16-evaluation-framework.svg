@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="How to evaluate whether a deployment is working">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.item{font-size:15px;fill:#1C1D20}
+.dim{font-size:13px;fill:#7A7B82}
+</style>
+<rect width="1200" height="620" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 16.2 — WHAT TO WATCH, NOT WHAT TO TRACK</text>
+<text class="t h" x="64" y="112">Consulting metrics measure activity. These measure change.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<text class="t col" x="64" y="196">STOP WATCHING</text>
+<text class="t col" x="660" y="196">START WATCHING</text>
+<line x1="64" y1="212" x2="540" y2="212" stroke="#C5C4C0"/>
+<line x1="660" y1="212" x2="1136" y2="212" stroke="#C5C4C0"/>
+<line x1="600" y1="176" x2="600" y2="556" stroke="#D2D1CD"/>
+
+<text class="t dim" x="64" y="268">Status reports, RAG dashboards</text>
+<text class="t item" x="660" y="268">What actually changed since week four</text>
+
+<text class="t dim" x="64" y="328">Hours logged, utilisation</text>
+<text class="t item" x="660" y="328">Completion rate — did the metric move</text>
+
+<text class="t dim" x="64" y="388">"We are still finalising data access"</text>
+<text class="t item" x="660" y="388">What gets volunteered, unprompted, by week 8</text>
+
+<text class="t dim" x="64" y="448">Whether anything has gone wrong yet</text>
+<text class="t item" x="660" y="448">How the first failure is handled, in person</text>
+
+<text class="t dim" x="64" y="508">A clean, uneventful engagement</text>
+<text class="t item" x="660" y="508">Whether the edge case has been checked</text>
+
+<line x1="64" y1="556" x2="1136" y2="556" stroke="#D2D1CD"/>
+<text class="t" x="64" y="588" font-size="16" fill="#4A4B50">A smooth engagement with nothing volunteered is a weaker signal than a rocky one, handled well, with the team talking.</text>
+</svg>

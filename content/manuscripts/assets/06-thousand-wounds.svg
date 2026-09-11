@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="The long tail of workflow wounds">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.ax{font-size:12px;letter-spacing:2.2px;fill:#6A6B72}
+.note{font-size:13.5px;fill:#7A7B82}
+</style>
+<rect width="1200" height="720" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 6.3 — THE LONG TAIL OF WOUNDS</text>
+<text class="t h" x="64" y="112">Below the old line, nobody came. Below the new line, everyone qualifies.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- axes -->
+<line x1="150" y1="540" x2="1120" y2="540" stroke="#C5C4C0"/>
+<line x1="150" y1="200" x2="150" y2="540" stroke="#C5C4C0"/>
+<text class="t ax" x="150" y="576">WORKFLOWS, RANKED BY ANNUAL VALUE LOST →</text>
+<text class="t ax" x="150" y="186">VALUE LOST PER YEAR</text>
+
+<!-- long tail curve -->
+<path d="M170 210 C 200 214 230 220 260 232 C 310 252 360 280 420 312 C 500 356 580 396 680 432 C 780 460 880 478 1000 490 C 1060 494 1100 496 1110 498"
+      fill="none" stroke="#1C1D20" stroke-width="2.4"/>
+
+<!-- shade area between old line and new line -->
+<path d="M170 340 L440 340 C 500 356 580 396 680 432 C 780 460 880 478 1000 490 C 1060 494 1100 496 1110 498 L1110 540 L170 540 Z"
+      fill="#B8952B" opacity="0.08"/>
+
+<!-- shade area above old line -->
+<path d="M170 210 C 200 214 230 220 260 232 C 310 252 360 280 420 312 L420 340 L170 340 Z"
+      fill="#1C1D20" opacity="0.06"/>
+
+<!-- old threshold line -->
+<line x1="150" y1="340" x2="1120" y2="340" stroke="#C8553D" stroke-width="1.6" stroke-dasharray="8 6"/>
+<text class="t note" x="1110" y="332" text-anchor="end" fill="#C8553D">Old threshold — ~$250k/yr</text>
+<text class="t note" x="1110" y="352" text-anchor="end" font-size="12" fill="#7A7B82">consulting engagement minimum</text>
+
+<!-- new threshold line -->
+<line x1="150" y1="480" x2="1120" y2="480" stroke="#B8952B" stroke-width="1.6" stroke-dasharray="8 6"/>
+<text class="t note" x="1110" y="472" text-anchor="end" fill="#B8952B">New threshold — ~$50k/yr</text>
+<text class="t note" x="1110" y="492" text-anchor="end" font-size="12" fill="#7A7B82">one operator, six to twelve weeks</text>
+
+<!-- count labels -->
+<text class="t note" x="280" y="300" fill="#1C1D20">~50 workflows</text>
+<text class="t note" x="280" y="318" font-size="12" fill="#7A7B82">above the old line</text>
+
+<text class="t note" x="660" y="424" fill="#B8952B">~1,000 workflows</text>
+<text class="t note" x="660" y="442" font-size="12" fill="#4A4B50">between the lines</text>
+
+<!-- markers on curve -->
+<circle cx="420" cy="312" r="5" fill="#C8553D"/>
+<circle cx="1000" cy="490" r="5" fill="#B8952B"/>
+
+<!-- bottom annotation -->
+<rect x="64" y="600" width="1072" height="60" fill="#B8952B" opacity="0.10"/>
+<text class="t" x="84" y="622" font-size="12.5" letter-spacing="2.6" fill="#B8952B">THE OPERATING MODEL</text>
+<text class="t note" x="84" y="646" fill="#4A4B50">The thousand wounds between the lines are the operating model. They are what the enterprise means when it says "transformation" and could never fund.</text>
+
+<text class="t note" x="64" y="696" font-size="13" fill="#7A7B82">This is the unit-drive moment from Chapter 2. Not a better engine. A motor small enough to put everywhere.</text>
+</svg>

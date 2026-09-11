@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="Where pilots die inside an incumbent">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.node{font-size:12.5px;letter-spacing:2.2px;fill:#1C1D20}
+.note{font-size:13px;fill:#7A7B82}
+.dead{font-size:14px;fill:#C8553D}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 3.2 — WHERE PILOTS DIE</text>
+<text class="t h" x="64" y="112">The dangerous moment is not failure. It is success.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- governance bracket -->
+<line x1="120" y1="196" x2="380" y2="196" stroke="#C5C4C0"/>
+<line x1="120" y1="196" x2="120" y2="208" stroke="#C5C4C0"/><line x1="380" y1="196" x2="380" y2="208" stroke="#C5C4C0"/>
+<text class="t note" x="250" y="184" text-anchor="middle" font-size="12" letter-spacing="2.2" fill="#6A6B72">WHERE GOVERNANCE FILTERS</text>
+<text class="t note" x="250" y="228" text-anchor="middle" font-size="12" fill="#8A8B92">almost nothing dies here</text>
+
+<!-- main path -->
+<line x1="120" y1="290" x2="900" y2="290" stroke="#1C1D20" stroke-width="2"/>
+<g fill="#1C1D20">
+<circle cx="120" cy="290" r="8"/><circle cx="380" cy="290" r="8"/><circle cx="600" cy="290" r="8"/><circle cx="820" cy="290" r="8"/>
+</g>
+<text class="t node" x="120" y="268" text-anchor="middle">IDEA</text>
+<text class="t node" x="380" y="268" text-anchor="middle">DEMO</text>
+<text class="t node" x="600" y="268" text-anchor="middle">IT WORKS</text>
+<text class="t node" x="820" y="268" text-anchor="middle">HANDOVER</text>
+
+<!-- the orphan state -->
+<rect x="600" y="316" width="220" height="26" fill="#C8553D" opacity="0.16"/>
+<text class="t note" x="710" y="334" text-anchor="middle" font-size="11.5" letter-spacing="1.8" fill="#C8553D">ORPHANED — RUNS, NO OWNER</text>
+
+<!-- four deaths -->
+<defs><marker id="d" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><path d="M0,0 L8,0 L4,8 z" fill="#C8553D"/></marker></defs>
+<g stroke="#C8553D" stroke-width="1.6" fill="none" marker-end="url(#d)">
+<path d="M620 300 C 620 340 600 360 596 388"/>
+<path d="M680 300 C 680 380 660 420 656 456"/>
+<path d="M740 300 C 740 440 720 490 716 524"/>
+<path d="M800 300 C 800 500 780 558 776 592"/>
+</g>
+<text class="t dead" x="618" y="402">No owner named. Every roadmap was set before it existed.</text>
+<text class="t dead" x="678" y="470">Support decays. Response slips from hours to weeks; usage goes to zero in two quarters.</text>
+<text class="t dead" x="738" y="538">Rebuild proposed on the standard stack. Scoped, estimated, prioritised — never started.</text>
+<text class="t dead" x="798" y="606">The champion moves. Nobody kills it; it is un-championed, which is slower and more final.</text>
+
+<!-- survivor -->
+<path d="M820 290 L 1090 290" stroke="#B8952B" stroke-width="2" stroke-dasharray="6 5"/>
+<circle cx="1090" cy="290" r="8" fill="#B8952B"/>
+<text class="t node" x="1090" y="268" text-anchor="middle" fill="#B8952B">PRODUCTION</text>
+<text class="t note" x="1136" y="322" text-anchor="end" fill="#B8952B" font-size="12.5">the only version that survives:</text>
+<text class="t note" x="1136" y="342" text-anchor="end" fill="#7A7B82" font-size="12.5">an owner with real standing took it</text>
+<text class="t note" x="1136" y="362" text-anchor="end" fill="#7A7B82" font-size="12.5">before it was offered, into a budget</text>
+<text class="t note" x="1136" y="382" text-anchor="end" fill="#7A7B82" font-size="12.5">line and a team with a support rota</text>
+<text class="t note" x="1136" y="410" text-anchor="end" fill="#7A7B82" font-size="12">this never happens by process</text>
+
+<line x1="64" y1="646" x2="1136" y2="646" stroke="#D2D1CD"/>
+<text class="t" x="64" y="680" font-size="16" fill="#4A4B50">Plan the handover before the build. If you cannot name the owner, you are building a future orphan.</text>
+</svg>

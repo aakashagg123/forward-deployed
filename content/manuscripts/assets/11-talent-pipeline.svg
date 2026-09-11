@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 740" width="1200" height="740" role="img" aria-label="Five talent sources for the operator pipeline">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.note{font-size:13px;fill:#7A7B82}
+.lbl{font-size:15px;fill:#1C1D20}
+.gap{font-size:12.5px;fill:#C8553D;letter-spacing:1px}
+</style>
+<rect width="1200" height="740" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 11.2 — THE FIVE TALENT SOURCES</text>
+<text class="t h" x="64" y="112">Each source has a different gap to close.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Column headers -->
+<text class="t col" x="64" y="196">SOURCE</text>
+<text class="t col" x="530" y="196">STRENGTH</text>
+<text class="t col" x="860" y="196">GAP</text>
+<line x1="64" y1="212" x2="1136" y2="212" stroke="#D2D1CD"/>
+
+<!-- Source 1 -->
+<rect x="64" y="228" width="1072" height="82" rx="4" fill="#EBEAE6"/>
+<text class="t lbl" x="84" y="258">Startup founders</text>
+<text class="t note" x="84" y="278">and early employees</text>
+<text class="t note" x="530" y="258">Built, shipped, dealt with customers</text>
+<text class="t note" x="530" y="278">directly. Full-cycle experience.</text>
+<text class="t gap" x="860" y="254">GAP: PACE</text>
+<text class="t note" x="860" y="278">Too fast, too impatient</text>
+<text class="t note" x="860" y="296">with enterprise tempo</text>
+
+<!-- Source 2 -->
+<rect x="64" y="326" width="1072" height="82" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
+<text class="t lbl" x="84" y="356">Product engineers</text>
+<text class="t note" x="84" y="376">with customer rotations</text>
+<text class="t note" x="530" y="356">Taste of the room from</text>
+<text class="t note" x="530" y="376">implementation stints at clients</text>
+<text class="t gap" x="860" y="352">GAP: DEPTH</text>
+<text class="t note" x="860" y="376">Not enough organisational</text>
+<text class="t note" x="860" y="394">exposure to navigate alone</text>
+
+<!-- Source 3 -->
+<rect x="64" y="424" width="1072" height="82" rx="4" fill="#EBEAE6"/>
+<text class="t lbl" x="84" y="454">Services firm engineers</text>
+<text class="t note" x="84" y="474">who exceeded their role</text>
+<text class="t note" x="530" y="454">Built client relationships</text>
+<text class="t note" x="530" y="474">against the structure</text>
+<text class="t gap" x="860" y="450">GAP: AGENCY</text>
+<text class="t note" x="860" y="474">Trained to deliver specs,</text>
+<text class="t note" x="860" y="492">not question them</text>
+
+<!-- Source 4 -->
+<rect x="64" y="522" width="1072" height="82" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
+<text class="t lbl" x="84" y="552">Consultants who code</text>
+<text class="t note" x="84" y="572">Big Four / strategy associates</text>
+<text class="t note" x="530" y="552">Room-reading already trained</text>
+<text class="t note" x="530" y="572">at high level</text>
+<text class="t gap" x="860" y="548">GAP: BUILD</text>
+<text class="t note" x="860" y="572">Self-taught code, not</text>
+<text class="t note" x="860" y="590">production-grade</text>
+
+<!-- Source 5 -->
+<rect x="64" y="620" width="1072" height="82" rx="4" fill="#EBEAE6"/>
+<text class="t lbl" x="84" y="650">Domain experts</text>
+<text class="t note" x="84" y="670">who learned technology</text>
+<text class="t note" x="530" y="650">Already trusted by their own</text>
+<text class="t note" x="530" y="670">organisation</text>
+<text class="t gap" x="860" y="646">GAP: PERSPECTIVE</text>
+<text class="t note" x="860" y="670">Cannot see own org</text>
+<text class="t note" x="860" y="688">from the outside yet</text>
+
+<line x1="64" y1="718" x2="1136" y2="718" stroke="#D2D1CD"/>
+</svg>

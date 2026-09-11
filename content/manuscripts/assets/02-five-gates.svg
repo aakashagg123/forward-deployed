@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="The five gates where AI adoption breaks">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.gate{font-size:13px;letter-spacing:2.2px;fill:#1C1D20}
+.note{font-size:12.5px;fill:#7A7B82}
+.band{font-size:12px;letter-spacing:2.6px;}
+</style>
+<rect width="1200" height="660" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 2.4 — WHERE ADOPTION ACTUALLY BREAKS</text>
+<text class="t h" x="64" y="112">Enterprises measure the two gates they can procure</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- top bands -->
+<line x1="100" y1="196" x2="500" y2="196" stroke="#1C1D20"/>
+<line x1="100" y1="196" x2="100" y2="208" stroke="#1C1D20"/><line x1="500" y1="196" x2="500" y2="208" stroke="#1C1D20"/>
+<text class="t band" x="300" y="184" text-anchor="middle" fill="#1C1D20">MEASURED · BUDGETED · PROCURABLE</text>
+
+<line x1="520" y1="196" x2="1120" y2="196" stroke="#C8553D"/>
+<line x1="520" y1="196" x2="520" y2="208" stroke="#C8553D"/><line x1="1120" y1="196" x2="1120" y2="208" stroke="#C8553D"/>
+<text class="t band" x="820" y="184" text-anchor="middle" fill="#C8553D">NO VENDOR · NO BUDGET LINE · NO OWNER</text>
+
+<!-- funnel: centre line y=380 -->
+<path d="M100 230 L300 230 L300 238 L500 238 L500 305 L700 305 L700 340 L900 340 L900 358 L1120 358
+         L1120 402 L900 402 L900 420 L700 420 L700 455 L500 455 L500 522 L300 522 L300 530 L100 530 Z"
+      fill="#1C1D20" opacity="0.14" stroke="#1C1D20" stroke-width="1.2"/>
+
+<!-- gate dividers -->
+<g stroke="#F7F6F3" stroke-width="2">
+<line x1="300" y1="230" x2="300" y2="530"/>
+<line x1="500" y1="238" x2="500" y2="522"/>
+<line x1="700" y1="305" x2="700" y2="455"/>
+<line x1="900" y1="340" x2="900" y2="420"/>
+</g>
+
+<!-- gate labels -->
+<text class="t gate" x="200" y="386" text-anchor="middle">CAPABILITY</text>
+<text class="t gate" x="400" y="386" text-anchor="middle">ACCESS</text>
+<text class="t gate" x="600" y="386" text-anchor="middle">WORKFLOW FIT</text>
+<text class="t gate" x="800" y="386" text-anchor="middle">AUTHORITY</text>
+<text class="t gate" x="1010" y="386" text-anchor="middle">INCENTIVE</text>
+
+<!-- notes below -->
+<text class="t note" x="200" y="580" text-anchor="middle">the model is better</text>
+<text class="t note" x="200" y="600" text-anchor="middle">than the task requires</text>
+
+<text class="t note" x="400" y="580" text-anchor="middle">licences bought,</text>
+<text class="t note" x="400" y="600" text-anchor="middle">SSO works</text>
+
+<text class="t note" x="600" y="580" text-anchor="middle" fill="#C8553D">output lands in a chat window;</text>
+<text class="t note" x="600" y="600" text-anchor="middle" fill="#C8553D">the work happens in the ERP</text>
+
+<text class="t note" x="800" y="580" text-anchor="middle" fill="#C8553D">whoever can see the fix</text>
+<text class="t note" x="800" y="600" text-anchor="middle" fill="#C8553D">cannot make it</text>
+
+<text class="t note" x="1010" y="580" text-anchor="middle" fill="#C8553D">the fix changes</text>
+<text class="t note" x="1010" y="600" text-anchor="middle" fill="#C8553D">someone's numbers</text>
+
+<text class="t note" x="64" y="644" font-size="13" fill="#7A7B82">Attrition is not distributed. It clusters in the three layers nobody owns.</text>
+</svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Proximity to the work versus authority to change the path">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.ax{font-size:12px;letter-spacing:2.4px;fill:#6A6B72}
+.qn{font-size:15px;letter-spacing:1.6px;fill:#1C1D20}
+.qd{font-size:12.5px;fill:#7A7B82}
+.note{font-size:13px;fill:#7A7B82}
+</style>
+<rect width="1200" height="800" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 5.1 — THE TWO HALVES OF THE ANSWER</text>
+<text class="t h" x="64" y="112">Every enterprise has one half. Neither half has ever fixed anything.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- axes -->
+<text class="t ax" x="240" y="182" >PROXIMITY TO THE WORK ↑</text>
+<text class="t ax" x="240" y="748">AUTHORITY TO CHANGE THE PATH →</text>
+<line x1="240" y1="200" x2="240" y2="700" stroke="#C5C4C0"/>
+<line x1="240" y1="700" x2="940" y2="700" stroke="#C5C4C0"/>
+
+<!-- quadrant grid -->
+<rect x="240" y="200" width="700" height="500" fill="none" stroke="#D2D1CD"/>
+<line x1="590" y1="200" x2="590" y2="700" stroke="#D2D1CD"/>
+<line x1="240" y1="450" x2="940" y2="450" stroke="#D2D1CD"/>
+
+<!-- highlight the operator quadrant -->
+<rect x="590" y="200" width="350" height="250" fill="#B8952B" opacity="0.12"/>
+<rect x="590" y="200" width="350" height="250" fill="none" stroke="#B8952B" stroke-width="1.6"/>
+
+<!-- top-left -->
+<text class="t qn" x="266" y="242">THE PERSON WHO ALREADY KNOWS</text>
+<text class="t qd" x="266" y="272">Tells you exactly what is broken in twenty minutes.</text>
+<text class="t qd" x="266" y="294">Has a perfect map of the dysfunction.</text>
+<text class="t qd" x="266" y="316">Owns nothing that would have to change.</text>
+<text class="t qd" x="266" y="352" fill="#C8553D">Describes the fire to someone not allowed to carry water.</text>
+
+<!-- top-right -->
+<text class="t qn" x="616" y="242" fill="#B8952B">THE DEPLOYED OPERATOR</text>
+<text class="t qd" x="616" y="272">Sees the exception cases because they sit there.</text>
+<text class="t qd" x="616" y="294">Builds the fix without joining a queue.</text>
+<text class="t qd" x="616" y="316">Can close the old path — and does.</text>
+<text class="t qd" x="616" y="352" fill="#B8952B">The change survives their departure from the room.</text>
+
+<!-- bottom-left -->
+<text class="t qn" x="266" y="494">THE ANALYST</text>
+<text class="t qd" x="266" y="524">Infers the process from documents and interviews.</text>
+<text class="t qd" x="266" y="546">Produces the seventy-percent version of the truth.</text>
+<text class="t qd" x="266" y="582" fill="#C8553D">Output: the report.</text>
+
+<!-- bottom-right -->
+<text class="t qn" x="616" y="494">THE EXECUTIVE MANDATE</text>
+<text class="t qd" x="616" y="524">Real authority. Real urgency. Real money.</text>
+<text class="t qd" x="616" y="546">Six layers from the screen; has never seen it.</text>
+<text class="t qd" x="616" y="582" fill="#C8553D">Output: the memo. Then the transformation office.</text>
+
+<!-- right rail -->
+<text class="t note" x="980" y="242" fill="#4A4B50">Remove any one</text>
+<text class="t note" x="980" y="262" fill="#4A4B50">property and you get</text>
+<text class="t note" x="980" y="282" fill="#4A4B50">a role that already</text>
+<text class="t note" x="980" y="302" fill="#4A4B50">exists and already</text>
+<text class="t note" x="980" y="322" fill="#4A4B50">fails:</text>
+<text class="t note" x="980" y="362" font-size="12">— no build capability</text>
+<text class="t note" x="980" y="380" font-size="12" fill="#7A7B82">→ business analyst</text>
+<text class="t note" x="980" y="412" font-size="12">— no proximity</text>
+<text class="t note" x="980" y="430" font-size="12" fill="#7A7B82">→ platform team</text>
+<text class="t note" x="980" y="462" font-size="12">— no authority</text>
+<text class="t note" x="980" y="480" font-size="12" fill="#7A7B82">→ innovation lab</text>
+<text class="t note" x="980" y="512" font-size="12">— no accountability</text>
+<text class="t note" x="980" y="530" font-size="12" fill="#7A7B82">→ consultant, vendor</text>
+
+<line x1="64" y1="770" x2="1136" y2="770" stroke="#D2D1CD"/>
+</svg>

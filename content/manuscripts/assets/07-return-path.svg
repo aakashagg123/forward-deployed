@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="The return path: how deployments compound">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.note{font-size:12.5px;fill:#7A7B82}
+.big{font-size:24px;fill:#1C1D20}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 7.2 — THE RETURN PATH</text>
+<text class="t h" x="64" y="112">Each deployment accelerates the next. That is the asset.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Deployment boxes in a row, getting smaller -->
+<!-- Deployment 1 -->
+<rect x="80" y="210" width="200" height="240" fill="none" stroke="#C5C4C0" stroke-width="1.4"/>
+<text class="t col" x="100" y="240">DEPLOYMENT 1</text>
+<rect x="100" y="256" width="160" height="28" fill="#1C1D20" opacity="0.12"/>
+<text class="t note" x="110" y="276" fill="#4A4B50">Schema discovery</text>
+<rect x="100" y="290" width="160" height="28" fill="#1C1D20" opacity="0.12"/>
+<text class="t note" x="110" y="310" fill="#4A4B50">Integration patterns</text>
+<rect x="100" y="324" width="160" height="28" fill="#1C1D20" opacity="0.12"/>
+<text class="t note" x="110" y="344" fill="#4A4B50">Exception structures</text>
+<rect x="100" y="358" width="160" height="28" fill="#B8952B" opacity="0.2"/>
+<text class="t note" x="110" y="378" fill="#B8952B">The wound (specific)</text>
+<rect x="100" y="392" width="160" height="28" fill="#B8952B" opacity="0.2"/>
+<text class="t note" x="110" y="412" fill="#B8952B">The politics (specific)</text>
+<text class="t big" x="100" y="436" fill="#C8553D">12 weeks</text>
+
+<!-- Arrow 1 -->
+<line x1="290" y1="330" x2="340" y2="330" stroke="#B8952B" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+
+<!-- Deployment 10 -->
+<rect x="350" y="280" width="200" height="170" fill="none" stroke="#C5C4C0" stroke-width="1.4"/>
+<text class="t col" x="370" y="310">DEPLOYMENT 10</text>
+<rect x="370" y="326" width="160" height="22" fill="#C5C4C0" opacity="0.5"/>
+<text class="t note" x="380" y="342" fill="#7A7B82" font-size="11">reused from library</text>
+<rect x="370" y="354" width="160" height="22" fill="#C5C4C0" opacity="0.5"/>
+<text class="t note" x="380" y="370" fill="#7A7B82" font-size="11">reused from library</text>
+<rect x="370" y="382" width="160" height="22" fill="#C5C4C0" opacity="0.5"/>
+<text class="t note" x="380" y="398" fill="#7A7B82" font-size="11">reused from library</text>
+<rect x="370" y="410" width="160" height="14" fill="#B8952B" opacity="0.2"/>
+<text class="t note" x="380" y="420" fill="#B8952B" font-size="10">specific</text>
+<text class="t big" x="370" y="440" fill="#B8952B" font-size="20">6 weeks</text>
+
+<!-- Arrow 2 -->
+<line x1="560" y1="365" x2="610" y2="365" stroke="#B8952B" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+
+<!-- Deployment 100 -->
+<rect x="620" y="320" width="200" height="130" fill="none" stroke="#B8952B" stroke-width="1.4"/>
+<text class="t col" x="640" y="350" fill="#B8952B">DEPLOYMENT 100</text>
+<rect x="640" y="362" width="160" height="16" fill="#C5C4C0" opacity="0.5"/>
+<text class="t note" x="650" y="374" fill="#7A7B82" font-size="10">automated</text>
+<rect x="640" y="384" width="160" height="16" fill="#C5C4C0" opacity="0.5"/>
+<text class="t note" x="650" y="396" fill="#7A7B82" font-size="10">automated</text>
+<rect x="640" y="406" width="160" height="18" fill="#B8952B" opacity="0.2"/>
+<text class="t note" x="650" y="420" fill="#B8952B" font-size="10">specific — always specific</text>
+<text class="t big" x="640" y="442" fill="#B8952B" font-size="20">3 weeks</text>
+
+<!-- The return arrows going down to a library -->
+<defs>
+<marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+<polygon points="0 0, 8 3, 0 6" fill="#B8952B"/>
+</marker>
+<marker id="arrowdown" markerWidth="6" markerHeight="8" refX="3" refY="8" orient="auto">
+<polygon points="0 0, 6 0, 3 8" fill="#B8952B" opacity="0.6"/>
+</marker>
+</defs>
+
+<!-- Down arrows to library -->
+<line x1="180" y1="450" x2="180" y2="500" stroke="#B8952B" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowdown)"/>
+<line x1="450" y1="450" x2="450" y2="500" stroke="#B8952B" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowdown)"/>
+<line x1="720" y1="450" x2="720" y2="500" stroke="#B8952B" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowdown)"/>
+
+<!-- Library bar -->
+<rect x="80" y="510" width="740" height="56" fill="#B8952B" opacity="0.08" stroke="#B8952B" stroke-width="1" stroke-dasharray="6 5"/>
+<text class="t" x="100" y="536" font-size="13" letter-spacing="2.4" fill="#B8952B">THE RETURN PATH — DEPLOYMENT LIBRARY</text>
+<text class="t note" x="100" y="556" fill="#4A4B50">Schema patterns · integration templates · exception structures · handover scaffolding · failure-mode catalogue</text>
+
+<!-- Right side: the insight -->
+<rect x="880" y="210" width="256" height="356" fill="none" stroke="#C5C4C0" stroke-width="1"/>
+<text class="t col" x="900" y="244">WHAT COMPOUNDS</text>
+<line x1="900" y1="260" x2="1112" y2="260" stroke="#E0DFDB"/>
+<text class="t note" x="900" y="288" fill="#4A4B50">Schema familiarity</text>
+<text class="t note" x="900" y="316" fill="#4A4B50">Integration scaffolding</text>
+<text class="t note" x="900" y="344" fill="#4A4B50">Exception-case templates</text>
+<text class="t note" x="900" y="372" fill="#4A4B50">Handover material</text>
+<text class="t note" x="900" y="400" fill="#4A4B50">Failure-mode recognition</text>
+<line x1="900" y1="420" x2="1112" y2="420" stroke="#E0DFDB"/>
+<text class="t col" x="900" y="450" fill="#C8553D">WHAT NEVER DOES</text>
+<text class="t note" x="900" y="478" fill="#7A7B82">The wound itself</text>
+<text class="t note" x="900" y="502" fill="#7A7B82">The politics</text>
+<text class="t note" x="900" y="526" fill="#7A7B82">The owner</text>
+<text class="t note" x="900" y="550" fill="#7A7B82">The trust</text>
+
+<!-- Bottom -->
+<text class="t note" x="64" y="616" font-size="13" fill="#7A7B82">Without the return path, forward deployment is consulting with better tools — linear in learning, no compounding.</text>
+<text class="t note" x="64" y="636" font-size="13" fill="#7A7B82">With it, the firm accumulates an asset that no single engagement could have justified building.</text>
+
+<rect x="64" y="656" width="1072" height="30" fill="#B8952B" opacity="0.08"/>
+<text class="t note" x="84" y="676" fill="#B8952B">The model is a commodity. What sits around it — a hundred deployments' worth of tested patterns — is not.</text>
+</svg>
