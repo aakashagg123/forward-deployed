@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="How a deployment dies of correct process">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.note{font-size:13px;fill:#7A7B82}
+.tick{font-size:11px;letter-spacing:1.2px;fill:#6A6B72}
+.lbl{font-size:13px;fill:#1C1D20}
+</style>
+<rect width="1200" height="620" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 12.3 — DEATH BY CORRECT PROCESS</text>
+<text class="t h" x="64" y="112">Every gate is reasonable. The sum is fatal.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Timeline axis -->
+<line x1="120" y1="440" x2="1100" y2="440" stroke="#1C1D20" stroke-width="2"/>
+<text class="t tick" x="120" y="468">WEEK 0</text>
+<text class="t tick" x="308" y="468">WEEK 4</text>
+<text class="t tick" x="496" y="468">WEEK 8</text>
+<text class="t tick" x="684" y="468">WEEK 12</text>
+<text class="t tick" x="872" y="468">WEEK 16</text>
+<text class="t tick" x="1060" y="468">WEEK 20</text>
+
+<!-- Build window -->
+<rect x="120" y="190" width="564" height="36" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
+<text class="t lbl" x="402" y="214" text-anchor="middle" fill="#B8952B">BUILD WINDOW — 12 weeks</text>
+
+<!-- Sequential gates blocking -->
+<defs>
+<marker id="garr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#C8553D"/></marker>
+</defs>
+
+<!-- Gate 1: Procurement -->
+<rect x="120" y="260" width="188" height="32" rx="4" fill="#C8553D" opacity="0.12" stroke="#C8553D" stroke-width="1"/>
+<text class="t lbl" x="214" y="281" text-anchor="middle" fill="#C8553D">Procurement</text>
+<text class="t tick" x="214" y="310" text-anchor="middle">4 WEEKS</text>
+
+<!-- Gate 2: IT Governance -->
+<rect x="308" y="260" width="188" height="32" rx="4" fill="#C8553D" opacity="0.12" stroke="#C8553D" stroke-width="1"/>
+<text class="t lbl" x="402" y="281" text-anchor="middle" fill="#C8553D">IT Governance</text>
+<text class="t tick" x="402" y="310" text-anchor="middle">4 WEEKS</text>
+
+<!-- Gate 3: Data Security -->
+<rect x="496" y="260" width="188" height="32" rx="4" fill="#C8553D" opacity="0.12" stroke="#C8553D" stroke-width="1"/>
+<text class="t lbl" x="590" y="281" text-anchor="middle" fill="#C8553D">Data Security</text>
+<text class="t tick" x="590" y="310" text-anchor="middle">4 WEEKS</text>
+
+<!-- Gate 4: Compliance -->
+<rect x="684" y="260" width="188" height="32" rx="4" fill="#C8553D" opacity="0.12" stroke="#C8553D" stroke-width="1"/>
+<text class="t lbl" x="778" y="281" text-anchor="middle" fill="#C8553D">Compliance</text>
+<text class="t tick" x="778" y="310" text-anchor="middle">4 WEEKS</text>
+
+<!-- Gate 5: PMO -->
+<rect x="872" y="260" width="188" height="32" rx="4" fill="#C8553D" opacity="0.12" stroke="#C8553D" stroke-width="1"/>
+<text class="t lbl" x="966" y="281" text-anchor="middle" fill="#C8553D">PMO</text>
+<text class="t tick" x="966" y="310" text-anchor="middle">4 WEEKS</text>
+
+<!-- Death marker -->
+<line x1="684" y1="190" x2="684" y2="440" stroke="#C8553D" stroke-dasharray="5 4"/>
+<text class="t lbl" x="700" y="210" fill="#C8553D">Build window closed</text>
+<text class="t note" x="700" y="228" fill="#C8553D">Deployment expired — not rejected</text>
+
+<!-- Arrows showing sequential flow -->
+<line x1="308" y1="276" x2="310" y2="276" stroke="#C8553D" stroke-width="1.5" marker-end="url(#garr)"/>
+<line x1="496" y1="276" x2="498" y2="276" stroke="#C8553D" stroke-width="1.5" marker-end="url(#garr)"/>
+<line x1="684" y1="276" x2="686" y2="276" stroke="#C8553D" stroke-width="1.5" marker-end="url(#garr)"/>
+<line x1="872" y1="276" x2="874" y2="276" stroke="#C8553D" stroke-width="1.5" marker-end="url(#garr)"/>
+
+<!-- Bottom: parallel approach -->
+<text class="t tick" x="120" y="390">THE FIX: PREPARATION WEEK</text>
+<rect x="120" y="398" width="60" height="24" rx="3" fill="#B8952B" opacity="0.2" stroke="#B8952B" stroke-width="1"/>
+<text class="t" x="150" y="415" text-anchor="middle" font-size="10" fill="#B8952B">PREP</text>
+
+<rect x="190" y="398" width="120" height="24" rx="3" fill="#EBEAE6" stroke="#D2D1CD" stroke-width="1"/>
+<text class="t" x="250" y="415" text-anchor="middle" font-size="10" fill="#7A7B82">Gates process</text>
+
+<rect x="190" y="398" width="494" height="24" rx="3" fill="#B8952B" opacity="0.08"/>
+<text class="t" x="437" y="415" text-anchor="middle" font-size="10" fill="#B8952B">Build runs in parallel with governance</text>
+
+<line x1="64" y1="500" x2="1136" y2="500" stroke="#D2D1CD"/>
+<text class="t" x="64" y="532" font-size="16" fill="#4A4B50">Sequential gates on the capital clock consume the entire build window. Preparation lets both clocks run in parallel.</text>
+<text class="t note" x="64" y="560">Chapter 3's two clocks, applied to the governance layer. The arithmetic is the same: four slow-clock decisions is not four times harder. It is dead.</text>
+</svg>

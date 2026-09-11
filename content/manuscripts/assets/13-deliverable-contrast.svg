@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="What consulting delivers versus what forward deployment delivers">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.item{font-size:16px;fill:#1C1D20}
+.dim{font-size:16px;fill:#7A7B82}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 13.2 — THE DELIVERABLE CONTRAST</text>
+<text class="t h" x="64" y="112">One column describes the change. The other is the change.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<text class="t col" x="64" y="196">WHAT CONSULTING DELIVERS</text>
+<text class="t col" x="660" y="196">WHAT FORWARD DEPLOYMENT DELIVERS</text>
+<line x1="64" y1="216" x2="540" y2="216" stroke="#C5C4C0"/>
+<line x1="660" y1="216" x2="1136" y2="216" stroke="#C5C4C0"/>
+
+<line x1="600" y1="176" x2="600" y2="636" stroke="#D2D1CD"/>
+<circle cx="600" cy="416" r="20" fill="#F7F6F3" stroke="#C5C4C0"/>
+<text class="t" x="600" y="423" font-size="18" fill="#B8952B" text-anchor="middle">→</text>
+
+<text class="t dim" x="64" y="272">The process assessment</text>
+<text class="t item" x="660" y="272">The process, changed</text>
+
+<text class="t dim" x="64" y="332">The technology recommendation</text>
+<text class="t item" x="660" y="332">The code, running in production</text>
+
+<text class="t dim" x="64" y="392">The change management plan</text>
+<text class="t item" x="660" y="392">The old path, switched off</text>
+
+<text class="t dim" x="64" y="452">The business case</text>
+<text class="t item" x="660" y="452">The metric, moved</text>
+
+<text class="t dim" x="64" y="512">The stakeholder map</text>
+<text class="t item" x="660" y="512">The team, trained and owning it</text>
+
+<text class="t dim" x="64" y="572">The implementation roadmap</text>
+<text class="t item" x="660" y="572">The implementation, complete</text>
+
+<text class="t dim" x="64" y="632">The final presentation</text>
+<text class="t item" x="660" y="632">A WhatsApp message at 10 PM when it breaks</text>
+
+<line x1="64" y1="660" x2="1136" y2="660" stroke="#D2D1CD"/>
+<text class="t" x="64" y="690" font-size="13" fill="#7A7B82">Nothing on the left is dishonest. Nothing on the left changes the organisation. The right column is accountable for the outcome.</text>
+</svg>

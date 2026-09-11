@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680">
+  <style>
+    .bg{fill:#F7F6F3}
+    .label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+    .body{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:14.5px}
+    .body-dim{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:13px}
+    .amber{fill:#B8952B}
+    .red{fill:#C8553D}
+    .title{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600}
+    .filter-bar{fill:#E4E3DF;rx:4;ry:4}
+    .pass-bar{fill:#B8952B;rx:4;ry:4}
+    .fail-bar{fill:#C8553D;opacity:0.25;rx:4;ry:4}
+    .filter-label{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:13.5px;font-weight:500}
+    .elim{fill:#C8553D;font-family:'Inter',system-ui,sans-serif;font-size:11.5px;font-style:italic}
+    .count{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:24px;font-weight:700}
+    .count-label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase}
+  </style>
+  <rect class="bg" width="1200" height="680"/>
+
+  <text class="label" x="60" y="48">Figure 8.1</text>
+  <text class="title" x="60" y="82">The Selection Filter</text>
+  <text class="body-dim" x="60" y="108">Five conditions — each eliminates a category of problem</text>
+
+  <!-- funnel of filters -->
+  <!-- input -->
+  <text class="count" x="60" y="172">~50</text>
+  <text class="count-label" x="118" y="172">candidate workflows at one site</text>
+
+  <!-- Filter 1: Small scope -->
+  <rect class="filter-bar" x="60" y="200" width="960" height="56"/>
+  <rect class="pass-bar" x="60" y="200" width="768" height="56"/>
+  <text class="filter-label" x="80" y="234">Small scope — one team, one site, one process</text>
+  <text class="elim" x="848" y="232">Eliminates: platforms, cross-functional initiatives</text>
+
+  <!-- Filter 2: Adjacent to money -->
+  <rect class="filter-bar" x="60" y="272" width="960" height="56"/>
+  <rect class="pass-bar" x="60" y="272" width="576" height="56"/>
+  <text class="filter-label" x="80" y="306">Adjacent to money — affects cash, not just efficiency</text>
+  <text class="elim" x="656" y="304">Eliminates: reporting, dashboards, analytics</text>
+
+  <!-- Filter 3: One hungry owner -->
+  <rect class="filter-bar" x="60" y="344" width="960" height="56"/>
+  <rect class="pass-bar" x="60" y="344" width="384" height="56"/>
+  <text class="filter-label" x="80" y="378">One hungry owner — answers at 10 PM</text>
+  <text class="elim" x="464" y="376">Eliminates: committee-owned processes</text>
+
+  <!-- Filter 4: Presence possible -->
+  <rect class="filter-bar" x="60" y="416" width="960" height="56"/>
+  <rect class="pass-bar" x="60" y="416" width="288" height="56"/>
+  <text class="filter-label" x="80" y="450">Presence — operator can sit with the team</text>
+  <text class="elim" x="368" y="448">Eliminates: distributed, multi-site, remote-only</text>
+
+  <!-- Filter 5: System of record -->
+  <rect class="filter-bar" x="60" y="488" width="960" height="56"/>
+  <rect class="pass-bar" x="60" y="488" width="192" height="56"/>
+  <text class="filter-label" x="80" y="522">System of record — closes the old path</text>
+  <text class="elim" x="272" y="520">Eliminates: side channels, parallel processes</text>
+
+  <!-- output -->
+  <text class="count" x="60" y="600">3–5</text>
+  <text class="count-label" x="128" y="600">deployments that qualify for the first engagement</text>
+
+  <!-- annotation -->
+  <line x1="192" y1="556" x2="192" y2="620" stroke="#B8952B" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <text class="body-dim" x="60" y="644">Each filter is a question. If the answer is no, you learn what to go and get — or which wound to pick instead.</text>
+</svg>

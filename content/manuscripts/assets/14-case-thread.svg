@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="One build, six phases, from ungoverned scaffold to mature operation">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.note{font-size:12.5px;fill:#7A7B82}
+.tick{font-size:11px;letter-spacing:1.2px;fill:#6A6B72}
+.lbl{font-size:13.5px;fill:#1C1D20}
+.phase{font-size:11px;letter-spacing:1.4px;fill:#6A6B72}
+</style>
+<rect width="1200" height="660" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 14.2 — ONE BUILD, SIX PHASES</text>
+<text class="t h" x="64" y="112">~5 months. A 7–16× compression, unevenly distributed.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<line x1="120" y1="470" x2="1100" y2="470" stroke="#1C1D20" stroke-width="1.5"/>
+<text class="t tick" x="120" y="494">WEEK 1</text>
+<text class="t tick" x="1080" y="494" text-anchor="end">~WEEK 21</text>
+
+<!-- Phase blocks along timeline, varying width to suggest relative duration -->
+<!-- Phase 0: scaffold - wide, fast -->
+<rect x="120" y="360" width="150" height="70" rx="4" fill="#B8952B" opacity="0.18" stroke="#B8952B"/>
+<text class="t phase" x="130" y="382" fill="#B8952B">PHASE 0</text>
+<text class="t lbl" x="130" y="402">Ungoverned scaffold</text>
+<text class="t note" x="130" y="420">Prompt-to-app, fast</text>
+
+<!-- Phase 1: informal use -->
+<rect x="280" y="360" width="130" height="70" rx="4" fill="#EBEAE6" stroke="#D2D1CD"/>
+<text class="t phase" x="290" y="382">PHASE 1</text>
+<text class="t lbl" x="290" y="402">Informal agent use</text>
+<text class="t note" x="290" y="420">~6 weeks, ungoverned</text>
+
+<!-- Phase 2: formalization sprint - narrow, doesn't compress -->
+<rect x="420" y="360" width="90" height="70" rx="4" fill="#C8553D" opacity="0.15" stroke="#C8553D"/>
+<text class="t phase" x="430" y="382" fill="#C8553D">PHASE 2</text>
+<text class="t lbl" x="430" y="402" fill="#C8553D">Formalization</text>
+<text class="t note" x="430" y="420" fill="#C8553D">Dedicated sprint —</text>
+<text class="t note" x="430" y="436" fill="#C8553D">did not compress</text>
+
+<!-- Phase 3: scoping failure gate -->
+<rect x="520" y="360" width="130" height="70" rx="4" fill="#EBEAE6" stroke="#D2D1CD"/>
+<text class="t phase" x="530" y="382">PHASE 3</text>
+<text class="t lbl" x="530" y="402">Scoping failure</text>
+<text class="t note" x="530" y="420">→ hard gate, within a month</text>
+
+<!-- Phase 4: parallel production - wide, fast -->
+<rect x="660" y="360" width="220" height="70" rx="4" fill="#B8952B" opacity="0.18" stroke="#B8952B"/>
+<text class="t phase" x="670" y="382" fill="#B8952B">PHASE 4</text>
+<text class="t lbl" x="670" y="402">Parallel production cycles</text>
+<text class="t note" x="670" y="420">Wave-dispatch, fastest cadence</text>
+
+<!-- Phase 5: false-done incident - narrow, doesn't compress -->
+<rect x="890" y="360" width="90" height="70" rx="4" fill="#C8553D" opacity="0.15" stroke="#C8553D"/>
+<text class="t phase" x="900" y="382" fill="#C8553D">PHASE 5</text>
+<text class="t lbl" x="900" y="402" fill="#C8553D">False-done incident</text>
+<text class="t note" x="900" y="420" fill="#C8553D">Found + fixed in ~1 day</text>
+
+<!-- Phase 6: mature operation -->
+<rect x="990" y="360" width="110" height="70" rx="4" fill="#EBEAE6" stroke="#D2D1CD"/>
+<text class="t phase" x="1000" y="382">PHASE 6</text>
+<text class="t lbl" x="1000" y="402">Mature operation</text>
+<text class="t note" x="1000" y="420">Postmortem → rule, same week</text>
+
+<!-- Compression annotation -->
+<text class="t" x="120" y="200" font-size="16" fill="#1C1D20">~220K lines frontend · ~15K backend · 472 unit tests · 83 e2e specs</text>
+<text class="t" x="120" y="228" font-size="16" fill="#1C1D20">163 migrations · 20 domain-invariant lint rules</text>
+<text class="t note" x="120" y="256">Baseline: 4–6 engineers, 12–18 months (48–108 person-months) → 5 calendar months actual</text>
+
+<line x1="64" y1="524" x2="1136" y2="524" stroke="#D2D1CD"/>
+<text class="t" x="64" y="556" font-size="16" fill="#4A4B50">The amber phases compress. The red phases — governance design, and the incident that tested it — took exactly as long as they took.</text>
+<text class="t note" x="64" y="584">Figures are the project's own accounting, order-of-magnitude, not audited financials.</text>
+</svg>

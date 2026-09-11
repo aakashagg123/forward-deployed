@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="Trust accrues in steps, not gradients">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.note{font-size:13px;fill:#7A7B82}
+.tick{font-size:11.5px;letter-spacing:1.4px;fill:#6A6B72}
+.lbl{font-size:14px;fill:#1C1D20}
+</style>
+<rect width="1200" height="660" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 10.2 — THE TRUST STEP FUNCTION</text>
+<text class="t h" x="64" y="112">Trust accrues at events, not over time.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- axes -->
+<line x1="140" y1="500" x2="1100" y2="500" stroke="#C5C4C0" stroke-width="1.5"/>
+<line x1="140" y1="200" x2="140" y2="500" stroke="#C5C4C0" stroke-width="1.5"/>
+
+<!-- y-axis labels -->
+<text class="t tick" x="128" y="490" text-anchor="end">ZERO</text>
+<text class="t tick" x="128" y="400" text-anchor="end">COMPETENCE</text>
+<text class="t tick" x="128" y="310" text-anchor="end">INTENTION</text>
+<text class="t tick" x="128" y="220" text-anchor="end">STRUCTURAL</text>
+
+<!-- y gridlines -->
+<line x1="140" y1="396" x2="1100" y2="396" stroke="#EBEAE6" stroke-width="1"/>
+<line x1="140" y1="306" x2="1100" y2="306" stroke="#EBEAE6" stroke-width="1"/>
+<line x1="140" y1="216" x2="1100" y2="216" stroke="#EBEAE6" stroke-width="1"/>
+
+<!-- x-axis labels -->
+<text class="t tick" x="180" y="524">WEEK 1</text>
+<text class="t tick" x="380" y="524">WEEK 6</text>
+<text class="t tick" x="570" y="524">MONTH 3</text>
+<text class="t tick" x="760" y="524">MONTH 4</text>
+<text class="t tick" x="960" y="524">MONTH 6</text>
+
+<!-- step function path -->
+<!-- observation phase: flat at zero -->
+<path d="M 180 490 L 370 490" stroke="#B8952B" stroke-width="3" fill="none"/>
+<!-- step 1: first delivery → competence -->
+<path d="M 370 490 L 370 390" stroke="#B8952B" stroke-width="3" fill="none"/>
+<path d="M 370 390 L 620 390" stroke="#B8952B" stroke-width="3" fill="none"/>
+<!-- step 2: survived failure → intention -->
+<path d="M 620 390 L 620 300" stroke="#B8952B" stroke-width="3" fill="none"/>
+<path d="M 620 300 L 830 300" stroke="#B8952B" stroke-width="3" fill="none"/>
+<!-- step 3: quiet phase → structural -->
+<path d="M 830 300 L 830 216" stroke="#B8952B" stroke-width="3" fill="none"/>
+<path d="M 830 216 L 1060 216" stroke="#B8952B" stroke-width="3" fill="none"/>
+
+<!-- event markers -->
+<circle cx="370" cy="490" r="6" fill="#B8952B"/>
+<circle cx="620" cy="390" r="6" fill="#B8952B"/>
+<circle cx="830" cy="300" r="6" fill="#B8952B"/>
+
+<!-- event labels -->
+<text class="t lbl" x="385" y="478">First delivery ships</text>
+<text class="t note" x="385" y="496">Competence trust earned</text>
+
+<text class="t lbl" x="635" y="378">First failure survived</text>
+<text class="t note" x="635" y="396">Intention trust earned</text>
+
+<text class="t lbl" x="845" y="288">Team volunteers hidden problems</text>
+<text class="t note" x="845" y="306">Structural trust earned</text>
+
+<!-- the dip on failure -->
+<path d="M 540 390 C 560 420 580 430 600 430 C 610 430 615 418 620 390" stroke="#C8553D" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+<text class="t note" x="560" y="452" fill="#C8553D">Failure event</text>
+
+<!-- flat observation annotation -->
+<text class="t note" x="220" y="478" fill="#7A7B82">Observation</text>
+<text class="t note" x="220" y="496" fill="#7A7B82">"yeh bhi chal jaayega"</text>
+
+<line x1="64" y1="576" x2="1136" y2="576" stroke="#D2D1CD"/>
+<text class="t" x="64" y="608" font-size="16" fill="#4A4B50">The flat periods are where the operator is being watched without being told. The steps happen at events, not at milestones.</text>
+<text class="t note" x="64" y="636">How the operator handles the failure determines whether the next step happens or the function resets to zero.</text>
+</svg>

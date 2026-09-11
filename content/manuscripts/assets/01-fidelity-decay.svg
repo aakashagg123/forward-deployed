@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="Fidelity decay across organisational layers">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.lbl{font-size:14px;letter-spacing:1.8px;fill:#1C1D20}
+.mut{font-size:14.5px;fill:#7A7B82}
+.red{fill:#C8553D}
+</style>
+<rect width="1200" height="720" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 1.2 — FIDELITY DECAY</text>
+<text class="t h" x="64" y="112">What survives each translation</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD" stroke-width="1"/>
+
+<!-- row 1 -->
+<text class="t lbl" x="64" y="212">BOARD</text>
+<rect x="280" y="196" width="420" height="22" fill="#1C1D20"/>
+<text class="t mut" x="722" y="212" fill="#4A4B50">“We are behind on AI and it is a threat to the business.”</text>
+
+<!-- row 2 -->
+<text class="t lbl" x="64" y="294">EXEC COMMITTEE</text>
+<rect x="280" y="278" width="340" height="22" fill="#1C1D20" opacity="0.85"/>
+<text class="t mut" x="722" y="294">“Become an AI-first organisation by 2027.”</text>
+<text class="t mut" x="722" y="314" font-size="12.5" fill="#7A7B82">a threat became a destination</text>
+
+<!-- row 3 -->
+<text class="t lbl" x="64" y="386">TRANSFORMATION OFFICE</text>
+<rect x="280" y="370" width="250" height="22" fill="#1C1D20" opacity="0.66"/>
+<text class="t mut" x="722" y="386">“Six workstreams. Forty-one initiatives. A baseline.”</text>
+<text class="t mut" x="722" y="406" font-size="12.5" fill="#7A7B82">a destination became a portfolio</text>
+
+<!-- row 4 -->
+<text class="t lbl" x="64" y="478">FUNCTION HEAD</text>
+<rect x="280" y="462" width="165" height="22" fill="#1C1D20" opacity="0.5"/>
+<text class="t mut" x="722" y="478">“Three demonstrable use cases per function.”</text>
+<text class="t mut" x="722" y="498" font-size="12.5" fill="#7A7B82">the hardest workflow is dropped — it cannot be demoed by March</text>
+
+<!-- row 5 -->
+<text class="t lbl" x="64" y="570">TEAM LEAD</text>
+<rect x="280" y="554" width="90" height="22" fill="#1C1D20" opacity="0.36"/>
+<text class="t mut" x="722" y="570">“Evaluate vendor. Run pilot. Document findings.”</text>
+<text class="t mut" x="722" y="590" font-size="12.5" fill="#7A7B82">the only three items that need nobody's permission</text>
+
+<!-- row 6 -->
+<text class="t lbl red" x="64" y="662">TUESDAY, 9:14 AM</text>
+<rect x="280" y="646" width="6" height="22" fill="#C8553D"/>
+<text class="t mut red" x="722" y="662">Opens the same spreadsheet.</text>
+
+<line x1="64" y1="614" x2="1136" y2="614" stroke="#D2D1CD" stroke-width="1"/>
+<text class="t mut" x="64" y="700" font-size="13" fill="#7A7B82">Every translation performed competently. The loss is structural, not personal.</text>
+</svg>

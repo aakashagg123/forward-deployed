@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560">
+  <style>
+    .bg{fill:#F7F6F3}
+    .label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+    .body{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:13.5px}
+    .body-dim{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:12px}
+    .amber{fill:#B8952B}
+    .red{fill:#C8553D}
+    .title{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600}
+    .node{fill:#EBEAE6;stroke:#D2D1CD;stroke-width:1.5;rx:8;ry:8}
+    .node-amber{fill:#EBEAE6;stroke:#B8952B;stroke-width:1.5;rx:8;ry:8}
+    .node-label{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase}
+    .node-text{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:14px;font-weight:500}
+    .node-sub{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:12px}
+    .arrow{fill:none;stroke:#B8952B;stroke-width:1.5}
+    .arrow-dim{fill:none;stroke:#7A7B82;stroke-width:1;stroke-dasharray:6,4}
+    .phase{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:10px;letter-spacing:0.18em;text-transform:uppercase}
+  </style>
+  <defs>
+    <marker id="ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#B8952B" stroke-width="1.2"/>
+    </marker>
+    <marker id="ah-dim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#7A7B82" stroke-width="1.2"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="560"/>
+
+  <text class="label" x="60" y="48">Figure 9.1</text>
+  <text class="title" x="60" y="82">The Handover as Sales Mechanism</text>
+
+  <!-- Timeline phases -->
+  <text class="phase" x="120" y="140">Deployment</text>
+  <text class="phase" x="420" y="140">Handover</text>
+  <text class="phase" x="700" y="140">Internal referral</text>
+  <text class="phase" x="980" y="140">Next deployment</text>
+  <line x1="60" y1="152" x2="1140" y2="152" stroke="#D2D1CD" stroke-width="1"/>
+
+  <!-- Node 1: Operator ships -->
+  <rect class="node" x="60" y="180" width="280" height="130"/>
+  <text class="node-label" x="84" y="208">Week 2–12</text>
+  <text class="node-text" x="84" y="236">Operator ships the fix</text>
+  <text class="node-sub" x="84" y="260">Workflow changes</text>
+  <text class="node-sub" x="84" y="278">Metric moves</text>
+  <text class="node-sub" x="84" y="296">Owner is trained alongside</text>
+
+  <!-- Arrow 1→2 -->
+  <path class="arrow" d="M340,245 L380,245" marker-end="url(#ah)"/>
+
+  <!-- Node 2: Handover -->
+  <rect class="node-amber" x="390" y="180" width="250" height="130"/>
+  <text class="node-label" x="414" y="208">Week 12</text>
+  <text class="node-text" x="414" y="236">Three things are true</text>
+  <text class="node-sub" x="414" y="260">1. Workflow runs without operator</text>
+  <text class="node-sub" x="414" y="278">2. Owner can explain it</text>
+  <text class="node-sub" x="414" y="296">3. Metric in Monday MIS</text>
+
+  <!-- Arrow 2→3 -->
+  <path class="arrow" d="M640,245 L680,245" marker-end="url(#ah)"/>
+
+  <!-- Node 3: Referral -->
+  <rect class="node" x="690" y="180" width="250" height="130"/>
+  <text class="node-label" x="714" y="208">Week 14–20</text>
+  <text class="node-text" x="714" y="236">Owner tells a peer</text>
+  <text class="node-sub" x="714" y="260">Vizag branch manager tells</text>
+  <text class="node-sub" x="714" y="278">Lucknow branch manager</text>
+  <text class="node-sub" x="714" y="296">at quarterly review</text>
+
+  <!-- Arrow 3→4 -->
+  <path class="arrow" d="M940,245 L980,245" marker-end="url(#ah)"/>
+
+  <!-- Node 4: Next deployment -->
+  <rect class="node-amber" x="990" y="180" width="150" height="130"/>
+  <text class="node-label" x="1014" y="208">Week 20+</text>
+  <text class="node-text" x="1014" y="236">Invitation</text>
+  <text class="node-sub" x="1014" y="260">Not a pitch.</text>
+  <text class="node-sub" x="1014" y="278">A pull.</text>
+
+  <!-- Bottom: what makes the referral work -->
+  <rect class="node" x="60" y="370" width="520" height="150"/>
+  <text class="node-label" x="84" y="398">Why the internal referral works</text>
+  <text class="body" x="84" y="426">The branch manager who says "it worked for us"</text>
+  <text class="body" x="84" y="450">has no commercial interest in the outcome.</text>
+  <text class="body" x="84" y="474">In an Indian group, that carries a weight</text>
+  <text class="body" x="84" y="498">that no external proposal ever will.</text>
+
+  <!-- Contrast: what doesn't work -->
+  <rect class="node" x="620" y="370" width="520" height="150"/>
+  <text class="node-label" x="644" y="398" style="fill:#C8553D">What doesn't work</text>
+  <text class="body" x="644" y="426">Operator pitches directly to the next site.</text>
+  <text class="body" x="644" y="450">Feels like a vendor expanding their footprint.</text>
+  <text class="body" x="644" y="474">Triggers the antibodies. The director asks:</text>
+  <text class="body" x="644" y="498" style="fill:#C8553D;font-style:italic">"Why are you selling, and who is paying?"</text>
+</svg>

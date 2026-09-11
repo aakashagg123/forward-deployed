@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660">
+  <style>
+    .bg{fill:#F7F6F3}
+    .label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
+    .body{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:13.5px}
+    .body-dim{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:12px}
+    .amber{fill:#B8952B}
+    .red{fill:#C8553D}
+    .title{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600}
+    .ring-label{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase}
+    .ring-desc{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:14px}
+    .ring-detail{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:12px}
+    .metric{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:22px;font-weight:700}
+    .metric-label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.1em}
+    .ring{fill:none;stroke-width:2}
+  </style>
+  <rect class="bg" width="1200" height="660"/>
+
+  <text class="label" x="60" y="48">Figure 9.2</text>
+  <text class="title" x="60" y="82">The Compounding Sequence</text>
+  <text class="body-dim" x="60" y="106">Adjacent → Analogous → New — each ring is cheaper because of the return path</text>
+
+  <!-- Concentric rings (left side) -->
+  <!-- Center: First deployment -->
+  <circle cx="300" cy="360" r="56" fill="#B8952B" opacity="0.15" stroke="#B8952B" stroke-width="2"/>
+  <text class="body" x="300" y="354" text-anchor="middle" style="fill:#B8952B;font-weight:600">First</text>
+  <text class="body" x="300" y="374" text-anchor="middle" style="fill:#B8952B;font-weight:600">deployment</text>
+
+  <!-- Ring 1: Adjacent -->
+  <circle cx="300" cy="360" r="120" class="ring" stroke="#B8952B" opacity="0.7"/>
+  <text class="ring-label" x="300" y="228" text-anchor="middle">Adjacent</text>
+
+  <!-- Ring 2: Analogous -->
+  <circle cx="300" cy="360" r="184" class="ring" stroke="#B8952B" opacity="0.4"/>
+  <text class="ring-label" x="300" y="162" text-anchor="middle" opacity="0.7">Analogous</text>
+
+  <!-- Ring 3: New -->
+  <circle cx="300" cy="360" r="248" class="ring" stroke="#B8952B" opacity="0.2"/>
+  <text class="ring-label" x="300" y="98" text-anchor="middle" opacity="0.5">New</text>
+
+  <!-- Right side: details for each ring -->
+  <!-- Adjacent details -->
+  <rect x="600" y="120" width="540" height="140" rx="6" ry="6" fill="#EBEAE6"/>
+  <text class="ring-label" x="628" y="150">Ring 1: Adjacent</text>
+  <text class="ring-desc" x="628" y="176">Same workflow, different site</text>
+  <text class="ring-detail" x="628" y="200">Credit check fixed in Mumbai → deploy in Lucknow, Indore, Raipur</text>
+  <text class="ring-detail" x="628" y="220">90% transfers. 10% local variation discovered in week 1.</text>
+  <text class="metric" x="628" y="250">6 wks</text>
+  <text class="metric-label" x="710" y="250">vs 12 for the first — builds the margin</text>
+
+  <!-- Analogous details -->
+  <rect x="600" y="280" width="540" height="140" rx="6" ry="6" fill="#EBEAE6"/>
+  <text class="ring-label" x="628" y="310" style="opacity:0.7">Ring 2: Analogous</text>
+  <text class="ring-desc" x="628" y="336">Different workflow, similar structure, same company</text>
+  <text class="ring-detail" x="628" y="360">Credit check → dealer reconciliation → inventory replenishment</text>
+  <text class="ring-detail" x="628" y="380">Tooling partially transfers. Political map fully transfers.</text>
+  <text class="metric" x="628" y="410">8 wks</text>
+  <text class="metric-label" x="710" y="410">builds the breadth</text>
+
+  <!-- New details -->
+  <rect x="600" y="440" width="540" height="140" rx="6" ry="6" fill="#EBEAE6"/>
+  <text class="ring-label" x="628" y="470" style="opacity:0.5">Ring 3: New</text>
+  <text class="ring-desc" x="628" y="496">Different workflow, different company, different industry</text>
+  <text class="ring-detail" x="628" y="520">Scaffolding transfers. Domain knowledge does not.</text>
+  <text class="ring-detail" x="628" y="540">Full cold-start cost. New political map.</text>
+  <text class="metric" x="628" y="570">12 wks</text>
+  <text class="metric-label" x="720" y="570">builds the scale — pursue only after rings 1–2 pay</text>
+
+  <!-- Bottom annotation -->
+  <text class="body-dim" x="60" y="636">The firm that skips to Ring 3 before exhausting Ring 1 pays cold-start cost on every deployment and never compounds.</text>
+</svg>

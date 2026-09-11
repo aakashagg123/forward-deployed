@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="The rear decision loop versus the forward decision loop">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.nd{font-size:12.5px;letter-spacing:1.4px;fill:#1C1D20}
+.note{font-size:13px;fill:#7A7B82}
+</style>
+<rect width="1200" height="700" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 4.1 — DISTANCE IS LATENCY</text>
+<text class="t h" x="64" y="112">Same problem. Same organisation. Two loops.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<line x1="640" y1="176" x2="640" y2="600" stroke="#E4E3DF"/>
+
+<!-- LEFT: rear loop -->
+<text class="t col" x="64" y="204">THE REAR LOOP · run from the centre</text>
+<circle cx="330" cy="400" r="150" fill="none" stroke="#C5C4C0" stroke-width="1.4"/>
+<g fill="#1C1D20">
+<circle cx="330" cy="250" r="7"/><circle cx="460" cy="325" r="7"/><circle cx="460" cy="475" r="7"/>
+<circle cx="330" cy="550" r="7"/><circle cx="200" cy="475" r="7"/><circle cx="200" cy="325" r="7"/>
+</g>
+<text class="t nd" x="330" y="230" text-anchor="middle">OBSERVE</text>
+<text class="t nd" x="478" y="320" >ESCALATE</text>
+<text class="t nd" x="478" y="480" >REVIEW</text>
+<text class="t nd" x="330" y="576" text-anchor="middle">PRIORITISE</text>
+<text class="t nd" x="182" y="480" text-anchor="end">RESOURCE</text>
+<text class="t nd" x="182" y="320" text-anchor="end">BUILD</text>
+<g class="t note" font-size="11" fill="#7A7B82">
+<text x="478" y="338">waits on a meeting</text>
+<text x="478" y="498">waits on a meeting</text>
+<text x="330" y="596" text-anchor="middle">waits on a cycle</text>
+</g>
+<text class="t" x="330" y="392" text-anchor="middle" font-size="34" fill="#C8553D">12–18</text>
+<text class="t" x="330" y="416" text-anchor="middle" font-size="12" letter-spacing="2.4" fill="#C8553D">MONTHS PER CYCLE</text>
+
+<!-- RIGHT: forward loop -->
+<text class="t col" x="700" y="204">THE FORWARD LOOP · run at the work</text>
+<circle cx="900" cy="400" r="86" fill="none" stroke="#B8952B" stroke-width="1.4"/>
+<g fill="#B8952B">
+<circle cx="900" cy="314" r="7"/><circle cx="986" cy="400" r="7"/><circle cx="900" cy="486" r="7"/><circle cx="814" cy="400" r="7"/>
+</g>
+<text class="t nd" x="900" y="294" text-anchor="middle">OBSERVE</text>
+<text class="t nd" x="1004" y="404">BUILD</text>
+<text class="t nd" x="900" y="512" text-anchor="middle">WATCH SOMEONE USE IT</text>
+<text class="t nd" x="796" y="404" text-anchor="end">REBUILD</text>
+<text class="t" x="900" y="394" text-anchor="middle" font-size="34" fill="#B8952B">4</text>
+<text class="t" x="900" y="418" text-anchor="middle" font-size="12" letter-spacing="2.4" fill="#B8952B">DAYS PER CYCLE</text>
+
+<line x1="64" y1="628" x2="1136" y2="628" stroke="#D2D1CD"/>
+<text class="t" x="64" y="662" font-size="16" fill="#4A4B50">By the time the rear loop finishes its second meeting, the forward loop has cycled twelve times.</text>
+<text class="t note" x="64" y="686" font-size="13" fill="#7A7B82">The advantage is not speed. It is that fast loops generate information — the exception case, the blank field, the real workaround — that slow loops cannot buy at any price.</text>
+</svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="The lineage of forward deployment doctrine">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.yr{font-size:12px;letter-spacing:2.2px;fill:#B8952B}
+.nm{font-size:14.5px;fill:#1C1D20}
+.pr{font-size:12.5px;fill:#7A7B82}
+</style>
+<rect width="1200" height="620" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 4.3 — THE LINEAGE</text>
+<text class="t h" x="64" y="112">Seven discoveries of one principle</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<line x1="90" y1="330" x2="1130" y2="330" stroke="#C5C4C0" stroke-width="1.6"/>
+<g fill="#B8952B">
+<circle cx="110" cy="330" r="7"/><circle cx="280" cy="330" r="7"/><circle cx="450" cy="330" r="7"/>
+<circle cx="620" cy="330" r="7"/><circle cx="790" cy="330" r="7"/><circle cx="960" cy="330" r="7"/><circle cx="1110" cy="330" r="7"/>
+</g>
+<g stroke="#DDDCD8">
+<line x1="110" y1="330" x2="110" y2="272"/><line x1="450" y1="330" x2="450" y2="272"/>
+<line x1="790" y1="330" x2="790" y2="272"/><line x1="1110" y1="330" x2="1110" y2="272"/>
+<line x1="280" y1="330" x2="280" y2="388"/><line x1="620" y1="330" x2="620" y2="388"/><line x1="960" y1="330" x2="960" y2="388"/>
+</g>
+
+<!-- above -->
+<text class="t yr" x="110" y="256">1806 → 1869</text>
+<text class="t nm" x="110" y="232">Auftragstaktik</text>
+<text class="t pr" x="110" y="208">Prussia, after Jena</text>
+<text class="t pr" x="110" y="188" fill="#4A4B50">“send intent,</text>
+<text class="t pr" x="110" y="170" fill="#4A4B50">not method”</text>
+
+<text class="t yr" x="450" y="256">1976</text>
+<text class="t nm" x="450" y="232">Boyd’s OODA loop</text>
+<text class="t pr" x="450" y="208">from air combat over Korea</text>
+<text class="t pr" x="450" y="188" fill="#4A4B50">“cycle faster than</text>
+<text class="t pr" x="450" y="170" fill="#4A4B50">the situation changes”</text>
+
+<text class="t yr" x="790" y="256">ongoing</text>
+<text class="t nm" x="790" y="232">The 12-person detachment</text>
+<text class="t pr" x="790" y="208">US Special Forces ODA</text>
+<text class="t pr" x="790" y="188" fill="#4A4B50">“multiply the local force;</text>
+<text class="t pr" x="790" y="170" fill="#4A4B50">do not do its fighting”</text>
+
+<text class="t yr" x="1110" y="256" text-anchor="end">2023 →</text>
+<text class="t nm" x="1110" y="232" text-anchor="end">The AI multiplier</text>
+<text class="t pr" x="1110" y="208" text-anchor="end">this book</text>
+<text class="t pr" x="1110" y="188" text-anchor="end" fill="#4A4B50">“the unit is now</text>
+<text class="t pr" x="1110" y="170" text-anchor="end" fill="#4A4B50">one person”</text>
+
+<!-- below -->
+<text class="t yr" x="280" y="410">1940s → 1970s</text>
+<text class="t nm" x="280" y="434">Forward-deployed naval forces</text>
+<text class="t pr" x="280" y="456">Seventh Fleet, homeported at Yokosuka</text>
+<text class="t pr" x="280" y="476" fill="#4A4B50">“distance is time — and capability</text>
+<text class="t pr" x="280" y="494" fill="#4A4B50">that arrives late is zero”</text>
+
+<text class="t yr" x="620" y="410">1999</text>
+<text class="t nm" x="620" y="434">The strategic corporal</text>
+<text class="t pr" x="620" y="456">Krulak, Marine Corps</text>
+<text class="t pr" x="620" y="476" fill="#4A4B50">“consequence has moved down;</text>
+<text class="t pr" x="620" y="494" fill="#4A4B50">training and delegation must follow”</text>
+
+<text class="t yr" x="960" y="410">2005 →</text>
+<text class="t nm" x="960" y="434">The forward deployed engineer</text>
+<text class="t pr" x="960" y="456">Palantir</text>
+<text class="t pr" x="960" y="476" fill="#4A4B50">“ship, don’t recommend —</text>
+<text class="t pr" x="960" y="494" fill="#4A4B50">and feed the field back into the product”</text>
+
+<line x1="64" y1="546" x2="1136" y2="546" stroke="#D2D1CD"/>
+<text class="t" x="64" y="582" font-size="17" fill="#4A4B50">Put a small, highly capable unit at the point of contact. Give it the intent and the authority, not the instructions.</text>
+<text class="t pr" x="64" y="606" fill="#7A7B82">Let it cycle faster than the situation changes. That is forward deployment; everything else is implementation.</text>
+</svg>

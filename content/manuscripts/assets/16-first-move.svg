@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-label="The one decision this week: pick the wound, find the person, give access">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.step{font-size:44px;fill:#B8952B}
+.lbl{font-size:18px;fill:#1C1D20}
+.note{font-size:13.5px;fill:#7A7B82}
+</style>
+<rect width="1200" height="600" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 16.3 — THE ONE DECISION THIS WEEK</text>
+<text class="t h" x="64" y="112">Not a programme. Three things, done in order.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<!-- Step 1 -->
+<rect x="64" y="196" width="330" height="300" rx="10" fill="#EBEAE6" stroke="#D2D1CD"/>
+<text class="t step" x="100" y="270">01</text>
+<text class="t lbl" x="100" y="316">Pick one wound</text>
+<text class="t note" x="100" y="346">Small. Bleeding cash visibly.</text>
+<text class="t note" x="100" y="366">Not the biggest. Not the</text>
+<text class="t note" x="100" y="386">most strategic.</text>
+<text class="t note" x="100" y="416">One site, twelve weeks.</text>
+
+<!-- Arrow -->
+<defs><marker id="farr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6A6B72"/></marker></defs>
+<line x1="394" y1="346" x2="430" y2="346" stroke="#6A6B72" stroke-width="1.5" marker-end="url(#farr)"/>
+
+<!-- Step 2 -->
+<rect x="435" y="196" width="330" height="300" rx="10" fill="#EBEAE6" stroke="#D2D1CD"/>
+<text class="t step" x="471" y="270">02</text>
+<text class="t lbl" x="471" y="316">Find that person</text>
+<text class="t note" x="471" y="346">Whose hand goes up when you</text>
+<text class="t note" x="471" y="366">ask whose Tuesday gets better.</text>
+<text class="t note" x="471" y="396">Not the executive sponsor.</text>
+<text class="t note" x="471" y="416">The person doing the work.</text>
+
+<line x1="765" y1="346" x2="801" y2="346" stroke="#6A6B72" stroke-width="1.5" marker-end="url(#farr)"/>
+
+<!-- Step 3 -->
+<rect x="806" y="196" width="330" height="300" rx="10" fill="#B8952B" opacity="0.1" stroke="#B8952B"/>
+<text class="t step" x="842" y="270" fill="#B8952B">03</text>
+<text class="t lbl" x="842" y="316">Give real access</text>
+<text class="t note" x="842" y="346">Personally clear the badge,</text>
+<text class="t note" x="842" y="366">the credentials, the</text>
+<text class="t note" x="842" y="386">introduction — this week,</text>
+<text class="t note" x="842" y="406">not through the process.</text>
+
+<line x1="64" y1="530" x2="1136" y2="530" stroke="#D2D1CD"/>
+<text class="t" x="64" y="562" font-size="16" fill="#4A4B50">The organisations that look different in five years started with the smallest, most boring, most bleeding wound they could find — this month.</text>
+</svg>

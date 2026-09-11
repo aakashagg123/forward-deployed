@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" role="img" aria-label="What AI collapsed and what it did not">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
+.role{font-size:14px;letter-spacing:1.2px;fill:#F7F6F3}
+.note{font-size:12.5px;fill:#7A7B82}
+.big{font-size:30px;fill:#1C1D20}
+</style>
+<rect width="1200" height="760" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 5.2 — THE MULTIPLIER</text>
+<text class="t h" x="64" y="112">The build cost collapsed. The trust cost did not.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<line x1="600" y1="176" x2="600" y2="600" stroke="#E4E3DF"/>
+
+<!-- LEFT -->
+<text class="t col" x="64" y="204">2015 · THE UNIT THAT COULD CHANGE A WORKFLOW</text>
+<g fill="#1C1D20">
+<rect x="64" y="226" width="470" height="40"/>
+<rect x="64" y="274" width="470" height="40"/>
+<rect x="64" y="322" width="470" height="40"/>
+<rect x="64" y="370" width="470" height="40"/>
+<rect x="64" y="418" width="470" height="40"/>
+<rect x="64" y="466" width="470" height="40"/>
+</g>
+<g class="t role">
+<text x="84" y="252">Business analyst</text>
+<text x="84" y="300">Application engineer</text>
+<text x="84" y="348">Data engineer</text>
+<text x="84" y="396">Test / QA</text>
+<text x="84" y="444">Integration engineer</text>
+<text x="84" y="492">Project manager</text>
+</g>
+<text class="t big" x="64" y="556">6–9 months</text>
+<text class="t note" x="64" y="582">Needs a business case large enough to justify six salaries —</text>
+<text class="t note" x="64" y="604" fill="#C8553D">so only large problems qualify, and the thousand small bleeding</text>
+<text class="t note" x="64" y="626" fill="#C8553D">workflows that constitute the operating model never do.</text>
+
+<!-- RIGHT -->
+<text class="t col" x="660" y="204">2026 · THE UNIT</text>
+<rect x="660" y="226" width="470" height="40" fill="#B8952B"/>
+<text class="t role" x="680" y="252">The operator</text>
+
+<rect x="660" y="274" width="470" height="232" fill="none" stroke="#B8952B" stroke-width="1.4" stroke-dasharray="6 5"/>
+<text class="t" x="680" y="302" font-size="13" letter-spacing="2.4" fill="#B8952B">THE MACHINE</text>
+<g class="t note" fill="#4A4B50">
+<text x="680" y="332">writes the code — once the largest line item, now the smallest</text>
+<text x="680" y="356">reads a decade of schema weirdness in an afternoon</text>
+<text x="680" y="380">produces the integration scaffolding, migrations, retries, tests</text>
+<text x="680" y="404">generates a first version fast enough to throw away</text>
+<text x="680" y="428">writes the handover material operators always skipped —</text>
+<text x="680" y="450" fill="#7A7B82">which is exactly what determines whether the thing survives them</text>
+</g>
+<text class="t note" x="680" y="486" fill="#7A7B82">and the reliable task length keeps doubling on a scale of months</text>
+
+<text class="t big" x="660" y="556" fill="#B8952B">6–12 weeks</text>
+<text class="t note" x="660" y="582">Small enough that the thousand workflows now qualify —</text>
+<text class="t note" x="660" y="604" fill="#B8952B">which is the entire reason this model is newly viable.</text>
+
+<!-- bottom band -->
+<rect x="64" y="656" width="1072" height="80" fill="#C8553D" opacity="0.10"/>
+<text class="t" x="84" y="684" font-size="12.5" letter-spacing="2.6" fill="#C8553D">WHAT DID NOT COLLAPSE</text>
+<g class="t note" fill="#4A4B50" font-size="13">
+<text x="84" y="712">Knowing which workflow is bleeding · the relationship that makes someone tell you the truth about their own workaround ·</text>
+<text x="84" y="732">the authority to close the old path · someone who can be held accountable. These were always the hard parts. They still are.</text>
+</g>
+</svg>

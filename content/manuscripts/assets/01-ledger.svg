@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="What the transformation office produces versus what the work needs">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
+.h{font-size:30px;fill:#1C1D20}
+.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
+.item{font-size:16px;fill:#1C1D20}
+.dim{font-size:16px;fill:#7A7B82}
+</style>
+<rect width="1200" height="720" fill="#F7F6F3"/>
+<text class="t kicker" x="64" y="70">FIGURE 1.1 — THE TWO LEDGERS</text>
+<text class="t h" x="64" y="112">Both columns are real work. They never reconcile.</text>
+<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+
+<text class="t col" x="64" y="196">WHAT THE OFFICE PRODUCES</text>
+<text class="t col" x="660" y="196">WHAT THE WORK NEEDS</text>
+<line x1="64" y1="216" x2="540" y2="216" stroke="#C5C4C0"/>
+<line x1="660" y1="216" x2="1136" y2="216" stroke="#C5C4C0"/>
+
+<line x1="600" y1="176" x2="600" y2="656" stroke="#D2D1CD"/>
+<circle cx="600" cy="416" r="20" fill="#F7F6F3" stroke="#C5C4C0"/>
+<text class="t" x="600" y="423" font-size="18" fill="#C8553D" text-anchor="middle">≠</text>
+
+<text class="t dim" x="64" y="272">The strategy deck</text>
+<text class="t item" x="660" y="272">A field in the form, changed</text>
+
+<text class="t dim" x="64" y="332">The target operating model</text>
+<text class="t item" x="660" y="332">The old path, switched off</text>
+
+<text class="t dim" x="64" y="392">The maturity score</text>
+<text class="t item" x="660" y="392">One approval removed, by name</text>
+
+<text class="t dim" x="64" y="452">The roadmap</text>
+<text class="t item" x="660" y="452">A duplicate customer record, merged</text>
+
+<text class="t dim" x="64" y="512">The governance cadence</text>
+<text class="t item" x="660" y="512">An owner with a support rota</text>
+
+<text class="t dim" x="64" y="572">The adoption dashboard</text>
+<text class="t item" x="660" y="572">A metric someone is graded on</text>
+
+<text class="t dim" x="64" y="632">The change communications plan</text>
+<text class="t item" x="660" y="632">A person told to stop doing the old thing</text>
+
+<line x1="64" y1="672" x2="1136" y2="672" stroke="#D2D1CD"/>
+<text class="t" x="64" y="702" font-size="13" fill="#7A7B82">Nothing on the left is dishonest. Nothing on the left is change.</text>
+</svg>
