@@ -10,7 +10,19 @@ const CONTENT_DIR = path.join(ROOT, 'content');
 const THEME_STATIC_DIR = path.join(ROOT, 'theme', 'static');
 const DIST_DIR = path.join(ROOT, 'dist');
 
-const SITE = { title: 'Forward Deployed' };
+const SITE = {
+  title: 'Forward deployed',
+  repoUrl: 'https://github.com/aakashagg123/forward-deployed',
+  thesis:
+    "The unit of change is not a deck — it's a small team of engineers and AI placed at the point of the problem, with the authority to rewire the workflow rather than recommend one.",
+};
+
+const SPACE_META = {
+  manuscripts: { blurb: 'Forward-deployed — 16 chapters, four parts, one thesis.', status: 'Draft' },
+  'personal-notes': { blurb: "Running frameworks and working notes, added as they're written." },
+  'project-docs': { blurb: 'Documentation for projects and products, one space per body of work.' },
+  research: { blurb: 'Investment and research notes, structured for later reference.' },
+};
 
 function readTitleFromMarkdown(md, fallback) {
   const match = md.match(/^#\s+(.+)$/m);
@@ -40,16 +52,41 @@ function discoverSpaces() {
     .sort();
 }
 
-function spaceTitle(spaceId, spaceDir) {
-  const readmePath = path.join(spaceDir, 'README.md');
-  if (fs.existsSync(readmePath)) {
-    const title = readTitleFromMarkdown(fs.readFileSync(readmePath, 'utf8'), null);
-    if (title) return title;
+// Sentence case, derived from the folder name — not the page's own H1, so a
+// space's display name stays distinct from whatever its landing page is titled.
+function spaceTitle(spaceId) {
+  const words = spaceId.split('-');
+  return words.map((w, i) => (i === 0 ? w[0].toUpperCase() + w.slice(1) : w)).join(' ');
+}
+
+function slugify(text, seen) {
+  let base = text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'section';
+  let slug = base;
+  let n = 2;
+  while (seen.has(slug)) {
+    slug = `${base}-${n}`;
+    n++;
   }
-  return spaceId
-    .split('-')
-    .map((w) => w[0].toUpperCase() + w.slice(1))
-    .join(' ');
+  seen.add(slug);
+  return slug;
+}
+
+// Tags every h2/h3 with an id and returns the outline used for the
+// "on this page" rail — done as a post-process on rendered HTML rather than
+// inside the markdown renderer, since ids only need to be unique per page.
+function extractOutline(html) {
+  const seen = new Set();
+  const outline = [];
+  const updated = html.replace(/<(h[23])>(.*?)<\/\1>/gs, (match, tag, inner) => {
+    const text = inner.replace(/<[^>]+>/g, '').trim();
+    const id = slugify(text, seen);
+    outline.push({ level: tag === 'h2' ? 2 : 3, id, title: text });
+    return `<${tag} id="${id}">${inner}</${tag}>`;
+  });
+  return { html: updated, outline };
 }
 
 async function build() {
@@ -92,9 +129,17 @@ async function build() {
       }
     }
 
-    const title = spaceTitle(spaceId, spaceDir);
+    const title = spaceTitle(spaceId);
     const indexHref = pages[0].href.replace(`/${spaceId}/`, '');
-    spaces.push({ id: spaceId, title, indexHref });
+    const meta = SPACE_META[spaceId] || {};
+    spaces.push({
+      id: spaceId,
+      title,
+      indexHref,
+      blurb: meta.blurb || `${title} space.`,
+      status: meta.status || null,
+      pageCount: pages.length,
+    });
     spaceData.push({ spaceId, spaceDir, tree, pages });
   }
 
@@ -104,20 +149,22 @@ async function build() {
       if (page.external) continue;
       const abs = path.join(spaceDir, page.sourcePath);
       const raw = fs.readFileSync(abs, 'utf8');
-      const contentHtml = md.render(raw);
+      const rendered = md.render(raw);
+      const { html: contentHtml, outline } = extractOutline(rendered);
 
       const prev = i > 0 ? pages[i - 1] : null;
       const next = i < pages.length - 1 ? pages[i + 1] : null;
 
       const html = renderPage({
         site: SITE,
-        space: { id: spaceId },
+        space: { id: spaceId, title: spaceTitle(spaceId) },
         spaces,
         navTree: tree,
         page: { title: page.title, href: page.href, breadcrumb: page.breadcrumb },
         prev,
         next,
         contentHtml,
+        outline,
       });
 
       const outPath = path.join(DIST_DIR, page.href.replace(/^\//, ''));
@@ -128,7 +175,14 @@ async function build() {
     copyDir(path.join(spaceDir, 'assets'), path.join(DIST_DIR, spaceId, 'assets'));
   }
 
-  fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces }));
+  const manuscriptSpace = spaceData.find((s) => s.spaceId === 'manuscripts');
+  const chapters = manuscriptSpace
+    ? manuscriptSpace.pages
+        .filter((p) => p.sourcePath !== 'README.md')
+        .map((p, i) => ({ n: i + 1, title: p.title }))
+    : [];
+
+  fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, chapters }));
 
   copyDir(THEME_STATIC_DIR, DIST_DIR);
 
