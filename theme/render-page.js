@@ -1,6 +1,9 @@
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+function escapeAttr(s) {
+  return escapeHtml(s).replace(/"/g, '&quot;');
+}
 
 // Renders a link node's own <li>, plus a nested <ul> for its children (valid
 // HTML nesting: <ul> only ever contains <li>, which may itself hold a <ul>).
@@ -63,29 +66,75 @@ function renderOutline(outline) {
   return `<nav class="fd-outline"><p class="fd-outline-label">On this page</p>${links}</nav>`;
 }
 
-export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline }) {
+// Shared <head> block: title, description, canonical, Open Graph, Twitter
+// card, favicon, and any JSON-LD blocks the caller supplies.
+function renderHead({ site, title, description, canonicalUrl, image, jsonLd }) {
+  const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
+  const ld = (jsonLd || [])
+    .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
+    .join('\n');
+  return `<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(fullTitle)}</title>
+<meta name="description" content="${escapeAttr(description)}">
+<link rel="canonical" href="${escapeAttr(canonicalUrl)}">
+<link rel="icon" href="/mark-64.png">
+<link rel="apple-touch-icon" href="/mark-180.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${escapeAttr(site.title)}">
+<meta property="og:title" content="${escapeAttr(fullTitle)}">
+<meta property="og:description" content="${escapeAttr(description)}">
+<meta property="og:url" content="${escapeAttr(canonicalUrl)}">
+<meta property="og:image" content="${escapeAttr(image)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${escapeAttr(fullTitle)}">
+<meta name="twitter:description" content="${escapeAttr(description)}">
+<meta name="twitter:image" content="${escapeAttr(image)}">
+<link rel="stylesheet" href="/theme.css">
+${ld}`;
+}
+
+export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description }) {
   const pagenav = `
     <nav class="fd-pagenav">
       ${prev ? `<a class="fd-pn-prev" href="${prev.href}"><span class="fd-pn-label">Previous</span>${escapeHtml(prev.title)}</a>` : '<span></span>'}
       ${next ? `<a class="fd-pn-next" href="${next.href}"><span class="fd-pn-label">Next</span>${escapeHtml(next.title)}</a>` : '<span></span>'}
     </nav>`;
 
+  const canonicalUrl = site.baseUrl + page.href;
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: page.breadcrumb
+        .concat([{ title: page.title, href: page.href }])
+        .map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.title,
+          item: b.href ? site.baseUrl + b.href : undefined,
+        })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: page.title,
+      description,
+      url: canonicalUrl,
+      isPartOf: { '@type': 'WebSite', name: site.title, url: site.baseUrl },
+    },
+  ];
+
   return `<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escapeHtml(page.title)} · ${escapeHtml(site.title)}</title>
-<link rel="icon" href="/mark-64.png">
-<link rel="apple-touch-icon" href="/mark-180.png">
-<link rel="stylesheet" href="/theme.css">
+${renderHead({ site, title: page.title, description, canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd })}
 </head>
 <body>
 <header class="fd-header">
   <button class="fd-mobile-toggle" id="fdMobileToggle" aria-label="Toggle navigation">☰</button>
   <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</a>
   <a class="fd-toplink" href="/">Home</a>
-  <a class="fd-toplink" href="${site.repoUrl}">GitHub</a>
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle theme">Aa</button>
 </header>
 <div class="fd-layout">
@@ -94,10 +143,7 @@ export function renderPage({ site, space, spaces, navTree, page, prev, next, con
     <nav class="fd-nav">${renderNavTree(navTree, page.href)}</nav>
   </aside>
   <main class="fd-main">
-    <div class="fd-crumb-row">
-      <p class="fd-breadcrumb">${renderBreadcrumb(page.breadcrumb, page.title)}</p>
-      <button class="fd-copy-btn" id="fdCopyBtn" data-idle="Copy" data-done="Copied">Copy</button>
-    </div>
+    <p class="fd-breadcrumb">${renderBreadcrumb(page.breadcrumb, page.title)}</p>
     <article class="fd-content" id="fdContent">${contentHtml}</article>
     ${pagenav}
     <div class="fd-feedback" id="fdFeedback">
@@ -132,20 +178,24 @@ export function renderLanding({ site, spaces, chapters }) {
     )
     .join('');
 
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: site.title,
+      url: site.baseUrl,
+      description: site.thesis,
+    },
+  ];
+
   return `<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escapeHtml(site.title)}</title>
-<link rel="icon" href="/mark-64.png">
-<link rel="apple-touch-icon" href="/mark-180.png">
-<link rel="stylesheet" href="/theme.css">
+${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: site.baseUrl + '/', image: `${site.baseUrl}/social.jpg`, jsonLd })}
 </head>
 <body class="fd-landing-body">
 <header class="fd-header fd-header-landing">
   <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</a>
-  <a class="fd-toplink" href="${site.repoUrl}">GitHub</a>
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle theme">Aa</button>
 </header>
 <div class="wrap">
@@ -163,6 +213,27 @@ export function renderLanding({ site, spaces, chapters }) {
   <footer class="fd-foot">forward-deployed.in — built with a custom generator, deployed on GitHub Pages.</footer>
 </div>
 <script src="/theme.js"></script>
+</body>
+</html>`;
+}
+
+export function render404({ site }) {
+  const canonicalUrl = site.baseUrl + '/404.html';
+  return `<!doctype html>
+<html lang="en">
+<head>
+${renderHead({ site, title: 'Page not found', description: 'This page does not exist.', canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd: [] })}
+<meta name="robots" content="noindex">
+</head>
+<body class="fd-landing-body">
+<header class="fd-header fd-header-landing">
+  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</a>
+</header>
+<div class="wrap" style="padding-block:120px;text-align:left;">
+  <h1 style="font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-.02em;margin:0 0 16px;">Page not found.</h1>
+  <p style="color:var(--ink-2);font-size:16px;max-width:52ch;margin:0 0 28px;">Whatever you were looking for isn't here — it may have moved when a space was reorganized.</p>
+  <a href="/" style="display:inline-block;border:1px solid var(--rule);padding:11px 20px;font-weight:600;font-size:14px;">Back to the index</a>
+</div>
 </body>
 </html>`;
 }
