@@ -96,14 +96,8 @@ img { max-width: 100%; }
 .fd-nav a.active { background: var(--ink); color: var(--inv); font-weight: 600; }
 
 .fd-main { flex: 1; min-width: 0; padding: 36px 44px 70px; max-width: 760px; }
-.fd-crumb-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
-.fd-breadcrumb { font-size: 12.5px; color: var(--ink-3); margin: 0; }
+.fd-breadcrumb { font-size: 12.5px; color: var(--ink-3); margin: 0 0 20px; }
 .fd-breadcrumb a { color: var(--ink-3); }
-.fd-copy-btn {
-  font-size: 11.5px; font-weight: 600; border: 1px solid var(--rule); background: var(--bg);
-  color: var(--ink-2); padding: 5px 12px; cursor: pointer; font-family: var(--sans); flex: none;
-}
-.fd-copy-btn:hover { background: var(--ink); color: var(--inv); }
 
 .fd-content h1 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; margin: 0 0 20px; }
 .fd-content h2 { font-size: 21px; font-weight: 700; margin: 40px 0 12px; border-top: 1px solid var(--rule); padding-top: 24px; }
@@ -210,5 +204,3 @@ img { max-width: 100%; }
 .fd-cat-count { font-size: 11px; color: #5E5E63; border-top: 1px solid #2A2A2E; padding-top: 10px; display: block; }
 :root[data-theme='light'] .fd-cat-count { color: #8A8A8A; border-color: #000000; }
 
-.fd-foot { padding-block: 30px 60px; font-size: 12px; color: #5E5E63; border-top: 1px solid #2A2A2E; }
-:root[data-theme='light'] .fd-foot { color: #8A8A8A; border-color: #000000; }

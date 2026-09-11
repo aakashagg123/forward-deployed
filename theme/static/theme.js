@@ -49,21 +49,6 @@
     });
   }
 
-  var copyBtn = document.getElementById('fdCopyBtn');
-  var content = document.getElementById('fdContent');
-  if (copyBtn && content) {
-    copyBtn.addEventListener('click', function () {
-      var text = content.innerText;
-      var done = function () {
-        copyBtn.textContent = copyBtn.dataset.done;
-        setTimeout(function () { copyBtn.textContent = copyBtn.dataset.idle; }, 1600);
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done).catch(function () {});
-      }
-    });
-  }
-
   var feedback = document.getElementById('fdFeedback');
   if (feedback) {
     var faces = feedback.querySelectorAll('.fd-face');

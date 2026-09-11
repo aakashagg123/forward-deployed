@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404 } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -12,7 +12,7 @@ const DIST_DIR = path.join(ROOT, 'dist');
 
 const SITE = {
   title: 'Forward deployed',
-  repoUrl: 'https://github.com/aakashagg123/forward-deployed',
+  baseUrl: 'https://forward-deployed.in',
   thesis:
     "The unit of change is not a deck — it's a small team of engineers and AI placed at the point of the problem, with the authority to rewire the workflow rather than recommend one.",
 };
@@ -89,6 +89,34 @@ function extractOutline(html) {
   return { html: updated, outline };
 }
 
+const MAX_DESCRIPTION = 155;
+
+// Meta-description source: the raw markdown's first plain paragraph — not
+// a heading, blockquote, image, or a paragraph made entirely of a ⟦slot⟧ —
+// with markdown emphasis/slot markers stripped and cut to a clean word break.
+function extractDescription(raw, fallback) {
+  const blocks = raw.split(/\n\s*\n/);
+  for (const block of blocks) {
+    const line = block.trim();
+    if (!line) continue;
+    if (/^#{1,6}\s/.test(line)) continue;
+    if (line.startsWith('>')) continue;
+    if (line.startsWith('!')) continue;
+    if (line === '---') continue;
+    const plain = line
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      .replace(/\*(.+?)\*/g, '$1')
+      .replace(/⟦.+?⟧/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!plain) continue;
+    if (plain.length <= MAX_DESCRIPTION) return plain;
+    const cut = plain.slice(0, MAX_DESCRIPTION);
+    return cut.slice(0, cut.lastIndexOf(' ')) + '…';
+  }
+  return fallback;
+}
+
 async function build() {
   rmrf(DIST_DIR);
   fs.mkdirSync(DIST_DIR, { recursive: true });
@@ -143,6 +171,8 @@ async function build() {
     spaceData.push({ spaceId, spaceDir, tree, pages });
   }
 
+  const sitemapUrls = [{ loc: SITE.baseUrl + '/' }];
+
   for (const { spaceId, spaceDir, tree, pages } of spaceData) {
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i];
@@ -151,6 +181,7 @@ async function build() {
       const raw = fs.readFileSync(abs, 'utf8');
       const rendered = md.render(raw);
       const { html: contentHtml, outline } = extractOutline(rendered);
+      const description = extractDescription(raw, SITE.thesis);
 
       const prev = i > 0 ? pages[i - 1] : null;
       const next = i < pages.length - 1 ? pages[i + 1] : null;
@@ -165,11 +196,13 @@ async function build() {
         next,
         contentHtml,
         outline,
+        description,
       });
 
       const outPath = path.join(DIST_DIR, page.href.replace(/^\//, ''));
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html);
+      sitemapUrls.push({ loc: SITE.baseUrl + page.href });
     }
 
     copyDir(path.join(spaceDir, 'assets'), path.join(DIST_DIR, spaceId, 'assets'));
@@ -183,6 +216,21 @@ async function build() {
     : [];
 
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, chapters }));
+  fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
+
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapUrls.map((u) => `  <url><loc>${u.loc}</loc></url>`).join('\n')}
+</urlset>
+`;
+  fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemap);
+
+  const robots = `User-agent: *
+Allow: /
+
+Sitemap: ${SITE.baseUrl}/sitemap.xml
+`;
+  fs.writeFileSync(path.join(DIST_DIR, 'robots.txt'), robots);
 
   copyDir(THEME_STATIC_DIR, DIST_DIR);
 
