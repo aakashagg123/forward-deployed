@@ -204,5 +204,3 @@ img { max-width: 100%; }
 .fd-cat-count { font-size: 11px; color: #5E5E63; border-top: 1px solid #2A2A2E; padding-top: 10px; display: block; }
 :root[data-theme='light'] .fd-cat-count { color: #8A8A8A; border-color: #000000; }
 
-.fd-foot { padding-block: 30px 60px; font-size: 12px; color: #5E5E63; border-top: 1px solid #2A2A2E; }
-:root[data-theme='light'] .fd-foot { color: #8A8A8A; border-color: #000000; }

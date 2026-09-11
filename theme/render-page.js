@@ -210,7 +210,6 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
   </div>
   <div class="fd-marquee-wrap"><div class="fd-marquee">${marquee}</div></div>
   <div class="fd-cat-grid">${cards}</div>
-  <footer class="fd-foot">forward-deployed.in — built with a custom generator, deployed on GitHub Pages.</footer>
 </div>
 <script src="/theme.js"></script>
 </body>
