@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding, render404 } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404, renderProductGrid } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -19,10 +19,44 @@ const SITE = {
 
 const SPACE_META = {
   manuscripts: { blurb: 'Forward-deployed — 16 chapters, four parts, one thesis.', status: 'Draft' },
-  'personal-notes': { blurb: "Running frameworks and working notes, added as they're written." },
-  'project-docs': { blurb: 'Documentation for projects and products, one space per body of work.' },
-  research: { blurb: 'Investment and research notes, structured for later reference.' },
+  about: { title: 'About me', blurb: 'Who I am, what I do, and what I’m building right now.' },
+  portfolio: { title: 'Portfolio & experience', blurb: 'A decade of shipping — one founder run, three product leadership roles.' },
+  musings: { title: 'Musings & side projects', blurb: 'Running notes on AI, product ideas, and prototypes worth poking at.' },
 };
+
+// Case studies on the Portfolio & experience index page get a real,
+// filterable grid — status and body copy per case study still fill in over
+// time, but the grid itself is live from day one.
+const PRODUCTS = [
+  {
+    title: 'JSW One Finance — lending origination platform',
+    tagline: 'Commercial lending, 100% digital, lead to disbursement.',
+    tags: ['Fintech', 'Lending', 'AI'],
+    status: 'Current',
+    href: '/portfolio/products/jsw-one-finance-los.html',
+  },
+  {
+    title: 'JSW One MSME — B2B marketplace',
+    tagline: 'A credit-enabled marketplace for MSMEs, built to a $1B exit rate.',
+    tags: ['Fintech', 'E-commerce'],
+    status: 'Shipped',
+    href: '/portfolio/products/jsw-one-msme-marketplace.html',
+  },
+  {
+    title: 'Marsh — BenefitsCircle & QoverPro',
+    tagline: 'Voluntary benefits and embedded insurance for Amazon, Ashok Leyland, and more.',
+    tags: ['Insurance'],
+    status: 'Shipped',
+    href: '/portfolio/products/marsh-embedded-insurance.html',
+  },
+  {
+    title: 'AutoO2 — motor insurance claims SaaS',
+    tagline: 'Co-founded and built to 500+ onboarded workshops.',
+    tags: ['Insurance', '0→1', 'Founder'],
+    status: 'Shipped',
+    href: '/portfolio/products/autoo2-claims-saas.html',
+  },
+];
 
 function readTitleFromMarkdown(md, fallback) {
   const match = md.match(/^#\s+(.+)$/m);
@@ -54,7 +88,10 @@ function discoverSpaces() {
 
 // Sentence case, derived from the folder name — not the page's own H1, so a
 // space's display name stays distinct from whatever its landing page is titled.
+// SPACE_META.title overrides this when the folder name alone can't express it
+// (e.g. "portfolio" -> "Portfolio & experience").
 function spaceTitle(spaceId) {
+  if (SPACE_META[spaceId]?.title) return SPACE_META[spaceId].title;
   const words = spaceId.split('-');
   return words.map((w, i) => (i === 0 ? w[0].toUpperCase() + w.slice(1) : w)).join(' ');
 }
@@ -180,7 +217,10 @@ async function build() {
       const abs = path.join(spaceDir, page.sourcePath);
       const raw = fs.readFileSync(abs, 'utf8');
       const rendered = md.render(raw);
-      const { html: contentHtml, outline } = extractOutline(rendered);
+      let { html: contentHtml, outline } = extractOutline(rendered);
+      if (spaceId === 'portfolio' && page.sourcePath === 'README.md') {
+        contentHtml += renderProductGrid(PRODUCTS);
+      }
       const description = extractDescription(raw, SITE.thesis);
 
       const prev = i > 0 ? pages[i - 1] : null;

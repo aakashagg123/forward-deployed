@@ -78,6 +78,23 @@
     onScroll();
   }
 
+  var pfGrid = document.getElementById('fdPfGrid');
+  var pfFilters = document.querySelectorAll('.fd-pf-filter');
+  if (pfGrid && pfFilters.length) {
+    var pfCards = pfGrid.querySelectorAll('.fd-pf-card');
+    pfFilters.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pfFilters.forEach(function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        var tag = btn.dataset.tag;
+        pfCards.forEach(function (card) {
+          var tags = (card.dataset.tags || '').split('|');
+          card.hidden = tag !== 'All' && tags.indexOf(tag) === -1;
+        });
+      });
+    });
+  }
+
   // Typewriter: the real headline is already in the DOM (SEO/no-JS safe),
   // this just clears and retypes it once JS is confirmed running.
   var typed = document.getElementById('fdTyped');
