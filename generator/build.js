@@ -212,7 +212,7 @@ function extractDescription(raw, fallback) {
   return fallback;
 }
 
-const KINDLE_URL = 'https://amzn.in/d/04Wv46eH';
+const KINDLE_URL = 'https://amzn.in/d/0c3cehuZ';
 
 // Per-page structured data beyond the generic BreadcrumbList/Article every
 // page already gets — a Person entity for the About page, and a Book entity
