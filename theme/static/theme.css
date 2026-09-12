@@ -51,7 +51,7 @@ img { max-width: 100%; }
   background: var(--bg); border-bottom: 1px solid var(--rule);
 }
 .fd-header-landing { position: static; border-bottom: 1px solid var(--rule); }
-.fd-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
+.fd-brand { display: flex; align-items: center; gap: 10px; font-weight: 400; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
 .fd-mark { width: 24px; height: 24px; border-radius: 6px; flex: none; display: block; }
 .fd-toplink { margin-left: auto; font-size: 13.5px; font-weight: 500; color: var(--ink-2); }
 .fd-toplink:hover { color: var(--ink); }
