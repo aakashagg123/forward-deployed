@@ -28,7 +28,7 @@ Across fintech, e-commerce, and insurance, I've shipped 0→1 products, led cros
 
 AI has become a core part of how I operate — not as a shortcut, but as mental leverage. It helps me think wider, test assumptions faster, and push further than I could working alone. At JSW One Finance that shows up directly: AI is one of the product groups I lead, and it's genuinely at the core of some industry-first lending products we're building right now.
 
-I also wrote that idea into a book: *[Prompt engineering guide for product managers](https://amzn.in/d/04Wv46eH)* — a practical guidebook for AI-driven productivity, aimed at senior PMs and product leaders learning to work with tools like ChatGPT as more than a brainstorming shortcut. Published May 2025, available on Kindle.
+I also wrote that idea into a book: *[Prompt engineering guide for product managers](https://amzn.in/d/0c3cehuZ)* — a practical guidebook for AI-driven productivity, aimed at senior PMs and product leaders learning to work with tools like ChatGPT as more than a brainstorming shortcut. Published May 2025, available on Kindle.
 
 ## What kind of person I am
 

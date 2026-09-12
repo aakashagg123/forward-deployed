@@ -10,4 +10,4 @@ Whether you're using ChatGPT or any other AI assistant, the principles in this g
 
 > Note: This guide uses examples with ChatGPT for clarity, but the techniques are applicable to similar AI tools. Citations are provided throughout to ground advice in established best practices and real examples.
 
-**By Aakash Aggarwal** — published May 2025, available on [Kindle](https://amzn.in/d/04Wv46eH).
+**By Aakash Aggarwal** — published May 2025, available on [Kindle](https://amzn.in/d/0c3cehuZ).
