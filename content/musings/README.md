@@ -1,6 +1,6 @@
 # Musings & side projects
 
-Shorter, less structured than the manuscript — running notes on AI, product ideas worth poking at, and whatever prototype I'm currently taking apart.
+Short, informal notes — on AI, product ideas worth poking at, and whatever prototype I'm currently taking apart. Less structured than the books, and updated more often.
 
 ## Posts
 
