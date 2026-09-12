@@ -40,8 +40,21 @@ function renderNavTree(root, currentHref) {
   return blocks.join('');
 }
 
+// Drops a trailing ancestor that just repeats the page's own title — e.g. a
+// book's index page nested under a heading of the same name would otherwise
+// show "Forward-Deployed / Forward-Deployed" in both the visible breadcrumb
+// and the BreadcrumbList structured data.
+function dedupeBreadcrumb(breadcrumb, title) {
+  if (!breadcrumb.length) return breadcrumb;
+  const last = breadcrumb[breadcrumb.length - 1];
+  if (last.title.trim().toLowerCase() === title.trim().toLowerCase()) {
+    return breadcrumb.slice(0, -1);
+  }
+  return breadcrumb;
+}
+
 function renderBreadcrumb(breadcrumb, title) {
-  const trail = breadcrumb
+  const trail = dedupeBreadcrumb(breadcrumb, title)
     .map((b) => (b.href ? `<a href="${b.href}">${escapeHtml(b.title)}</a>` : escapeHtml(b.title)))
     .concat(escapeHtml(title));
   return trail.join(' <span aria-hidden="true">/</span> ');
@@ -106,7 +119,7 @@ export function renderPage({ site, space, spaces, navTree, page, prev, next, con
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
-      itemListElement: page.breadcrumb
+      itemListElement: dedupeBreadcrumb(page.breadcrumb, page.title)
         .concat([{ title: page.title, href: page.href }])
         .map((b, i) => ({
           '@type': 'ListItem',
