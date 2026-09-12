@@ -175,19 +175,35 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 </html>`;
 }
 
-export function renderLanding({ site, spaces, chapters }) {
-  const books = spaces.find((s) => s.id === 'books');
-  const preview = chapters.slice(0, 4);
-  const rows = preview
+export function renderLanding({ site, spaces, landing, latestBook }) {
+  const about = spaces.find((s) => s.id === 'about');
+
+  const companies = landing.companies
+    .map((c) => `<span class="fd-company${c.featured ? ' fd-company-on' : ''}">${escapeHtml(c.name)}</span>`)
+    .join('');
+
+  const pillars = landing.pillars
     .map(
-      (c) => `
-        <a class="fd-ch-row" href="${c.href}">
-          <span class="fd-ch-num">${String(c.n).padStart(2, '0')}</span>
-          <span class="fd-ch-title">${escapeHtml(c.title)}</span>
-          <span class="fd-ch-part">${escapeHtml(c.part)}</span>
-        </a>`,
+      (p) => `
+        <div class="fd-pillar">
+          <h4>${escapeHtml(p.label)}</h4>
+          <p>${escapeHtml(p.body)}</p>
+        </div>`,
     )
     .join('');
+
+  const release = latestBook
+    ? `
+    <a class="fd-release" href="${latestBook.href}">
+      <img class="fd-release-cover" src="${latestBook.cover}" alt="Cover of ${escapeAttr(latestBook.title)}" loading="lazy">
+      <span class="fd-release-body">
+        <span class="fd-release-badge">Latest release</span>
+        <h5>${escapeHtml(latestBook.title)}</h5>
+        <p>${escapeHtml(latestBook.tagline)}</p>
+      </span>
+      <span class="fd-release-link">Read free →</span>
+    </a>`
+    : '';
 
   const spaceRows = spaces
     .map(
@@ -199,8 +215,6 @@ export function renderLanding({ site, spaces, chapters }) {
         </a>`,
     )
     .join('');
-
-  const typedLine = 'They die between the deck and Tuesday.';
 
   const jsonLd = [
     {
@@ -226,15 +240,13 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
 <div class="wrap">
   <div class="fd-hero">
     <div class="fd-glow"></div>
-    <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</p>
-    <h1 class="fd-hero-title" id="fdTyped" data-text="${escapeAttr(typedLine)}">${escapeHtml(typedLine)}<span class="fd-cursor" aria-hidden="true"></span></h1>
-    <p class="fd-hero-lede">${escapeHtml(site.thesis)}</p>
-    <div class="fd-cta-row">
-      ${books ? `<a class="fd-btn fd-btn-solid" href="/${books.id}/${books.indexHref}">Read the books</a>` : ''}
-      <a class="fd-btn" href="#spaces">Browse all spaces</a>
-    </div>
-    <div class="fd-ch-list">${rows}</div>
+    <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.author)}</p>
+    <h1 class="fd-hero-title">${escapeHtml(landing.headline)}</h1>
+    <p class="fd-hero-lede">${landing.lede}${about ? ` <a class="fd-lede-link" href="/${about.id}/${about.indexHref}">Read the full story →</a>` : ''}</p>
+    <div class="fd-companies">${companies}</div>
   </div>
+  <div class="fd-pillars">${pillars}</div>
+  ${release}
   <div class="fd-spaces-row" id="spaces">${spaceRows}</div>
 </div>
 <script src="/theme.js"></script>

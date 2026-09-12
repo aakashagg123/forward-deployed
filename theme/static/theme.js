@@ -95,32 +95,4 @@
     });
   }
 
-  // Typewriter: the real headline is already in the DOM (SEO/no-JS safe),
-  // this just clears and retypes it once JS is confirmed running.
-  var typed = document.getElementById('fdTyped');
-  if (typed && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    var full = typed.dataset.text || typed.textContent;
-    var cursor = typed.querySelector('.fd-cursor');
-    typed.textContent = '';
-    if (cursor) typed.appendChild(cursor);
-    var i = 0;
-    (function type() {
-      if (i <= full.length) {
-        typed.textContent = full.slice(0, i);
-        if (cursor) typed.appendChild(cursor);
-        i++;
-        setTimeout(type, 28);
-      }
-    })();
-  }
-
-  document.querySelectorAll('.fd-btn').forEach(function (btn) {
-    btn.addEventListener('mousemove', function (e) {
-      var r = btn.getBoundingClientRect();
-      var x = (e.clientX - r.left - r.width / 2) * 0.15;
-      var y = (e.clientY - r.top - r.height / 2) * 0.3;
-      btn.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-    });
-    btn.addEventListener('mouseleave', function () { btn.style.transform = 'translate(0,0)'; });
-  });
 })();
