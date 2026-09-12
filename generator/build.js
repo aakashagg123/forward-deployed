@@ -25,6 +25,36 @@ const SPACE_META = {
   musings: { title: 'Musings & side projects', blurb: 'Running notes on AI, product ideas, and prototypes worth poking at.' },
 };
 
+// Landing page copy — About-first: the headline, lede, and pillars all pull
+// from the About me page's own voice, with JSW One Platforms and Marsh
+// named explicitly since they're the most recognizable names on the resume.
+const LANDING = {
+  headline: 'Product leader and builder, working where fintech, AI, and real-world pressure meet.',
+  lede:
+    "I'm Aakash — based in Mumbai, currently leading the lending origination platform, CRM, and AI charter at JSW One Finance. Before that: product at <strong>JSW One Platforms</strong>, on the MSME marketplace built to a $1B exit rate, and at <strong>Marsh</strong>, on embedded insurance programs for Amazon and Ashok Leyland.",
+  companies: [
+    { name: 'JSW One Finance' },
+    { name: 'JSW One Platforms', featured: true },
+    { name: 'Marsh', featured: true },
+    { name: 'AutoO2' },
+    { name: 'VIP Industries' },
+  ],
+  pillars: [
+    {
+      label: 'What I do',
+      body: "Take an ambiguous problem, design the system around it, then drive adoption until it's second nature.",
+    },
+    {
+      label: "What I'm doing now",
+      body: 'Leading AI as one of the product groups at JSW One Finance — genuinely at the core of industry-first lending products.',
+    },
+    {
+      label: 'How I think',
+      body: 'A systems thinker first — mechanical engineering and physics, then an MBA. Structure before opinion.',
+    },
+  ],
+};
+
 // The library's two books, each rendered as a cover card on the Books index.
 const BOOKS = [
   {
@@ -395,15 +425,7 @@ async function build() {
     copyNestedAssetDirs(spaceDir, path.join(DIST_DIR, spaceId));
   }
 
-  const booksSpace = spaceData.find((s) => s.spaceId === 'books');
-  const forwardDeployedChapters = booksSpace
-    ? booksSpace.pages.filter(
-        (p) => p.breadcrumb[0]?.title === 'Forward-deployed' && p.sourcePath.includes('/chapters/'),
-      )
-    : [];
-  const chapters = forwardDeployedChapters.map((p, i) => ({ n: i + 1, title: p.title, href: p.href, part: '' }));
-
-  fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, chapters }));
+  fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0] }));
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
