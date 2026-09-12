@@ -123,6 +123,20 @@ img { max-width: 100%; }
 .fd-content :not(pre) > code { background: var(--rule-soft); padding: 2px 5px; font-size: 0.88em; }
 .fd-content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
 
+.fd-pf-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 36px 0 20px; }
+.fd-pf-filter { font-family: var(--sans); font-size: 12.5px; font-weight: 600; border: 1px solid var(--rule); background: var(--bg); color: var(--ink-2); padding: 6px 14px; cursor: pointer; }
+.fd-pf-filter.on { background: var(--ink); color: var(--inv); }
+.fd-pf-filter:hover:not(.on) { background: var(--rule-soft); }
+.fd-pf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); border: 1px solid var(--rule); }
+.fd-pf-card { padding: 20px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); color: var(--ink); transition: background .15s; }
+.fd-pf-card:hover { background: var(--rule-soft); text-decoration: none; }
+.fd-pf-card[hidden] { display: none; }
+.fd-pf-status { font-size: 10.5px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+.fd-pf-card h4 { font-size: 15px; font-weight: 700; margin: 10px 0 6px; }
+.fd-pf-card p { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; line-height: 1.5; }
+.fd-pf-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.fd-pf-tags span { font-size: 10.5px; font-weight: 600; border: 1px solid var(--rule-soft); padding: 2px 8px; color: var(--ink-3); }
+
 .fd-pagenav { display: flex; justify-content: space-between; gap: 16px; margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--rule); }
 .fd-pagenav a { flex: 1; padding: 13px 15px; border: 1px solid var(--rule); color: var(--ink); }
 .fd-pagenav a:hover { background: var(--ink); color: var(--inv); text-decoration: none; }

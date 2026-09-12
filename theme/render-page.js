@@ -227,6 +227,29 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
 </html>`;
 }
 
+// A filterable grid of product case studies, appended after the portfolio
+// space's own README prose — the tag filter is real JS, not decorative.
+export function renderProductGrid(products) {
+  const tags = Array.from(new Set(products.flatMap((p) => p.tags))).sort();
+  const filterBtns = ['All', ...tags]
+    .map((t, i) => `<button class="fd-pf-filter${i === 0 ? ' on' : ''}" data-tag="${escapeAttr(t)}">${escapeHtml(t)}</button>`)
+    .join('');
+  const cards = products
+    .map(
+      (p) => `
+        <a class="fd-pf-card" href="${p.href}" data-tags="${escapeAttr(p.tags.join('|'))}">
+          <span class="fd-pf-status">${escapeHtml(p.status)}</span>
+          <h4>${escapeHtml(p.title)}</h4>
+          <p>${escapeHtml(p.tagline)}</p>
+          <div class="fd-pf-tags">${p.tags.map((t) => `<span>${escapeHtml(t)}</span>`).join('')}</div>
+        </a>`,
+    )
+    .join('');
+  return `
+    <div class="fd-pf-filters" role="group" aria-label="Filter by tag">${filterBtns}</div>
+    <div class="fd-pf-grid" id="fdPfGrid">${cards}</div>`;
+}
+
 export function render404({ site }) {
   const canonicalUrl = site.baseUrl + '/404.html';
   return `<!doctype html>
