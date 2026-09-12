@@ -1,4 +1,4 @@
-# Forward-Deployed
+# Forward-deployed
 
 ### Putting engineers and AI inside the companies too slow to save themselves
 

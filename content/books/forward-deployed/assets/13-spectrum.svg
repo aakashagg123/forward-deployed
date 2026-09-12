@@ -59,7 +59,7 @@
 <text class="t dim" x="604" y="452">After engagement:</text>
 <text class="t dim" x="604" y="472">re-insourcing project</text>
 
-<!-- Model 4: Forward-Deployed (highlighted) -->
+<!-- Model 4: Forward-deployed (highlighted) -->
 <rect x="834" y="248" width="230" height="240" rx="8" fill="#B8952B" opacity="0.10" stroke="#B8952B" stroke-width="1.5"/>
 <text class="t lbl" x="949" y="280" text-anchor="middle" fill="#B8952B">Forward-deployed</text>
 <text class="t dim" x="949" y="300" text-anchor="middle">Embedded operator,</text>

@@ -42,7 +42,7 @@ function renderNavTree(root, currentHref) {
 
 // Drops a trailing ancestor that just repeats the page's own title — e.g. a
 // book's index page nested under a heading of the same name would otherwise
-// show "Forward-Deployed / Forward-Deployed" in both the visible breadcrumb
+// show "Forward-deployed / Forward-deployed" in both the visible breadcrumb
 // and the BreadcrumbList structured data.
 function dedupeBreadcrumb(breadcrumb, title) {
   if (!breadcrumb.length) return breadcrumb;

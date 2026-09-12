@@ -27,7 +27,7 @@ const SPACE_META = {
 // The library's two books, each rendered as a cover card on the Books index.
 const BOOKS = [
   {
-    title: 'Forward-Deployed',
+    title: 'Forward-deployed',
     tagline: 'Why transformation fails inside incumbents, and the operating model that fixes it.',
     cover: '/books/forward-deployed/covers/cover.jpg',
     href: '/books/forward-deployed/README.html',
@@ -311,7 +311,7 @@ async function build() {
   const booksSpace = spaceData.find((s) => s.spaceId === 'books');
   const forwardDeployedChapters = booksSpace
     ? booksSpace.pages.filter(
-        (p) => p.breadcrumb[0]?.title === 'Forward-Deployed' && p.sourcePath.includes('/chapters/'),
+        (p) => p.breadcrumb[0]?.title === 'Forward-deployed' && p.sourcePath.includes('/chapters/'),
       )
     : [];
   const chapters = forwardDeployedChapters.map((p, i) => ({ n: i + 1, title: p.title, href: p.href, part: '' }));
