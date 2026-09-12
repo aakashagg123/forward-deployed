@@ -2,7 +2,7 @@
 
 *Commercial lending, 100% digital, lead to disbursement.*
 
-**Role:** AGM Product · **Company:** JSW One Finance (JOFL) · **Timeline:** November 2024 – present
+**Role:** AGM product · **Company:** JSW One Finance (JOFL) · **Timeline:** November 2024 – present
 
 ## Overview
 

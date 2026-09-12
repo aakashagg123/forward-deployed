@@ -2,7 +2,7 @@
 
 *Voluntary employee benefits and embedded insurance, shipped for household names.*
 
-**Role:** Lead Product Manager · **Company:** Marsh · **Timeline:** November 2019 – November 2021
+**Role:** Lead product manager · **Company:** Marsh · **Timeline:** November 2019 – November 2021
 
 ## Overview
 
