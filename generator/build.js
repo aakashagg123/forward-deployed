@@ -212,7 +212,12 @@ async function build() {
   const chapters = manuscriptSpace
     ? manuscriptSpace.pages
         .filter((p) => p.sourcePath !== 'README.md')
-        .map((p, i) => ({ n: i + 1, title: p.title }))
+        .map((p, i) => {
+          const heading = p.breadcrumb[p.breadcrumb.length - 1]?.title || '';
+          const partMatch = heading.match(/^Part\s+\S+/i);
+          const part = partMatch ? partMatch[0][0].toUpperCase() + partMatch[0].slice(1).toLowerCase() : '';
+          return { n: i + 1, title: p.title, href: p.href, part };
+        })
     : [];
 
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, chapters }));
