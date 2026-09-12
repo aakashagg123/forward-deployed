@@ -81,7 +81,7 @@ function renderOutline(outline) {
 
 // Shared <head> block: title, description, canonical, Open Graph, Twitter
 // card, favicon, and any JSON-LD blocks the caller supplies.
-function renderHead({ site, title, description, canonicalUrl, image, jsonLd }) {
+function renderHead({ site, title, description, canonicalUrl, image, jsonLd, markdownUrl }) {
   const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
   const ld = (jsonLd || [])
     .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
@@ -93,7 +93,7 @@ function renderHead({ site, title, description, canonicalUrl, image, jsonLd }) {
 <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
 <link rel="icon" href="/mark-64.png">
 <link rel="apple-touch-icon" href="/mark-180.png">
-<meta property="og:type" content="website">
+${markdownUrl ? `<link rel="alternate" type="text/markdown" href="${escapeAttr(markdownUrl)}">\n` : ''}<meta property="og:type" content="website">
 <meta property="og:site_name" content="${escapeAttr(site.title)}">
 <meta property="og:title" content="${escapeAttr(fullTitle)}">
 <meta property="og:description" content="${escapeAttr(description)}">
@@ -107,7 +107,7 @@ function renderHead({ site, title, description, canonicalUrl, image, jsonLd }) {
 ${ld}`;
 }
 
-export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description }) {
+export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description, extraJsonLd, markdownUrl }) {
   const pagenav = `
     <nav class="fd-pagenav">
       ${prev ? `<a class="fd-pn-prev" href="${prev.href}"><span class="fd-pn-label">Previous</span>${escapeHtml(prev.title)}</a>` : '<span></span>'}
@@ -136,12 +136,13 @@ export function renderPage({ site, space, spaces, navTree, page, prev, next, con
       url: canonicalUrl,
       isPartOf: { '@type': 'WebSite', name: site.title, url: site.baseUrl },
     },
+    ...(extraJsonLd || []),
   ];
 
   return `<!doctype html>
 <html lang="en">
 <head>
-${renderHead({ site, title: page.title, description, canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd })}
+${renderHead({ site, title: page.title, description, canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd, markdownUrl })}
 </head>
 <body>
 <header class="fd-header">
@@ -208,6 +209,7 @@ export function renderLanding({ site, spaces, chapters }) {
       name: site.title,
       url: site.baseUrl,
       description: site.thesis,
+      author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about/README.html` },
     },
   ];
 
