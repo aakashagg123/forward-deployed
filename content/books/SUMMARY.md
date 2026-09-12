@@ -2,9 +2,9 @@
 
 - [Books](README.md)
 
-## Forward-Deployed
+## Forward-deployed
 
-- [Forward-Deployed](forward-deployed/README.md)
+- [Forward-deployed](forward-deployed/README.md)
 - [The transformation office is where change goes to die](forward-deployed/chapters/01-the-transformation-office.md)
 - [The adoption gap](forward-deployed/chapters/02-the-adoption-gap.md)
 - [Notes from inside a giant](forward-deployed/chapters/03-notes-from-inside-a-giant.md)
@@ -22,7 +22,7 @@
 - [The country-sized opportunity](forward-deployed/chapters/15-the-country-sized-opportunity.md)
 - [What you build from here](forward-deployed/chapters/16-what-you-build-from-here.md)
 
-## Prompt Engineering Guide for Product Managers
+## Prompt engineering guide for product managers
 
 - [Prompt engineering guide for product managers](prompt-engineering-guide/README.md)
 - [1. Foundational concepts of prompt engineering](prompt-engineering-guide/chapters/01-foundational-concepts.md)

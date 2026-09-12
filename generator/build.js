@@ -13,6 +13,7 @@ const DIST_DIR = path.join(ROOT, 'dist');
 const SITE = {
   title: 'Forward deployed',
   baseUrl: 'https://forward-deployed.in',
+  author: 'Aakash Aggarwal',
   thesis:
     "The unit of change is not a deck — it's a small team of engineers and AI placed at the point of the problem, with the authority to rewire the workflow rather than recommend one.",
 };
@@ -27,7 +28,7 @@ const SPACE_META = {
 // The library's two books, each rendered as a cover card on the Books index.
 const BOOKS = [
   {
-    title: 'Forward-Deployed',
+    title: 'Forward-deployed',
     tagline: 'Why transformation fails inside incumbents, and the operating model that fixes it.',
     cover: '/books/forward-deployed/covers/cover.jpg',
     href: '/books/forward-deployed/README.html',
@@ -211,6 +212,84 @@ function extractDescription(raw, fallback) {
   return fallback;
 }
 
+const KINDLE_URL = 'https://amzn.in/d/04Wv46eH';
+
+// Per-page structured data beyond the generic BreadcrumbList/Article every
+// page already gets — a Person entity for the About page, and a Book entity
+// for each book's own index, so an LLM or search engine can resolve "who is
+// this site about" and "what are these books" directly from the markup.
+function buildExtraJsonLd(spaceId, page) {
+  if (spaceId === 'about' && page.sourcePath === 'README.md') {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: SITE.author,
+        url: SITE.baseUrl + page.href,
+        jobTitle: 'Product leader',
+        worksFor: { '@type': 'Organization', name: 'JSW One Finance' },
+        // LinkedIn/other profile URLs go in sameAs once confirmed.
+      },
+    ];
+  }
+  if (spaceId === 'books' && page.sourcePath === 'forward-deployed/README.md') {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Book',
+        name: 'Forward-deployed',
+        author: { '@type': 'Person', name: SITE.author },
+        url: SITE.baseUrl + page.href,
+        bookFormat: 'https://schema.org/EBook',
+        inLanguage: 'en',
+        isAccessibleForFree: true,
+      },
+    ];
+  }
+  if (spaceId === 'books' && page.sourcePath === 'prompt-engineering-guide/README.md') {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Book',
+        name: 'Prompt engineering guide for product managers',
+        author: { '@type': 'Person', name: SITE.author },
+        url: SITE.baseUrl + page.href,
+        bookFormat: 'https://schema.org/EBook',
+        inLanguage: 'en',
+        datePublished: '2025-05-05',
+        isAccessibleForFree: true,
+        sameAs: [KINDLE_URL],
+      },
+    ];
+  }
+  return [];
+}
+
+// llms.txt (the llmstxt.org convention): a compact, curated map of the site
+// for an AI agent to fetch before crawling — plus llms-full.txt, the same
+// map with every page's raw markdown inlined for one-shot ingestion.
+function writeLlmsTxt({ spaces, spaceData }) {
+  const lines = [`# ${SITE.title}`, '', `> ${SITE.thesis}`, ''];
+  const fullParts = [`# ${SITE.title}\n\n> ${SITE.thesis}\n`];
+
+  for (const space of spaces) {
+    const data = spaceData.find((s) => s.spaceId === space.id);
+    lines.push(`## ${space.title}`);
+    fullParts.push(`\n## ${space.title}\n`);
+    for (const page of data.pages) {
+      if (page.external) continue;
+      lines.push(`- [${page.title}](${SITE.baseUrl}${page.href}): ${page.description || space.blurb}`);
+      const abs = path.join(data.spaceDir, page.sourcePath);
+      const raw = fs.readFileSync(abs, 'utf8');
+      fullParts.push(`\n### ${SITE.baseUrl}${page.href}\n\n${raw}\n`);
+    }
+    lines.push('');
+  }
+
+  fs.writeFileSync(path.join(DIST_DIR, 'llms.txt'), lines.join('\n'));
+  fs.writeFileSync(path.join(DIST_DIR, 'llms-full.txt'), fullParts.join('\n'));
+}
+
 async function build() {
   rmrf(DIST_DIR);
   fs.mkdirSync(DIST_DIR, { recursive: true });
@@ -283,8 +362,11 @@ async function build() {
         contentHtml += renderBookGrid(BOOKS);
       }
       const description = extractDescription(raw, SITE.thesis);
+      page.description = description;
 
       const { prev, next } = prevNext.get(i);
+      const markdownUrl = page.href.replace(/\.html$/, '.md');
+      const extraJsonLd = buildExtraJsonLd(spaceId, page);
 
       const html = renderPage({
         site: SITE,
@@ -297,11 +379,16 @@ async function build() {
         contentHtml,
         outline,
         description,
+        extraJsonLd,
+        markdownUrl,
       });
 
       const outPath = path.join(DIST_DIR, page.href.replace(/^\//, ''));
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html);
+      // A clean markdown mirror of every page, for agents/crawlers that
+      // prefer fetching source content over HTML-with-chrome.
+      fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), raw);
       sitemapUrls.push({ loc: SITE.baseUrl + page.href });
     }
 
@@ -311,7 +398,7 @@ async function build() {
   const booksSpace = spaceData.find((s) => s.spaceId === 'books');
   const forwardDeployedChapters = booksSpace
     ? booksSpace.pages.filter(
-        (p) => p.breadcrumb[0]?.title === 'Forward-Deployed' && p.sourcePath.includes('/chapters/'),
+        (p) => p.breadcrumb[0]?.title === 'Forward-deployed' && p.sourcePath.includes('/chapters/'),
       )
     : [];
   const chapters = forwardDeployedChapters.map((p, i) => ({ n: i + 1, title: p.title, href: p.href, part: '' }));
@@ -326,12 +413,32 @@ ${sitemapUrls.map((u) => `  <url><loc>${u.loc}</loc></url>`).join('\n')}
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemap);
 
+  // Named groups (rather than relying on "*" alone) for the crawlers behind
+  // ChatGPT, Claude, Perplexity, and other AI tools — explicit allow, so
+  // access here is a stated choice, not an accident of a wildcard.
+  const AI_CRAWLERS = [
+    'GPTBot',
+    'ChatGPT-User',
+    'OAI-SearchBot',
+    'ClaudeBot',
+    'Claude-User',
+    'anthropic-ai',
+    'PerplexityBot',
+    'Perplexity-User',
+    'Google-Extended',
+    'CCBot',
+    'Applebot-Extended',
+  ];
   const robots = `User-agent: *
 Allow: /
+
+${AI_CRAWLERS.map((ua) => `User-agent: ${ua}\nAllow: /`).join('\n\n')}
 
 Sitemap: ${SITE.baseUrl}/sitemap.xml
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'robots.txt'), robots);
+
+  writeLlmsTxt({ spaces, spaceData });
 
   copyDir(THEME_STATIC_DIR, DIST_DIR);
 

@@ -137,15 +137,19 @@ img { max-width: 100%; }
 .fd-pf-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .fd-pf-tags span { font-size: 10.5px; font-weight: 600; border: 1px solid var(--rule-soft); padding: 2px 8px; color: var(--ink-3); }
 
-.fd-book-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 36px 0; }
-.fd-book-card { display: flex; gap: 18px; padding: 20px; background: var(--bg); color: var(--ink); transition: background .15s; }
+.fd-book-grid { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 36px 0; }
+.fd-book-card { display: flex; gap: 28px; align-items: flex-start; padding: 28px; background: var(--bg); color: var(--ink); transition: background .15s; }
 .fd-book-card:hover { background: var(--rule-soft); text-decoration: none; }
-.fd-book-cover { flex: none; width: 84px; aspect-ratio: 2 / 3; overflow: hidden; border: 1px solid var(--rule); }
+.fd-book-cover { flex: none; width: 160px; aspect-ratio: 2 / 3; overflow: hidden; border: 1px solid var(--rule); }
 .fd-book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.fd-book-info { min-width: 0; }
+.fd-book-info { min-width: 0; padding-top: 4px; }
 .fd-book-status { font-size: 10.5px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
-.fd-book-info h4 { font-size: 15px; font-weight: 700; margin: 8px 0 6px; }
-.fd-book-info p { font-size: 13px; color: var(--ink-2); margin: 0; line-height: 1.5; }
+.fd-book-info h4 { font-size: 20px; font-weight: 700; margin: 10px 0 8px; }
+.fd-book-info p { font-size: 14px; color: var(--ink-2); margin: 0; line-height: 1.6; max-width: 52ch; }
+@media (max-width: 560px) {
+  .fd-book-card { flex-direction: column; gap: 16px; }
+  .fd-book-cover { width: 120px; }
+}
 
 .fd-pagenav { display: flex; justify-content: space-between; gap: 16px; margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--rule); }
 .fd-pagenav a { flex: 1; padding: 13px 15px; border: 1px solid var(--rule); color: var(--ink); }
