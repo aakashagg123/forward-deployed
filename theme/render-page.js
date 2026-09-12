@@ -162,21 +162,31 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 }
 
 export function renderLanding({ site, spaces, chapters }) {
-  const marqueeItems = chapters
-    .map((c) => `<span><b>${String(c.n).padStart(2, '0')}</b> ${escapeHtml(c.title)}</span>`)
-    .join('');
-  const marquee = marqueeItems + marqueeItems;
-
-  const cards = spaces
+  const manuscripts = spaces.find((s) => s.id === 'manuscripts');
+  const preview = chapters.slice(0, 4);
+  const rows = preview
     .map(
-      (s) => `
-        <a class="fd-cat-card" href="/${s.id}/${s.indexHref}">
-          <h4>${escapeHtml(s.title)}</h4>
-          <p>${escapeHtml(s.blurb)}</p>
-          <span class="fd-cat-count">${s.pageCount} page${s.pageCount === 1 ? '' : 's'}${s.status ? ` · ${escapeHtml(s.status)}` : ''}</span>
+      (c) => `
+        <a class="fd-ch-row" href="${c.href}">
+          <span class="fd-ch-num">${String(c.n).padStart(2, '0')}</span>
+          <span class="fd-ch-title">${escapeHtml(c.title)}</span>
+          <span class="fd-ch-part">${escapeHtml(c.part)}</span>
         </a>`,
     )
     .join('');
+
+  const spaceRows = spaces
+    .map(
+      (s) => `
+        <a href="/${s.id}/${s.indexHref}">
+          <span class="fd-sp-n">${s.pageCount} page${s.pageCount === 1 ? '' : 's'}${s.status ? ` · ${escapeHtml(s.status)}` : ''}</span>
+          <h4>${escapeHtml(s.title)}</h4>
+          <p>${escapeHtml(s.blurb)}</p>
+        </a>`,
+    )
+    .join('');
+
+  const typedLine = 'They die between the deck and Tuesday.';
 
   const jsonLd = [
     {
@@ -199,17 +209,18 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle theme">Aa</button>
 </header>
 <div class="wrap">
-  <div class="fd-hero" id="fdHero">
-    <div class="fd-torch" id="fdTorch"></div>
-    <div class="fd-hero-inner">
-      <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</p>
-      <h1 class="fd-hero-title">A field manual for putting engineers where the work actually is.</h1>
-      <p class="fd-hero-lede">${escapeHtml(site.thesis)}</p>
-      <p class="fd-hero-hint">Move your cursor over this page.</p>
+  <div class="fd-hero">
+    <div class="fd-glow"></div>
+    <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</p>
+    <h1 class="fd-hero-title" id="fdTyped" data-text="${escapeAttr(typedLine)}">${escapeHtml(typedLine)}<span class="fd-cursor" aria-hidden="true"></span></h1>
+    <p class="fd-hero-lede">${escapeHtml(site.thesis)}</p>
+    <div class="fd-cta-row">
+      ${manuscripts ? `<a class="fd-btn fd-btn-solid" href="/${manuscripts.id}/${manuscripts.indexHref}">Read the manuscript</a>` : ''}
+      <a class="fd-btn" href="#spaces">Browse all spaces</a>
     </div>
+    <div class="fd-ch-list">${rows}</div>
   </div>
-  <div class="fd-marquee-wrap"><div class="fd-marquee">${marquee}</div></div>
-  <div class="fd-cat-grid">${cards}</div>
+  <div class="fd-spaces-row" id="spaces">${spaceRows}</div>
 </div>
 <script src="/theme.js"></script>
 </body>
