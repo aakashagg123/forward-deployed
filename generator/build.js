@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding, render404, renderProductGrid } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -18,11 +18,29 @@ const SITE = {
 };
 
 const SPACE_META = {
-  manuscripts: { blurb: 'Forward-deployed — 16 chapters, four parts, one thesis.', status: 'Draft' },
+  books: { title: 'Books', blurb: 'A small digital library — two long-reads, free to read here.' },
   about: { title: 'About me', blurb: 'Who I am, what I do, and what I’m building right now.' },
   portfolio: { title: 'Portfolio & experience', blurb: 'A decade of shipping — one founder run, three product leadership roles.' },
   musings: { title: 'Musings & side projects', blurb: 'Running notes on AI, product ideas, and prototypes worth poking at.' },
 };
+
+// The library's two books, each rendered as a cover card on the Books index.
+const BOOKS = [
+  {
+    title: 'Forward-Deployed',
+    tagline: 'Why transformation fails inside incumbents, and the operating model that fixes it.',
+    cover: '/books/forward-deployed/covers/cover.jpg',
+    href: '/books/forward-deployed/README.html',
+    status: 'Draft · 16 chapters',
+  },
+  {
+    title: 'Prompt engineering guide for product managers',
+    tagline: 'A practical guidebook for turning AI into daily leverage as a product leader.',
+    cover: '/books/prompt-engineering-guide/covers/cover.jpg',
+    href: '/books/prompt-engineering-guide/README.html',
+    status: 'Published · 10 chapters',
+  },
+];
 
 // Case studies on the Portfolio & experience index page get a real,
 // filterable grid — status and body copy per case study still fill in over
@@ -76,6 +94,45 @@ function copyDir(src, dest) {
     if (entry.isDirectory()) copyDir(s, d);
     else fs.copyFileSync(s, d);
   }
+}
+
+// Recursively finds every "assets" or "covers" folder under a space
+// (a book subfolder may nest its own, rather than one living at the space
+// root) and mirrors each to the same relative path in dist.
+function copyNestedAssetDirs(spaceDir, spaceDistDir, relDir = '') {
+  const dir = path.join(spaceDir, relDir);
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const rel = path.join(relDir, entry.name);
+    if (entry.name === 'assets' || entry.name === 'covers') {
+      copyDir(path.join(spaceDir, rel), path.join(spaceDistDir, rel));
+    } else {
+      copyNestedAssetDirs(spaceDir, spaceDistDir, rel);
+    }
+  }
+}
+
+// Groups pages by their top-level breadcrumb heading (e.g. each book in the
+// Books space) so prev/next navigation stays within one book instead of
+// running off the end of one into the start of the next.
+function computePrevNext(pages) {
+  const groups = new Map();
+  pages.forEach((page, i) => {
+    const key = page.breadcrumb[0]?.title || '';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(i);
+  });
+  const map = new Map();
+  for (const indices of groups.values()) {
+    indices.forEach((idx, pos) => {
+      map.set(idx, {
+        prev: pos > 0 ? pages[indices[pos - 1]] : null,
+        next: pos < indices.length - 1 ? pages[indices[pos + 1]] : null,
+      });
+    });
+  }
+  return map;
 }
 
 function discoverSpaces() {
@@ -211,6 +268,7 @@ async function build() {
   const sitemapUrls = [{ loc: SITE.baseUrl + '/' }];
 
   for (const { spaceId, spaceDir, tree, pages } of spaceData) {
+    const prevNext = computePrevNext(pages);
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i];
       if (page.external) continue;
@@ -221,10 +279,12 @@ async function build() {
       if (spaceId === 'portfolio' && page.sourcePath === 'README.md') {
         contentHtml += renderProductGrid(PRODUCTS);
       }
+      if (spaceId === 'books' && page.sourcePath === 'README.md') {
+        contentHtml += renderBookGrid(BOOKS);
+      }
       const description = extractDescription(raw, SITE.thesis);
 
-      const prev = i > 0 ? pages[i - 1] : null;
-      const next = i < pages.length - 1 ? pages[i + 1] : null;
+      const { prev, next } = prevNext.get(i);
 
       const html = renderPage({
         site: SITE,
@@ -245,20 +305,16 @@ async function build() {
       sitemapUrls.push({ loc: SITE.baseUrl + page.href });
     }
 
-    copyDir(path.join(spaceDir, 'assets'), path.join(DIST_DIR, spaceId, 'assets'));
+    copyNestedAssetDirs(spaceDir, path.join(DIST_DIR, spaceId));
   }
 
-  const manuscriptSpace = spaceData.find((s) => s.spaceId === 'manuscripts');
-  const chapters = manuscriptSpace
-    ? manuscriptSpace.pages
-        .filter((p) => p.sourcePath !== 'README.md')
-        .map((p, i) => {
-          const heading = p.breadcrumb[p.breadcrumb.length - 1]?.title || '';
-          const partMatch = heading.match(/^Part\s+\S+/i);
-          const part = partMatch ? partMatch[0][0].toUpperCase() + partMatch[0].slice(1).toLowerCase() : '';
-          return { n: i + 1, title: p.title, href: p.href, part };
-        })
+  const booksSpace = spaceData.find((s) => s.spaceId === 'books');
+  const forwardDeployedChapters = booksSpace
+    ? booksSpace.pages.filter(
+        (p) => p.breadcrumb[0]?.title === 'Forward-Deployed' && p.sourcePath.includes('/chapters/'),
+      )
     : [];
+  const chapters = forwardDeployedChapters.map((p, i) => ({ n: i + 1, title: p.title, href: p.href, part: '' }));
 
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, chapters }));
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));

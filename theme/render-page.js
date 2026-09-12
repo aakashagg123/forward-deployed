@@ -162,7 +162,7 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 }
 
 export function renderLanding({ site, spaces, chapters }) {
-  const manuscripts = spaces.find((s) => s.id === 'manuscripts');
+  const books = spaces.find((s) => s.id === 'books');
   const preview = chapters.slice(0, 4);
   const rows = preview
     .map(
@@ -215,7 +215,7 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
     <h1 class="fd-hero-title" id="fdTyped" data-text="${escapeAttr(typedLine)}">${escapeHtml(typedLine)}<span class="fd-cursor" aria-hidden="true"></span></h1>
     <p class="fd-hero-lede">${escapeHtml(site.thesis)}</p>
     <div class="fd-cta-row">
-      ${manuscripts ? `<a class="fd-btn fd-btn-solid" href="/${manuscripts.id}/${manuscripts.indexHref}">Read the manuscript</a>` : ''}
+      ${books ? `<a class="fd-btn fd-btn-solid" href="/${books.id}/${books.indexHref}">Read the books</a>` : ''}
       <a class="fd-btn" href="#spaces">Browse all spaces</a>
     </div>
     <div class="fd-ch-list">${rows}</div>
@@ -248,6 +248,25 @@ export function renderProductGrid(products) {
   return `
     <div class="fd-pf-filters" role="group" aria-label="Filter by tag">${filterBtns}</div>
     <div class="fd-pf-grid" id="fdPfGrid">${cards}</div>`;
+}
+
+// The Books space's own digital-library grid — a cover, title, tagline and
+// status per book, appended after the space's README prose.
+export function renderBookGrid(books) {
+  const cards = books
+    .map(
+      (b) => `
+        <a class="fd-book-card" href="${b.href}">
+          <span class="fd-book-cover"><img src="${b.cover}" alt="Cover of ${escapeAttr(b.title)}" loading="lazy"></span>
+          <span class="fd-book-info">
+            <span class="fd-book-status">${escapeHtml(b.status)}</span>
+            <h4>${escapeHtml(b.title)}</h4>
+            <p>${escapeHtml(b.tagline)}</p>
+          </span>
+        </a>`,
+    )
+    .join('');
+  return `<div class="fd-book-grid">${cards}</div>`;
 }
 
 export function render404({ site }) {
