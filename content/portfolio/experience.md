@@ -38,11 +38,14 @@ Owned brand revitalization, identity, and launch for Footloose, a D2C brand insi
 - Pioneered a dedicated Footloose brand store on Amazon
 - Hit $100,000 in primary sales within 60 days of launch, then grew organic sales on Amazon by 25% over three months through SKU and content optimisation
 
-## AutoO2 — co-founder, chief product officer (June 2015 – April 2018)
+## AutoO2 — co-founder, chief product officer (June 2015 – April 2018) — entrepreneurial stint
 
-Co-founded and served as CPO of AutoO2 (Carmenta Solutions), conceptualising, designing, building, and launching AutoO2 ARAS — a B2B claims SaaS platform for motor insurers — and AutoO2 Claims Cloud, which powered motor and own-damage insurance workflows through a virtual, self-inspection model.
+Co-founded and served as CPO of AutoO2 (Carmenta Solutions) — the founding stint before the corporate roles, built from zero rather than inherited. The vision: a connected digital post-sales vehicle care technology enterprise, running two product lines side by side — a consumer marketplace for vehicle servicing and repair, and an enterprise B2B claims stack sold to motor insurers, brokers, and fleet operators.
 
-- Onboarded 500+ network workshops across Delhi, Ghaziabad, Mumbai, Surat, Ahmedabad, and Vadodara within eight months of launch
+- Conceptualised, designed, built, and launched AutoO2 ARAS (our core claims SaaS) and AutoO2 Claims Cloud, which replaced manual surveyor visits with a virtual, self-inspection claims model for motor and own-damage claims
+- Extended Claims Cloud into an enterprise suite — a service-management web app and an API — so insurers and brokers could integrate AutoO2 directly into their own claims systems
+- Designed a repair-auction system: network workshops bid on minor-damage claim jobs (under ₹20,000), a reverse-auction mechanism that created a self-correcting, competitive cost-control layer instead of fixed pricing
+- Recruited and rated the 500+ workshop network itself, giving insurers a vetted panel and fleet operators guaranteed service coverage across Delhi, Ghaziabad, Mumbai, Surat, Ahmedabad, and Vadodara — all within eight months of launch
 - Raised $100,000+ in pre-seed capital from angels and CXOs
 - Secured exclusive digital claims mandates from two insurance companies for touchless claim servicing
 - Won an equity-free grant of ₹10,00,000 from Mumbai Fintech, a Government of Maharashtra initiative, in its second grants cohort

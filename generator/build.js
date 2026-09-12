@@ -37,7 +37,6 @@ const LANDING = {
     { name: 'JSW One Platforms', featured: true },
     { name: 'Marsh', featured: true },
     { name: 'AutoO2' },
-    { name: 'VIP Industries' },
   ],
   pillars: [
     {
