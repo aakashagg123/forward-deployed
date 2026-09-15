@@ -4,8 +4,6 @@
 
 **Role:** Lead product manager · **Company:** Marsh · **Timeline:** November 2019 – November 2021
 
-## Overview
-
 I was lead product manager and roadmap owner for two platforms: BenefitsCircle, a voluntary employee benefits product, and QoverPro, Marsh's embedded insurance platform — owning the stack and the UI/UX of BenefitsCircle's customer-facing e-insurance website.
 
 ## What I built

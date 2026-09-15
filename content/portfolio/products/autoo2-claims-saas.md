@@ -4,8 +4,6 @@
 
 **Role:** Co-founder & chief product officer · **Company:** AutoO2 (Carmenta Solutions) · **Timeline:** June 2015 – April 2018
 
-## Overview
-
 AutoO2 (operated as Carmenta Solutions Private Limited) was the entrepreneurial stint before the corporate roles: I co-founded the company from zero and served as CPO, conceptualising, designing, building, and launching the product line myself rather than inheriting a team or a roadmap. The vision was to become a connected digital post-sales vehicle care technology enterprise — one platform serving both individual vehicle owners and the B2B insurance ecosystem around them.
 
 The business ran two product lines side by side:
