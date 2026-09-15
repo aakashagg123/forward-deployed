@@ -162,7 +162,7 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 <body>
 <header class="fd-header">
   <button class="fd-mobile-toggle" id="fdMobileToggle" aria-label="Toggle navigation">☰</button>
-  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</a>
+  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
   <a class="fd-toplink" href="/">Home</a>
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
 </header>
@@ -244,7 +244,7 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
 </head>
 <body class="fd-landing-body">
 <header class="fd-header fd-header-landing">
-  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</a>
+  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
 </header>
 <div class="wrap">
@@ -381,7 +381,7 @@ ${renderHead({ site, title: 'Page not found', description: 'This page does not e
 </head>
 <body class="fd-landing-body">
 <header class="fd-header fd-header-landing">
-  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.title)}</a>
+  <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
 </header>
 <div class="wrap" style="padding-block:120px;text-align:left;">
   <h1 style="font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-.02em;margin:0 0 16px;">Page not found.</h1>
