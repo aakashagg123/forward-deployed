@@ -4,8 +4,6 @@
 
 **Role:** SPM · **Company:** JSW One Platforms · **Timeline:** November 2021 – April 2024
 
-## Overview
-
 JSW One MSME (jswonemsme.com) is a B2B marketplace that lets MSMEs purchase industrial supplies with embedded credit. I led product and strategy for the platform, and personally designed its most load-bearing piece: the booking core.
 
 ## What I built

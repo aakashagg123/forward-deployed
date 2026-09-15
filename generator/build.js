@@ -11,7 +11,7 @@ const THEME_STATIC_DIR = path.join(ROOT, 'theme', 'static');
 const DIST_DIR = path.join(ROOT, 'dist');
 
 const SITE = {
-  title: 'Forward deployed',
+  title: 'Product leader & builder, working where AI, fintech, and real-world success meet',
   baseUrl: 'https://forward-deployed.in',
   author: 'Aakash Aggarwal',
   thesis:

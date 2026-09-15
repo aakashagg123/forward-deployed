@@ -4,8 +4,6 @@
 
 **Role:** SPM (AI) · **Company:** JSW One Finance (JOFL) · **Timeline:** November 2024 – present
 
-## Overview
-
 JOFL is a digital-first NBFC and wholly owned subsidiary of JSW One Platforms, built to serve the credit needs of India's MSME ecosystem. I lead the lending origination (LOS), CRM, and AI charter as one of the earliest product hires on the team — and, distinctly, I own the operating model for *how* the team builds, not just the roadmap for what gets built.
 
 ## What I built
