@@ -106,7 +106,7 @@ img { max-width: 100%; }
 .fd-nav a:hover { background: var(--rule-soft); text-decoration: none; }
 .fd-nav a.active { background: var(--ink); color: var(--inv); font-weight: 600; }
 
-.fd-main { flex: 1; min-width: 0; padding: 36px 44px 70px; max-width: 760px; }
+.fd-main { flex: 1; min-width: 0; padding: 36px 44px 70px; max-width: 960px; }
 .fd-breadcrumb { font-size: 12.5px; color: var(--ink-3); margin: 0 0 20px; }
 .fd-breadcrumb a { color: var(--ink-3); }
 
