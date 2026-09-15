@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 360" width="1600" height="360" role="img" aria-label="How the OCC workflow moves an opportunity to a paid order">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:2.8px;fill:#8A8A8A}
+.h{font-size:26px;font-weight:700;fill:#000000}
+.step-lbl{font-size:12.5px;font-weight:700;letter-spacing:1.2px;fill:#000000}
+.step-n{font-size:12px;font-weight:700;fill:#8A8A8A}
+.note{font-size:12.5px;fill:#4A4A4A}
+</style>
+<rect width="1600" height="360" style="fill:#FFFFFF"/>
+<text class="t kicker" x="40" y="48">THE OCC WORKFLOW</text>
+<text class="t h" x="40" y="88">From opportunity to a synced, paid order — the checkout core.</text>
+<line x1="40" y1="110" x2="1560" y2="110" stroke="#D8D8D8"/>
+
+<g>
+  <!-- Step 1 -->
+  <rect x="40" y="160" width="224" height="140" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="62" y="190">01</text>
+  <text class="t step-lbl" x="62" y="216">OPPORTUNITY</text>
+  <text class="t step-lbl" x="62" y="232">CREATED</text>
+  <text class="t note" x="62" y="256">Logged in Salesforce</text>
+  <text class="t note" x="62" y="272">with status 'New'</text>
+
+  <line x1="264" y1="230" x2="291" y2="230" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="291,224 299,230 291,236" style="fill:#000000"/>
+
+  <!-- Step 2 -->
+  <rect x="299" y="160" width="224" height="140" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="321" y="190">02</text>
+  <text class="t step-lbl" x="321" y="216">PRICING &amp;</text>
+  <text class="t step-lbl" x="321" y="232">SELLER PI</text>
+  <text class="t note" x="321" y="256">Category team sources</text>
+  <text class="t note" x="321" y="272">SKU pricing; seller</text>
+  <text class="t note" x="321" y="288">finalises quote on PI</text>
+
+  <line x1="523" y1="230" x2="550" y2="230" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="550,224 558,230 550,236" style="fill:#000000"/>
+
+  <!-- Step 3 -->
+  <rect x="558" y="160" width="224" height="140" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="580" y="190">03</text>
+  <text class="t step-lbl" x="580" y="216">CART</text>
+  <text class="t step-lbl" x="580" y="232">CREATED</text>
+  <text class="t note" x="580" y="256">OCC workflow creates</text>
+  <text class="t note" x="580" y="272">cart on jswonemsme.com</text>
+
+  <line x1="782" y1="230" x2="809" y2="230" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="809,224 817,230 809,236" style="fill:#000000"/>
+
+  <!-- Step 4 -->
+  <rect x="817" y="160" width="224" height="140" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="839" y="190">04</text>
+  <text class="t step-lbl" x="839" y="216">ORDER</text>
+  <text class="t step-lbl" x="839" y="232">PLACED</text>
+  <text class="t note" x="839" y="256">Customer checks out;</text>
+  <text class="t note" x="839" y="272">order synced to OMS</text>
+  <text class="t note" x="839" y="288">with 'placed' status</text>
+
+  <line x1="1041" y1="230" x2="1068" y2="230" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="1068,224 1076,230 1068,236" style="fill:#000000"/>
+
+  <!-- Step 5 -->
+  <rect x="1076" y="160" width="224" height="140" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="1098" y="190">05</text>
+  <text class="t step-lbl" x="1098" y="216">PAYMENT</text>
+  <text class="t step-lbl" x="1098" y="232">SETTLED</text>
+  <text class="t note" x="1098" y="256">NEFT/RTGS or netbanking;</text>
+  <text class="t note" x="1098" y="272">ledger auto-adjusts</text>
+  <text class="t note" x="1098" y="288">against cart amount</text>
+
+  <line x1="1300" y1="230" x2="1327" y2="230" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="1327,224 1335,230 1327,236" style="fill:#000000"/>
+
+  <!-- Step 6 -->
+  <rect x="1335" y="160" width="224" height="140" style="fill:#000000"/>
+  <text class="t step-n" x="1357" y="190" style="fill:#8A8A8A">06</text>
+  <text class="t step-lbl" x="1357" y="216" style="fill:#FFFFFF">OPPORTUNITY</text>
+  <text class="t step-lbl" x="1357" y="232" style="fill:#FFFFFF">CLOSED</text>
+  <text class="t note" x="1357" y="256" style="fill:#D8D8D8">SF syncs order status</text>
+  <text class="t note" x="1357" y="272" style="fill:#D8D8D8">and closes opportunity</text>
+  <text class="t note" x="1357" y="288" style="fill:#D8D8D8">at 'success' stage</text>
+</g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 540" width="1400" height="540" role="img" aria-label="JSW One MSME's three product zones, from core to fulfillment">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:2.8px;fill:#8A8A8A}
+.h{font-size:26px;font-weight:700;fill:#000000}
+.chip{font-size:11px;font-weight:700;letter-spacing:1.4px;fill:#FFFFFF}
+.cell{font-size:13px;font-weight:600;fill:#000000}
+.zlbl{font-size:11px;font-weight:700;letter-spacing:1.4px;fill:#8A8A8A}
+.item{font-size:13px;fill:#4A4A4A}
+</style>
+<rect width="1400" height="540" style="fill:#FFFFFF"/>
+<text class="t kicker" x="40" y="48">THREE PRODUCT ZONES</text>
+<text class="t h" x="40" y="88">Everything radiates outward from one shared core.</text>
+<line x1="40" y1="110" x2="1360" y2="110" stroke="#D8D8D8"/>
+
+<!-- Concentric zones -->
+<rect x="440" y="140" width="520" height="230" rx="4" fill="none" stroke="#D8D8D8" stroke-width="1.4"/>
+<rect x="34" y="128" width="76" height="22" style="fill:#000000"/>
+<text class="t chip" x="72" y="143" text-anchor="middle">ZONE 3</text>
+<line x1="110" y1="139" x2="440" y2="150" stroke="#D8D8D8" stroke-width="1"/>
+
+<rect x="490" y="175" width="420" height="160" rx="4" fill="none" stroke="#B8B8B8" stroke-width="1.4"/>
+
+<rect x="560" y="210" width="280" height="95" rx="3" style="fill:#000000"/>
+<text class="t cell" x="700" y="238" text-anchor="middle" style="fill:#FFFFFF">Customer  —  Onboarding</text>
+<line x1="700" y1="248" x2="700" y2="278" stroke="#4A4A4A"/>
+<line x1="590" y1="263" x2="810" y2="263" stroke="#4A4A4A"/>
+<text class="t cell" x="700" y="290" text-anchor="middle" style="fill:#FFFFFF">Catalogue  —  Ledger</text>
+
+<!-- zone chip labels -->
+<rect x="656" y="163" width="88" height="20" style="fill:#4A4A4A"/>
+<text class="t chip" x="700" y="177" text-anchor="middle">ZONE 2</text>
+<rect x="656" y="196" width="88" height="20" style="fill:#000000"/>
+<text class="t chip" x="700" y="210" text-anchor="middle">ZONE 1</text>
+
+<!-- Legend rows -->
+<g>
+  <rect x="40" y="400" width="1320" height="1" style="fill:#EDEDED"/>
+
+  <text class="t zlbl" x="40" y="432">ZONE 1 — CORE</text>
+  <text class="t item" x="260" y="432">Customer · Onboarding · Catalogue · Ledger</text>
+
+  <text class="t zlbl" x="40" y="466">ZONE 2 — TRANSACTION</text>
+  <text class="t item" x="260" y="466">Opportunity · Pricing · Cart · Order · Credit · Cashbacks · Notifications</text>
+
+  <text class="t zlbl" x="40" y="500">ZONE 3 — FULFILLMENT &amp; OPS</text>
+  <text class="t item" x="260" y="500">Shipments · Documents · Payments · Payouts · Customer service · Reporting</text>
+</g>
+</svg>
