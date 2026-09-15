@@ -11,11 +11,10 @@ const THEME_STATIC_DIR = path.join(ROOT, 'theme', 'static');
 const DIST_DIR = path.join(ROOT, 'dist');
 
 const SITE = {
-  title: 'Product leader & builder, working where AI, fintech, and real-world success meet',
+  title: 'Forward-deployed',
   baseUrl: 'https://forward-deployed.in',
   author: 'Aakash Aggarwal',
-  thesis:
-    "The unit of change is not a deck — it's a small team of engineers and AI placed at the point of the problem, with the authority to rewire the workflow rather than recommend one.",
+  thesis: 'Product leader & builder, working where AI, fintech, and real-world success meet',
 };
 
 // Spaces excluded from the build entirely — content stays on disk, just not
