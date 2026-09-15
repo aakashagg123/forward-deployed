@@ -5,12 +5,15 @@
 Lead the lending origination platform, CRM, and AI charter at JSW One Finance (JOFL), a digital-first NBFC and wholly owned subsidiary of JSW One Platforms built to serve the MSME ecosystem's credit needs. Second senior hire into the product team, operating as what the team internally calls a full-stack builder — an AI-native product role spanning strategy through to shipped detail.
 
 - Own a group of products: channel finance, vendor finance, and term loan origination (LOS); the lending API suite and LOS–LMS governance; the customer master; and AI initiatives
-- Lead cloud telephony and product governance across JOFL and JSW One Platforms, cross-functionally
 - Commercial lending here is 100% digital, lead to disbursement, with genuinely industry-first products built around AI at the core
 - Business growing fast — 4x AUM growth since FY25
 - Built and govern a multi-agent AI development harness for the LOS platform: 360+ sessions across 131 days, 560K+ lines of production code shipped, holding a 4.5:1 feature-to-fix commit ratio — well above the norm, where most AI-assisted output needs enough rework to erase the productivity gain
 - Instituted the review gates, spec-first discipline, and sprint retrospectives that took delivery accuracy from an unguided 82% to a sustained 90%+ band, compounding every lesson into a living rulebook instead of relearning it
 - Delivered roughly 14.7x return on AI tooling spend against API-equivalent compute cost — the team runs a 2.6:1 plan-to-build ratio, specifying and reviewing before it ships, not after
+- Run a disciplined plan → build → verify workflow across 130+ skill-driven passes a month, so AI output ships correct the first time instead of needing rework
+- Sustain 94%+ context-cache efficiency across 17B+ tokens processed, keeping AI development cost low even as usage scales
+- Track and publish sprint-level accuracy, cost, and output metrics for the AI harness itself — treating the team's AI development practice as a product to be measured and improved, not a black box
+- Estimated in the top 1–3% of the global AI-developer population by harness governance maturity, not raw usage frequency — the differentiator is a custom, audited multi-agent system with hard guardrails, not ad hoc single-agent chat use
 
 ## JSW One Platforms — SPM (November 2021 – April 2024)
 
