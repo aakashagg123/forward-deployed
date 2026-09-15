@@ -32,6 +32,4 @@ AutoO2 was recognised as one of the most promising top 8 startups and won the eq
 
 I'm a systems thinker first, grounded in business fundamentals — mechanical engineering and physics at BITS Pilani, then an MBA at IMT Ghaziabad. I care about products that remain useful long after the initial launch: future-ready, adaptable, grounded in clear thinking rather than whatever's trending that quarter.
 
-I know what it costs to raise the first dollar and onboard the first customer with nothing but conviction, and I know what it takes to ship inside a large, fast-moving organisation without losing the plot. Most of what I write in [Books](/books/README.html) comes out of sitting inside exactly that tension.
-
-I also wrote that idea into a book: *[Prompt engineering guide for product managers](https://amzn.in/d/0c3cehuZ)* — a practical guidebook for AI-driven productivity, aimed at senior PMs and product leaders learning to work with tools like ChatGPT as more than a brainstorming shortcut. Published May 2025, available on Kindle.
+I know what it costs to raise the first dollar and onboard the first customer with nothing but conviction, and I know what it takes to ship inside a large, fast-moving organisation without losing the plot.

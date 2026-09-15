@@ -7,13 +7,17 @@ Lead the lending origination platform, CRM, and AI charter at JSW One Finance (J
 - Own a group of products: channel finance, vendor finance, and term loan origination (LOS); the lending API suite and LOS–LMS governance; the customer master; and AI initiatives
 - Commercial lending here is 100% digital, lead to disbursement, with genuinely industry-first products built around AI at the core
 - Business growing fast — 4x AUM growth since FY25
-- Built and govern a multi-agent AI development harness for the LOS platform: 360+ sessions across 131 days, 560K+ lines of production code shipped, holding a 4.5:1 feature-to-fix commit ratio — well above the norm, where most AI-assisted output needs enough rework to erase the productivity gain
-- Instituted the review gates, spec-first discipline, and sprint retrospectives that took delivery accuracy from an unguided 82% to a sustained 90%+ band, compounding every lesson into a living rulebook instead of relearning it
-- Delivered roughly 14.7x return on AI tooling spend against API-equivalent compute cost — the team runs a 2.6:1 plan-to-build ratio, specifying and reviewing before it ships, not after
-- Run a disciplined plan → build → verify workflow across 130+ skill-driven passes a month, so AI output ships correct the first time instead of needing rework
-- Sustain 94%+ context-cache efficiency across 17B+ tokens processed, keeping AI development cost low even as usage scales
-- Track and publish sprint-level accuracy, cost, and output metrics for the AI harness itself — treating the team's AI development practice as a product to be measured and improved, not a black box
-- Estimated in the top 1–3% of the global AI-developer population by harness governance maturity, not raw usage frequency — the differentiator is a custom, audited multi-agent system with hard guardrails, not ad hoc single-agent chat use
+
+**AI-native product leadership:**
+
+- Designed and govern a multi-agent AI development harness (built on Claude Code) as the operating model for how the team ships feature work, not just what gets built
+- Ran 360+ AI-assisted development sessions over 131 days, shipping 560,000+ lines of production code across the live lending-origination platform
+- Engineered a governance system — pre-flight checks, bounded task scoping, human checkpoints between build waves, and mandatory security review gates — that took delivery accuracy from an unguided 82% to a sustained 90%+ band
+- Sustained a 4.5:1 feature-to-fix commit ratio, meaningfully above the typical AI-assisted outcome where rework erodes most of the productivity gain
+- Runs a 2.6:1 plan-to-build discipline (spec and review before shipping), the structural reason the team's AI output lands instead of needing a rewrite
+- Delivered roughly 14.7x return on AI tooling spend against API-equivalent compute cost, at roughly $0.84 per 1,000 lines of generated code versus an estimated $2,300–$6,000 per 1,000 lines of fully-loaded human developer time
+- Sustains 94%+ context-cache efficiency across 17B+ tokens processed, and tracks sprint-level accuracy, cost, and output for the harness itself the same way the team tracks product KPIs
+- Estimated in the top 1–3% of the global AI-developer population by harness governance maturity, not raw usage frequency
 
 ## JSW One Platforms — SPM (November 2021 – April 2024)
 
