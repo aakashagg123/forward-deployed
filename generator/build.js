@@ -18,6 +18,10 @@ const SITE = {
     "The unit of change is not a deck — it's a small team of engineers and AI placed at the point of the problem, with the authority to rewire the workflow rather than recommend one.",
 };
 
+// Spaces excluded from the build entirely — content stays on disk, just not
+// built/linked/indexed. Remove an id here to bring the space back.
+const HIDDEN_SPACES = new Set(['musings']);
+
 const SPACE_META = {
   books: { title: 'Books', blurb: 'A small digital library — two long-reads, free to read here.' },
   about: { title: 'About me', blurb: 'Who I am, what I do, and what I’m building right now.' },
@@ -25,31 +29,25 @@ const SPACE_META = {
   musings: { title: 'Musings & side projects', blurb: 'Running notes on AI, product ideas, and prototypes worth poking at.' },
 };
 
-// Landing page copy — About-first: the headline, lede, and pillars all pull
-// from the About me page's own voice, with JSW One Platforms and Marsh
-// named explicitly since they're the most recognizable names on the resume.
+// Landing page copy — About-first, short founder-energy framing; the full
+// detailed narrative lives on the About page, reached via "Read the full
+// story".
 const LANDING = {
-  headline: 'Product leader and builder, working where fintech, AI, and real-world pressure meet.',
+  headline: 'Product leader & builder, working where AI, fintech, and real-world success meet.',
   lede:
-    "I'm Aakash — based in Mumbai, currently leading the lending origination platform, CRM, and AI charter at JSW One Finance. Before that: product at <strong>JSW One Platforms</strong>, on the MSME marketplace built to a $1B exit rate, and at <strong>Marsh</strong>, on embedded insurance programs for Amazon and Ashok Leyland.",
-  companies: [
-    { name: 'JSW One Finance' },
-    { name: 'JSW One Platforms', featured: true },
-    { name: 'Marsh', featured: true },
-    { name: 'AutoO2' },
-  ],
+    "Hi, I'm Aakash — based in Mumbai, leading lending origination, CRM, and the AI charter at JSW One Finance. I've got founder-shaped energy and I'm most natural at 0→1 work — right now that means building a defensible credit platform from vision through AI-native execution.",
   pillars: [
     {
       label: 'What I do',
-      body: "Take an ambiguous problem, design the system around it, then drive adoption until it's second nature.",
+      body: "Take an ambiguous, complex problem statement — design product, process and people systems around it, then drive adoption until it's completely weaved into the organisation.",
     },
     {
       label: "What I'm doing now",
-      body: 'Leading AI as one of the product groups at JSW One Finance — genuinely at the core of industry-first lending products.',
+      body: "I'm practically breaking boundaries in product management. Leading product for LOS, CRM, and the AI charter at JSW One Finance — genuinely at the core of industry-first commercial lending product systems.",
     },
     {
       label: 'How I think',
-      body: 'A systems thinker first — mechanical engineering and physics, then an MBA. Structure before opinion.',
+      body: 'A systems thinker first, grounded in business fundamentals — thanks to a background in physics, engineering, and an MBA. I prefer structure over opinions.',
     },
   ],
 };
@@ -329,7 +327,7 @@ async function build() {
   });
   const md = createRenderer({ highlighter });
 
-  const spaceIds = discoverSpaces();
+  const spaceIds = discoverSpaces().filter((id) => !HIDDEN_SPACES.has(id));
   if (spaceIds.length === 0) {
     throw new Error(`No spaces found under ${CONTENT_DIR}`);
   }
