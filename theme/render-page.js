@@ -100,9 +100,13 @@ function renderHead({ site, title, description, canonicalUrl, image, jsonLd, mar
   const ld = (jsonLd || [])
     .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
     .join('\n');
-  return `${GA_TAG}
-<meta charset="utf-8">
+  // Charset/viewport and the render-blocking stylesheet come first so the
+  // browser can start painting as soon as possible; the async GA tag doesn't
+  // need to block that — it fires the same regardless of position in <head>.
+  return `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="stylesheet" href="/theme.css">
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeAttr(description)}">
 <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
@@ -118,8 +122,8 @@ ${markdownUrl ? `<link rel="alternate" type="text/markdown" href="${escapeAttr(m
 <meta name="twitter:title" content="${escapeAttr(fullTitle)}">
 <meta name="twitter:description" content="${escapeAttr(description)}">
 <meta name="twitter:image" content="${escapeAttr(image)}">
-<link rel="stylesheet" href="/theme.css">
-${ld}`;
+${ld}
+${GA_TAG}`;
 }
 
 export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description, extraJsonLd, markdownUrl }) {
@@ -185,7 +189,7 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
   </main>
   ${renderOutline(outline)}
 </div>
-<script src="/theme.js"></script>
+<script src="/theme.js" defer></script>
 </body>
 </html>`;
 }
@@ -258,7 +262,7 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
   ${release}
   <div class="fd-spaces-row" id="spaces">${spaceRows}</div>
 </div>
-<script src="/theme.js"></script>
+<script src="/theme.js" defer></script>
 </body>
 </html>`;
 }
