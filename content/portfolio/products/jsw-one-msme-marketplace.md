@@ -21,4 +21,16 @@ The booking core supported the business through its run to a $1B exit rate in FY
 
 ## The deeper dive
 
-The platform runs on a stable core — customer, catalogue, and ledger — with two journeys built outward from it: one that runs through Salesforce up to order creation, and one that runs through ERP from there to completion. Toggle between them below.
+The platform sits in three concentric zones — a stable core (customer, catalogue, ledger), a transaction layer built around Salesforce, and an outer fulfillment and reporting layer — with two journeys running outward from that core: one through Salesforce up to order creation, and one through ERP from there to completion.
+
+![JSW One MSME's three product zones](../assets/jsw-msme-zones.svg)
+
+*Figure 1 — the platform's three zones, from the shared core to fulfillment and reporting.*
+
+The order-creation-and-checkout (OCC) flow is where most of the product decisions live — opportunity conversion, seller pricing, ledger-based credit offset, and payment reconciliation, all before an order ever reaches ERP.
+
+![How the OCC workflow moves an opportunity to a paid order](../assets/jsw-msme-occ-flow.svg)
+
+*Figure 2 — the high-level OCC (order creation and checkout) workflow, from opportunity to payment confirmation.*
+
+The pre-order and post-order journeys share the same core but run through different systems end to end. Toggle between them below to see which building blocks each journey touches.

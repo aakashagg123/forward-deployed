@@ -305,62 +305,63 @@ export function renderBookGrid(books) {
   return `<div class="fd-book-grid">${cards}</div>`;
 }
 
-// A small interactive architecture figure for the JSW One MSME product page's
-// deeper dive: a stable core with two journeys built outward from it —
-// pre-order (Salesforce) and post-order (ERP) — toggled by the reader rather
-// than shown as two static diagrams.
+// A full-width interactive product-stack figure for the JSW One MSME product
+// page's deeper dive: the platform's building blocks laid out between the
+// Customer and Seller personas, with the pre-order (Salesforce) and
+// post-order (ERP) journeys toggled by the reader. Built as a plain CSS grid
+// rather than fixed-coordinate SVG text so it reflows instead of overlapping
+// at any width.
 export function renderJswArchitecture() {
-  const node = (label, phase) => `<div class="fd-arch-node" data-phase="${phase}">${escapeHtml(label)}</div>`;
+  const cell = (label, phase) => `<div class="fd-stack-cell" data-phase="${phase}">${escapeHtml(label)}</div>`;
+  const row = (label) => `<div class="fd-stack-row">${escapeHtml(label)}</div>`;
   return `
-    <div class="fd-arch" id="fdArch">
-      <div class="fd-arch-toggle" role="group" aria-label="Select journey">
-        <button type="button" data-phase="pre">Pre-order journey</button>
-        <button type="button" data-phase="post">Post-order journey</button>
+    <div class="fd-stack" id="fdStack">
+      <div class="fd-stack-toggle" role="group" aria-label="Select journey">
+        <button type="button" data-phase="pre">Pre-order journey (Salesforce)</button>
+        <button type="button" data-phase="post">Post-order journey (ERP)</button>
       </div>
-      <div class="fd-arch-diagram">
-        <div class="fd-arch-persona">Customer</div>
-        <div class="fd-arch-zone">
-          <span class="fd-arch-zone-label">Core</span>
-          ${node('Customer & onboarding', 'both')}
-          ${node('Catalogue & pricing', 'both')}
-          ${node('Ledger', 'both')}
+      <div class="fd-stack-grid">
+        <div class="fd-stack-persona">Customer</div>
+        <div class="fd-stack-cells">
+          ${cell('Catalogue', 'pre')}
+          ${cell('Pricing', 'pre')}
+          ${cell('Cart', 'pre')}
+          ${cell('Shipment', 'post')}
+          ${cell('Documents', 'post')}
+          ${cell('Ledger', 'pre')}
+          ${cell('Credit', 'pre')}
+          ${cell('Order', 'pre')}
+          ${cell('Payments', 'post')}
+          ${cell('Payouts', 'post')}
         </div>
-        <div class="fd-arch-arrow" aria-hidden="true">→</div>
-        <div class="fd-arch-zone">
-          <span class="fd-arch-zone-label">Transaction</span>
-          ${node('Opportunity (Salesforce)', 'pre')}
-          ${node('Cart', 'pre')}
-          ${node('Order', 'pre')}
-          ${node('Credit', 'pre')}
-        </div>
-        <div class="fd-arch-arrow" aria-hidden="true">→</div>
-        <div class="fd-arch-zone">
-          <span class="fd-arch-zone-label">Fulfillment</span>
-          ${node('Shipment & documents', 'post')}
-          ${node('Payments & payouts', 'post')}
-          ${node('Reporting', 'post')}
-        </div>
-        <div class="fd-arch-persona">Seller</div>
+        <div class="fd-stack-persona">Seller</div>
       </div>
-      <p class="fd-arch-caption" id="fdArchCaption"></p>
+      <div class="fd-stack-shared">
+        ${row('Opportunity workflow')}
+        ${row('Notifications')}
+        ${row('Masters (material master, vendor master)')}
+        ${row('Customer service')}
+        ${row('Reporting')}
+      </div>
+      <p class="fd-stack-caption" id="fdStackCaption"></p>
     </div>
     <script>
     (function(){
-      var root = document.getElementById('fdArch');
+      var root = document.getElementById('fdStack');
       if (!root) return;
-      var btns = root.querySelectorAll('.fd-arch-toggle button');
-      var nodes = root.querySelectorAll('.fd-arch-node');
-      var caption = document.getElementById('fdArchCaption');
+      var btns = root.querySelectorAll('.fd-stack-toggle button');
+      var cells = root.querySelectorAll('.fd-stack-cell');
+      var caption = document.getElementById('fdStackCaption');
       var captions = {
         pre: 'Pre-order to order journey — enabled through the customer portal and the Opportunity workflow on Salesforce.',
         post: 'Post-order to order-completion journey — enabled via ERP.'
       };
       function setPhase(phase) {
         btns.forEach(function (b) { b.classList.toggle('on', b.dataset.phase === phase); });
-        nodes.forEach(function (n) {
-          var active = n.dataset.phase === 'both' || n.dataset.phase === phase;
-          n.classList.toggle('fd-arch-on', active);
-          n.classList.toggle('fd-arch-dim', !active);
+        cells.forEach(function (c) {
+          var active = c.dataset.phase === phase;
+          c.classList.toggle('fd-stack-on', active);
+          c.classList.toggle('fd-stack-dim', !active);
         });
         caption.textContent = captions[phase];
       }

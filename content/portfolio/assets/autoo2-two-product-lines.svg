@@ -7,7 +7,7 @@
 .item{font-size:14px;fill:#4A4A4A}
 .small{font-size:12px;fill:#8A8A8A}
 </style>
-<rect width="1400" height="680" fill="#FFFFFF"/>
+<rect width="1400" height="680" style="fill:#FFFFFF"/>
 <text class="t kicker" x="40" y="48">TWO PRODUCT LINES, ONE NETWORK</text>
 <text class="t h" x="40" y="88">A consumer marketplace and an enterprise claims stack, built side by side.</text>
 <line x1="40" y1="110" x2="1360" y2="110" stroke="#D8D8D8"/>
@@ -27,18 +27,18 @@
 <text class="t small" x="64" y="460">Live in Delhi/NCR and Mumbai at launch.</text>
 
 <!-- Right column: enterprise -->
-<rect x="752" y="140" width="608" height="350" fill="#000000"/>
-<text class="t col-h" x="776" y="178" fill="#FFFFFF">ENTERPRISE CLAIMS STACK</text>
-<text class="t small" x="776" y="200" fill="#B8B8B8">AutoO2 ARAS + Claims Cloud — for insurers, brokers, fleets</text>
+<rect x="752" y="140" width="608" height="350" style="fill:#000000"/>
+<text class="t col-h" x="776" y="178" style="fill:#FFFFFF">ENTERPRISE CLAIMS STACK</text>
+<text class="t small" x="776" y="200" style="fill:#B8B8B8">AutoO2 ARAS + Claims Cloud — for insurers, brokers, fleets</text>
 <line x1="776" y1="216" x2="1336" y2="216" stroke="#4A4A4A"/>
 <g class="t item">
-  <text x="776" y="250" fill="#D8D8D8">•  Electronic notice of loss (ENOL) — self-reported, photo-driven</text>
-  <text x="776" y="282" fill="#D8D8D8">•  Remote damage assessment, replacing manual surveyor visits</text>
-  <text x="776" y="314" fill="#D8D8D8">•  Claim job auctions for cost-controlled repair settlement</text>
-  <text x="776" y="346" fill="#D8D8D8">•  Direct-to-workshop or cash-in-lieu claim settlement</text>
-  <text x="776" y="378" fill="#D8D8D8">•  Service-management web app + API for insurer integration</text>
+  <text x="776" y="250" style="fill:#D8D8D8">•  Electronic notice of loss (ENOL) — self-reported, photo-driven</text>
+  <text x="776" y="282" style="fill:#D8D8D8">•  Remote damage assessment, replacing manual surveyor visits</text>
+  <text x="776" y="314" style="fill:#D8D8D8">•  Claim job auctions for cost-controlled repair settlement</text>
+  <text x="776" y="346" style="fill:#D8D8D8">•  Direct-to-workshop or cash-in-lieu claim settlement</text>
+  <text x="776" y="378" style="fill:#D8D8D8">•  Service-management web app + API for insurer integration</text>
 </g>
-<text class="t small" x="776" y="460" fill="#8A8A8A">Exclusive digital-claims mandates with 2 insurers.</text>
+<text class="t small" x="776" y="460" style="fill:#8A8A8A">Exclusive digital-claims mandates with 2 insurers.</text>
 
 <!-- convergence -->
 <line x1="352" y1="490" x2="700" y2="560" stroke="#000000" stroke-width="1.2" stroke-dasharray="5 4"/>

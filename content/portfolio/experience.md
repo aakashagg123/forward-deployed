@@ -23,6 +23,10 @@ Lead the lending origination platform, CRM, and AI charter at JSW One Finance (J
 
 Led product and strategy for the JSW One MSME customer platform (jswonemsme.com), a credit-enabled marketplace for MSMEs to purchase industrial supplies.
 
+![JSW One MSME's three product zones](assets/jsw-msme-zones.svg)
+
+*Figure — the platform's three zones, from the shared customer/catalogue/ledger core out to fulfillment and reporting.*
+
 - Designed the booking core — the order-creation journey — with deep integrations across Salesforce CRM, ERP, customer notifications, a discounts engine, and the catalogue and pricing system
 - Supported the business through its run to a $1B exit rate in FY '23–24
 - Shipped the discounts and cashbacks engine, marketing automation, WhatsApp Business integration, and the technical documentation repository
