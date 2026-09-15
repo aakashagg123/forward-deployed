@@ -162,6 +162,26 @@ img { max-width: 100%; }
   .fd-book-cover { width: 120px; }
 }
 
+.fd-arch { margin: 28px 0 40px; }
+.fd-arch-toggle { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.fd-arch-toggle button { font-family: var(--sans); font-size: 13px; font-weight: 600; padding: 8px 16px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink-2); cursor: pointer; }
+.fd-arch-toggle button.on { background: var(--ink); color: var(--inv); }
+.fd-arch-toggle button:hover:not(.on) { background: var(--rule-soft); }
+.fd-arch-diagram { display: flex; align-items: stretch; gap: 14px; flex-wrap: wrap; }
+.fd-arch-persona { display: flex; align-items: center; justify-content: center; flex: none; width: 64px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); text-align: center; }
+.fd-arch-zone { flex: 1; min-width: 170px; border: 1px solid var(--rule-soft); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.fd-arch-zone-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: 2px; }
+.fd-arch-node { border: 1px solid var(--rule-soft); padding: 9px 11px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); transition: opacity .15s, border-color .15s, background .15s, color .15s; }
+.fd-arch-node.fd-arch-on { border-color: var(--ink); background: var(--rule-soft); color: var(--ink); }
+.fd-arch-node.fd-arch-dim { opacity: .35; }
+.fd-arch-arrow { display: flex; align-items: center; justify-content: center; flex: none; font-size: 18px; color: var(--ink-3); }
+.fd-arch-caption { font-size: 13px; color: var(--ink-2); margin: 16px 0 0; }
+@media (max-width: 720px) {
+  .fd-arch-diagram { flex-direction: column; }
+  .fd-arch-persona { width: auto; }
+  .fd-arch-arrow { transform: rotate(90deg); }
+}
+
 .fd-pagenav { display: flex; justify-content: space-between; gap: 16px; margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--rule); }
 .fd-pagenav a { flex: 1; padding: 13px 15px; border: 1px solid var(--rule); color: var(--ink); }
 .fd-pagenav a:hover { background: var(--ink); color: var(--inv); text-decoration: none; }
