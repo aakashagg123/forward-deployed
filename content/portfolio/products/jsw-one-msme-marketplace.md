@@ -22,5 +22,3 @@ The booking core supported the business through its run to a $1B exit rate in FY
 ## The deeper dive
 
 The platform runs on a stable core — customer, catalogue, and ledger — with two journeys built outward from it: one that runs through Salesforce up to order creation, and one that runs through ERP from there to completion. Toggle between them below.
-
-*Screens and specific journey decisions are coming — placeholder until that write-up is ready.*

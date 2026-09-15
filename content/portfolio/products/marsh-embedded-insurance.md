@@ -17,7 +17,3 @@ I was lead product manager and roadmap owner for two platforms: BenefitsCircle, 
 ## Outcome
 
 Selected into Marsh Asia's first cohort of 30 Digital Influencers, helping define the region's digital culture and educate colleagues on emerging consumer and commercial digital solutions.
-
-## The deeper dive
-
-*Program-specific outcomes and platform screens are coming — placeholder until that write-up is ready.*
