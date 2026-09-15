@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -387,6 +387,9 @@ async function build() {
       }
       if (spaceId === 'books' && page.sourcePath === 'README.md') {
         contentHtml += renderBookGrid(BOOKS);
+      }
+      if (spaceId === 'portfolio' && page.sourcePath === 'products/jsw-one-msme-marketplace.md') {
+        contentHtml += renderJswArchitecture();
       }
       const description = extractDescription(raw, SITE.thesis);
       page.description = description;
