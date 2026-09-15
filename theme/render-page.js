@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -85,26 +87,62 @@ function renderOutline(outline) {
 
 // Shared <head> block: title, description, canonical, Open Graph, Twitter
 // card, favicon, and any JSON-LD blocks the caller supplies.
-const GA_TAG = `<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9EN43HKXY"></script>
-<script>
+const GA_INLINE_SCRIPT = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-R9EN43HKXY');
-</script>`;
+`;
+const GA_TAG = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9EN43HKXY"></script>
+<script>${GA_INLINE_SCRIPT}</script>`;
+
+// CSP script-src can't use 'unsafe-inline', so the one inline script this
+// site ships (GA's config snippet above) is allow-listed by its exact
+// content hash instead — computed here so it can never drift out of sync
+// with GA_INLINE_SCRIPT.
+const GA_INLINE_SCRIPT_HASH = `sha256-${createHash('sha256').update(GA_INLINE_SCRIPT).digest('base64')}`;
+
+// Whitelist-model CSP: default-src 'none' plus explicit allowances for
+// exactly the resource types this site uses (self-hosted CSS/JS/images, and
+// Google Analytics' two script/beacon origins). Delivered via <meta> because
+// GitHub Pages cannot send custom HTTP response headers at all — which also
+// means two of the asks a real security header sweep would include can't be
+// done from here: `frame-ancestors` is a CSP directive the spec explicitly
+// excludes from meta-tag delivery (browsers silently ignore it there, so
+// it's omitted rather than included for false reassurance), and
+// Cross-Origin-Opener-Policy has no meta-tag form at all. Clickjacking and
+// origin-isolation protection would need the domain fronted by a
+// header-capable edge layer (e.g. Cloudflare) — out of scope for this repo.
+const CSP = [
+  "default-src 'none'",
+  `script-src 'self' https://www.googletagmanager.com '${GA_INLINE_SCRIPT_HASH}'`,
+  "style-src 'self'",
+  "img-src 'self'",
+  'connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com',
+  "font-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  'upgrade-insecure-requests',
+  "require-trusted-types-for 'script'",
+].join('; ');
 
 function renderHead({ site, title, description, canonicalUrl, image, jsonLd, markdownUrl }) {
   const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
   const ld = (jsonLd || [])
     .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
     .join('\n');
-  // Charset/viewport and the render-blocking stylesheet come first so the
-  // browser can start painting as soon as possible; the async GA tag doesn't
-  // need to block that — it fires the same regardless of position in <head>.
+  // Charset/viewport first, then CSP — a meta-delivered CSP only governs
+  // elements that appear *after* it in the document, so it has to come
+  // before the stylesheet link and any script tag. The render-blocking
+  // stylesheet still loads as early as possible right after; the async GA
+  // tag doesn't need to be early too — it fires the same regardless of
+  // position in <head>.
   return `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="${escapeAttr(CSP)}">
 <link rel="preconnect" href="https://www.googletagmanager.com">
 <link rel="stylesheet" href="/theme.css">
 <title>${escapeHtml(fullTitle)}</title>
@@ -348,31 +386,7 @@ export function renderJswArchitecture() {
         ${row('Reporting')}
       </div>
       <p class="fd-stack-caption" id="fdStackCaption"></p>
-    </div>
-    <script>
-    (function(){
-      var root = document.getElementById('fdStack');
-      if (!root) return;
-      var btns = root.querySelectorAll('.fd-stack-toggle button');
-      var cells = root.querySelectorAll('.fd-stack-cell');
-      var caption = document.getElementById('fdStackCaption');
-      var captions = {
-        pre: 'Pre-order to order journey — enabled through the customer portal and the Opportunity workflow on Salesforce.',
-        post: 'Post-order to order-completion journey — enabled via ERP.'
-      };
-      function setPhase(phase) {
-        btns.forEach(function (b) { b.classList.toggle('on', b.dataset.phase === phase); });
-        cells.forEach(function (c) {
-          var active = c.dataset.phase === phase;
-          c.classList.toggle('fd-stack-on', active);
-          c.classList.toggle('fd-stack-dim', !active);
-        });
-        caption.textContent = captions[phase];
-      }
-      btns.forEach(function (b) { b.addEventListener('click', function () { setPhase(b.dataset.phase); }); });
-      setPhase('pre');
-    })();
-    </script>`;
+    </div>`;
 }
 
 export function render404({ site }) {
@@ -387,10 +401,10 @@ ${renderHead({ site, title: 'Page not found', description: 'This page does not e
 <header class="fd-header fd-header-landing">
   <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
 </header>
-<div class="wrap" style="padding-block:120px;text-align:left;">
-  <h1 style="font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-.02em;margin:0 0 16px;">Page not found.</h1>
-  <p style="color:var(--ink-2);font-size:16px;max-width:52ch;margin:0 0 28px;">Whatever you were looking for isn't here — it may have moved when a space was reorganized.</p>
-  <a href="/" style="display:inline-block;border:1px solid var(--rule);padding:11px 20px;font-weight:600;font-size:14px;">Back to the index</a>
+<div class="wrap fd-404-wrap">
+  <h1 class="fd-404-title">Page not found.</h1>
+  <p class="fd-404-body">Whatever you were looking for isn't here — it may have moved when a space was reorganized.</p>
+  <a href="/" class="fd-404-back">Back to the index</a>
 </div>
 </body>
 </html>`;
