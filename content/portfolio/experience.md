@@ -52,6 +52,10 @@ Owned brand revitalization, identity, and launch for Footloose, a D2C brand insi
 
 Co-founded and served as CPO of AutoO2 (Carmenta Solutions) — the founding stint before the corporate roles, built from zero rather than inherited. The vision: a connected digital post-sales vehicle care technology enterprise, running two product lines side by side — a consumer marketplace for vehicle servicing and repair, and an enterprise B2B claims stack sold to motor insurers, brokers, and fleet operators.
 
+![Two product lines, one workshop network](assets/autoo2-two-product-lines.svg)
+
+*Figure — the consumer marketplace and the enterprise claims stack ran side by side, converging on the same 500+ workshop network.*
+
 - Conceptualised, designed, built, and launched AutoO2 ARAS (our core claims SaaS) and AutoO2 Claims Cloud, which replaced manual surveyor visits with a virtual, self-inspection claims model for motor and own-damage claims
 - Extended Claims Cloud into an enterprise suite — a service-management web app and an API — so insurers and brokers could integrate AutoO2 directly into their own claims systems
 - Designed a repair-auction system: network workshops bid on minor-damage claim jobs (under ₹20,000), a reverse-auction mechanism that created a self-correcting, competitive cost-control layer instead of fixed pricing
