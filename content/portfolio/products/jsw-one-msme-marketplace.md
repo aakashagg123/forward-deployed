@@ -2,7 +2,7 @@
 
 *A credit-enabled marketplace for MSMEs to purchase industrial supplies.*
 
-**Role:** Product · **Company:** JSW One Platforms · **Timeline:** November 2021 – April 2024
+**Role:** SPM · **Company:** JSW One Platforms · **Timeline:** November 2021 – April 2024
 
 ## Overview
 

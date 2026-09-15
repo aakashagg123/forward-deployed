@@ -1,15 +1,25 @@
 # Experience
 
-## JSW One Finance — AGM product (November 2024 – present)
+## JSW One Finance — SPM (AI) (November 2024 – present)
 
 Lead the lending origination platform, CRM, and AI charter at JSW One Finance (JOFL), a digital-first NBFC and wholly owned subsidiary of JSW One Platforms built to serve the MSME ecosystem's credit needs. Second senior hire into the product team, operating as what the team internally calls a full-stack builder — an AI-native product role spanning strategy through to shipped detail.
 
 - Own a group of products: channel finance, vendor finance, and term loan origination (LOS); the lending API suite and LOS–LMS governance; the customer master; and AI initiatives
-- Lead cloud telephony and product governance across JOFL and JSW One Platforms, cross-functionally
 - Commercial lending here is 100% digital, lead to disbursement, with genuinely industry-first products built around AI at the core
 - Business growing fast — 4x AUM growth since FY25
 
-## JSW One Platforms — product (November 2021 – April 2024)
+**AI-native product leadership:**
+
+- Designed and govern a multi-agent AI development harness (built on Claude Code) as the operating model for how the team ships feature work, not just what gets built
+- Ran 360+ AI-assisted development sessions over 131 days, shipping 560,000+ lines of production code across the live lending-origination platform
+- Engineered a governance system — pre-flight checks, bounded task scoping, human checkpoints between build waves, and mandatory security review gates — that took delivery accuracy from an unguided 82% to a sustained 90%+ band
+- Sustained a 4.5:1 feature-to-fix commit ratio, meaningfully above the typical AI-assisted outcome where rework erodes most of the productivity gain
+- Runs a 2.6:1 plan-to-build discipline (spec and review before shipping), the structural reason the team's AI output lands instead of needing a rewrite
+- Delivered roughly 14.7x return on AI tooling spend against API-equivalent compute cost, at roughly $0.84 per 1,000 lines of generated code versus an estimated $2,300–$6,000 per 1,000 lines of fully-loaded human developer time
+- Sustains 94%+ context-cache efficiency across 17B+ tokens processed, and tracks sprint-level accuracy, cost, and output for the harness itself the same way the team tracks product KPIs
+- Estimated in the top 1–3% of the global AI-developer population by harness governance maturity, not raw usage frequency
+
+## JSW One Platforms — SPM (November 2021 – April 2024)
 
 Led product and strategy for the JSW One MSME customer platform (jswonemsme.com), a credit-enabled marketplace for MSMEs to purchase industrial supplies.
 
