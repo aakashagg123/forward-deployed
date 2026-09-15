@@ -29,4 +29,16 @@ As founder and CPO, I owned this end to end — product, positioning to insurers
 
 ## The deeper dive
 
-*The pivot story, the self-inspection model in detail, and platform screens are coming — placeholder until that write-up is ready.*
+![Two product lines, one workshop network](../assets/autoo2-two-product-lines.svg)
+
+*Figure 1 — the consumer marketplace and the enterprise claims stack ran side by side, converging on the same 500+ workshop network.*
+
+The two product lines shared infrastructure but sold to completely different buyers: the consumer marketplace competed on convenience for a vehicle owner booking a service, while the enterprise claims stack competed on cost and turnaround time for an insurer's claims team. Both depended on the same underlying asset — a vetted, rated network of repair workshops — which is why building and maintaining that network was as much a product responsibility as any feature.
+
+![How the repair auction system works](../assets/autoo2-repair-auction.svg)
+
+*Figure 2 — the reverse-auction mechanism behind claim job cost control.*
+
+The repair auction system was the clearest example of designing a market, not just a workflow. For minor-damage claims (under ₹20,000 in liability), instead of routing a job to a single pre-agreed workshop at a fixed rate, AutoO2 published the job to same-category workshops in the network and let them bid. Competition — not a negotiated rate card — set the price, and the insurer still retained final say over which workshop got the job.
+
+*The pivot story and platform screens are coming — placeholder until that write-up is ready.*

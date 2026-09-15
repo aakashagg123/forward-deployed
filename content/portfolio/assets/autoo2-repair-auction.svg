@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 460" width="1160" height="460" role="img" aria-label="How AutoO2's repair auction system works">
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:12px;letter-spacing:2.6px;fill:#8A8A8A}
+.h{font-size:22px;font-weight:700;fill:#000000}
+.step-lbl{font-size:11px;font-weight:700;letter-spacing:1.4px;fill:#000000}
+.step-n{font-size:11px;font-weight:700;fill:#8A8A8A}
+.note{font-size:12.5px;fill:#4A4A4A}
+.small{font-size:11px;fill:#8A8A8A}
+</style>
+<rect width="1160" height="460" fill="#FFFFFF"/>
+<text class="t kicker" x="40" y="42">THE REPAIR AUCTION SYSTEM</text>
+<text class="t h" x="40" y="76">Reverse auction turns claim cost into a competition, not a fixed rate.</text>
+<line x1="40" y1="98" x2="1120" y2="98" stroke="#D8D8D8"/>
+
+<!-- Step boxes -->
+<g>
+  <!-- Step 1 -->
+  <rect x="40" y="140" width="190" height="110" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="58" y="166">01</text>
+  <text class="t step-lbl" x="58" y="190">CLAIM</text>
+  <text class="t step-lbl" x="58" y="206">INTIMATION</text>
+  <text class="t note" x="58" y="232">Insured self-reports via</text>
+  <text class="t note" x="58" y="248">OTP-verified policy no.</text>
+
+  <!-- arrow -->
+  <line x1="230" y1="195" x2="266" y2="195" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="266,190 276,195 266,200" fill="#000000"/>
+
+  <!-- Step 2 -->
+  <rect x="276" y="140" width="190" height="110" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="294" y="166">02</text>
+  <text class="t step-lbl" x="294" y="190">DAMAGE INFO</text>
+  <text class="t step-lbl" x="294" y="206">CAPTURE</text>
+  <text class="t note" x="294" y="232">Photos, accident detail,</text>
+  <text class="t note" x="294" y="248">panel-wise damage</text>
+
+  <line x1="466" y1="195" x2="502" y2="195" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="502,190 512,195 502,200" fill="#000000"/>
+
+  <!-- Step 3 -->
+  <rect x="512" y="140" width="190" height="110" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="530" y="166">03</text>
+  <text class="t step-lbl" x="530" y="190">REQUEST FOR</text>
+  <text class="t step-lbl" x="530" y="206">BID</text>
+  <text class="t note" x="530" y="232">AutoO2 publishes the job</text>
+  <text class="t note" x="530" y="248">to the workshop network</text>
+
+  <line x1="702" y1="195" x2="738" y2="195" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="738,190 748,195 738,200" fill="#000000"/>
+
+  <!-- Step 4 -->
+  <rect x="748" y="140" width="190" height="110" fill="none" stroke="#000000" stroke-width="1.4"/>
+  <text class="t step-n" x="766" y="166">04</text>
+  <text class="t step-lbl" x="766" y="190">WORKSHOPS</text>
+  <text class="t step-lbl" x="766" y="206">BID ON THE JOB</text>
+  <text class="t note" x="766" y="232">3+ same-category shops</text>
+  <text class="t note" x="766" y="248">quote, same job posted</text>
+
+  <line x1="938" y1="195" x2="974" y2="195" stroke="#000000" stroke-width="1.4"/>
+  <polygon points="974,190 984,195 974,200" fill="#000000"/>
+
+  <!-- Step 5 -->
+  <rect x="984" y="140" width="136" height="110" fill="#000000"/>
+  <text class="t step-n" x="1002" y="166" fill="#8A8A8A">05</text>
+  <text class="t step-lbl" x="1002" y="190" fill="#FFFFFF">BID WON</text>
+  <text class="t note" x="1002" y="216" fill="#D8D8D8">Lowest qualified</text>
+  <text class="t note" x="1002" y="232" fill="#D8D8D8">quote wins the</text>
+  <text class="t note" x="1002" y="248" fill="#D8D8D8">claim job</text>
+</g>
+
+<!-- Note bar -->
+<rect x="40" y="300" width="1080" height="120" fill="none" stroke="#D8D8D8" stroke-width="1"/>
+<text class="t small" x="64" y="330" letter-spacing="1.2">SCOPE</text>
+<text class="t note" x="64" y="354">Applies to minor-damage claims under ₹20,000 in liability — the volume tier where a fixed workshop rate</text>
+<text class="t note" x="64" y="374">leaves the most cost on the table.</text>
+
+<text class="t small" x="600" y="330" letter-spacing="1.2">RESULT</text>
+<text class="t note" x="600" y="354">Cost reductions come from open-market competition</text>
+<text class="t note" x="600" y="374">among same-category workshops for each job.</text>
+</svg>
