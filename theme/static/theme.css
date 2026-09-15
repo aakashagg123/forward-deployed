@@ -294,3 +294,9 @@ img { max-width: 100%; }
   .fd-spaces-row a { min-width: 100%; border-right: 0 !important; padding-right: 0 !important; margin-right: 0 !important; }
 }
 
+/* ---- 404 page ---- */
+.fd-404-wrap { padding-block: 120px; text-align: left; }
+.fd-404-title { font-size: clamp(28px, 5vw, 46px); font-weight: 800; letter-spacing: -.02em; margin: 0 0 16px; }
+.fd-404-body { color: var(--ink-2); font-size: 16px; max-width: 52ch; margin: 0 0 28px; }
+.fd-404-back { display: inline-block; border: 1px solid var(--rule); padding: 11px 20px; font-weight: 600; font-size: 14px; }
+

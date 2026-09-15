@@ -95,4 +95,26 @@
     });
   }
 
+  var stackRoot = document.getElementById('fdStack');
+  if (stackRoot) {
+    var stackBtns = stackRoot.querySelectorAll('.fd-stack-toggle button');
+    var stackCells = stackRoot.querySelectorAll('.fd-stack-cell');
+    var stackCaption = document.getElementById('fdStackCaption');
+    var stackCaptions = {
+      pre: 'Pre-order to order journey — enabled through the customer portal and the Opportunity workflow on Salesforce.',
+      post: 'Post-order to order-completion journey — enabled via ERP.'
+    };
+    var setStackPhase = function (phase) {
+      stackBtns.forEach(function (b) { b.classList.toggle('on', b.dataset.phase === phase); });
+      stackCells.forEach(function (c) {
+        var active = c.dataset.phase === phase;
+        c.classList.toggle('fd-stack-on', active);
+        c.classList.toggle('fd-stack-dim', !active);
+      });
+      if (stackCaption) stackCaption.textContent = stackCaptions[phase];
+    };
+    stackBtns.forEach(function (b) { b.addEventListener('click', function () { setStackPhase(b.dataset.phase); }); });
+    setStackPhase('pre');
+  }
+
 })();
