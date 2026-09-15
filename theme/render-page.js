@@ -85,12 +85,23 @@ function renderOutline(outline) {
 
 // Shared <head> block: title, description, canonical, Open Graph, Twitter
 // card, favicon, and any JSON-LD blocks the caller supplies.
+const GA_TAG = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9EN43HKXY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-R9EN43HKXY');
+</script>`;
+
 function renderHead({ site, title, description, canonicalUrl, image, jsonLd, markdownUrl }) {
   const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
   const ld = (jsonLd || [])
     .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
     .join('\n');
-  return `<meta charset="utf-8">
+  return `${GA_TAG}
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeAttr(description)}">
