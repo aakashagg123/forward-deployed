@@ -8,6 +8,7 @@ import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
 const THEME_STATIC_DIR = path.join(ROOT, 'theme', 'static');
+const LEARNING_ZONE_DIR = path.join(ROOT, 'learning-zone');
 const DIST_DIR = path.join(ROOT, 'dist');
 
 const SITE = {
@@ -426,6 +427,13 @@ async function build() {
 
   fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0] }));
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
+
+  // Learning Zone: a pre-built static site (its own design system, not run
+  // through the markdown pipeline) copied wholesale into dist/learning-zone/.
+  if (fs.existsSync(LEARNING_ZONE_DIR)) {
+    copyDir(LEARNING_ZONE_DIR, path.join(DIST_DIR, 'learning-zone'));
+    sitemapUrls.push({ loc: SITE.baseUrl + '/learning-zone/' });
+  }
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

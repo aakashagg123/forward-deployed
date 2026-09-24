@@ -1,0 +1,37 @@
+{
+  "$comment": "Claude Code permissions + hooks wiring Phase 8. Place at .claude/settings.json; put hook scripts under .claude/hooks/. kind: settings · phase: 8 · lesson: 6",
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Grep(*)",
+      "Glob(*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(npm test:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push:*)",
+      "Edit(.env)",
+      "Read(.env)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/block-env-edit.sh" }]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/egress-guard.sh" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/lint.sh" }]
+      }
+    ]
+  }
+}

@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Location &amp; geo services — System Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>System Design</span><em>a standalone module</em></a>
+  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink active" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Lesson 06</span>
+    <h1>Location &amp; geo services</h1>
+  </div>
+  <h2 id="tldr">TL;DR</h2>
+<p>Location-aware systems face a fundamental challenge: mapping the continuous, curved surface of the Earth onto discrete, queryable data structures. <strong>Proximity search</strong> (find businesses near me) uses geohashing to convert 2D coordinates into sortable 1D strings. This enables efficient range queries on standard databases. <strong>Nearby friends</strong> (real-time location sharing) adds the streaming dimension — 334K location updates per second flowing through WebSocket servers and Redis pub/sub channels. <strong>Google Maps</strong> stacks multiple geospatial problems: tiling the planet into a hierarchy of pre-rendered images, routing through continent-scale road graphs, and computing adaptive ETAs from live traffic. The common thread: spatial indexing is the bottleneck. The choice of index structure — geohash, quadtree, S2 cells — determines every downstream tradeoff.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — Any feature involving "nearby," "around me," or "estimated arrival" depends on spatial indexing. The choice of geospatial data structure determines query latency, update cost, and whether your system can scale to millions of moving entities.</p>
+<p><strong>What it changes in your decisions</strong> — You stop treating location as just a lat/long column with a distance filter. You budget for the infrastructure to handle continuous location streams (WebSockets, pub/sub), and you size your tile/routing CDN for the coverage area.</p>
+<p><strong>Ask your eng team</strong> — <em>"Are we using geohash or quadtree for spatial indexing, and how do we handle queries at geohash boundaries?"</em></p>
+<p><strong>Risk if ignored</strong> — Your "find nearby" feature scans every record in the database, your real-time location sharing drains phone batteries, or your routing engine gives ETAs that are 30% off because it ignores live traffic.</p>
+</blockquote>
+<hr />
+<h2 id="proximity-service">Proximity service</h2>
+<h3 id="scale-and-requirements">Scale and requirements</h3>
+<ul>
+<li>100M daily active users</li>
+<li>200M businesses in the database</li>
+<li>Users search for businesses within a radius (500m to 5km)</li>
+<li>Read-heavy: business data changes infrequently; searches happen constantly</li>
+<li>Latency target: results in under 200ms</li>
+</ul>
+<h3 id="the-spatial-indexing-problem">The spatial indexing problem</h3>
+<p>The naive approach — scan all 200M businesses, compute the distance to the user, filter by radius — is O(n) per query. At 100M DAU, that's unacceptable.</p>
+<p>The problem is that standard database indexes (B-trees) work on one dimension. Latitude and longitude are two dimensions. You need a way to convert 2D spatial proximity into something a 1D index can handle.</p>
+<h3 id="approaches-compared">Approaches compared</h3>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>How it works</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2D range scan</strong></td>
+<td><code>WHERE lat BETWEEN x1 AND x2 AND lng BETWEEN y1 AND y2</code></td>
+<td>Simple</td>
+<td>Two index scans intersected; slow at scale</td>
+</tr>
+<tr>
+<td><strong>Even grid</strong></td>
+<td>Divide world into equal-sized cells</td>
+<td>Conceptually simple</td>
+<td>Uneven data distribution (ocean cells empty, city cells overloaded)</td>
+</tr>
+<tr>
+<td><strong>Geohash</strong></td>
+<td>Encode lat/lng into a base-32 string; shared prefix = spatial proximity</td>
+<td>Sortable, standard DB index, easy neighbor lookup</td>
+<td>Edge cases at cell boundaries</td>
+</tr>
+<tr>
+<td><strong>Quadtree</strong></td>
+<td>Recursively subdivide space; split cells that exceed a threshold</td>
+<td>Adaptive density</td>
+<td>In-memory only; hard to distribute</td>
+</tr>
+<tr>
+<td><strong>Google S2</strong></td>
+<td>Map sphere to cube faces, then use Hilbert curves</td>
+<td>Handles poles and antimeridian; tunable cell levels</td>
+<td>Complex implementation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Geohash is the standard choice</strong> for most proximity services: it's simple, works with any database that supports range queries, and handles the common case well.</p>
+<h3 id="how-geohashing-works">How geohashing works</h3>
+<p>Geohash recursively bisects the world, alternating between longitude and latitude, encoding each decision as a bit. The bits are then encoded as a base-32 string:</p>
+<style>
+.sd-geo{background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:16px;padding:28px 24px 24px;box-shadow:0 1px 3px rgba(31,35,40,.04);
+  margin:26px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.sd-geo-title{font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;
+  color:#59636e;font-weight:700;margin:0 0 18px}
+/* Geohash grid */
+.sd-geo-grid-wrap{background:#ffffff;border:1px solid #d1d9e0;border-radius:12px;
+  padding:16px;margin:0 0 12px}
+.sd-geo-grid-label{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:#59636e;margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.sd-geo-grid-label .tag{font-size:9px;font-weight:700;border-radius:20px;
+  padding:2px 10px;color:#ffffff;background:#8250df;letter-spacing:.6px}
+.sd-geo-grid-container{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.sd-geo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;width:fit-content}
+.sd-geo-cell{width:56px;height:42px;border-radius:4px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-size:9.5px;font-weight:600;
+  transition:background .15s}
+.sd-geo-cell-default{background:#f6f8fa;border:1px solid #d1d9e0;color:#59636e}
+.sd-geo-cell-center{background:#0969da;border:1.5px solid #0550ae;color:#ffffff;
+  box-shadow:0 2px 6px rgba(9,105,218,0.25)}
+.sd-geo-cell-neighbor{background:#ddf4ff;border:1.5px solid #b6e3ff;color:#0969da}
+.sd-geo-cell-far{background:#f6f8fa;border:1px solid #d1d9e0;color:#8c959f}
+.sd-geo-cell small{font-size:7.5px;font-weight:450;margin-top:1px}
+.sd-geo-cell-center small{color:rgba(255,255,255,.75)}
+.sd-geo-cell-neighbor small{color:#59636e}
+/* Legend for grid */
+.sd-geo-legend{font-size:10.5px;color:#59636e;line-height:1.8}
+.sd-geo-legend-item{display:flex;align-items:center;gap:6px;margin:3px 0}
+.sd-geo-legend-swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.sd-geo-legend-swatch-center{background:#0969da;border:1px solid #0550ae}
+.sd-geo-legend-swatch-neighbor{background:#ddf4ff;border:1px solid #b6e3ff}
+.sd-geo-legend-swatch-far{background:#f6f8fa;border:1px solid #d1d9e0}
+.sd-geo-precision{margin:10px 0 0;padding:8px 10px;background:#f6f8fa;border:1px solid #d1d9e0;
+  border-radius:8px;font-size:10px;color:#59636e;line-height:1.5}
+.sd-geo-precision strong{color:#1f2328}
+/* Lookup pipeline */
+.sd-geo-pipeline{background:#ffffff;border:1px solid #d1d9e0;border-radius:12px;
+  padding:16px;margin:0 0 12px}
+.sd-geo-pipe-label{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:#59636e;margin:0 0 12px;display:flex;align-items:center;gap:6px}
+.sd-geo-pipe-label .tag{font-size:9px;font-weight:700;border-radius:20px;
+  padding:2px 10px;color:#ffffff;background:#1a7f37;letter-spacing:.6px}
+.sd-geo-pipe{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.sd-geo-step{border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;
+  text-align:center;line-height:1.35;flex-shrink:0}
+.sd-geo-step small{display:block;font-size:9px;font-weight:450;margin-top:2px}
+.sd-geo-s-input{background:#f6f8fa;border:1px solid #d1d9e0;color:#1f2328}
+.sd-geo-s-compute{background:#fbefff;border:1px solid #eecef7;color:#8250df}
+.sd-geo-s-expand{background:#ddf4ff;border:1px solid #b6e3ff;color:#0969da}
+.sd-geo-s-store{background:#dafbe1;border:1px solid #aceebb;color:#1a7f37}
+.sd-geo-s-result{background:#0969da;border:1px solid #0550ae;color:#ffffff}
+.sd-geo-arr{flex:0 0 auto;color:#8c959f;font-size:13px;font-weight:700;padding:0 3px}
+.sd-geo-arr-lbl{font-size:8px;color:#59636e;font-weight:500;display:block;text-align:center}
+.sd-geo-arr-wrap{display:flex;flex-direction:column;align-items:center;padding:0 1px}
+/* Comparison chips */
+.sd-geo-compare{display:flex;gap:10px;flex-wrap:wrap}
+.sd-geo-compare-card{flex:1;min-width:140px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:10px;padding:12px}
+.sd-geo-compare-name{font-size:11px;font-weight:650;color:#1f2328;margin:0 0 6px;
+  display:flex;align-items:center;gap:5px}
+.sd-geo-compare-name .badge{font-size:8px;font-weight:700;border-radius:10px;padding:1px 7px}
+.sd-geo-compare-name .badge-rec{background:#dafbe1;border:1px solid #aceebb;color:#1a7f37}
+.sd-geo-compare-pts{font-size:10px;color:#59636e;line-height:1.6}
+.sd-geo-compare-pts span{display:block}
+@media (max-width:640px){
+  .sd-geo{padding:18px 14px 16px}
+  .sd-geo-grid-container{flex-direction:column}
+  .sd-geo-grid{margin:0 auto}
+  .sd-geo-pipe{flex-direction:column;gap:4px;align-items:stretch}
+  .sd-geo-arr{transform:rotate(90deg);text-align:center;padding:2px 0}
+  .sd-geo-compare{flex-direction:column}
+}
+</style>
+<div class="sd-geo">
+  <div class="sd-geo-title">Geospatial indexing - geohash grid + neighbor lookup</div>
+
+  <!-- Geohash grid visualization -->
+  <div class="sd-geo-grid-wrap">
+    <div class="sd-geo-grid-label">
+      <span class="tag">Geohash</span>
+      Recursive subdivision of the map into grid cells
+    </div>
+    <div class="sd-geo-grid-container">
+      <div>
+        <div class="sd-geo-grid">
+          <div class="sd-geo-cell sd-geo-cell-far">9q8w<small>far</small></div>
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8x<small>neighbor</small></div>
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8y<small>neighbor</small></div>
+          <div class="sd-geo-cell sd-geo-cell-far">9q8z<small>far</small></div>
+
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8t<small>neighbor</small></div>
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8v<small>neighbor</small></div>
+          <div class="sd-geo-cell sd-geo-cell-center">9q8s<small>you are here</small></div>
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8u<small>neighbor</small></div>
+
+          <div class="sd-geo-cell sd-geo-cell-far">9q8e<small>far</small></div>
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8g<small>neighbor</small></div>
+          <div class="sd-geo-cell sd-geo-cell-neighbor">9q8f<small>neighbor</small></div>
+          <div class="sd-geo-cell sd-geo-cell-far">9q8d<small>far</small></div>
+
+          <div class="sd-geo-cell sd-geo-cell-far">9q87<small></small></div>
+          <div class="sd-geo-cell sd-geo-cell-far">9q86<small></small></div>
+          <div class="sd-geo-cell sd-geo-cell-far">9q85<small></small></div>
+          <div class="sd-geo-cell sd-geo-cell-far">9q84<small></small></div>
+        </div>
+      </div>
+      <div>
+        <div class="sd-geo-legend">
+          <div class="sd-geo-legend-item">
+            <div class="sd-geo-legend-swatch sd-geo-legend-swatch-center"></div>
+            <span>Query cell (your location)</span>
+          </div>
+          <div class="sd-geo-legend-item">
+            <div class="sd-geo-legend-swatch sd-geo-legend-swatch-neighbor"></div>
+            <span>8 neighbors (always queried)</span>
+          </div>
+          <div class="sd-geo-legend-item">
+            <div class="sd-geo-legend-swatch sd-geo-legend-swatch-far"></div>
+            <span>Outside search radius</span>
+          </div>
+        </div>
+        <div class="sd-geo-precision">
+          <strong>Precision vs. area:</strong><br>
+          4 chars = ~39km &middot; 5 chars = ~5km &middot; 6 chars = ~1.2km<br>
+          More chars = smaller cell = finer search
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lookup pipeline -->
+  <div class="sd-geo-pipeline">
+    <div class="sd-geo-pipe-label">
+      <span class="tag">Query</span>
+      Nearby search pipeline
+    </div>
+    <div class="sd-geo-pipe">
+      <div class="sd-geo-step sd-geo-s-input">lat, lng<small>37.77, -122.42</small></div>
+      <div class="sd-geo-arr-wrap"><span class="sd-geo-arr">→</span></div>
+      <div class="sd-geo-step sd-geo-s-compute">Compute<small>geohash(lat,lng,6)</small></div>
+      <div class="sd-geo-arr-wrap">
+        <span class="sd-geo-arr">→</span>
+        <span class="sd-geo-arr-lbl">"9q8s"</span>
+      </div>
+      <div class="sd-geo-step sd-geo-s-expand">Expand<small>cell + 8 neighbors</small></div>
+      <div class="sd-geo-arr-wrap">
+        <span class="sd-geo-arr">→</span>
+        <span class="sd-geo-arr-lbl">9 keys</span>
+      </div>
+      <div class="sd-geo-step sd-geo-s-store">Redis<small>ZRANGEBYSCORE</small></div>
+      <div class="sd-geo-arr-wrap"><span class="sd-geo-arr">→</span></div>
+      <div class="sd-geo-step sd-geo-s-result">Sort<small>by distance</small></div>
+    </div>
+  </div>
+
+  <!-- Comparison -->
+  <div class="sd-geo-compare">
+    <div class="sd-geo-compare-card">
+      <div class="sd-geo-compare-name">
+        Geohash
+        <span class="badge badge-rec">Recommended</span>
+      </div>
+      <div class="sd-geo-compare-pts">
+        <span>+ Simple string prefix matching</span>
+        <span>+ Easy to store in Redis sorted sets</span>
+        <span>+ Incrementally refine precision</span>
+        <span>- Edge cases at cell boundaries</span>
+      </div>
+    </div>
+    <div class="sd-geo-compare-card">
+      <div class="sd-geo-compare-name">Quadtree</div>
+      <div class="sd-geo-compare-pts">
+        <span>+ Dynamic subdivision by density</span>
+        <span>+ Natural spatial indexing</span>
+        <span>- Must rebuild on updates</span>
+        <span>- Harder to distribute</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p>Key properties:</p>
+<ul>
+<li><strong>Prefix sharing</strong> — points with the same geohash prefix are spatially close (with caveats at boundaries).</li>
+<li><strong>Precision control</strong> — longer geohash = smaller cell. A 6-character geohash covers ~1.2 km x 0.6 km.</li>
+<li><strong>Range queryable</strong> — "find all businesses in cell 9q8yyk" is a simple string prefix query on a B-tree index.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Geohash length</th>
+<th>Cell width</th>
+<th>Cell height</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>~39 km</td>
+<td>~20 km</td>
+<td>Regional search</td>
+</tr>
+<tr>
+<td>5</td>
+<td>~5 km</td>
+<td>~5 km</td>
+<td>City district</td>
+</tr>
+<tr>
+<td>6</td>
+<td>~1.2 km</td>
+<td>~0.6 km</td>
+<td>Neighborhood</td>
+</tr>
+<tr>
+<td>7</td>
+<td>~150 m</td>
+<td>~150 m</td>
+<td>Block level</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-boundary-problem-and-8-neighbor-lookup">The boundary problem and 8-neighbor lookup</h3>
+<p>Geohash has a well-known edge case: two points on opposite sides of a cell boundary can be very close geographically but have completely different geohash prefixes.</p>
+<p>The solution: query the target cell <strong>and all 8 neighboring cells</strong>:</p>
+<style>
+.dgm-nb{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-nb-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-nb h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-nb-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-nb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:340px;margin:0 auto}
+.dgm-nb-cell{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:14px 6px;text-align:center;
+  font-size:10px;font-weight:700;color:#59636e}
+.dgm-nb-cell.center{background:#faece5;border:1.5px solid #e8b39a;color:#8a3d20}
+.dgm-nb-note{margin-top:12px;padding:10px 14px;background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;
+  font-size:10.5px;color:#1f2328;line-height:1.4;text-align:center}
+@media (max-width:640px){.dgm-nb{padding:20px 16px 18px}}
+</style>
+<div class="dgm-nb">
+  <span class="dgm-nb-chip">The boundary problem</span>
+  <h4>Query the target cell and all 8 neighbors</h4>
+  <p class="dgm-nb-sub">A point 50m away across a cell boundary must not be missed.</p>
+
+  <div class="dgm-nb-grid">
+    <div class="dgm-nb-cell">NW</div><div class="dgm-nb-cell">N</div><div class="dgm-nb-cell">NE</div>
+    <div class="dgm-nb-cell">W</div><div class="dgm-nb-cell center">Target cell — user's geohash</div><div class="dgm-nb-cell">E</div>
+    <div class="dgm-nb-cell">SW</div><div class="dgm-nb-cell">S</div><div class="dgm-nb-cell">SE</div>
+  </div>
+
+  <div class="dgm-nb-note">9 prefix lookups, still fast on an indexed column — any point within the search radius falls within one of these 9 cells.</div>
+</div>
+
+<p>This guarantees coverage: any point within the search radius falls within one of these 9 cells (assuming the cell size is chosen to match the search radius). The query becomes 9 prefix lookups — still fast on an indexed column.</p>
+<h3 id="caching-with-redis">Caching with Redis</h3>
+<p>Business data changes slowly (new restaurant listings, address updates), but searches are extremely frequent. Cache businesses by geohash key in Redis:</p>
+<ul>
+<li><strong>Key:</strong> <code>geohash:{precision}:{geohash_value}</code> (e.g., <code>geohash:6:9q8yyk</code>)</li>
+<li><strong>Value:</strong> list of business IDs in that cell</li>
+<li><strong>TTL:</strong> long (hours), because business locations rarely change</li>
+<li><strong>Invalidation:</strong> when a business is added/updated/removed, recompute its geohash and update the relevant key</li>
+</ul>
+<p>A search query resolves to 9 Redis lookups (the target cell + 8 neighbors), each returning a list of business IDs. Client-side or API-side filtering then computes exact distances and applies the radius filter.</p>
+<h3 id="architecture">Architecture</h3>
+<style>
+.dgm-pa2{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pa2-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-pa2 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pa2-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pa2-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.dgm-pa2-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 10px;text-align:center;
+  font-size:10px;font-weight:700;color:#1f2328}
+.dgm-pa2-arr{color:#8c959f}
+.dgm-pa2-branch{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dgm-pa2-b{background:#faece5;border:1px solid #e8b39a;border-radius:9px;padding:8px 9px;text-align:center;
+  font-size:9.5px;color:#8a3d20}
+.dgm-pa2-bg{margin-top:8px;padding:9px 14px;background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;
+  font-size:10px;color:#1f2328;text-align:center}
+@media (max-width:640px){.dgm-pa2{padding:20px 16px 18px}.dgm-pa2-row{flex-direction:column}.dgm-pa2-branch{grid-template-columns:1fr}}
+</style>
+<div class="dgm-pa2">
+  <span class="dgm-pa2-chip">Proximity service architecture</span>
+  <h4>Redis geohash cache in front of the business database</h4>
+  <p class="dgm-pa2-sub">A change stream keeps the cache in sync as businesses update.</p>
+
+  <div class="dgm-pa2-row">
+    <div class="dgm-pa2-n">Client</div><span class="dgm-pa2-arr">→</span>
+    <div class="dgm-pa2-n">Load balancer</div><span class="dgm-pa2-arr">→</span>
+    <div class="dgm-pa2-n">API servers</div>
+  </div>
+
+  <div class="dgm-pa2-branch">
+    <div class="dgm-pa2-b">Redis cache — geohash → business IDs</div>
+    <div class="dgm-pa2-b">Business DB — business details</div>
+  </div>
+
+  <div class="dgm-pa2-bg">Background worker — rebuilds cache on business changes, fed by the DB's change stream</div>
+</div>
+
+<hr />
+<h2 id="nearby-friends">Nearby friends</h2>
+<h3 id="scale-and-requirements_1">Scale and requirements</h3>
+<ul>
+<li>1 billion total users, 10% concurrent (~100M online at any time)</li>
+<li>10M actively sharing location simultaneously</li>
+<li>Location updates every 30 seconds per active user</li>
+<li>Update rate: 10M / 30 = <strong>~334K location updates per second</strong></li>
+<li>Show friends within 5 miles, refresh every 30 seconds</li>
+<li>Average user has 400 friends, ~10% are nearby at any time</li>
+</ul>
+<h3 id="why-http-polling-fails">Why HTTP polling fails</h3>
+<p>At 334K updates/sec, if each update requires:</p>
+<ol>
+<li>Client sends location to server (HTTP request)</li>
+<li>Server queries all friends' locations</li>
+<li>Server returns nearby friends list</li>
+</ol>
+<p>This is request-heavy, latency-heavy, and wasteful — most updates won't change the nearby-friends list.</p>
+<h3 id="websocket-servers-stateful">WebSocket servers (stateful)</h3>
+<p>The solution: <strong>persistent WebSocket connections</strong> between each client and a WebSocket server. The server holds in-memory state mapping user_id to their connection:</p>
+<style>
+.dgm-ws{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ws-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-ws h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ws-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ws-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dgm-ws-srv{background:#faece5;border:1.5px solid #e8b39a;border-radius:12px;padding:12px 13px;position:relative}
+.dgm-ws-srv .tag{position:absolute;top:-9px;left:12px;background:#ffffff;border:1px solid #e8b39a;
+  font-size:9px;font-weight:700;color:#8a3d20;padding:2px 7px;border-radius:5px;text-transform:uppercase}
+.dgm-ws-conn{background:#ffffff;border:1px solid #f2d6c4;border-radius:8px;padding:7px 9px;font-size:10px;
+  color:#8a3d20;margin-top:6px;text-align:center}
+.dgm-ws-note{margin-top:12px;padding:10px 14px;background:#ffebe9;border:1px dashed #ffcecb;border-radius:10px;
+  font-size:10.5px;color:#82061e;line-height:1.4}
+@media (max-width:640px){.dgm-ws{padding:20px 16px 18px}.dgm-ws-row{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ws">
+  <span class="dgm-ws-chip">Stateful WebSocket servers</span>
+  <h4>Persistent connections replace request-heavy polling</h4>
+  <p class="dgm-ws-sub">Each server holds in-memory state mapping user_id to their connection.</p>
+
+  <div class="dgm-ws-row">
+    <div class="dgm-ws-srv">
+      <span class="tag">Server 1</span>
+      <div class="dgm-ws-conn">User A connection</div>
+      <div class="dgm-ws-conn">User B connection</div>
+      <div class="dgm-ws-conn">User C connection</div>
+    </div>
+    <div class="dgm-ws-srv">
+      <span class="tag">Server 2</span>
+      <div class="dgm-ws-conn">User D connection</div>
+      <div class="dgm-ws-conn">User E connection</div>
+    </div>
+  </div>
+
+  <div class="dgm-ws-note">User A's friends may connect to a <em>different</em> server — Server 1 needs a way to notify Server 2 that User A moved.</div>
+</div>
+
+<p>When User A sends a location update:</p>
+<ol>
+<li>The WebSocket server receives it.</li>
+<li>It looks up User A's friend list.</li>
+<li>For each friend, it checks: is that friend nearby?</li>
+<li>If yes, it pushes User A's new location to the friend's WebSocket connection.</li>
+</ol>
+<p>The problem: User A's friends may be connected to <em>different</em> WebSocket servers. You need a way for Server 1 to notify Server 2 that User A moved.</p>
+<h3 id="redis-pubsub-for-cross-server-communication">Redis pub/sub for cross-server communication</h3>
+<p>Each user gets a <strong>Redis pub/sub channel</strong> named after their user_id. When User A comes online:</p>
+<ul>
+<li>User A's WebSocket server subscribes to the channels of all of User A's friends.</li>
+<li>When a friend sends a location update, it publishes to their own channel.</li>
+<li>User A's server receives the publish, computes the distance, and pushes the update to User A if the friend is within range.</li>
+</ul>
+<style>
+.dgm-ps3{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ps3-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-ps3 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ps3-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ps3-actors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.dgm-ps3-actor{border-radius:9px;padding:7px 6px;text-align:center;font-size:9.5px;font-weight:700}
+.dgm-ps3-actor.a{background:#ddf4ff;border:1px solid #b6e3ff;color:#0550ae}
+.dgm-ps3-actor.r{background:#faece5;border:1px solid #e8b39a;color:#8a3d20}
+.dgm-ps3-actor.b{background:#dafbe1;border:1px solid #aceebb;color:#1a614f}
+.dgm-ps3-msgs{display:flex;flex-direction:column;gap:5px}
+.dgm-ps3-msg{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;font-size:10.5px;
+  color:#1f2328;line-height:1.35;padding:7px 10px;border-radius:8px;background:#f6f8fa}
+.dgm-ps3-msg .tag{font-size:9px;font-weight:700;color:#8c959f}
+@media (max-width:640px){.dgm-ps3{padding:20px 16px 18px}.dgm-ps3-actors{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ps3">
+  <span class="dgm-ps3-chip">Redis pub/sub for cross-server communication</span>
+  <h4>Each user gets a channel named after their user_id</h4>
+  <p class="dgm-ps3-sub">User A and User B are friends, connected to different WebSocket servers.</p>
+
+  <div class="dgm-ps3-actors">
+    <div class="dgm-ps3-actor a">User A — WS Server 1</div>
+    <div class="dgm-ps3-actor r">Redis pub/sub</div>
+    <div class="dgm-ps3-actor b">User B — WS Server 2</div>
+  </div>
+
+  <div class="dgm-ps3-msgs">
+    <div class="dgm-ps3-msg"><span class="tag">1</span><span>A → Redis: subscribe to channel:user_b</span></div>
+    <div class="dgm-ps3-msg"><span class="tag">2</span><span>B → Redis: publish to channel:user_b (lat, lng, ts)</span></div>
+    <div class="dgm-ps3-msg"><span class="tag">3</span><span>Redis → A: receive User B's location</span></div>
+    <div class="dgm-ps3-msg"><span class="tag">4</span><span>A computes distance, pushes to User A if nearby</span></div>
+  </div>
+</div>
+
+<h3 id="scaling-redis-pubsub">Scaling Redis pub/sub</h3>
+<p>With 10M concurrent users each subscribing to ~400 friend channels, the total subscription count is 4 billion. A single Redis instance cannot handle this.</p>
+<p><strong>Consistent hashing</strong> distributes users across a Redis pub/sub cluster:</p>
+<ul>
+<li>Hash(user_id) determines which Redis node holds that user's channel.</li>
+<li>When a new Redis node is added, only ~1/N of channels need to migrate.</li>
+<li>The WebSocket server maintains connections to multiple Redis nodes (one per friend's assigned node).</li>
+</ul>
+<h3 id="redis-location-cache">Redis location cache</h3>
+<p>Separate from the pub/sub layer, a <strong>Redis location cache</strong> stores the latest known position of every active user:</p>
+<ul>
+<li><strong>Key:</strong> <code>loc:{user_id}</code></li>
+<li><strong>Value:</strong> <code>{lat, lng, timestamp}</code></li>
+<li><strong>TTL:</strong> 10 minutes (if no update arrives, the user is assumed offline/inactive)</li>
+</ul>
+<p>This cache serves two purposes:</p>
+<ol>
+<li>When a user first comes online, it bootstraps their nearby-friends list without waiting for individual friend updates.</li>
+<li>It provides a fallback when pub/sub messages are lost.</li>
+</ol>
+<h3 id="alternative-erlang-distributed-processes">Alternative: Erlang distributed processes</h3>
+<p>An alternative architecture uses Erlang/Elixir (or similar actor-model systems) where each user is a lightweight process:</p>
+<ul>
+<li>Each user process holds their state (location, friend list, subscriptions).</li>
+<li>Erlang's built-in distributed messaging replaces Redis pub/sub.</li>
+<li>The BEAM VM handles millions of concurrent processes per node.</li>
+<li>Processes are location-transparent — they can migrate between nodes.</li>
+</ul>
+<p>This eliminates the Redis layer but couples you to the Erlang ecosystem. WhatsApp famously used this approach to handle 2M connections per server.</p>
+<hr />
+<h2 id="google-maps">Google Maps</h2>
+<h3 id="scale-and-requirements_2">Scale and requirements</h3>
+<ul>
+<li>1 billion daily active users</li>
+<li>Global coverage: roads, transit, walking, cycling</li>
+<li>Petabytes of map data (satellite imagery, street data, POIs)</li>
+<li>Sub-second tile loading</li>
+<li>Real-time traffic-aware routing and ETA</li>
+</ul>
+<h3 id="web-mercator-projection">Web Mercator projection</h3>
+<p>Maps display a spherical planet on a flat screen. <strong>Web Mercator</strong> (EPSG:3857) projects the sphere onto a cylinder, then unrolls it:</p>
+<ul>
+<li>The world becomes a square at zoom level 0.</li>
+<li>Each zoom level divides each tile into 4 sub-tiles.</li>
+<li>At zoom level N, there are 4^N tiles total.</li>
+<li>Zoom 0 = 1 tile (whole world). Zoom 21 = ~4 trillion tiles (building-level detail).</li>
+</ul>
+<p>The projection distorts area near the poles (Greenland looks enormous) but preserves angles and shapes locally, which is what navigation needs.</p>
+<h3 id="geohashing-for-tile-addressing">Geohashing for tile addressing</h3>
+<p>Each tile is addressed by (zoom_level, x, y), but the system uses geohashing principles for spatial indexing:</p>
+<ul>
+<li>A tile's geohash-like address enables efficient CDN caching (nearby tiles share prefixes, enabling prefix-based cache grouping).</li>
+<li>Tile requests are the dominant read pattern — pre-render and cache aggressively.</li>
+</ul>
+<h3 id="static-pre-rendered-tiles-cdn">Static pre-rendered tiles + CDN</h3>
+<p>Map tiles are <strong>pre-rendered</strong> at all zoom levels and served as static images from a CDN:</p>
+<style>
+.dgm-ct{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ct-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-ct h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ct-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ct-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-ct-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10px;font-weight:700;color:#1f2328}
+.dgm-ct-arr{color:#8c959f}
+.dgm-ct-branch{display:flex;justify-content:center;gap:20px;margin-top:8px}
+.dgm-ct-b{font-size:10px;color:#59636e;text-align:center}
+.dgm-ct-b b{display:block;color:#8a3d20}
+@media (max-width:640px){.dgm-ct{padding:20px 16px 18px}.dgm-ct-row{flex-direction:column}}
+</style>
+<div class="dgm-ct">
+  <span class="dgm-ct-chip">Static pre-rendered tiles + CDN</span>
+  <h4>Tile requests are the dominant read pattern — pre-render and cache aggressively</h4>
+  <p class="dgm-ct-sub">Most users look at a few cities; those tiles are always cached at the edge.</p>
+
+  <div class="dgm-ct-row">
+    <div class="dgm-ct-n">Client — tile request: zoom/x/y.png</div>
+    <span class="dgm-ct-arr">→</span>
+    <div class="dgm-ct-n">CDN edge server</div>
+  </div>
+
+  <div class="dgm-ct-branch">
+    <div class="dgm-ct-b"><b>Cache hit</b>→ Client</div>
+    <div class="dgm-ct-b"><b>Cache miss</b>→ Tile render service → Map data store</div>
+  </div>
+</div>
+
+<p>At Google's scale, the tile set is hundreds of petabytes. But the access pattern is highly skewed:</p>
+<ul>
+<li>Most users look at a few cities → those tiles are always cached at the edge.</li>
+<li>Remote areas are rarely accessed → cache misses are rare and acceptable.</li>
+<li>Tiles change infrequently (road networks update weekly/monthly) → long TTLs.</li>
+</ul>
+<h3 id="hierarchical-routing-tiles">Hierarchical routing tiles</h3>
+<p>Road network routing at global scale cannot use a single graph — the full graph has billions of nodes. Instead, the road network is partitioned into <strong>routing tiles</strong> at multiple hierarchy levels:</p>
+<style>
+.dgm-rt{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-rt-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-rt h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-rt-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-rt-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-rt-node{background:#faece5;border:1.5px solid #e8b39a;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#8a3d20}
+.dgm-rt-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px}
+@media (max-width:640px){.dgm-rt{padding:20px 16px 18px}}
+</style>
+<div class="dgm-rt">
+  <span class="dgm-rt-chip">Hierarchical routing tiles</span>
+  <h4>Billions of nodes reduced to thousands per query</h4>
+  <p class="dgm-rt-sub">Local roads for the last mile, highways for the middle, local roads again at the destination.</p>
+
+  <div class="dgm-rt-chain">
+    <div class="dgm-rt-node">Level 0: Local roads — small tiles, full detail</div>
+    <div class="dgm-rt-arr">↓ connect at tile boundaries ↓</div>
+    <div class="dgm-rt-node">Level 1: Arterial roads — medium tiles, major roads only</div>
+    <div class="dgm-rt-arr">↓ connect at tile boundaries ↓</div>
+    <div class="dgm-rt-node">Level 2: Highways — large tiles, highways and expressways</div>
+  </div>
+</div>
+
+<p>For a cross-country route:</p>
+<ol>
+<li>Route locally from origin to the nearest highway (Level 0).</li>
+<li>Route on highways to near the destination (Level 2).</li>
+<li>Route locally from highway to destination (Level 0).</li>
+</ol>
+<p>This hierarchical decomposition reduces the search space from billions of nodes to thousands per query.</p>
+<h3 id="a-shortest-path">A* shortest path</h3>
+<p>Within each routing tile, the system uses <strong>A* search</strong> — a variant of Dijkstra's algorithm that uses a heuristic (straight-line distance to destination) to prioritize exploring nodes in the direction of the goal:</p>
+<ul>
+<li><strong>Edge weights</strong> incorporate distance, speed limit, road type, and real-time traffic.</li>
+<li><strong>Pre-computed contractions</strong> (Contraction Hierarchies) shortcut through low-importance nodes, reducing the graph size by 10-100x.</li>
+<li>The combination of hierarchical tiles + A* + contraction hierarchies makes continent-scale routing possible in milliseconds.</li>
+</ul>
+<h3 id="client-side-gps-batching">Client-side GPS batching</h3>
+<p>Mobile clients send GPS coordinates, but not every reading:</p>
+<ul>
+<li>GPS readings arrive at 1 Hz (once per second).</li>
+<li>Sending every reading wastes bandwidth and battery.</li>
+<li>The client <strong>batches</strong> readings and sends them every 15-30 seconds, or when significant movement is detected.</li>
+<li>The batch includes timestamps for each reading, enabling the server to reconstruct the path.</li>
+</ul>
+<h3 id="adaptive-eta-via-tile-based-traffic-tracking">Adaptive ETA via tile-based traffic tracking</h3>
+<p>Real-time ETA depends on current traffic conditions, computed from the aggregate behavior of all map users:</p>
+<ol>
+<li>Every active navigation client reports its (tile, speed, timestamp) via GPS batches.</li>
+<li>A traffic processing service aggregates speeds per road segment per time window.</li>
+<li>The aggregated speeds update edge weights in the routing graph.</li>
+<li>ETA computation for new routes uses these live-updated weights.</li>
+</ol>
+<style>
+.dgm-eta{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-eta-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-eta h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-eta-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-eta-pipe{display:grid;grid-template-columns:1fr 16px 1fr 16px 1fr 16px 1fr 16px 1fr;align-items:center;gap:3px;margin-bottom:10px}
+.dgm-eta-node{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:8px 6px;text-align:center;
+  font-size:8.5px;font-weight:700;color:#1f2328;line-height:1.25}
+.dgm-eta-node.kafka{background:#faece5;border-color:#e8b39a;color:#8a3d20}
+.dgm-eta-arr{text-align:center;color:#8c959f;font-weight:700}
+.dgm-eta-loop{margin-top:8px;padding:9px 14px;background:#faece5;border:1px dashed #e8b39a;border-radius:10px;
+  font-size:10px;color:#8a3d20;line-height:1.4;text-align:center}
+@media (max-width:640px){.dgm-eta{padding:20px 16px 18px}.dgm-eta-pipe{grid-template-columns:1fr}.dgm-eta-arr{transform:rotate(90deg)}}
+</style>
+<div class="dgm-eta">
+  <span class="dgm-eta-chip">Adaptive ETA via traffic tracking</span>
+  <h4>The more users navigate, the more accurate the ETAs</h4>
+  <p class="dgm-eta-sub">GPS batches feed a live-updated routing graph.</p>
+
+  <div class="dgm-eta-pipe">
+    <div class="dgm-eta-node">Millions of navigation clients — GPS batches</div>
+    <div class="dgm-eta-arr">→</div>
+    <div class="dgm-eta-node">Ingestion service</div>
+    <div class="dgm-eta-arr">→</div>
+    <div class="dgm-eta-node kafka">Kafka / stream processor</div>
+    <div class="dgm-eta-arr">→</div>
+    <div class="dgm-eta-node">Traffic aggregation — per segment, per 5-min window</div>
+  </div>
+
+  <div class="dgm-eta-loop">↓ updates edge weights → Routing graph → ETA computation for new route requests</div>
+</div>
+
+<p>The feedback loop is powerful: the more users navigate with the system, the better the traffic data, the more accurate the ETAs, the more users trust and use the system.</p>
+<hr />
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Geohash boundary misses</strong> — a business 50m away sits across a geohash boundary and is missed because only the center cell was queried. Always query 8 neighbors.</li>
+<li><strong>WebSocket server failure</strong> — a server crash disconnects thousands of users. They must reconnect (to a different server), re-subscribe to all friend channels, and re-bootstrap their nearby list. Design for fast reconnection.</li>
+<li><strong>Redis pub/sub message loss</strong> — Redis pub/sub is fire-and-forget; if the subscriber is temporarily disconnected, messages are lost. The location cache provides eventual consistency, but real-time accuracy degrades.</li>
+<li><strong>GPS drift in indoor/urban environments</strong> — GPS accuracy drops to 10-50m near tall buildings or indoors. Nearby-friends may show a friend "nearby" who is actually several blocks away, inside a building.</li>
+<li><strong>Stale traffic data</strong> — if the traffic aggregation pipeline lags (processing backlog, pipeline failure), ETA computation uses outdated edge weights. On fast-changing roads (accident, event), the ETA drifts.</li>
+<li><strong>Tile rendering backlog</strong> — when map data updates, millions of tiles need re-rendering. If the render pipeline can't keep up, users see stale map tiles for days or weeks.</li>
+<li><strong>Hot geohash cells</strong> — Times Square, Shibuya Crossing, or a stadium during an event creates extreme load on one geohash cell. The Redis key for that cell becomes a hotspot. Mitigation: split hot cells into sub-cells or replicate the key.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have you chosen a spatial index (geohash, quadtree, S2) and justified the choice against your data distribution and query pattern?</li>
+<li class="task todo">For geohash: are you querying 8 neighbors plus the target cell to avoid boundary misses?</li>
+<li class="task todo">For real-time location: are you using persistent connections (WebSocket) rather than polling?</li>
+<li class="task todo">Is the pub/sub layer scaled with consistent hashing, and is there a fallback for lost messages?</li>
+<li class="task todo">For mapping: are tiles pre-rendered and CDN-cached, with appropriate TTLs?</li>
+<li class="task todo">Is the routing graph hierarchically decomposed to avoid full-graph searches?</li>
+<li class="task todo">Are GPS updates batched client-side to preserve battery and bandwidth?</li>
+<li class="task todo">Is there a traffic aggregation feedback loop for adaptive ETA?</li>
+<li class="task todo">Have you tested behavior under GPS drift, stale data, and pub/sub message loss?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="core-building-blocks.html">Core building blocks</a> — consistent hashing for distributing Redis pub/sub channels; key-value stores for the location cache</li>
+<li><a href="real-time-systems.html">Real-time systems</a> — WebSocket connection management patterns from the chat system design</li>
+<li><a href="data-infrastructure.html">Data infrastructure</a> — Kafka-based stream processing for the traffic aggregation pipeline</li>
+<li><a href="storage-and-sync.html">Storage &amp; sync</a> — notification via long polling as an alternative to WebSockets</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="storage-and-sync.html"><span class="lbl">← Previous</span><span class="ttl">Storage &amp; sync</span></a><a class="navcard next" href="data-infrastructure.html"><span class="lbl">→ Next</span><span class="ttl">Data infrastructure</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#proximity-service">Proximity service</a><a class="h3" href="#scale-and-requirements">Scale and requirements</a><a class="h3" href="#the-spatial-indexing-problem">The spatial indexing problem</a><a class="h3" href="#approaches-compared">Approaches compared</a><a class="h3" href="#how-geohashing-works">How geohashing works</a><a class="h3" href="#the-boundary-problem-and-8-neighbor-lookup">The boundary problem and 8-neighbor lookup</a><a class="h3" href="#caching-with-redis">Caching with Redis</a><a class="h3" href="#architecture">Architecture</a><a class="h2" href="#nearby-friends">Nearby friends</a><a class="h3" href="#scale-and-requirements_1">Scale and requirements</a><a class="h3" href="#why-http-polling-fails">Why HTTP polling fails</a><a class="h3" href="#websocket-servers-stateful">WebSocket servers (stateful)</a><a class="h3" href="#redis-pubsub-for-cross-server-communication">Redis pub/sub for cross-server communication</a><a class="h3" href="#scaling-redis-pubsub">Scaling Redis pub/sub</a><a class="h3" href="#redis-location-cache">Redis location cache</a><a class="h3" href="#alternative-erlang-distributed-processes">Alternative: Erlang distributed processes</a><a class="h2" href="#google-maps">Google Maps</a><a class="h3" href="#scale-and-requirements_2">Scale and requirements</a><a class="h3" href="#web-mercator-projection">Web Mercator projection</a><a class="h3" href="#geohashing-for-tile-addressing">Geohashing for tile addressing</a><a class="h3" href="#static-pre-rendered-tiles-cdn">Static pre-rendered tiles + CDN</a><a class="h3" href="#hierarchical-routing-tiles">Hierarchical routing tiles</a><a class="h3" href="#a-shortest-path">A* shortest path</a><a class="h3" href="#client-side-gps-batching">Client-side GPS batching</a><a class="h3" href="#adaptive-eta-via-tile-based-traffic-tracking">Adaptive ETA via tile-based traffic tracking</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=system-design%2Flocation-and-geo-services.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="system-design/location-and-geo-services.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: loan-origination
+description: Capstone process — parallel checks, DMN decision, review, timed offer, disbursal
+kind: process-model
+phase: 11
+lesson: 01
+Combines: Phase 1 (tokens/gateways), 2 (async boundaries), 3 (candidate groups),
+4 (HTTP task + error boundary), 5 (DMN decision task), 7 (timer boundary).
+Deployable to flowable-rest together with loan-decision.dmn (lesson 02).
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:flowable="http://flowable.org/bpmn"
+    targetNamespace="http://flowable.org/examples">
+
+  <process id="loanOrigination" name="Loan origination" isExecutable="true">
+
+    <startEvent id="applicationReceived"/>
+
+    <!-- ===== parallel checks: bureau (system) + KYC (human) — Phase 1/4 ===== -->
+    <parallelGateway id="forkChecks"/>
+
+    <serviceTask id="bureauPull" name="Pull bureau score" flowable:type="http"
+        flowable:async="true">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[GET]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${bureauBaseUrl}/v1/score?pan=${pan}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[5000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="resultVariablePrefix">
+          <flowable:string><![CDATA[bureau]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[true]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="failStatusCodes">
+          <flowable:string><![CDATA[400, 404, 5XX]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="handleStatusCodes">
+          <flowable:string><![CDATA[400, 404, 5XX]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+
+    <!-- bureau unreachable -> a human pulls the report (Phase 4) -->
+    <boundaryEvent id="bureauDown" attachedToRef="bureauPull">
+      <errorEventDefinition/>
+    </boundaryEvent>
+    <userTask id="manualBureauPull" name="Pull bureau report manually"
+        flowable:candidateGroups="credit-ops">
+      <extensionElements>
+        <flowable:formProperty id="score" name="Bureau score" type="long" required="true"/>
+      </extensionElements>
+    </userTask>
+
+    <userTask id="kycReview" name="KYC document review"
+        flowable:candidateGroups="kyc-ops">
+      <extensionElements>
+        <flowable:formProperty id="kycOk" name="KYC passed?" type="boolean" required="true"/>
+      </extensionElements>
+    </userTask>
+
+    <parallelGateway id="joinChecks"/>
+
+    <!-- ===== KYC gate, then the DMN credit decision — Phase 5 ===== -->
+    <exclusiveGateway id="kycGate" default="toDecision"/>
+    <endEvent id="rejectedKyc"/>
+
+    <serviceTask id="decideCredit" name="Credit decision" flowable:type="dmn">
+      <extensionElements>
+        <flowable:field name="decisionTableReferenceKey">
+          <flowable:string><![CDATA[loanDecision]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+
+    <exclusiveGateway id="route" default="toDeclined"/>
+
+    <userTask id="creditReview" name="Manual credit review"
+        flowable:candidateGroups="credit-ops">
+      <extensionElements>
+        <flowable:formProperty id="decision" name="Decision" type="enum" required="true">
+          <flowable:value id="auto-approve" name="Approve"/>
+          <flowable:value id="decline" name="Decline"/>
+        </flowable:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="reviewRoute" default="toDeclined2"/>
+
+    <!-- ===== offer: accept within 30 days or it expires — Phase 7 ===== -->
+    <userTask id="acceptOffer" name="Accept loan offer"
+        flowable:candidateGroups="applicants">
+      <extensionElements>
+        <flowable:formProperty id="accepted" name="Accept the offer?" type="boolean"
+            required="true"/>
+      </extensionElements>
+    </userTask>
+    <boundaryEvent id="offerExpiry" attachedToRef="acceptOffer" cancelActivity="true">
+      <timerEventDefinition>
+        <timeDuration>${offerValidity}</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <endEvent id="expired"/>
+
+    <exclusiveGateway id="acceptGate" default="toDeclined3"/>
+
+    <serviceTask id="disburse" name="Disburse loan"
+        flowable:expression="${execution.setVariable('outcome', 'disbursed')}"/>
+    <endEvent id="doneDisbursed"/>
+    <endEvent id="declined"/>
+
+    <!-- ===== flows ===== -->
+    <sequenceFlow id="s1" sourceRef="applicationReceived" targetRef="forkChecks"/>
+    <sequenceFlow id="s2" sourceRef="forkChecks" targetRef="bureauPull"/>
+    <sequenceFlow id="s3" sourceRef="forkChecks" targetRef="kycReview"/>
+    <sequenceFlow id="s4" sourceRef="bureauPull" targetRef="joinChecks"/>
+    <sequenceFlow id="s5" sourceRef="bureauDown" targetRef="manualBureauPull"/>
+    <sequenceFlow id="s6" sourceRef="manualBureauPull" targetRef="joinChecks"/>
+    <sequenceFlow id="s7" sourceRef="kycReview" targetRef="joinChecks"/>
+    <sequenceFlow id="s8" sourceRef="joinChecks" targetRef="kycGate"/>
+
+    <sequenceFlow id="s9" sourceRef="kycGate" targetRef="rejectedKyc">
+      <conditionExpression xsi:type="tFormalExpression">${kycOk == false}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toDecision" sourceRef="kycGate" targetRef="decideCredit"/>
+
+    <sequenceFlow id="s10" sourceRef="decideCredit" targetRef="route"/>
+    <sequenceFlow id="toOffer" sourceRef="route" targetRef="acceptOffer">
+      <conditionExpression xsi:type="tFormalExpression">${decision == 'auto-approve'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toReview" sourceRef="route" targetRef="creditReview">
+      <conditionExpression xsi:type="tFormalExpression">${decision == 'manual-review'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toDeclined" sourceRef="route" targetRef="declined"/>
+
+    <sequenceFlow id="s11" sourceRef="creditReview" targetRef="reviewRoute"/>
+    <sequenceFlow id="s12" sourceRef="reviewRoute" targetRef="acceptOffer">
+      <conditionExpression xsi:type="tFormalExpression">${decision == 'auto-approve'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toDeclined2" sourceRef="reviewRoute" targetRef="declined"/>
+
+    <sequenceFlow id="s13" sourceRef="acceptOffer" targetRef="acceptGate"/>
+    <sequenceFlow id="s14" sourceRef="offerExpiry" targetRef="expired"/>
+    <sequenceFlow id="s15" sourceRef="acceptGate" targetRef="disburse">
+      <conditionExpression xsi:type="tFormalExpression">${accepted == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toDeclined3" sourceRef="acceptGate" targetRef="declined"/>
+    <sequenceFlow id="s16" sourceRef="disburse" targetRef="doneDisbursed"/>
+
+  </process>
+</definitions>

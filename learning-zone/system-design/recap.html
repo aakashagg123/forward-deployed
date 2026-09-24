@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Recap &amp; real-world examples — System Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>System Design</span><em>a standalone module</em></a>
+  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Recap</span>
+    <h1>Recap &amp; real-world examples</h1>
+  </div>
+  <h2 id="tldr">TL;DR</h2>
+<p>This track covered <strong>28 real-world systems</strong> across eight lessons, from single-server scaling patterns to microsecond-latency stock exchanges. The systems span six categories: web-scale services, real-time communication, storage, geospatial, data infrastructure, and financial/transactional. But the same dozen patterns appear again and again. This recap maps every system at a glance. It names the recurring patterns that connect them, and distills the practitioner-level takeaways that cut across all 28 designs.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — Seeing the patterns that repeat across 28 systems gives you a vocabulary for evaluating any new design. You stop treating each system as a special case and start recognizing the shared building blocks and tradeoffs.</p>
+<p><strong>What it changes in your decisions</strong> — When your team proposes an architecture, you can identify which of these 28 systems it most resembles. You can ask whether they've addressed that system's known failure modes, and check whether they've chosen the right consistency/availability tradeoff.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which of these established system designs is ours closest to, and what did we learn from their known failure modes?"</em></p>
+<p><strong>Risk if ignored</strong> — You reinvent solutions to problems that were solved a decade ago. You miss failure modes that are well-documented in existing designs, and make avoidable tradeoff mistakes.</p>
+</blockquote>
+<hr />
+<h2 id="the-systems-at-a-glance">The systems at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>System</th>
+<th>Lesson</th>
+<th>Scale</th>
+<th>Core tradeoff</th>
+<th>Key mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Scaling (single to millions)</td>
+<td><a href="foundations-and-framework.html">Foundations</a></td>
+<td>0 to 10M+ users</td>
+<td>Vertical vs. horizontal scaling</td>
+<td>Stateless web tier, sharding</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Back-of-envelope estimation</td>
+<td><a href="foundations-and-framework.html">Foundations</a></td>
+<td>Any</td>
+<td>Precision vs. speed of analysis</td>
+<td>Power-of-2 reasoning, latency table</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Four-step framework</td>
+<td><a href="foundations-and-framework.html">Foundations</a></td>
+<td>Any</td>
+<td>Breadth vs. depth in design</td>
+<td>Scope, sketch, deep-dive, wrap-up</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Rate limiter</td>
+<td><a href="core-building-blocks.html">Building blocks</a></td>
+<td>Millions of requests/sec</td>
+<td>User experience vs. system protection</td>
+<td>Token bucket, sliding window</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Consistent hashing</td>
+<td><a href="core-building-blocks.html">Building blocks</a></td>
+<td>N nodes, dynamic membership</td>
+<td>Even distribution vs. simplicity</td>
+<td>Virtual nodes on a hash ring</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Key-value store</td>
+<td><a href="core-building-blocks.html">Building blocks</a></td>
+<td>Billions of keys</td>
+<td>Consistency vs. availability (CAP)</td>
+<td>Quorum reads/writes, vector clocks</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Unique ID generator</td>
+<td><a href="core-building-blocks.html">Building blocks</a></td>
+<td>Millions of IDs/sec</td>
+<td>Sortability vs. coordination-freedom</td>
+<td>Snowflake: timestamp + machine + sequence</td>
+</tr>
+<tr>
+<td>8</td>
+<td>URL shortener</td>
+<td><a href="web-scale-services.html">Web-scale</a></td>
+<td>100M URLs</td>
+<td>Read vs. write optimization</td>
+<td>Base-62 encoding, 301/302 redirect</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Web crawler</td>
+<td><a href="web-scale-services.html">Web-scale</a></td>
+<td>Billions of pages</td>
+<td>Freshness vs. politeness</td>
+<td>Priority queue, URL frontier, robots.txt</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Notification system</td>
+<td><a href="web-scale-services.html">Web-scale</a></td>
+<td>Millions of pushes/min</td>
+<td>Delivery reliability vs. latency</td>
+<td>APNs/FCM, retry with backoff</td>
+</tr>
+<tr>
+<td>11</td>
+<td>News feed</td>
+<td><a href="web-scale-services.html">Web-scale</a></td>
+<td>100M+ DAU</td>
+<td>Fanout-on-write vs. fanout-on-read</td>
+<td>Hybrid: push for normal, pull for celebrities</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Chat system</td>
+<td><a href="real-time-systems.html">Real-time</a></td>
+<td>Millions concurrent</td>
+<td>Consistency vs. real-time delivery</td>
+<td>WebSocket, message queue, read receipts</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Search autocomplete</td>
+<td><a href="real-time-systems.html">Real-time</a></td>
+<td>100K QPS</td>
+<td>Freshness vs. latency</td>
+<td>Trie in memory, async updates</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Video streaming</td>
+<td><a href="real-time-systems.html">Real-time</a></td>
+<td>Millions concurrent streams</td>
+<td>Quality vs. bandwidth/cost</td>
+<td>Adaptive bitrate, DAG transcoding, CDN</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Google Drive (file sync)</td>
+<td><a href="storage-and-sync.html">Storage</a></td>
+<td>50M users, 10GB each</td>
+<td>Sync speed vs. bandwidth</td>
+<td>4MB blocks, delta sync, long polling</td>
+</tr>
+<tr>
+<td>16</td>
+<td>S3-like object storage</td>
+<td><a href="storage-and-sync.html">Storage</a></td>
+<td>100 PB</td>
+<td>Durability vs. storage cost</td>
+<td>Erasure coding (8+4), WAL merging</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Proximity service</td>
+<td><a href="location-and-geo-services.html">Location</a></td>
+<td>200M businesses</td>
+<td>Query speed vs. index complexity</td>
+<td>Geohash + 8-neighbor lookup</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Nearby friends</td>
+<td><a href="location-and-geo-services.html">Location</a></td>
+<td>10M concurrent</td>
+<td>Real-time accuracy vs. resource cost</td>
+<td>WebSocket + Redis pub/sub</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Google Maps</td>
+<td><a href="location-and-geo-services.html">Location</a></td>
+<td>1B DAU</td>
+<td>Tile freshness vs. CDN efficiency</td>
+<td>Hierarchical routing, pre-rendered tiles</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Distributed message queue</td>
+<td><a href="data-infrastructure.html">Data infra</a></td>
+<td>Millions msgs/sec</td>
+<td>Durability vs. throughput</td>
+<td>WAL, ISR replication, consumer groups</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Metrics monitoring</td>
+<td><a href="data-infrastructure.html">Data infra</a></td>
+<td>10M metrics</td>
+<td>Resolution vs. storage cost</td>
+<td>Down-sampling, double-delta encoding</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Ad click aggregation</td>
+<td><a href="data-infrastructure.html">Data infra</a></td>
+<td>1B clicks/day</td>
+<td>Accuracy vs. latency</td>
+<td>Kappa architecture, watermarking</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Distributed email</td>
+<td><a href="data-infrastructure.html">Data infra</a></td>
+<td>100K emails/sec</td>
+<td>Deliverability vs. throughput</td>
+<td>SPF/DKIM, IP warm-up, Cassandra by user</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Hotel reservation</td>
+<td><a href="transactional-and-financial.html">Transactional</a></td>
+<td>~3 TPS</td>
+<td>Simplicity vs. concurrency</td>
+<td>DB constraints, idempotency key</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Gaming leaderboard</td>
+<td><a href="transactional-and-financial.html">Transactional</a></td>
+<td>5M DAU</td>
+<td>Memory vs. scale</td>
+<td>Redis sorted sets, O(log N) ZRANK</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Payment system</td>
+<td><a href="transactional-and-financial.html">Transactional</a></td>
+<td>Millions txn/day</td>
+<td>Safety vs. speed</td>
+<td>Double-entry ledger, PSP idempotency</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Digital wallet</td>
+<td><a href="transactional-and-financial.html">Transactional</a></td>
+<td>1M TPS</td>
+<td>Consistency vs. throughput</td>
+<td>Event sourcing + CQRS + Raft</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Stock exchange</td>
+<td><a href="transactional-and-financial.html">Transactional</a></td>
+<td>1B orders/day</td>
+<td>Latency vs. distribution</td>
+<td>Single-server mmap, custom sequencer</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recurring-patterns">Recurring patterns</h2>
+<p>These patterns appear across many of the 28 systems. Recognizing them lets you transfer understanding from one system to another.</p>
+<h3 id="1-separate-metadata-from-data">1. Separate metadata from data</h3>
+<p>The most universal pattern: store the catalog of what exists (metadata) separately from the content itself (data), because they have different consistency, access, and scaling requirements.</p>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Metadata</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Google Drive</td>
+<td>File tree, versions, sharing (MySQL)</td>
+<td>Blocks in cloud storage</td>
+</tr>
+<tr>
+<td>S3 object storage</td>
+<td>Bucket/object catalog (sharded RDBMS)</td>
+<td>Blobs on data nodes</td>
+</tr>
+<tr>
+<td>Distributed email</td>
+<td>Headers, folders, labels (Cassandra)</td>
+<td>Body/attachments in blob store</td>
+</tr>
+<tr>
+<td>Video streaming</td>
+<td>Video info, processing status (RDBMS)</td>
+<td>Encoded segments on CDN</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-append-only-logs-wal">2. Append-only logs (WAL)</h3>
+<p>Write-ahead logs appear as the foundational data structure in systems that prize write throughput and durability:</p>
+<ul>
+<li><strong>Kafka</strong> — partitions are append-only logs on disk.</li>
+<li><strong>S3 data nodes</strong> — small objects are appended to WAL files.</li>
+<li><strong>Stock exchange</strong> — the event log of all orders and trades.</li>
+<li><strong>Digital wallet</strong> — event sourcing stores every balance change as an appended event.</li>
+<li><strong>Key-value store</strong> — LSM trees use WALs for crash recovery.</li>
+</ul>
+<p>The pattern: convert random writes to sequential appends, gain throughput, and accept the cost of background compaction.</p>
+<h3 id="3-idempotency-keys">3. Idempotency keys</h3>
+<p>Every system where a retry is possible (which is every system that uses a network) must make writes idempotent:</p>
+<ul>
+<li><strong>Hotel reservation</strong> — <code>reservation_id</code> as unique constraint.</li>
+<li><strong>Payment system</strong> — <code>payment_order_id</code> as PSP idempotency key.</li>
+<li><strong>Ad click aggregation</strong> — <code>(ad_id, window_start)</code> for deduplicated counts.</li>
+<li><strong>Notification system</strong> — deduplication of push notifications by event ID.</li>
+</ul>
+<p>The pattern: the client generates a unique key before the first attempt. The server uses it to detect and suppress duplicates.</p>
+<h3 id="4-consistent-hashing-for-shard-distribution">4. Consistent hashing for shard distribution</h3>
+<p>Consistent hashing distributes data across nodes while minimizing reshuffling when nodes join or leave:</p>
+<ul>
+<li><strong>Key-value store</strong> — partition keys across storage nodes.</li>
+<li><strong>Nearby friends</strong> — distribute Redis pub/sub channels across a Redis cluster.</li>
+<li><strong>Distributed email</strong> — Cassandra ring membership.</li>
+<li><strong>Digital wallet</strong> — shard user balances across database instances.</li>
+<li><strong>Message queue</strong> — assign partitions to brokers.</li>
+</ul>
+<h3 id="5-event-sourcing-for-auditability">5. Event sourcing for auditability</h3>
+<p>When correctness and history matter more than raw performance, systems store events rather than state:</p>
+<ul>
+<li><strong>Stock exchange</strong> — deterministic replay of every order for disaster recovery.</li>
+<li><strong>Digital wallet</strong> — complete transaction history for regulatory compliance.</li>
+<li><strong>Ad click aggregation</strong> — raw events retained for reprocessing when logic changes.</li>
+<li><strong>Payment system</strong> — double-entry ledger entries are effectively events.</li>
+</ul>
+<p>The cost: replaying billions of events is slow without periodic snapshots, and the storage footprint grows indefinitely.</p>
+<h3 id="6-pubsub-for-fan-out">6. Pub/sub for fan-out</h3>
+<p>When one event must reach many consumers, pub/sub decouples the producer from the consumer count:</p>
+<ul>
+<li><strong>Nearby friends</strong> — Redis pub/sub channels per user.</li>
+<li><strong>News feed</strong> — fanout-on-write pushes posts to follower inboxes.</li>
+<li><strong>Metrics monitoring</strong> — Kafka topics fan out to dashboards, alerting, and archival.</li>
+<li><strong>Stock exchange</strong> — UDP multicast for market data distribution.</li>
+<li><strong>Notification system</strong> — event bus to APNs/FCM/SMS/email channels.</li>
+</ul>
+<h3 id="7-tiered-storage-hotwarmcold">7. Tiered storage (hot/warm/cold)</h3>
+<p>Not all data is equally accessed. Tiering reduces cost without sacrificing access to recent data:</p>
+<ul>
+<li><strong>Google Drive</strong> — SSD for recent files, HDD for older, archival for 90+ day dormant.</li>
+<li><strong>S3 object storage</strong> — storage classes (Standard, Infrequent Access, Glacier).</li>
+<li><strong>Metrics monitoring</strong> — full resolution for 7 days, down-sampled for months/years.</li>
+<li><strong>Message queue</strong> — retention policy moves old segments off primary storage.</li>
+</ul>
+<h3 id="8-geospatial-indexing">8. Geospatial indexing</h3>
+<p>Converting 2D coordinates to 1D sortable keys enables spatial queries on standard indexes:</p>
+<ul>
+<li><strong>Proximity service</strong> — geohash prefix queries.</li>
+<li><strong>Google Maps</strong> — tile addressing by zoom/x/y (geohash-like hierarchy).</li>
+<li><strong>Nearby friends</strong> — location cache keyed by geohash for bootstrapping.</li>
+</ul>
+<h3 id="9-real-time-via-persistent-connections">9. Real-time via persistent connections</h3>
+<p>When latency matters more than resource efficiency, persistent connections (WebSocket, long polling) replace HTTP polling:</p>
+<ul>
+<li><strong>Chat system</strong> — WebSocket for message delivery.</li>
+<li><strong>Nearby friends</strong> — WebSocket for location updates.</li>
+<li><strong>Google Drive</strong> — long polling for sync notifications.</li>
+<li><strong>Search autocomplete</strong> — persistent connection for keystroke-level latency.</li>
+</ul>
+<h3 id="10-exactly-once-via-idempotent-processing">10. Exactly-once via idempotent processing</h3>
+<p>Exactly-once delivery is impossible in a distributed system, but exactly-once <em>processing</em> is achievable by combining at-least-once delivery with idempotent consumers:</p>
+<ul>
+<li><strong>Kafka</strong> — idempotent producer + transactional consumer.</li>
+<li><strong>Ad click aggregation</strong> — deduplicated writes keyed by <code>(ad_id, window)</code>.</li>
+<li><strong>Payment system</strong> — PSP idempotency key prevents double charges.</li>
+<li><strong>Hotel reservation</strong> — unique constraint on <code>reservation_id</code>.</li>
+</ul>
+<hr />
+<h2 id="the-practitioners-takeaway">The practitioner's takeaway</h2>
+<h3 id="start-with-the-constraints-not-the-technology">Start with the constraints, not the technology</h3>
+<p>Every system in this track began with the same questions: What's the QPS? What's the storage? What's the latency budget? What's the consistency requirement? The answers — not the latest database trend — drive the architecture. A hotel reservation system at 3 TPS doesn't need Kafka. A stock exchange at 100K orders/sec doesn't need Kubernetes.</p>
+<h3 id="correctness-and-performance-are-in-tension-pick-explicitly">Correctness and performance are in tension — pick explicitly</h3>
+<p>The systems divide cleanly into two camps:</p>
+<ul>
+<li><strong>Correctness-first</strong> (payments, wallets, exchanges, reservations): accept higher latency and lower throughput for ACID, idempotency, and double-entry guarantees.</li>
+<li><strong>Throughput-first</strong> (metrics, click aggregation, crawlers, news feed): accept eventual consistency and tolerate occasional duplicates or losses.</li>
+</ul>
+<p>The worst designs are the ones that don't choose — they promise both and deliver neither.</p>
+<h3 id="the-metadata-store-is-always-the-critical-path">The metadata store is always the critical path</h3>
+<p>Across Google Drive, S3, email, video streaming, and the stock exchange, the metadata store is the single most critical component. Data can be replicated and reconstructed. Metadata loss means the system doesn't know what it has. Invest disproportionately in metadata store durability, replication, and backup.</p>
+<h3 id="every-retry-is-a-potential-duplicate">Every retry is a potential duplicate</h3>
+<p>The moment you add a network between two components, you accept that operations may execute more than once. If you haven't made every write operation idempotent, you haven't designed a production system — you've designed a demo.</p>
+<h3 id="scaling-is-a-sequence-not-a-choice">Scaling is a sequence, not a choice</h3>
+<p>The <a href="foundations-and-framework.html">foundations lesson</a> laid out the scaling sequence: separate compute from storage, add load balancing, add replication, add caching, add sharding. Every system in this track follows some prefix of this sequence. The art is knowing where to stop. Most systems don't need the full sequence, and jumping ahead — sharding before you've cached, caching before you've indexed — creates avoidable complexity.</p>
+<h3 id="the-gap-between-works-and-works-correctly-at-scale-is-where-careers-are-made">The gap between "works" and "works correctly at scale" is where careers are made</h3>
+<p>A URL shortener, a chat system, or a payment flow can be built in a weekend hackathon. Making it handle 100M users, survive node failures, reconcile every transaction, and maintain sub-200ms latency — that's the work this track is about. The designs here aren't clever algorithms. They're decades of production experience encoded as patterns and checklists.</p>
+<hr />
+<h2 id="the-full-track">The full track</h2>
+<ol>
+<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — scaling, estimation, and the four-step design process</li>
+<li><a href="core-building-blocks.html">Core building blocks</a> — rate limiting, consistent hashing, key-value stores, unique ID generation</li>
+<li><a href="web-scale-services.html">Web-scale services</a> — URL shortener, web crawler, notification system, news feed</li>
+<li><a href="real-time-systems.html">Real-time systems</a> — chat, search autocomplete, video streaming</li>
+<li><a href="storage-and-sync.html">Storage &amp; sync</a> — Google Drive file sync, S3-like object storage</li>
+<li><a href="location-and-geo-services.html">Location &amp; geo services</a> — proximity service, nearby friends, Google Maps</li>
+<li><a href="data-infrastructure.html">Data infrastructure</a> — message queues, metrics monitoring, ad click aggregation, email</li>
+<li><a href="transactional-and-financial.html">Transactional &amp; financial systems</a> — hotel reservation, leaderboard, payments, digital wallet, stock exchange</li>
+</ol>
+  <div class="pagenav"><a class="navcard prev" href="transactional-and-financial.html"><span class="lbl">← Previous</span><span class="ttl">Transactional &amp; financial systems</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-systems-at-a-glance">The systems at a glance</a><a class="h2" href="#recurring-patterns">Recurring patterns</a><a class="h3" href="#1-separate-metadata-from-data">1. Separate metadata from data</a><a class="h3" href="#2-append-only-logs-wal">2. Append-only logs (WAL)</a><a class="h3" href="#3-idempotency-keys">3. Idempotency keys</a><a class="h3" href="#4-consistent-hashing-for-shard-distribution">4. Consistent hashing for shard distribution</a><a class="h3" href="#5-event-sourcing-for-auditability">5. Event sourcing for auditability</a><a class="h3" href="#6-pubsub-for-fan-out">6. Pub/sub for fan-out</a><a class="h3" href="#7-tiered-storage-hotwarmcold">7. Tiered storage (hot/warm/cold)</a><a class="h3" href="#8-geospatial-indexing">8. Geospatial indexing</a><a class="h3" href="#9-real-time-via-persistent-connections">9. Real-time via persistent connections</a><a class="h3" href="#10-exactly-once-via-idempotent-processing">10. Exactly-once via idempotent processing</a><a class="h2" href="#the-practitioners-takeaway">The practitioner&#x27;s takeaway</a><a class="h3" href="#start-with-the-constraints-not-the-technology">Start with the constraints, not the technology</a><a class="h3" href="#correctness-and-performance-are-in-tension-pick-explicitly">Correctness and performance are in tension — pick explicitly</a><a class="h3" href="#the-metadata-store-is-always-the-critical-path">The metadata store is always the critical path</a><a class="h3" href="#every-retry-is-a-potential-duplicate">Every retry is a potential duplicate</a><a class="h3" href="#scaling-is-a-sequence-not-a-choice">Scaling is a sequence, not a choice</a><a class="h3" href="#the-gap-between-works-and-works-correctly-at-scale-is-where-careers-are-made">The gap between &quot;works&quot; and &quot;works correctly at scale&quot; is where careers are made</a><a class="h2" href="#the-full-track">The full track</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=system-design%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="system-design/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

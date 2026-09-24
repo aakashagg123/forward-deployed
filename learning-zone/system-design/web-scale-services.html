@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Web-scale services — System Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>System Design</span><em>a standalone module</em></a>
+  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink active" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Lesson 03</span>
+    <h1>Web-scale services</h1>
+  </div>
+  <h2 id="tldr">TL;DR</h2>
+<p>Four systems that define "internet scale." A <strong>URL shortener</strong> maps 100 million new short links per day, using a distributed ID generator and Base62 encoding. It chooses between 301 redirects (faster, cached) and 302 redirects (trackable, measurable). A <strong>web crawler</strong> systematically downloads billions of pages, using BFS traversal, a URL frontier with politeness and priority queues, and deduplication at every layer. A <strong>notification system</strong> routes 16 million daily notifications across push (APNS/FCM), SMS (Twilio), and email (SendGrid). Each channel gets its own message queue, with templating, rate limiting, and retry logic. And a <strong>news feed system</strong> serves a personalized timeline by combining fanout-on-write for normal users with fanout-on-read for celebrities, backed by a five-layer cache architecture.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — These are the systems your product decisions directly shape. The URL shortener's redirect choice (301 vs 302) determines whether you can track click analytics. The crawler's politeness settings determine whether you get blocked by every major site. The notification system's rate limiter is the difference between engagement and user churn from spam. The news feed's fanout strategy determines whether celebrity posts take minutes or milliseconds to appear.</p>
+<p><strong>What it changes in your decisions</strong> — You define SLAs with numbers attached: redirect latency under 20ms, notification delivery within 30 seconds, feed refresh under 500ms. You make explicit tradeoffs between features (analytics tracking vs redirect speed) and know the engineering cost of each.</p>
+<p><strong>Ask your eng team</strong> — <em>"What's our P99 notification delivery latency, and what happens to the queue when a single notification targets 10 million followers?"</em></p>
+<p><strong>Risk if ignored</strong> — Short URLs that can't be tracked because you chose the wrong redirect code. A crawler that gets IP-banned from target sites within hours. Notifications that arrive minutes late because a celebrity mention flooded the queue. A news feed where new posts take 30 seconds to appear for users following popular accounts.</p>
+</blockquote>
+<hr />
+<h2 id="url-shortener">URL shortener</h2>
+<p>The product: given a long URL, produce a short one (e.g., <code>tinyurl.com/abc123</code>). Given the short URL, redirect to the original. At 100 million new URLs per day with a 10:1 read-to-write ratio, that's 1 billion redirects per day — roughly 11,600 reads/second average, 23,000+ at peak.</p>
+<h3 id="the-encoding-decision">The encoding decision</h3>
+<p>Two approaches to generating the short code:</p>
+<p><strong>Hash + collision resolution</strong> — Hash the long URL (e.g., CRC32 or MD5), take the first 7 characters. If there's a collision (another URL already mapped to that code), append a predefined string and re-hash. Problem: checking for collisions requires a database query on every write, and the collision rate grows as the table fills.</p>
+<p><strong>Distributed ID generator + Base62</strong> — Generate a unique numeric ID (using the Snowflake approach from <a href="core-building-blocks.html">lesson 2</a>), then encode it in Base62 (a-z, A-Z, 0-9). A 7-character Base62 string supports 62^7 = 3.5 trillion unique URLs. No collision checking needed — the ID is guaranteed unique.</p>
+<p>The Base62 approach wins for high-throughput systems because it eliminates collision resolution and the database lookup on every write.</p>
+<h3 id="the-redirect-decision">The redirect decision</h3>
+<p>This seemingly minor HTTP choice has major product implications:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>Browser behavior</th>
+<th>Analytics impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>301</strong></td>
+<td>Moved Permanently</td>
+<td>Browser caches; future visits skip your server</td>
+<td>You lose visibility — can't count clicks after first visit</td>
+</tr>
+<tr>
+<td><strong>302</strong></td>
+<td>Found (Temporary)</td>
+<td>Browser always hits your server first</td>
+<td>Every click is tracked — essential for analytics</td>
+</tr>
+</tbody>
+</table>
+<p>If click tracking and analytics are part of your product (they usually are), use 302. If pure redirect speed matters and you have no analytics requirement, use 301.</p>
+<h3 id="system-architecture">System architecture</h3>
+<style>
+.sd-url{background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:16px;padding:28px 24px 24px;box-shadow:0 1px 3px rgba(31,35,40,.04);
+  margin:26px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.sd-url-title{font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;
+  color:#59636e;font-weight:700;margin:0 0 18px}
+.sd-url-flow{background:#ffffff;border:1px solid #d1d9e0;border-radius:12px;
+  padding:16px;margin:0 0 12px;position:relative}
+.sd-url-flow-label{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;margin:0 0 12px;display:flex;align-items:center;gap:6px}
+.sd-url-flow-label .tag{font-size:9px;font-weight:700;border-radius:20px;
+  padding:2px 10px;color:#ffffff;letter-spacing:.6px}
+.sd-url-flow-label .tag-write{background:#0969da}
+.sd-url-flow-label .tag-read{background:#1a7f37}
+.sd-url-pipe{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.sd-url-node{border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:600;
+  text-align:center;line-height:1.35;flex-shrink:0;max-width:140px}
+.sd-url-node small{display:block;font-size:9.5px;font-weight:450;margin-top:2px}
+.sd-url-node-client{background:#f6f8fa;border:1px solid #d1d9e0;color:#1f2328}
+.sd-url-node-api{background:#ddf4ff;border:1px solid #b6e3ff;color:#0969da}
+.sd-url-node-process{background:#fbefff;border:1px solid #eecef7;color:#8250df}
+.sd-url-node-db{background:#f6f8fa;border:1px solid #d1d9e0;color:#1f2328}
+.sd-url-node-cache{background:#dafbe1;border:1px solid #aceebb;color:#1a7f37}
+.sd-url-node-result{background:#0969da;border:1px solid #0550ae;color:#ffffff}
+.sd-url-arrow{flex:0 0 auto;color:#8c959f;font-size:13px;font-weight:700;padding:0 4px}
+.sd-url-arrow-label{font-size:8.5px;color:#59636e;font-weight:500;display:block;
+  text-align:center;line-height:1.1}
+.sd-url-arrow-wrap{display:flex;flex-direction:column;align-items:center;padding:0 2px}
+.sd-url-example{margin:14px 0 0;padding:10px 14px;background:#ffffff;
+  border:1px solid #d1d9e0;border-radius:10px}
+.sd-url-example-title{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:#59636e;margin:0 0 6px}
+.sd-url-example-row{display:flex;align-items:center;gap:6px;font-size:11.5px;
+  color:#59636e;line-height:1.8}
+.sd-url-example-row code{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:11px;
+  background:#f6f8fa;border:1px solid #d1d9e0;border-radius:4px;padding:1px 6px;
+  color:#1f2328}
+.sd-url-example-row .arr{color:#8c959f;font-weight:700}
+.sd-url-branch{display:flex;align-items:stretch;gap:0;margin:8px 0 0}
+.sd-url-branch-path{display:flex;align-items:center;gap:0;flex:1}
+.sd-url-branch-split{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.sd-url-branch-label{font-size:8.5px;color:#1a7f37;font-weight:600;
+  background:#dafbe1;border:1px solid #aceebb;border-radius:4px;padding:1px 6px}
+.sd-url-branch-label-miss{color:#0969da;background:#ddf4ff;border-color:#b6e3ff}
+@media (max-width:640px){
+  .sd-url{padding:18px 14px 16px}
+  .sd-url-pipe{flex-direction:column;align-items:stretch;gap:4px}
+  .sd-url-arrow{transform:rotate(90deg);text-align:center;padding:2px 0}
+  .sd-url-node{max-width:100%}
+  .sd-url-arrow-wrap{flex-direction:row;gap:4px}
+}
+</style>
+<div class="sd-url">
+  <div class="sd-url-title">URL shortener - data flow architecture</div>
+
+  <!-- Write flow -->
+  <div class="sd-url-flow">
+    <div class="sd-url-flow-label">
+      <span class="tag tag-write">Write</span>
+      <span style="color:#59636e;font-size:11px;font-weight:500">Shorten a URL</span>
+    </div>
+    <div class="sd-url-pipe">
+      <div class="sd-url-node sd-url-node-client">Client<small>POST /shorten</small></div>
+      <div class="sd-url-arrow-wrap"><span class="sd-url-arrow">→</span></div>
+      <div class="sd-url-node sd-url-node-api">API Gateway<small>auth + rate limit</small></div>
+      <div class="sd-url-arrow-wrap"><span class="sd-url-arrow">→</span></div>
+      <div class="sd-url-node sd-url-node-process">ID Generator<small>Snowflake / counter</small></div>
+      <div class="sd-url-arrow-wrap">
+        <span class="sd-url-arrow">→</span>
+        <span class="sd-url-arrow-label">base62</span>
+      </div>
+      <div class="sd-url-node sd-url-node-process">Base62 Encode<small>id → "zn9edcu"</small></div>
+      <div class="sd-url-arrow-wrap"><span class="sd-url-arrow">→</span></div>
+      <div class="sd-url-node sd-url-node-db">DB Write<small>shortURL → longURL</small></div>
+    </div>
+  </div>
+
+  <!-- Read flow -->
+  <div class="sd-url-flow">
+    <div class="sd-url-flow-label">
+      <span class="tag tag-read">Read</span>
+      <span style="color:#59636e;font-size:11px;font-weight:500">Redirect (100:1 read-heavy)</span>
+    </div>
+    <div class="sd-url-pipe">
+      <div class="sd-url-node sd-url-node-client">Client<small>GET /zn9edcu</small></div>
+      <div class="sd-url-arrow-wrap"><span class="sd-url-arrow">→</span></div>
+      <div class="sd-url-node sd-url-node-cache">Cache<small>Redis lookup</small></div>
+      <div class="sd-url-arrow-wrap">
+        <span class="sd-url-arrow">→</span>
+      </div>
+      <div class="sd-url-branch-split">
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="sd-url-branch-label">HIT</span>
+          <span class="sd-url-arrow" style="font-size:11px">→</span>
+          <div class="sd-url-node sd-url-node-result" style="padding:5px 10px;font-size:10.5px">302 Redirect</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="sd-url-branch-label sd-url-branch-label-miss">MISS</span>
+          <span class="sd-url-arrow" style="font-size:11px">→</span>
+          <div class="sd-url-node sd-url-node-db" style="padding:5px 10px;font-size:10.5px">DB<small>backfill cache</small></div>
+          <span class="sd-url-arrow" style="font-size:11px">→</span>
+          <div class="sd-url-node sd-url-node-result" style="padding:5px 10px;font-size:10.5px">302 Redirect</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example -->
+  <div class="sd-url-example">
+    <div class="sd-url-example-title">Encoding example</div>
+    <div class="sd-url-example-row">
+      <code>2009215674938</code>
+      <span class="arr">→</span>
+      base62(id)
+      <span class="arr">→</span>
+      <code>zn9edcu</code>
+      <span class="arr">→</span>
+      <code>tinyurl.com/zn9edcu</code>
+    </div>
+    <div style="font-size:10px;color:#59636e;margin-top:4px">
+      62 chars (a-z A-Z 0-9) &middot; 7 chars = 62<sup>7</sup> = 3.5 trillion URLs
+    </div>
+  </div>
+</div>
+
+<p><strong>Write flow:</strong> Client submits a long URL. The system generates a unique ID via the distributed ID generator and converts it to Base62. It stores the <code>(shortCode, longURL)</code> mapping in the database and returns the short URL.</p>
+<p><strong>Read flow:</strong> Client visits a short URL. The system checks the cache (Redis) first. On a cache hit, it issues a 302 redirect immediately. On a cache miss, it queries the database, populates the cache, then redirects. Given the 10:1 read-to-write ratio, the cache hit rate should be high — popular short links will stay hot in cache.</p>
+<h3 id="storage-estimation">Storage estimation</h3>
+<p>At 100M new URLs/day for 10 years: 365 billion records. Each record is ~100 bytes (short code + long URL + metadata). Total: ~36 TB. This is within the range of a sharded relational database or a distributed KV store partitioned via consistent hashing.</p>
+<hr />
+<h2 id="web-crawler">Web crawler</h2>
+<p>A web crawler systematically browses the web by downloading pages, extracting links, and following them. At scale (billions of pages), the challenge isn't downloading — it's doing so politely, efficiently, and without getting stuck in loops or traps.</p>
+<h3 id="traversal-strategy">Traversal strategy</h3>
+<p><strong>BFS is preferred</strong> over DFS because DFS can get trapped in deep link chains on a single domain (forums, paginated archives, infinite calendars). BFS explores breadth-first, discovering more domains and more diverse content early.</p>
+<h3 id="url-frontier-architecture">URL frontier architecture</h3>
+<p>The URL frontier is the heart of the crawler — a sophisticated queue that manages which URLs to crawl next, balancing politeness, priority, and freshness.</p>
+<style>
+.dgm-crawl{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-crawl-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-crawl h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-crawl-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-crawl-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-crawl-node{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:8px 14px;
+  font-weight:700;font-size:10.5px;color:#1f2328}
+.dgm-crawl-node.front{background:#faece5;border-color:#e8b39a;color:#8a3d20}
+.dgm-crawl-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px}
+.dgm-crawl-loop{margin-top:8px;padding:9px 14px;background:#faece5;border:1px dashed #e8b39a;border-radius:10px;
+  font-size:10px;color:#8a3d20;line-height:1.4;text-align:center}
+@media (max-width:640px){.dgm-crawl{padding:20px 16px 18px}}
+</style>
+<div class="dgm-crawl">
+  <span class="dgm-crawl-chip">The URL frontier</span>
+  <h4>Priority queues + per-host politeness scheduling</h4>
+  <p class="dgm-crawl-sub">Not all URLs are equal, and hammering one host gets you blocked.</p>
+
+  <div class="dgm-crawl-chain">
+    <div class="dgm-crawl-node">Seed URLs</div>
+    <div class="dgm-crawl-arr">↓</div>
+    <div class="dgm-crawl-node front">URL Frontier — Priority Queues (PageRank, freshness) → Politeness Scheduler (per-host delay)</div>
+    <div class="dgm-crawl-arr">↓</div>
+    <div class="dgm-crawl-node">Downloader — DNS cache, timeouts</div>
+    <div class="dgm-crawl-arr">↓</div>
+    <div class="dgm-crawl-node">HTML Parser</div>
+    <div class="dgm-crawl-arr">↓</div>
+    <div class="dgm-crawl-node">Content Dedup — checksums/simhash</div>
+    <div class="dgm-crawl-arr">↓</div>
+    <div class="dgm-crawl-node">URL Extractor → URL Filter (robots.txt, blocklist)</div>
+  </div>
+
+  <div class="dgm-crawl-loop">URL seen? No → back to the Frontier · Yes → discard</div>
+</div>
+
+<h3 id="priority">Priority</h3>
+<p>Not all URLs are equal. The frontier maintains <strong>priority queues</strong> that rank URLs by:</p>
+<ul>
+<li><strong>PageRank</strong> — pages linked to by many other pages are more important</li>
+<li><strong>Content type</strong> — known high-quality domains get priority</li>
+<li><strong>Freshness</strong> — pages that change frequently (news sites) should be re-crawled sooner</li>
+<li><strong>Depth</strong> — pages discovered earlier in the BFS tend to be more important</li>
+</ul>
+<p>A <strong>prioritizer</strong> assigns each URL a priority score and routes it to the appropriate queue. The front-end selector picks from higher-priority queues more frequently.</p>
+<h3 id="politeness">Politeness</h3>
+<p>Hammering a single domain will get you blocked. The politeness layer ensures:</p>
+<ul>
+<li><strong>Per-host queues</strong> — all URLs for the same host go into the same queue, processed sequentially</li>
+<li><strong>Configurable delay</strong> — a minimum time between requests to the same host (typically 1-2 seconds)</li>
+<li><strong>robots.txt compliance</strong> — the crawler checks and caches each site's robots.txt before crawling</li>
+</ul>
+<p>This means the crawler maintains hundreds of thousands of per-host queues. A queue-router maps each URL's hostname to its queue, and worker threads pull from different host queues in parallel.</p>
+<h3 id="deduplication">Deduplication</h3>
+<p>Deduplication happens at two levels:</p>
+<ol>
+<li>
+<p><strong>URL dedup</strong> — a set (often backed by a Bloom filter for memory efficiency) tracks which URLs have been seen. Before adding a URL to the frontier, check the set. This prevents crawl loops (A links to B, B links to A).</p>
+</li>
+<li>
+<p><strong>Content dedup</strong> — different URLs can serve identical content (mirrors, syndication, URL parameters). Compute a content hash (or simhash for near-duplicate detection) and skip pages whose content matches a previously crawled page.</p>
+</li>
+</ol>
+<h3 id="robustness">Robustness</h3>
+<p>Production crawlers handle dozens of edge cases:</p>
+<ul>
+<li><strong>Spider traps</strong> — URLs that generate infinite content (e.g., <code>/calendar/2025/01</code>, <code>/calendar/2025/02</code>, ...). Set a maximum URL depth or detect pattern repetition.</li>
+<li><strong>DNS resolution</strong> — DNS lookups are slow. Cache DNS results aggressively (locally and in a shared cache).</li>
+<li><strong>Timeouts</strong> — set aggressive timeouts. A crawler that waits 30 seconds for a response wastes precious throughput.</li>
+<li><strong>Content types</strong> — skip binary files, images, and non-HTML content unless specifically needed.</li>
+<li><strong>Distributed coordination</strong> — multiple crawler instances must partition the URL space (by domain hash) to avoid duplicate work.</li>
+</ul>
+<hr />
+<h2 id="notification-system">Notification system</h2>
+<p>The product: deliver 10 million mobile push notifications, 1 million SMS messages, and 5 million emails per day — 16 million total, across three channels with different providers, latency expectations, and failure modes.</p>
+<h3 id="provider-landscape">Provider landscape</h3>
+<p>Each channel has its own delivery infrastructure:</p>
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Provider</th>
+<th>Protocol</th>
+<th>Characteristics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>iOS push</strong></td>
+<td>APNS (Apple)</td>
+<td>HTTP/2, certificate-based</td>
+<td>Token-based auth, payload ≤ 4 KB</td>
+</tr>
+<tr>
+<td><strong>Android push</strong></td>
+<td>FCM (Google)</td>
+<td>HTTP/JSON</td>
+<td>API-key auth, payload ≤ 4 KB</td>
+</tr>
+<tr>
+<td><strong>SMS</strong></td>
+<td>Twilio, Nexmo</td>
+<td>REST API</td>
+<td>Per-message cost, carrier variability</td>
+</tr>
+<tr>
+<td><strong>Email</strong></td>
+<td>SendGrid, SES</td>
+<td>SMTP/API</td>
+<td>Deliverability reputation, bounce handling</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture-per-channel-message-queues">Architecture: per-channel message queues</h3>
+<p>The critical design insight: <strong>each channel gets its own message queue and worker pool</strong>. This prevents a slow channel (SMS, which depends on carrier networks) from blocking a fast channel (push, which is near-instant).</p>
+<style>
+.dgm-notif{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-notif-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-notif h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-notif-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-notif-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.dgm-notif-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 10px;text-align:center;
+  font-size:9.5px;font-weight:700;color:#1f2328}
+.dgm-notif-arr{color:#8c959f;font-size:11px}
+.dgm-notif-channels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.dgm-notif-ch{background:#faece5;border:1.5px solid #e8b39a;border-radius:10px;padding:9px 9px;text-align:center}
+.dgm-notif-ch .q{font-size:9.5px;font-weight:700;color:#8a3d20}
+.dgm-notif-ch .w{font-size:9px;color:#59636e;margin-top:3px}
+.dgm-notif-track{text-align:center;font-size:10px;color:#59636e;margin-top:6px}
+@media (max-width:640px){.dgm-notif{padding:20px 16px 18px}.dgm-notif-row{flex-direction:column}.dgm-notif-channels{grid-template-columns:1fr}}
+</style>
+<div class="dgm-notif">
+  <span class="dgm-notif-chip">Per-channel message queues</span>
+  <h4>A slow channel never blocks a fast one</h4>
+  <p class="dgm-notif-sub">SMS depends on carrier networks; push is near-instant — each gets its own queue and workers.</p>
+
+  <div class="dgm-notif-row">
+    <div class="dgm-notif-n">Service / Trigger</div>
+    <span class="dgm-notif-arr">→</span>
+    <div class="dgm-notif-n">Notification Service — validation, templating</div>
+    <span class="dgm-notif-arr">→</span>
+    <div class="dgm-notif-n">User preference cache</div>
+  </div>
+
+  <div class="dgm-notif-channels">
+    <div class="dgm-notif-ch"><div class="q">Push Queue</div><div class="w">Push Workers — APNS / FCM</div></div>
+    <div class="dgm-notif-ch"><div class="q">SMS Queue</div><div class="w">SMS Workers — Twilio</div></div>
+    <div class="dgm-notif-ch"><div class="q">Email Queue</div><div class="w">Email Workers — SendGrid</div></div>
+  </div>
+
+  <div class="dgm-notif-track">All three workers → Event Tracking</div>
+</div>
+
+<h3 id="notification-templates">Notification templates</h3>
+<p>At 16M notifications/day, you don't craft individual messages. Templates define the structure:</p>
+<pre><code>Hello {{user.first_name}}, your order {{order.id}} has shipped!
+Tracking: {{tracking.url}}
+</code></pre>
+<p>Templates are stored, versioned, and cached. The notification service merges the template with user-specific data at send time. This enables A/B testing (different templates for different cohorts), localization (language-specific templates), and rapid iteration without code deployments.</p>
+<h3 id="rate-limiting">Rate limiting</h3>
+<p>Without rate limiting, a bug or misconfigured campaign can blast millions of users with duplicate notifications — the fastest way to destroy app engagement. The notification system applies rate limits at multiple levels:</p>
+<ul>
+<li><strong>Per-user</strong> — no more than <em>n</em> notifications per channel per hour (e.g., max 3 push per hour)</li>
+<li><strong>Per-campaign</strong> — a marketing campaign has a total send budget</li>
+<li><strong>Per-channel</strong> — respect provider rate limits (APNS throttles per-device, SendGrid has hourly sending limits)</li>
+</ul>
+<p>The rate limiter uses the same algorithms from <a href="core-building-blocks.html">lesson 2</a> — typically sliding window counter backed by Redis.</p>
+<h3 id="retry-and-failure-handling">Retry and failure handling</h3>
+<p>Notifications fail: APNS returns an invalid token, Twilio gets a carrier error, SendGrid bounces an email. The system must:</p>
+<ol>
+<li><strong>Retry with exponential backoff</strong> — first retry after 1s, then 2s, 4s, 8s, up to a maximum (e.g., 1 hour)</li>
+<li><strong>Dead letter queue</strong> — after <em>n</em> retries, move the notification to a DLQ for manual investigation</li>
+<li><strong>Token invalidation</strong> — if APNS returns "invalid token," remove the device token from the user's record to stop future failures</li>
+<li><strong>Bounce handling</strong> — hard email bounces (invalid address) should permanently suppress the address; soft bounces (mailbox full) can be retried</li>
+</ol>
+<h3 id="event-tracking">Event tracking</h3>
+<p>The notification system tracks the full lifecycle:</p>
+<ul>
+<li><strong>Created</strong> — notification request received</li>
+<li><strong>Queued</strong> — placed in channel queue</li>
+<li><strong>Sent</strong> — delivered to provider (APNS, Twilio, SendGrid)</li>
+<li><strong>Delivered</strong> — provider confirmed delivery (not available for all channels)</li>
+<li><strong>Opened</strong> — user opened the notification (via tracking pixel for email, or app callback for push)</li>
+<li><strong>Clicked</strong> — user tapped a link (via redirect URL with tracking parameter)</li>
+</ul>
+<p>This data feeds analytics dashboards and enables product decisions: which notification types drive engagement, which channels perform best for which user segments, when to send for maximum open rates.</p>
+<hr />
+<h2 id="news-feed-system">News feed system</h2>
+<p>The product: show each user a personalized timeline of posts from people they follow. Facebook's news feed, Twitter's timeline, Instagram's feed. The core challenge: when a user with 10 million followers posts, how do you make that post appear in all 10 million feeds quickly?</p>
+<h3 id="the-fanout-problem">The fanout problem</h3>
+<p>Two fundamental approaches:</p>
+<p><strong>Fanout on write (push model)</strong> — When a user publishes a post, immediately write it to every follower's feed cache. The feed is pre-computed. Reading is instant — just fetch the cache.</p>
+<ul>
+<li><strong>Pro:</strong> Feed reads are O(1) — read from the pre-computed cache. Feed loads are fast.</li>
+<li><strong>Con:</strong> Writes are expensive. A user with 10M followers triggers 10M cache writes. Inactive users' feeds are computed but never read — wasted work.</li>
+</ul>
+<p><strong>Fanout on read (pull model)</strong> — When a user opens their feed, the system fetches posts from all followed users on the fly, merges, ranks, and returns.</p>
+<ul>
+<li><strong>Pro:</strong> Writes are O(1). No wasted work for inactive users.</li>
+<li><strong>Con:</strong> Feed reads are expensive — must fetch from many sources and merge. Slow for users following thousands of accounts.</li>
+</ul>
+<p><strong>Hybrid approach (the production answer):</strong> Use fanout-on-write for most users (fast reads for the common case). For users with massive followings (celebrities, verified accounts), use fanout-on-read — their posts are fetched and merged into the feed at read time rather than pushed to millions of caches.</p>
+<style>
+.dgm-fan{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-fan-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-fan h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-fan-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-fan-col{border-radius:12px;padding:12px 13px;margin-bottom:10px;position:relative}
+.dgm-fan-col.write{background:#ddf4ff;border:1.5px solid #b6e3ff}
+.dgm-fan-col.read{background:#faece5;border:1.5px solid #e8b39a}
+.dgm-fan-col .tag{position:absolute;top:-9px;left:12px;background:#ffffff;border:1px solid;
+  font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:5px}
+.dgm-fan-col.write .tag{color:#0550ae;border-color:#b6e3ff}
+.dgm-fan-col.read .tag{color:#8a3d20;border-color:#e8b39a}
+.dgm-fan-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}
+.dgm-fan-n{background:#ffffff;border-radius:8px;padding:7px 9px;font-size:9.5px;font-weight:600;color:#1f2328}
+.dgm-fan-col.write .dgm-fan-n{border:1px solid #d4ecfa}
+.dgm-fan-col.read .dgm-fan-n{border:1px solid #f2d6c4}
+.dgm-fan-arr{color:#8c959f;font-size:10px}
+@media (max-width:640px){.dgm-fan{padding:20px 16px 18px}}
+</style>
+<div class="dgm-fan">
+  <span class="dgm-fan-chip">Fanout on write vs. fanout on read</span>
+  <h4>Hybrid: push for normal users, pull for celebrities</h4>
+  <p class="dgm-fan-sub">A user with 10M followers can't trigger 10M cache writes on every post.</p>
+
+  <div class="dgm-fan-col write">
+    <span class="tag">Fanout on write — normal users</span>
+    <div class="dgm-fan-row">
+      <div class="dgm-fan-n">User posts</div><span class="dgm-fan-arr">→</span>
+      <div class="dgm-fan-n">Fanout Service</div><span class="dgm-fan-arr">↔</span>
+      <div class="dgm-fan-n">Social Graph — get followers</div>
+    </div>
+    <div class="dgm-fan-row">
+      <div class="dgm-fan-n">Fanout Service →</div>
+      <div class="dgm-fan-n">Follower 1 feed cache</div>
+      <div class="dgm-fan-n">Follower 2 feed cache</div>
+      <div class="dgm-fan-n">Follower N feed cache</div>
+    </div>
+  </div>
+
+  <div class="dgm-fan-col read">
+    <span class="tag">Fanout on read — celebrities</span>
+    <div class="dgm-fan-row">
+      <div class="dgm-fan-n">Feed request</div><span class="dgm-fan-arr">→</span>
+      <div class="dgm-fan-n">Fetch Service</div><span class="dgm-fan-arr">→</span>
+      <div class="dgm-fan-n">Celebrity posts store</div><span class="dgm-fan-arr">→</span>
+      <div class="dgm-fan-n">Merge with cached feed</div>
+    </div>
+  </div>
+</div>
+
+<h3 id="feed-publishing-flow">Feed publishing flow</h3>
+<ol>
+<li>User creates a post via the API</li>
+<li>Post is stored in the <strong>post database</strong> and the <strong>post cache</strong></li>
+<li>The <strong>fanout service</strong> queries the <strong>social graph cache</strong> for the user's followers</li>
+<li>For each follower, the post ID is inserted into their <strong>feed cache</strong> (a sorted set in Redis, ordered by timestamp or ranking score)</li>
+<li>If the poster is a celebrity (follower count above threshold), skip fanout — the post stays only in the post store</li>
+</ol>
+<h3 id="feed-retrieval-flow">Feed retrieval flow</h3>
+<ol>
+<li>User opens their feed</li>
+<li>The system reads the user's <strong>feed cache</strong> (pre-computed post IDs)</li>
+<li>For each celebrity the user follows, fetch their recent posts from the <strong>post store</strong></li>
+<li>Merge the cached feed with celebrity posts</li>
+<li>Rank (by time, engagement, ML model) and return the top <em>N</em> posts</li>
+<li>For each post ID, hydrate the full content from the <strong>post cache</strong> and <strong>user cache</strong> (author name, avatar)</li>
+</ol>
+<h3 id="the-five-layer-cache">The five-layer cache</h3>
+<p>Feed performance depends entirely on cache architecture. Production news feed systems use five distinct cache layers:</p>
+<table>
+<thead>
+<tr>
+<th>Cache layer</th>
+<th>What it stores</th>
+<th>Why it's separate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>News feed cache</strong></td>
+<td>Pre-computed feed (list of post IDs per user)</td>
+<td>The hottest data — every feed load hits this</td>
+</tr>
+<tr>
+<td><strong>Content cache</strong></td>
+<td>Post bodies, images, metadata</td>
+<td>Large objects; different eviction pattern from feed IDs</td>
+</tr>
+<tr>
+<td><strong>Social graph cache</strong></td>
+<td>Follow/friend relationships</td>
+<td>Queried on every fanout; rarely changes</td>
+</tr>
+<tr>
+<td><strong>Action cache</strong></td>
+<td>Likes, comments, shares per post</td>
+<td>High write rate; separate to avoid invalidating content cache</td>
+</tr>
+<tr>
+<td><strong>Counter cache</strong></td>
+<td>Like counts, comment counts, share counts</td>
+<td>Extremely high write rate; often approximate</td>
+</tr>
+</tbody>
+</table>
+<p>Each layer has its own cluster, eviction policy, and TTL. Mixing them in a single cache would cause hot data (counters) to evict warm data (social graph), degrading overall hit rates.</p>
+<h3 id="social-graph-cache">Social graph cache</h3>
+<p>The social graph (who follows whom) is read on every fanout and every feed fetch. It changes rarely (follows/unfollows are infrequent compared to posts and reads). Storing it in a dedicated cache with long TTLs and lazy invalidation keeps fanout latency low. The data structure is typically a hash map: <code>user_id → set of follower_ids</code>.</p>
+<hr />
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>URL shortener hash collision</strong> — If using hash+collision resolution, high write rates increase collision frequency, degrading write latency. Monitor collision rate; switch to ID-based encoding if it exceeds 1%.</li>
+<li><strong>URL shortener cache stampede</strong> — A popular short URL expires from cache, and thousands of concurrent redirects hit the database simultaneously. Use cache warming or probabilistic early expiration.</li>
+<li><strong>Crawler politeness violation</strong> — A bug in the per-host delay logic causes aggressive crawling, getting your IP range blocked by major sites. Monitor per-host request rates with hard circuit breakers.</li>
+<li><strong>Crawler infinite loops</strong> — Spider traps (auto-generated calendars, session-ID URLs) create infinite URL generation. Set maximum crawl depth per domain and detect URL pattern repetition.</li>
+<li><strong>Notification thundering herd</strong> — A system event (e.g., "service restored") triggers notifications to all users simultaneously, overwhelming the provider. Jitter the send times across a window.</li>
+<li><strong>Notification duplicate delivery</strong> — Retry logic without idempotency causes users to receive the same notification multiple times. Use idempotency keys per notification.</li>
+<li><strong>News feed celebrity bottleneck</strong> — A celebrity with 50M followers posts during peak hours. Even with the hybrid approach, the fan-on-read merge at read time can spike latency. Pre-compute celebrity feeds on a schedule rather than on-demand.</li>
+<li><strong>News feed stale cache</strong> — A user unfollows someone, but the social graph cache hasn't been invalidated. The unfollowed user's posts continue appearing in the feed until the cache expires.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Does your URL shortener use 301 or 302 redirects, and does the product team understand the analytics implications?</li>
+<li class="task todo">Is the short-code generation collision-free (ID-based), or does it require collision resolution?</li>
+<li class="task todo">Does your crawler respect robots.txt and enforce per-host request delays?</li>
+<li class="task todo">Is crawl deduplication happening at both the URL level and the content level?</li>
+<li class="task todo">Does each notification channel have its own message queue and worker pool?</li>
+<li class="task todo">Are per-user notification rate limits in place to prevent spam?</li>
+<li class="task todo">Does the notification system retry with exponential backoff and have a dead letter queue?</li>
+<li class="task todo">Is the news feed fanout strategy hybrid (push for normal users, pull for celebrities)?</li>
+<li class="task todo">Can you name all five cache layers and their eviction strategies?</li>
+<li class="task todo">What's the P99 latency for feed retrieval, and is it within your product SLA?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="core-building-blocks.html">Core building blocks</a> — the rate limiter, consistent hashing, and ID generator that these services are built on</li>
+<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — the estimation and scaling techniques used to size these systems</li>
+<li><a href="real-time-systems.html">Real-time systems</a> — chat and autocomplete systems that share the queue-and-worker pattern with notifications</li>
+<li><a href="data-infrastructure.html">Data infrastructure</a> — distributed message queues that underpin the notification and feed architectures</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="core-building-blocks.html"><span class="lbl">← Previous</span><span class="ttl">Core building blocks</span></a><a class="navcard next" href="real-time-systems.html"><span class="lbl">→ Next</span><span class="ttl">Real-time systems</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#url-shortener">URL shortener</a><a class="h3" href="#the-encoding-decision">The encoding decision</a><a class="h3" href="#the-redirect-decision">The redirect decision</a><a class="h3" href="#system-architecture">System architecture</a><a class="h3" href="#storage-estimation">Storage estimation</a><a class="h2" href="#web-crawler">Web crawler</a><a class="h3" href="#traversal-strategy">Traversal strategy</a><a class="h3" href="#url-frontier-architecture">URL frontier architecture</a><a class="h3" href="#priority">Priority</a><a class="h3" href="#politeness">Politeness</a><a class="h3" href="#deduplication">Deduplication</a><a class="h3" href="#robustness">Robustness</a><a class="h2" href="#notification-system">Notification system</a><a class="h3" href="#provider-landscape">Provider landscape</a><a class="h3" href="#architecture-per-channel-message-queues">Architecture: per-channel message queues</a><a class="h3" href="#notification-templates">Notification templates</a><a class="h3" href="#rate-limiting">Rate limiting</a><a class="h3" href="#retry-and-failure-handling">Retry and failure handling</a><a class="h3" href="#event-tracking">Event tracking</a><a class="h2" href="#news-feed-system">News feed system</a><a class="h3" href="#the-fanout-problem">The fanout problem</a><a class="h3" href="#feed-publishing-flow">Feed publishing flow</a><a class="h3" href="#feed-retrieval-flow">Feed retrieval flow</a><a class="h3" href="#the-five-layer-cache">The five-layer cache</a><a class="h3" href="#social-graph-cache">Social graph cache</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=system-design%2Fweb-scale-services.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="system-design/web-scale-services.html"</script><script defer src="../assets/glossary.js"></script></body></html>

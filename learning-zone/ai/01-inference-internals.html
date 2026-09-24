@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>01 · Inference internals — AI engineering for PMs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
+  <nav class="topnav"><a href="00-foundations.html">00</a><a href="01-inference-internals.html">01</a><a href="02-reliable-outputs.html">02</a><a href="03-rag.html">03</a><a href="04-evals-observability.html">04</a><a href="05-safety-multitenancy.html">05</a><a href="06-strategy-tradeoffs.html">06</a></nav>
+</header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="00-foundations.html"><span class="num">00</span>Foundations</a><a class="modlink active" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#prompt-vs-semantic-caching">Prompt caching vs. semantic caching</a><a href="#kv-cache-management">KV cache management: eviction, reuse, and memory pressure at scale</a><a href="#prefill-vs-decode">Prefill vs. decode latency</a><a href="#batching-and-paged-attention">Continuous batching &amp; paged attention</a><a href="#speculative-quantization-distillation">Speculative decoding vs. quantization vs. distillation</a><a href="#quantization-formats">Quantization formats: INT8, INT4, FP8, AWQ, GPTQ — and when it hurts</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Module 01</span>
+    <h1>Inference internals</h1>
+    <p class="lede">What happens between your request and the tokens that come back.</p>
+    <div class="hero-meta">6 lessons · interactive demo · every lesson includes a
+      <strong>🎯 For the AI-native PM</strong> briefing</div>
+  </div>
+  <div class="intro"><p>You need to know what happens when a model serves a request. Without that, you
+can't make good decisions about latency, cost, and reliability. This module
+opens the box.</p>
+<p>Two phases, one cache, and a handful of throughput and compression techniques
+explain almost everything about LLM serving economics:</p>
+<ul>
+<li><a href="#prompt-vs-semantic-caching"><strong>Prompt caching vs. semantic caching</strong></a> — two
+  completely different things that share a word.</li>
+<li><a href="#kv-cache-management"><strong>KV cache management</strong></a> — the data structure that makes
+  generation fast, and the memory pressure it creates at scale.</li>
+<li><a href="#prefill-vs-decode"><strong>Prefill vs. decode latency</strong></a> — why the two phases are
+  bottlenecked by different hardware limits and optimized differently.</li>
+<li><a href="#batching-and-paged-attention"><strong>Continuous batching &amp; paged attention</strong></a> —
+  how modern servers hit high throughput without wrecking latency.</li>
+<li><a href="#speculative-quantization-distillation"><strong>Speculative decoding vs. quantization vs. distillation</strong></a>
+  — three ways to go faster/cheaper, with different risk profiles.</li>
+<li><a href="#quantization-formats"><strong>Quantization formats</strong></a> — INT8, INT4, FP8, AWQ, GPTQ,
+  and when compression starts hurting quality.</li>
+</ul>
+<p>Everything here feeds the cross-stack tradeoff reasoning in
+<a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">Module 06</a>.</p>
+<h2>Connects to other tracks</h2>
+<ul>
+<li><a href="../harness/phases/01-llm-io-foundations/08-prompt-caching/docs/en.html">Prompt caching, built by hand</a> — the harness-side view of what you cache and why.</li>
+<li><a href="../technical-product-sense/latency-scale-performance.html">Latency, scale &amp; performance</a> — inference latency as a product and cost concern.</li>
+<li><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a> — where the money goes when tokens are the unit.</li>
+</ul>
+<p><strong>📌 Close out the module:</strong> <a href="#recap">Recap &amp; real-world examples</a> — war stories from production plus the key takeaways.</p>
+<hr /></div>
+  <nav class="toc"><div class="toc-h">In this module</div><a href="#interactive"><span>◆</span>Interactive demo</a><a href="#prompt-vs-semantic-caching"><span>01.1</span>Prompt caching vs. semantic caching</a><a href="#kv-cache-management"><span>01.2</span>KV cache management: eviction, reuse, and memory pressure at scale</a><a href="#prefill-vs-decode"><span>01.3</span>Prefill vs. decode latency</a><a href="#batching-and-paged-attention"><span>01.4</span>Continuous batching &amp; paged attention</a><a href="#speculative-quantization-distillation"><span>01.5</span>Speculative decoding vs. quantization vs. distillation</a><a href="#quantization-formats"><span>01.6</span>Quantization formats: INT8, INT4, FP8, AWQ, GPTQ — and when it hurts</a><a href="#recap"><span>📌</span>Recap &amp; real-world examples</a></nav>
+  <section class="interactive" id="interactive"><div class="iw-head"><span class="tag">Interactive</span><h3>Latency &amp; cost playground — prefill vs. decode</h3></div><div class="iw-body"><div class="iw-controls">
+  <div class="iw-field"><label>Input tokens <span class="v" id="lc-inv"></span></label><input type="range" id="lc-in" min="0" max="32000" step="500" value="3000"></div>
+  <div class="iw-field"><label>Output tokens <span class="v" id="lc-outv"></span></label><input type="range" id="lc-out" min="0" max="4000" step="50" value="300"></div>
+  <div class="iw-field"><label>Cached prefix <span class="v" id="lc-cv"></span></label><input type="range" id="lc-cache" min="0" max="100" step="5" value="0"></div>
+</div>
+<div class="iw-btns">
+  <button class="iw-btn" data-p="rag">Long input · short answer</button>
+  <button class="iw-btn" data-p="chat">Chatbot reply</button>
+  <button class="iw-btn" data-p="agent">Cached agent step</button>
+</div>
+<div class="iw-out">
+  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><strong>Latency</strong><span class="v" id="lc-total"></span></div>
+  <div class="iw-stack" id="lc-stack"><span id="lc-pre" style="background:#0969DA"></span><span id="lc-dec" style="background:#1A7F37"></span></div>
+  <div class="iw-legend"><span><i style="background:#0969DA"></i>Prefill (input) <span class="v" id="lc-prems"></span></span><span><i style="background:#1A7F37"></i>Decode (output) <span class="v" id="lc-decms"></span></span></div>
+  <div class="iw-metric" style="margin-top:14px"><span class="ml">Cost / request</span><span class="mv" id="lc-cost"></span></div>
+  <div class="iw-note" id="lc-note"></div>
+</div>
+<div class="iw-note">Illustrative model: ~60&nbsp;ms per 1k input tokens (prefill), 12&nbsp;ms per output token (decode), $3 / $15 per Mtok in/out, cached input at 10% price. Your real numbers vary by model &amp; hardware — the <em>shape</em> is the lesson.</div></div></section>
+  <section class="lesson" id="prompt-vs-semantic-caching"><div class="lesson-head"><span class="lesson-num">01.1</span><h2>Prompt caching vs. semantic caching</h2></div><h2 id="tldr">TL;DR</h2>
+<p>They share the word "caching" and almost nothing else. <strong>Prompt caching</strong>
+reuses the model's internal computation (the
+<a href="#kv-cache-management">KV cache</a>) for an <em>exact</em> shared prefix. It is
+lossless, and it changes only cost and latency, never the answer. <strong>Semantic
+caching</strong> returns a previously generated <em>response</em> when a new query is
+<em>similar</em>. It can skip the model entirely, but it risks returning a subtly
+wrong answer. One is a performance optimization. The other is a correctness
+gamble you must validate.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — Caching is one of your biggest levers on cost and latency. But <em>semantic</em> caching can serve a wrong or stale answer. That's a trust and even a compliance problem, not just a performance tweak.</p>
+<p><strong>What it changes in your decisions</strong> — Cost targets, whether to enable semantic caching for a given feature, and the SLAs you can stand behind.</p>
+<p><strong>Ask your eng team</strong> — <em>"Are we caching responses across users, and how do we know we're not serving the wrong one?"</em></p>
+<p><strong>Product risk if ignored</strong> — A loosely-tuned cache serves one user's answer to another — a privacy incident dressed up as an optimization.</p>
+</blockquote>
+<h2 id="the-two-are-not-the-same-layer">The two are not the same layer</h2>
+<pre><code>                      ┌─────────────────────────────────────────┐
+   request ──────────▶│ semantic cache?  (embed query, ANN match)│──hit──▶ stored response
+                      └─────────────────────────────────────────┘         (NO model call)
+                                       │ miss
+                                       ▼
+                      ┌─────────────────────────────────────────┐
+                      │ model server: prompt cache reuses KV for │──▶ generate tokens
+                      │ the matching prompt *prefix*             │
+                      └─────────────────────────────────────────┘
+</code></pre>
+<h2 id="prompt-prefix-kv-caching">Prompt (prefix / KV) caching</h2>
+<p><strong>What it reuses:</strong> the computed key/value tensors for a prompt <em>prefix</em> that
+is byte-for-byte identical to one seen before. The
+<a href="#prefill-vs-decode">prefill</a> phase for that prefix is skipped; decode
+proceeds normally.</p>
+<p><strong>Why it matters:</strong> prefill is compute-heavy and scales with input length. If
+2,000 tokens of system prompt and tool definitions are shared across every
+request, caching that prefix removes most of the prefill cost for every call
+after the first.</p>
+<p><strong>Properties:</strong></p>
+<ul>
+<li><strong>Lossless.</strong> The output distribution is unchanged. You compute the same
+  thing; you just skip recomputing the shared part.</li>
+<li><strong>Prefix-only and order-sensitive.</strong> The cache matches from the start of
+  the prompt. One changed byte near the top — a timestamp, a user name —
+  invalidates everything after it. This is why
+  <a href="00-foundations.html#context-engineering">context engineering</a> insists on
+  a <em>stable prefix</em>.</li>
+<li><strong>Time-limited.</strong> Cached entries expire; provider TTLs are short, often
+  minutes. Self-hosted entries are subject to
+  <a href="#kv-cache-management">KV cache eviction</a> under memory pressure.</li>
+</ul>
+<p><strong>Design rules:</strong></p>
+<ul>
+<li>Put stable content — system prompt, policies, tool contracts, few-shot
+  examples — <em>first</em>. Put volatile content, the user's query, <em>last</em>.</li>
+<li>Keep the prefix identical across requests. Don't put per-request strings
+  up top.</li>
+<li>In multi-tenant systems, be deliberate: a shared prefix is fine, but never
+  let cache <em>reuse</em> cross a trust boundary in a way that exposes data. See
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant cache safety</a>.</li>
+</ul>
+<h2 id="semantic-caching">Semantic caching</h2>
+<p><strong>What it reuses:</strong> a <em>final response</em>. The system embeds the query. If its
+nearest neighbor in a vector store falls within a similarity threshold, the
+system returns the stored answer and never calls the model.</p>
+<p><strong>Why it matters:</strong> this is the biggest possible win. You skip generation
+entirely, cutting latency to a lookup and cost to near zero for repeat-ish
+questions like FAQs and common support queries.</p>
+<p><strong>Properties &amp; risks:</strong></p>
+<ul>
+<li><strong>Lossy and approximate.</strong> "Similar embedding" does not mean "same correct
+  answer." <code>What's my account balance?</code> and <code>What was my account balance
+  last month?</code> can sit close in embedding space and demand totally different
+  answers.</li>
+<li><strong>Staleness.</strong> A cached answer can be correct today and wrong tomorrow —
+  prices, inventory, policy change. It needs TTLs and invalidation, which
+  connects to retrieval <a href="03-rag.html#rag-architecture">freshness</a>.</li>
+<li><strong>Context-blind.</strong> Two users asking the same words may need different
+  answers, because of different permissions, tenant, or locale. Caching
+  across users without keying on context causes
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">cross-user contamination</a>.</li>
+<li><strong>Threshold tuning is a precision/recall problem.</strong> Too loose, and you
+  serve wrong answers confidently. Too tight, and you get almost no hits.</li>
+</ul>
+<h2 id="tradeoffs-at-a-glance">Tradeoffs at a glance</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Prompt (prefix) caching</th>
+<th>Semantic caching</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reuses</td>
+<td>KV computation of shared prefix</td>
+<td>Final response</td>
+</tr>
+<tr>
+<td>Correctness impact</td>
+<td>None (lossless)</td>
+<td>Can return wrong/stale answers</td>
+</tr>
+<tr>
+<td>Match type</td>
+<td>Exact prefix</td>
+<td>Approximate (embedding similarity)</td>
+</tr>
+<tr>
+<td>Saves</td>
+<td>Prefill compute</td>
+<td>The entire model call</td>
+</tr>
+<tr>
+<td>Main risk</td>
+<td>Cache misses from unstable prefixes</td>
+<td>False hits, staleness, contamination</td>
+</tr>
+<tr>
+<td>Who owns it</td>
+<td>Mostly the inference server/provider</td>
+<td>You, in the application harness</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Silent prefix busting</strong> — a logging timestamp injected at the top of the
+  system prompt drops your prompt-cache hit rate to near zero and triples
+  cost. Catch it with
+  <a href="04-evals-observability.html#cost-attribution">cost attribution</a> and
+  cache-hit metrics in
+  <a href="04-evals-observability.html#observability">observability</a>.</li>
+<li><strong>Confident wrong semantic hit</strong> — the threshold is too loose, so users
+  get plausible, incorrect answers with no model call to catch it. Guard
+  against this with conservative thresholds, context-aware cache keys, and
+  <a href="04-evals-observability.html#evals">evals</a>.</li>
+<li><strong>Stale semantic cache</strong> — yesterday's price served today. Add TTLs and
+  event-based invalidation.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is your prompt prefix stable enough to actually hit the prompt cache?</li>
+<li class="task todo">Do you measure prompt-cache hit rate as a first-class metric?</li>
+<li class="task todo">Does your semantic cache key include user/tenant/permission context?</li>
+<li class="task todo">Do semantically cached entries have TTLs and invalidation hooks?</li>
+<li class="task todo">Have you evaluated semantic-cache false-hit rate on a labeled set?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#kv-cache-management">KV cache management</a></li>
+<li><a href="#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="00-foundations.html#context-engineering">Context engineering</a></li>
+<li><a href="05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation &amp; cache safety</a></li>
+<li><a href="04-evals-observability.html#cost-attribution">Cost attribution</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="kv-cache-management"><div class="lesson-head"><span class="lesson-num">01.2</span><h2>KV cache management: eviction, reuse, and memory pressure at scale</h2></div><h2 id="tldr">TL;DR</h2>
+<p>During generation, the model caches the key and value tensors of every token it has
+already processed. This way attention doesn't recompute the whole sequence at each
+step. This <strong>KV cache</strong> is what makes <a href="#prefill-vs-decode">decode</a> fast. It is
+usually the binding constraint on how many requests a GPU can serve at once.
+Managing it — sizing, reuse, eviction, fragmentation — is the core memory problem
+of LLM serving.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — This is the hidden reason you can't just add longer context and more concurrent users cheaply. It sets your capacity ceiling and your unit economics.</p>
+<p><strong>What it changes in your decisions</strong> — The context-length limits you expose in the product, your scaling plan, and your pricing tiers.</p>
+<p><strong>Ask your eng team</strong> — <em>"What does doubling our max context length do to our cost and our capacity?"</em></p>
+<p><strong>Product risk if ignored</strong> — You promise long-context or high-concurrency features. They quietly blow up cost or fall over at scale.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>Attention at step <em>t</em> needs the keys and values of all tokens <code>0..t-1</code>.
+Recomputing them every step would make generation quadratic. Instead, the
+server stores them:</p>
+<pre><code>KV cache size ≈ 2 (K and V)
+              × num_layers
+              × num_kv_heads × head_dim
+              × sequence_length
+              × bytes_per_element (dtype)
+              × batch_size (sum of all sequences in flight)
+</code></pre>
+<p>The two things to feel in your gut:</p>
+<ol>
+<li><strong>It grows linearly with total tokens in flight</strong> (context length × concurrency).</li>
+<li><strong>It lives in scarce GPU HBM</strong>, competing with the model weights themselves.</li>
+</ol>
+<p>A long-context, high-concurrency workload can need <em>more memory for KV than for the
+model weights.</em> That's why KV cache — not FLOPs — limits your batch size and
+throughput.</p>
+<h2 id="the-levers">The levers</h2>
+<h3 id="1-reuse">1. Reuse</h3>
+<p>Identical prefixes can share KV entries. This is exactly what
+<a href="#prompt-vs-semantic-caching">prompt/prefix caching</a> exploits. A stable system
+prompt shared across requests is computed once and reused. This saves both
+prefill compute and memory. Reuse requires the entries to still be resident,
+which ties reuse to eviction policy.</p>
+<h3 id="2-eviction">2. Eviction</h3>
+<p>When memory fills, something must go. Here are the policies and their costs:</p>
+<ul>
+<li><strong>By completion</strong> — free a sequence's KV when it finishes (the baseline).</li>
+<li><strong>LRU on cached prefixes</strong> — evict the least-recently-used shared prefix. A
+  future request with that prefix pays full prefill again. This is a
+  <em>recompute</em>, not a wrong answer.</li>
+<li><strong>Preemption / swapping</strong> — under pressure, the server can pause a running
+  sequence. It can then <strong>recompute</strong> the sequence's KV later, or <strong>swap</strong> it
+  to CPU/host memory and back. Recompute trades compute for memory. Swapping
+  trades PCIe bandwidth for memory. Both add tail latency.</li>
+</ul>
+<h3 id="3-memory-pressure-fragmentation">3. Memory pressure &amp; fragmentation</h3>
+<p>Naively, each sequence reserves a contiguous block sized for its <em>maximum</em>
+possible length. This wastes memory for short outputs and fragments the pool.
+<strong>Paged attention</strong> solves this by allocating the KV cache in fixed-size
+blocks that need not be contiguous — OS-style virtual memory for the cache.
+It nearly eliminates fragmentation and enables much higher concurrency. See
+<a href="#batching-and-paged-attention">paged attention</a>.</p>
+<h3 id="4-compression">4. Compression</h3>
+<ul>
+<li><strong>Smaller dtype</strong> — storing KV in FP8/INT8 halves or quarters cache size (a
+  quality/memory tradeoff; see <a href="#quantization-formats">quantization formats</a>).</li>
+<li><strong>Grouped/Multi-Query Attention (GQA/MQA)</strong> — fewer <em>KV</em> heads than query
+  heads, so the cache shrinks proportionally. Most modern models use GQA for
+  exactly this reason.</li>
+<li><strong>Multi-head Latent Attention (MLA)</strong> — a deeper compression than GQA: instead
+  of shrinking the <em>number</em> of KV heads, compress the KV representation itself
+  into a low-rank latent vector, then reconstruct it at attention time. DeepSeek-V2
+  and V3 made this the reference architecture for the technique. It buys a bigger
+  cache reduction than GQA alone, at the cost of a materially more complex
+  attention implementation — an architectural bet made at training time, not a
+  serving-time knob.</li>
+<li><strong>Sliding-window / local attention</strong> — bound the cache to the last <em>N</em> tokens.</li>
+</ul>
+<h2 id="why-this-is-the-throughput-story">Why this is the throughput story</h2>
+<p>Concurrency — how many requests you batch together — is capped by how much KV
+cache fits. More memory headroom means bigger batches, which means higher GPU
+utilization, which means lower cost-per-token. So every KV optimization
+(paging, GQA, FP8 KV, eviction policy) is really a <strong>throughput and cost</strong>
+optimization. This is the mechanism behind
+<a href="#batching-and-paged-attention">continuous batching</a>.</p>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th>Lever</th>
+<th>Buys you</th>
+<th>Costs you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prefix reuse</td>
+<td>Less prefill, less memory</td>
+<td>Cache must stay resident; invalidation care</td>
+</tr>
+<tr>
+<td>Aggressive eviction</td>
+<td>Higher concurrency</td>
+<td>Recompute/swap latency on the tail</td>
+</tr>
+<tr>
+<td>FP8/INT8 KV</td>
+<td>~2–4× more concurrency</td>
+<td>Small quality risk on long contexts</td>
+</tr>
+<tr>
+<td>GQA/MQA</td>
+<td>Big cache reduction</td>
+<td>Baked into the model architecture</td>
+</tr>
+<tr>
+<td>MLA</td>
+<td>Deeper cache reduction than GQA</td>
+<td>More complex attention implementation; also baked in at training time</td>
+</tr>
+<tr>
+<td>Sliding window</td>
+<td>Bounded memory</td>
+<td>Forgets distant context</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>OOM under load</strong> — concurrency times context exceeded HBM, so requests get
+  rejected or the server crashes. Mitigate with admission control and
+  max-context limits.</li>
+<li><strong>Tail latency from preemption</strong> — under pressure, long requests get
+  swapped or recomputed, which spikes p99. You can see this only with
+  <a href="04-evals-observability.html#observability">per-span latency tracing</a>.</li>
+<li><strong>Cache thrash</strong> — too many distinct prefixes for the pool, so reuse never
+  hits. Standardize prefixes (context engineering) to keep the working set
+  small.</li>
+<li><strong>Cross-tenant reuse hazard</strong> — sharing KV across trust boundaries can leak
+  data if it isn't carefully scoped. See
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant cache safety</a>.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have you computed KV memory for your max context × target concurrency?</li>
+<li class="task todo">Does your model use GQA/MQA (and could FP8 KV buy headroom)?</li>
+<li class="task todo">Is there admission control so you reject rather than OOM?</li>
+<li class="task todo">Do you monitor preemption/swap rate and its effect on p99?</li>
+<li class="task todo">Are shared prefixes scoped so reuse never crosses a tenant boundary?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="#batching-and-paged-attention">Continuous batching &amp; paged attention</a></li>
+<li><a href="#prompt-vs-semantic-caching">Prompt vs. semantic caching</a></li>
+<li><a href="#quantization-formats">Quantization formats</a></li>
+<li><a href="05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation &amp; cache safety</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="prefill-vs-decode"><div class="lesson-head"><span class="lesson-num">01.3</span><h2>Prefill vs. decode latency</h2></div><h2 id="tldr">TL;DR</h2>
+<p>Generation has two phases with opposite hardware profiles. <strong>Prefill</strong>
+processes the entire prompt in parallel to build the
+<a href="#kv-cache-management">KV cache</a>. It is <strong>compute-bound</strong>, and its cost
+scales with <em>input</em> length. <strong>Decode</strong> then emits output tokens one at a
+time. Each step reads the whole model and KV cache, so decode is
+<strong>memory-bandwidth-bound</strong>, and its cost scales with <em>output</em> length. The two
+phases have different bottlenecks, so you optimize them with different
+techniques. Mix them up and you'll optimize the wrong thing.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — "It feels slow" has two different causes: time-to-first-token, or per-token speed. Each has a different fix. Knowing which one you have lets you fund the right latency work instead of guessing.</p>
+<p><strong>What it changes in your decisions</strong> — Your latency SLOs, UX choices (streaming, skeleton states), and which optimization you pay for.</p>
+<p><strong>Ask your eng team</strong> — <em>"Is our latency problem time-to-first-token, or tokens-per-second?"</em></p>
+<p><strong>Product risk if ignored</strong> — You fund the wrong latency fix and the number you promised the exec doesn't move.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<pre><code>PREFILL  (process N prompt tokens together)        DECODE (generate one token at a time)
+  ─ one big parallel matmul over all input          ─ T sequential steps
+  ─ saturates the GPU's compute (FLOPs)             ─ each step: load weights + KV, do tiny matmul
+  ─ cost ∝ input length                              ─ cost ∝ output length
+  ─ bottleneck: arithmetic throughput               ─ bottleneck: memory bandwidth
+</code></pre>
+<p>The two user-visible latency numbers map directly onto the phases:</p>
+<ul>
+<li><strong>TTFT — Time To First Token</strong> ≈ prefill time (plus queueing). <em>Input</em>
+  length and <a href="#prompt-vs-semantic-caching">prompt-cache</a> hits dominate it.</li>
+<li><strong>TPOT / ITL — Time Per Output Token / Inter-Token Latency</strong> ≈ decode step
+  time. Model size, memory bandwidth, and batch dynamics dominate it.</li>
+</ul>
+<p>Total latency ≈ <code>TTFT + (num_output_tokens × TPOT)</code>.</p>
+<h2 id="why-theyre-bound-by-different-limits">Why they're bound by different limits</h2>
+<ul>
+<li><strong>Prefill is compute-bound</strong> because the server processes all prompt tokens
+  at once: large, dense matrix multiplies that keep the GPU's compute units
+  busy. Doubling the prompt roughly doubles prefill work. The fix is to <em>do
+  less of it</em>: shorten or compress the input
+  (<a href="00-foundations.html#context-engineering">context engineering</a>), or skip
+  it with <a href="#prompt-vs-semantic-caching">prefix caching</a>.</li>
+<li><strong>Decode is memory-bandwidth-bound</strong> because each single-token step must
+  stream the <em>entire</em> set of model weights (and the growing KV cache) through
+  the compute units to produce one token. The arithmetic per step is tiny;
+  the bottleneck is moving bytes. The GPU sits underutilized on compute,
+  which is exactly why <a href="#batching-and-paged-attention">batching</a> helps
+  decode so much — more sequences share each weight read.</li>
+</ul>
+<h2 id="how-this-changes-what-you-optimize">How this changes what you optimize</h2>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Attack the right phase</th>
+<th>Techniques</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lower <strong>TTFT</strong></td>
+<td>Prefill</td>
+<td>Prompt caching, shorter input, chunked prefill, more compute</td>
+</tr>
+<tr>
+<td>Lower <strong>TPOT</strong></td>
+<td>Decode</td>
+<td><a href="#speculative-quantization-distillation">Speculative decoding</a>, smaller/<a href="#quantization-formats">quantized</a> model, more bandwidth</td>
+</tr>
+<tr>
+<td>Higher <strong>throughput</strong></td>
+<td>Decode-side batching</td>
+<td><a href="#batching-and-paged-attention">Continuous batching</a>, bigger batches via <a href="#kv-cache-management">KV headroom</a></td>
+</tr>
+</tbody>
+</table>
+<p>Key consequences:</p>
+<ul>
+<li><strong>Speculative decoding only helps decode</strong>, not prefill. It attacks the
+  sequential token-by-token bottleneck. Don't expect it to fix a slow TTFT
+  caused by a huge prompt.</li>
+<li><strong>Quantization can help both</strong>, but for different reasons: it moves less
+  data (which helps bandwidth-bound decode) and sometimes does faster math
+  (which helps compute-bound prefill).</li>
+<li><strong>Batching is mostly a decode/throughput lever.</strong> It improves tokens per
+  second across many users, but it can slightly raise any single user's
+  TPOT.</li>
+<li><strong>Chunked prefill</strong> interleaves prefill of new requests with ongoing
+  decode, so a giant prompt doesn't stall everyone else's token stream. It's
+  a scheduling fix for the prefill/decode interference problem — for the more
+  aggressive fix, running prefill and decode on separate GPU pools entirely, see
+  <a href="#batching-and-paged-attention">prefill/decode disaggregation</a>.</li>
+</ul>
+<h2 id="workload-shape-matters">Workload shape matters</h2>
+<ul>
+<li><strong>Long input, short output</strong> — classification, extraction, a RAG answer
+  over a big context — is <strong>prefill-dominated</strong>. Prompt caching and input
+  compression are your biggest wins.</li>
+<li><strong>Short input, long output</strong> — open-ended generation, long agent turns —
+  is <strong>decode-dominated</strong>. Speculative decoding, smaller models, and
+  batching matter most.</li>
+<li>Knowing which regime you're in tells you where to spend engineering
+  effort. Measure TTFT and TPOT separately in
+  <a href="04-evals-observability.html#observability">observability</a> — a single
+  "latency" number hides which phase is the problem.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Optimizing the wrong phase</strong> — adding speculative decoding to fix
+  latency that is actually 90% prefill of a 30k-token prompt.</li>
+<li><strong>Prefill stalls</strong> — one user's huge prompt monopolizes the GPU and spikes
+  everyone else's TPOT. Fix this with chunked prefill or scheduler tuning.</li>
+<li><strong>Reporting only average latency</strong> — this hides that TTFT is fine but TPOT
+  is terrible, or the reverse. Always split the two.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do you measure TTFT and TPOT as separate metrics?</li>
+<li class="task todo">Do you know whether your workload is prefill- or decode-dominated?</li>
+<li class="task todo">Is prompt caching enabled for long, shared prefixes (prefill win)?</li>
+<li class="task todo">Are decode-side wins (spec decoding, batching) applied where output is long?</li>
+<li class="task todo">Does a large prompt from one user degrade others' token stream?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#kv-cache-management">KV cache management</a></li>
+<li><a href="#batching-and-paged-attention">Continuous batching &amp; paged attention</a></li>
+<li><a href="#speculative-quantization-distillation">Speculative decoding vs. quantization vs. distillation</a></li>
+<li><a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">Inference-stack tradeoffs</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="batching-and-paged-attention"><div class="lesson-head"><span class="lesson-num">01.4</span><h2>Continuous batching &amp; paged attention</h2></div><h2 id="tldr">TL;DR</h2>
+<p>Two innovations made modern LLM serving economical. <strong>Continuous batching</strong> keeps the
+GPU full by adding and removing requests at the <em>token</em> level instead of waiting for
+a whole batch to finish. <strong>Paged attention</strong> manages the <a href="#kv-cache-management">KV cache</a>
+in fixed-size, non-contiguous blocks (like OS virtual memory), so memory isn't wasted
+or fragmented. That lets you fit more sequences and therefore batch more. Together
+they turn the bandwidth-bound <a href="#prefill-vs-decode">decode</a> phase into a
+high-throughput one.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — This is the throughput-vs-latency dial for self-hosted inference, and it sets the <em>gross margin</em> on your AI features more than almost anything else.</p>
+<p><strong>What it changes in your decisions</strong> — Build-vs-buy for inference, your margin model, and the latency-vs-cost point you choose to operate at.</p>
+<p><strong>Ask your eng team</strong> — <em>"What's our cost per token at our latency target, and how much does relaxing latency a little save us?"</em></p>
+<p><strong>Product risk if ignored</strong> — The margins assumed in your business case never materialize because the serving stack was never tuned.</p>
+</blockquote>
+<h2 id="the-problem-they-solve">The problem they solve</h2>
+<p>Decode is <strong>memory-bandwidth-bound</strong>: each step streams the whole model through the
+compute units to produce one token, leaving compute units idle. The cure is
+<strong>batching</strong> — process many sequences per weight read so each expensive byte-movement
+serves many users. But two things get in the way:</p>
+<ol>
+<li><strong>Ragged completion.</strong> In a static batch, sequences finish at different times.
+   With naive batching the whole batch waits for the slowest sequence, and finished
+   slots sit idle → wasted GPU.</li>
+<li><strong>Memory waste.</strong> Reserving a contiguous max-length KV block per sequence wastes
+   memory (most outputs are short) and fragments the pool, capping how many sequences
+   fit.</li>
+</ol>
+<h2 id="continuous-in-flight-batching">Continuous (in-flight) batching</h2>
+<p>Instead of "form batch → run to completion → form next batch," the scheduler operates
+per decoding step:</p>
+<pre><code>every step:
+  - run one decode step for all active sequences
+  - any sequence that emitted EOS → evict, free its KV, return result
+  - any newly arrived request → admit, schedule its prefill, add to the batch
+</code></pre>
+<p>Effects:</p>
+<ul>
+<li><strong>GPU stays saturated</strong> — finished slots are immediately refilled by waiting
+  requests. No idle bubbles.</li>
+<li><strong>New requests don't wait for a batch boundary</strong> — they join almost immediately, so
+  queueing latency drops.</li>
+<li><strong>Throughput rises sharply</strong> at a given latency target compared to static batching.</li>
+</ul>
+<p>The catch: prefill of a newly admitted request can momentarily interfere with ongoing
+decode (a TTFT-vs-TPOT tension). <strong>Chunked prefill</strong> mitigates this. It slices big
+prefills and interleaves them with decode steps, so no single large prompt stalls the
+token stream.</p>
+<h2 id="paged-attention">Paged attention</h2>
+<p>Borrowing virtual-memory ideas from operating systems: divide the KV cache into
+fixed-size <strong>blocks (pages)</strong>. A sequence's KV is a <em>list of blocks</em> that need not be
+contiguous. A block table maps logical positions to physical blocks.</p>
+<p>Benefits:</p>
+<ul>
+<li><strong>Near-zero fragmentation</strong> — allocate blocks on demand as a sequence grows, instead
+  of reserving its maximum up front. More sequences fit in the same HBM →
+  bigger batches → higher throughput.</li>
+<li><strong>Cheap sharing (copy-on-write).</strong> Sequences with a common prefix can <em>share</em> the
+  physical blocks for that prefix, and only diverge when they differ. This is the
+  mechanism behind efficient <a href="#prompt-vs-semantic-caching">prefix caching</a> and
+  parallel sampling or beam search.</li>
+<li><strong>Clean eviction/swap units.</strong> Blocks are natural granules to evict or swap to host
+  memory under <a href="#kv-cache-management">memory pressure</a>.</li>
+</ul>
+<h2 id="how-they-reinforce-each-other">How they reinforce each other</h2>
+<p>Paged attention raises how many sequences fit in memory. Continuous batching turns
+that headroom into sustained GPU utilization. The product is dramatically higher
+throughput — and therefore lower <strong>cost per token</strong> — at comparable latency. This is
+the core reason a well-configured open-source server (vLLM, TGI, TensorRT-LLM, SGLang)
+can serve far more traffic per GPU than a naive loop.</p>
+<h2 id="prefilldecode-disaggregation-separating-the-pools-entirely">Prefill/decode disaggregation — separating the pools entirely</h2>
+<p>Chunked prefill mitigates prefill/decode interference on a <em>shared</em> pool of GPUs.
+The more aggressive fix removes the interference at the root: run prefill and
+decode on <strong>separate GPU pools entirely</strong>. A request's prefill runs on a
+compute-optimized pool, its KV cache transfers over a fast interconnect, and
+decode continues on a pool tuned for memory-bandwidth-bound work. Neither phase
+ever waits behind the other, because they were never sharing hardware to begin
+with.</p>
+<p>This is now a mainstream production serving architecture (DistServe, Mooncake,
+NVIDIA Dynamo), not a research curiosity. The tradeoff is operational complexity —
+two pools to provision, monitor, and keep balanced, plus a KV-transfer hop that
+adds its own latency — against a ceiling chunked prefill alone can't reach: at
+high enough concurrency, no scheduling trick fully hides one phase's footprint
+from the other on shared hardware. Disaggregation is the lever teams reach for
+once that ceiling is the actual bottleneck, not before.</p>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th>Lever</th>
+<th>Buys you</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bigger batches</td>
+<td>Throughput, lower $/token</td>
+<td>Higher per-user TPOT; more KV memory</td>
+</tr>
+<tr>
+<td>Continuous batching</td>
+<td>Utilization + low queueing</td>
+<td>Prefill/decode interference</td>
+</tr>
+<tr>
+<td>Chunked prefill</td>
+<td>Smoother TPOT under mixed load</td>
+<td>Slightly higher prefill latency</td>
+</tr>
+<tr>
+<td>Prefill/decode disaggregation</td>
+<td>Removes the interference at the root</td>
+<td>Two pools to operate; KV-transfer hop</td>
+</tr>
+<tr>
+<td>Paged KV blocks</td>
+<td>Concurrency, prefix sharing</td>
+<td>Small bookkeeping overhead</td>
+</tr>
+</tbody>
+</table>
+<p>There is no free lunch: pushing batch size up improves cost and throughput but can
+raise tail latency for individual requests. The right operating point is an
+<a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">SLO decision</a>, not a default.</p>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Throughput tuned, latency forgotten</strong> — batch sizes cranked for cost, p99 TPOT
+  quietly blows the SLO. Track both.</li>
+<li><strong>Prefill stalls</strong> — a 32k-token prompt admitted mid-flight freezes everyone's token
+  stream for a moment; needs chunked prefill.</li>
+<li><strong>KV exhaustion</strong> — high concurrency × long context overruns the block pool →
+  preemption/swap and tail-latency spikes (see <a href="#kv-cache-management">KV management</a>).</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Are you on a server that does continuous batching + paged attention?</li>
+<li class="task todo">Have you set a max batch size / max-num-seqs tied to an SLO, not just "max"?</li>
+<li class="task todo">Is chunked prefill enabled if you mix long prompts with latency-sensitive decode?</li>
+<li class="task todo">Do you alert on KV-pool utilization and preemption rate?</li>
+<li class="task todo">Do you track throughput <em>and</em> p99 TTFT/TPOT together?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#kv-cache-management">KV cache management</a></li>
+<li><a href="#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="#prompt-vs-semantic-caching">Prompt vs. semantic caching</a></li>
+<li><a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">Inference-stack tradeoffs</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="speculative-quantization-distillation"><div class="lesson-head"><span class="lesson-num">01.5</span><h2>Speculative decoding vs. quantization vs. distillation</h2></div><h2 id="tldr">TL;DR</h2>
+<p>Three ways to make inference faster or cheaper, with very different risk
+profiles. <strong>Speculative decoding</strong> speeds up <a href="#prefill-vs-decode">decode</a>
+with <em>zero quality change</em> — the output distribution is provably preserved.
+But it needs extra memory, and it helps only when a small draft model agrees
+often. <strong>Quantization</strong> shrinks the model to use less memory and bandwidth,
+which is cheaper and faster, with a <em>bounded, measurable</em> quality risk.
+<strong>Distillation</strong> trains a genuinely smaller model. It's the biggest
+speed/cost win, but it carries the largest and least reversible quality
+risk, plus real training cost. Pick by which resource you're short on and
+how much quality risk you can carry.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — These are the three knobs for "make it cheaper and faster," and each carries a <em>different</em> quality risk. Pick the wrong one, and it shows up as a silent quality regression your users feel.</p>
+<p><strong>What it changes in your decisions</strong> — Your cost-reduction roadmap, how much quality risk you'll accept, and the eval gates you require before rollout.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which of these are we using, and did quality hold on our eval set after we turned it on?"</em></p>
+<p><strong>Product risk if ignored</strong> — A cost-cutting change quietly degrades the experience and no one's eval catches it.</p>
+</blockquote>
+<h2 id="the-three-techniques">The three techniques</h2>
+<h3 id="speculative-decoding-free-speed-same-answer">Speculative decoding — <em>free speed, same answer</em></h3>
+<p>A small, fast <strong>draft</strong> model proposes the next <em>k</em> tokens. The large
+<strong>target</strong> model verifies all <em>k</em> in a single forward pass — parallel
+verification is cheap because the target is bandwidth-bound, not
+compute-bound. The server keeps accepted tokens; on the first rejection, it
+falls back to the target's own token. Because verification uses the
+target's true probabilities, <strong>the output distribution is identical</strong> to
+plain decode.</p>
+<ul>
+<li><strong>Wins:</strong> lower TPOT / inter-token latency. It can be 1.5–3× faster on
+  agreeable workloads.</li>
+<li><strong>Costs:</strong> extra GPU memory for the draft model. The benefit depends
+  entirely on the <strong>acceptance rate</strong> — if the draft rarely agrees, you pay
+  overhead for little gain.</li>
+<li><strong>Scope:</strong> decode only. It does nothing for prefill-dominated (long-prompt)
+  latency.</li>
+<li><strong>Variants:</strong> separate draft model, Medusa-style extra heads, n-gram or
+  lookahead decoding, EAGLE.</li>
+</ul>
+<h3 id="quantization-smaller-model-bounded-quality-risk">Quantization — <em>smaller model, bounded quality risk</em></h3>
+<p>Store, and sometimes compute, weights and activations in fewer bits — FP16
+to INT8, FP8, or INT4. Moving less data directly helps the bandwidth-bound
+decode phase and frees <a href="#kv-cache-management">KV/memory headroom</a> for
+bigger batches.</p>
+<ul>
+<li><strong>Wins:</strong> lower memory footprint, lower $/token, often lower latency, more
+  concurrency.</li>
+<li><strong>Costs:</strong> quality degradation that grows as bits shrink, and that varies
+  by method and by what you quantize — weights, activations, or KV. 8-bit is
+  usually near-lossless. 4-bit needs care. Below that, quality often falls
+  off a cliff.</li>
+<li><strong>Reversibility:</strong> high. It's a post-training transform you can dial back.</li>
+<li>Full detail and method comparison: <a href="#quantization-formats">Quantization formats</a>.</li>
+</ul>
+<h3 id="distillation-a-new-smaller-model">Distillation — <em>a new, smaller model</em></h3>
+<p>Train a small <strong>student</strong> to imitate a large <strong>teacher</strong>, matching its
+outputs or output distributions. The result is a permanently smaller,
+cheaper, faster model specialized to your task distribution.</p>
+<ul>
+<li><strong>Wins:</strong> the largest steady-state speed/cost reduction. It's great for a
+  narrow, high-volume task.</li>
+<li><strong>Costs:</strong> upfront training effort and data. The quality ceiling is lower
+  and depends on the teacher and data. <strong>Generality is lost</strong> — the student
+  is good at what it was distilled for and can be brittle off-distribution.</li>
+<li><strong>Reversibility:</strong> low. You've trained an artifact and built a pipeline
+  around it.</li>
+</ul>
+<h2 id="choosing-between-them">Choosing between them</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Speculative decoding</th>
+<th>Quantization</th>
+<th>Distillation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary win</td>
+<td>Lower decode latency</td>
+<td>Lower memory + cost</td>
+<td>Lower cost at scale</td>
+</tr>
+<tr>
+<td>Quality risk</td>
+<td><strong>None</strong> (lossless)</td>
+<td>Bounded, tunable</td>
+<td>Largest, task-dependent</td>
+</tr>
+<tr>
+<td>Up-front cost</td>
+<td>Low (config + draft model)</td>
+<td>Low (convert once)</td>
+<td>High (training pipeline)</td>
+</tr>
+<tr>
+<td>Reversibility</td>
+<td>Trivial</td>
+<td>Easy</td>
+<td>Hard</td>
+</tr>
+<tr>
+<td>Helps prefill?</td>
+<td>No</td>
+<td>Yes (less data/faster math)</td>
+<td>Yes (smaller model)</td>
+</tr>
+<tr>
+<td>Best when</td>
+<td>Latency-bound, draft agrees</td>
+<td>Memory/cost-bound</td>
+<td>One high-volume task, willing to train</td>
+</tr>
+</tbody>
+</table>
+<p>They are <strong>composable</strong>: a common production stack is a <em>quantized</em> model
+served with <em>speculative decoding</em>, and for a hot narrow task, a <em>distilled</em>
+student that is itself quantized. They attack different resources, so
+stacking compounds the wins.</p>
+<h2 id="decision-guide">Decision guide</h2>
+<ol>
+<li><strong>Latency-bound, output-heavy, can't touch quality?</strong> Reach for
+   speculative decoding first.</li>
+<li><strong>Memory/cost-bound, and can tolerate a small, measured quality dip?</strong>
+   Use quantization — start at INT8/FP8, validate, and only go to INT4 if
+   evals hold.</li>
+<li><strong>One narrow, very high-volume task where a big model is overkill?</strong> Use
+   distillation, then quantize the student.</li>
+<li><strong>Always:</strong> gate every one of these behind your
+   <a href="04-evals-observability.html#evals">eval suite</a>. Speculative decoding
+   shouldn't move evals at all — that's a red flag if it does. Quantization
+   and distillation <em>will</em> move evals, so you must measure by how much.</li>
+</ol>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Speculative decoding with a bad draft</strong> — a low acceptance rate makes
+  it net-neutral or slower. Measure acceptance rate, not just "it's
+  enabled."</li>
+<li><strong>Quantizing past the cliff</strong> — INT4 on a task with tight numeric or
+  format demands silently degrades. Only <a href="04-evals-observability.html#evals">evals</a>
+  catch this, not eyeballing.</li>
+<li><strong>Distilling on the wrong distribution</strong> — the student looks great
+  offline but fails on the long tail of real traffic it wasn't distilled
+  for.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Are you short on latency, memory, or steady-state cost? (picks the technique)</li>
+<li class="task todo">For spec decoding: do you monitor draft acceptance rate?</li>
+<li class="task todo">For quantization: did evals hold at the chosen bit-width?</li>
+<li class="task todo">For distillation: does the student's eval set reflect <em>production</em> traffic?</li>
+<li class="task todo">Are all three gated by regression evals before rollout?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#quantization-formats">Quantization formats: INT8, INT4, FP8, AWQ, GPTQ</a></li>
+<li><a href="#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="06-strategy-tradeoffs.html#finetune-vs-icl-vs-rag">Fine-tuning vs. ICL vs. RAG vs. distillation</a></li>
+<li><a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">Inference-stack tradeoffs</a></li>
+<li><a href="04-evals-observability.html#evals">Evals</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="quantization-formats"><div class="lesson-head"><span class="lesson-num">01.6</span><h2>Quantization formats: INT8, INT4, FP8, AWQ, GPTQ — and when it hurts</h2></div><h2 id="tldr">TL;DR</h2>
+<p>Quantization stores numbers in fewer bits. This shrinks the model's memory footprint
+and moves less data per <a href="#prefill-vs-decode">decode</a> step, buying lower cost, more
+<a href="#kv-cache-management">KV/batch headroom</a>, and often lower latency. The format
+(<strong>INT8, FP8, INT4</strong>) sets the precision/range ceiling. The method (<strong>AWQ, GPTQ</strong>, and
+others) decides how cleverly you map full-precision weights into that budget. 8-bit is
+usually near-lossless. 4-bit is viable <em>with a good method</em>. Below that, quality
+typically collapses. Always confirm with <a href="04-evals-observability.html#evals">evals</a> —
+degradation is task-specific and invisible to the eye.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — "We quantized to save money" can be free — or it can wreck quality on exactly the hard tasks (math, code, strict JSON) your product depends on. It's a margin decision with a quality blast radius.</p>
+<p><strong>What it changes in your decisions</strong> — Whether to approve a quantization change, and which high-value task types to guard with evals.</p>
+<p><strong>Ask your eng team</strong> — <em>"At what bit-width did our evals start to slip, and on which task types?"</em></p>
+<p><strong>Product risk if ignored</strong> — You bank the savings and inherit a subtle quality cliff on your highest-value workflows.</p>
+</blockquote>
+<h2 id="what-quantize-actually-means">What "quantize" actually means</h2>
+<p>A full-precision weight is FP16/BF16 (16 bits). Quantization maps ranges of those
+values onto a smaller set of levels:</p>
+<ul>
+<li><strong>Integer (INT8, INT4):</strong> pick a scale (and maybe zero-point) per tensor/channel/
+  group, then round weights to integers. Fewer bits = coarser grid = more rounding
+  error.</li>
+<li><strong>Float (FP8):</strong> keep a floating layout (e.g. <strong>E4M3</strong> = 4 exponent + 3 mantissa
+  bits, or <strong>E5M2</strong>). Floats preserve <strong>dynamic range</strong> far better than integers at the
+  same bit count. That matters for the large outlier values that show up in
+  activations.</li>
+</ul>
+<p>What you quantize matters as much as the bit count:</p>
+<ul>
+<li><strong>Weight-only</strong> (most common for INT4) — weights are small precision, math often
+  still done in FP16. Great memory win, modest compute win, lower quality risk.</li>
+<li><strong>Weight + activation</strong> (e.g. W8A8 INT8, or FP8 both) — this also speeds up the
+  matmuls. But activations have <strong>outliers</strong> that are hard to quantize, and they are
+  the usual source of quality loss.</li>
+<li><strong>KV-cache quantization</strong> — store the <a href="#kv-cache-management">KV cache</a> in FP8/INT8
+  to roughly double or quadruple concurrency. This is a separate, valuable lever.</li>
+</ul>
+<h2 id="the-formats">The formats</h2>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Bits</th>
+<th>Keeps dynamic range?</th>
+<th>Typical use</th>
+<th>Quality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>INT8</strong></td>
+<td>8</td>
+<td>Moderate</td>
+<td>W8A8 serving, broad HW support</td>
+<td>Usually near-lossless</td>
+</tr>
+<tr>
+<td><strong>FP8 (E4M3/E5M2)</strong></td>
+<td>8</td>
+<td><strong>Yes</strong> (float)</td>
+<td>Modern GPUs (Hopper+), weights+activations</td>
+<td>Near-lossless, range-robust</td>
+</tr>
+<tr>
+<td><strong>FP4</strong></td>
+<td>4</td>
+<td><strong>Yes</strong> (float)</td>
+<td>Blackwell-class GPUs, weights+activations</td>
+<td>Good <em>with a good method</em>, range-robust vs. INT4</td>
+</tr>
+<tr>
+<td><strong>INT4</strong></td>
+<td>4</td>
+<td>Low</td>
+<td>Weight-only, memory-constrained serving</td>
+<td>Good <em>with AWQ/GPTQ</em>, risky naive</td>
+</tr>
+<tr>
+<td><strong>INT3/INT2</strong></td>
+<td>≤3</td>
+<td>Very low</td>
+<td>Research / extreme compression</td>
+<td>Usually large degradation</td>
+</tr>
+</tbody>
+</table>
+<p>FP8 vs INT8 at the same 8 bits: FP8's exponent gives it the <strong>range</strong> to absorb
+activation outliers, so it often quantizes activations more gracefully. This is handy
+on hardware with native FP8 support. INT8 has the widest software and hardware support.
+The same relationship repeats one tier down: <strong>FP4 vs. INT4</strong> at 4 bits, FP4 keeps a
+float layout's dynamic range where INT4's fixed grid struggles most, and it's now
+natively accelerated on Blackwell-class GPUs. The rule doesn't change with the tier —
+confirm gains with evals, not intuition about the format's name.</p>
+<h2 id="the-methods-how-to-hit-4-bit-without-wrecking-quality">The methods (how to hit 4-bit without wrecking quality)</h2>
+<p>Naive round-to-nearest at 4-bit loses too much. Smarter post-training quantization
+(PTQ) methods use a small <strong>calibration</strong> dataset to minimize error:</p>
+<ul>
+<li><strong>GPTQ</strong> — quantizes weights one column or group at a time. It uses approximate
+  <strong>second-order (Hessian) information</strong> to compensate remaining weights for the error
+  introduced, minimizing layer-wise output error. Results are strong for 4-bit
+  weight-only quantization, but the method is sensitive to the calibration set.</li>
+<li><strong>AWQ (Activation-aware Weight Quantization)</strong> — observes that a <em>small fraction</em> of
+  weight channels (those multiplied by large activations) dominate quality. It scales
+  to <strong>protect those salient channels</strong> and quantizes the rest aggressively. Robust at
+  4-bit, less sensitive to the calibration set, fast.</li>
+<li><strong>Others you'll meet:</strong> SmoothQuant (shifts activation outliers into weights so W8A8
+  works), GGUF k-quants (llama.cpp's mixed-bit CPU/edge formats), bitsandbytes
+  (NF4/INT8 for QLoRA-style training and easy loading), and SpinQuant/QuaRot
+  (rotations that make 4-bit activations tractable).</li>
+</ul>
+<p>Rule of thumb: <strong>the format sets the ceiling. The method determines how close to it
+you get.</strong> "INT4" with AWQ/GPTQ ≫ "INT4" with naive rounding.</p>
+<h2 id="when-quantization-hurts">When quantization <em>hurts</em></h2>
+<p>Degradation is not uniform — it concentrates in specific places:</p>
+<ul>
+<li><strong>Lower bits, more risk</strong> — INT8 and FP8 are usually safe. INT4 needs a good
+  method. 3-bit or lower usually hurts.</li>
+<li><strong>Activation quantization</strong> is riskier than weight-only because of outliers.</li>
+<li><strong>Long-context / KV quantization</strong> can accumulate small per-token errors over a long
+  sequence.</li>
+<li><strong>Hard, precision-sensitive tasks</strong> suffer most: math/arithmetic, code, strict
+  <a href="02-reliable-outputs.html#structured-output">structured output / JSON</a>, low-resource
+  languages, and long multi-step reasoning. Easy classification/summarization barely
+  notices.</li>
+<li><strong>Small models</strong> have less redundancy to spare and degrade more than large ones at
+  the same bit-width.</li>
+<li><strong>Calibration mismatch</strong> — calibrating GPTQ/AWQ on data unlike production traffic
+  bakes in error where you'll actually use the model.</li>
+</ul>
+<p>Because it's task-specific, you cannot judge quantization by spot-checking a few
+prompts. You need a <a href="04-evals-observability.html#evals">task-representative eval set</a>,
+ideally including adversarial and format-strict cases. Run it at each candidate
+bit-width.</p>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th>Choice</th>
+<th>Buys</th>
+<th>Costs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INT8 / FP8</td>
+<td>~2× memory, near-lossless</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>FP4 (Blackwell)</td>
+<td>~4× memory, better range than INT4</td>
+<td>Real but bounded quality risk; needs Blackwell-class hardware</td>
+</tr>
+<tr>
+<td>INT4 (AWQ/GPTQ)</td>
+<td>~4× memory, big $ win</td>
+<td>Real but bounded quality risk</td>
+</tr>
+<tr>
+<td>KV-cache FP8/INT8</td>
+<td>More concurrency/throughput</td>
+<td>Small long-context risk</td>
+</tr>
+<tr>
+<td>Weight+activation</td>
+<td>Faster matmuls too</td>
+<td>Activation-outlier degradation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Start at INT8/FP8; only go INT4 if evals hold.</li>
+<li class="task todo">Use AWQ or GPTQ (not naive rounding) for 4-bit.</li>
+<li class="task todo">Calibrate on data that looks like production traffic.</li>
+<li class="task todo">Run task-representative + adversarial evals at each bit-width.</li>
+<li class="task todo">Pay special attention to math, code, and strict-JSON tasks.</li>
+<li class="task todo">Consider KV-cache quantization as a separate concurrency lever.</li>
+<li class="task todo">Confirm your hardware actually accelerates the chosen format (e.g. FP8 on Hopper+).</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#speculative-quantization-distillation">Speculative decoding vs. quantization vs. distillation</a></li>
+<li><a href="#kv-cache-management">KV cache management</a></li>
+<li><a href="#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="04-evals-observability.html#evals">Evals</a></li>
+<li><a href="02-reliable-outputs.html#structured-output">Structured output</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section>
+  <section class="recap" id="recap"><div class="recap-head"><span class="recap-ic">📌</span><h2>Recap &amp; real-world examples</h2></div><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
+<p><strong>PagedAttention / vLLM (UC Berkeley, 2023).</strong> By managing the
+<a href="#kv-cache-management">KV cache</a> in non-contiguous "pages" instead of one
+big reserved block, the PagedAttention paper reported up to <strong>~24× higher
+throughput</strong> than prior serving systems at the same latency. vLLM became a
+default open-source serving engine on the strength of it. 🎯 <em>PM takeaway:</em>
+the same GPU can serve far more traffic. Your <strong>$/token and gross margin</strong>
+are an engineering choice, not a fixed input. See
+<a href="#batching-and-paged-attention">batching &amp; paged attention</a>.</p>
+<p><strong>Prompt caching goes mainstream (2024).</strong> Anthropic, OpenAI, and Google all
+shipped prefix/prompt caching that can cut the cost of the <em>cached</em> input by
+up to <strong>~90%</strong> and reduce time-to-first-token. This only works when your
+prompt prefix is byte-stable. 🎯 <em>PM takeaway:</em> a stable system prompt is
+literally money. A per-request timestamp at the top of the prompt quietly
+throws that discount away. See
+<a href="#prompt-vs-semantic-caching">prompt vs. semantic caching</a>.</p>
+<p><strong>Speculative decoding in production.</strong> Techniques like Medusa and EAGLE,
+and provider features such as "predicted outputs," use a cheap draft to
+accelerate <a href="#prefill-vs-decode">decode</a> with <strong>no change to the
+output</strong> — often 1.5–3× faster token streaming. 🎯 <em>PM takeaway:</em> this is a
+latency win you can take <em>without</em> a quality-risk conversation. See
+<a href="#speculative-quantization-distillation">speculative decoding</a>.</p>
+<p><strong>4-bit models on one GPU (GPTQ / AWQ).</strong> Quantization is why large open
+models run on a single GPU, even a consumer one. But teams have repeatedly
+found 4-bit quality slipping on <em>math, code, and strict JSON</em>, while
+summarization barely notices. 🎯 <em>PM takeaway:</em> "we quantized to save
+money" is a margin decision with a quality blast radius. Gate it on evals.
+See <a href="#quantization-formats">quantization formats</a>.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The decision it drives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#prompt-vs-semantic-caching">Prompt vs. semantic caching</a></td>
+<td>One is lossless (KV reuse), one can serve wrong answers</td>
+<td>When to cache responses; SLA risk</td>
+</tr>
+<tr>
+<td><a href="#kv-cache-management">KV cache management</a></td>
+<td>KV memory — not FLOPs — caps concurrency</td>
+<td>Context limits; capacity &amp; pricing tiers</td>
+</tr>
+<tr>
+<td><a href="#prefill-vs-decode">Prefill vs. decode</a></td>
+<td>Two phases, two bottlenecks (compute vs. bandwidth)</td>
+<td>Which latency fix to fund</td>
+</tr>
+<tr>
+<td><a href="#batching-and-paged-attention">Batching &amp; paged attention</a></td>
+<td>Throughput vs. per-user latency dial</td>
+<td>Build-vs-buy; margin model</td>
+</tr>
+<tr>
+<td><a href="#speculative-quantization-distillation">Spec-decode / quant / distill</a></td>
+<td>Three speed/cost knobs, three risk profiles</td>
+<td>Cost roadmap; quality risk accepted</td>
+</tr>
+<tr>
+<td><a href="#quantization-formats">Quantization formats</a></td>
+<td>Format sets the ceiling; method gets you there</td>
+<td>Whether to approve a quantization change</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> <strong>two phases (prefill is compute-bound, decode is
+bandwidth-bound), one cache (KV), throughput from batching and paging, and
+compression from spec-decoding, quantization, and distillation</strong> explain
+almost all LLM serving economics. Every latency, cost, and capacity number
+traces back to one of these.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"Is our latency problem time-to-first-token or tokens-per-second
+— and is our prompt prefix actually cacheable?"</em></p>
+</blockquote>
+<hr />
+<p>← Back to <a href="01-inference-internals.html">module index</a> · → Next module: <a href="02-reliable-outputs.html">02 · Reliable Outputs</a></p><a class="totop" href="#top">↑ back to top</a></section>
+  <div class="pagenav"><a class="navcard prev" href="00-foundations.html"><span class="lbl">← Previous</span><span class="ttl">00 · Foundations</span></a><a class="navcard next" href="02-reliable-outputs.html"><span class="lbl">→ Next</span><span class="ttl">02 · Reliable outputs &amp; tool use</span></a></div><footer class="foot">Educational content · part of the <a href="index.html">AI engineering</a> curriculum for AI-native PMs.</footer>
+  </main></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>(function(){var root=document.getElementById('interactive');
+var $=function(id){return root.querySelector(id);};
+var inEl=$('#lc-in'),outEl=$('#lc-out'),cacheEl=$('#lc-cache');
+function calc(){var i=+inEl.value,o=+outEl.value,c=+cacheEl.value/100;
+var unc=i*(1-c);var prefill=unc/1000*60+ (i>0?40:0);var decode=o*12;var total=prefill+decode||1;
+var cost=unc/1e6*3 + (i*c)/1e6*0.3 + o/1e6*15;
+$('#lc-inv').textContent=i.toLocaleString();$('#lc-outv').textContent=o.toLocaleString();$('#lc-cv').textContent=(c*100)+'%';
+$('#lc-pre').style.width=(prefill/total*100)+'%';$('#lc-dec').style.width=(decode/total*100)+'%';
+$('#lc-total').textContent=(total/1000).toFixed(2)+' s';
+$('#lc-prems').textContent=Math.round(prefill)+' ms';$('#lc-decms').textContent=Math.round(decode)+' ms';
+$('#lc-cost').textContent='$'+cost.toFixed(4);
+var note;if(prefill>decode*1.4)note='<strong>Prefill-dominated.</strong> Your latency is mostly the input. Biggest wins: shorter/compressed context and <em>prompt caching</em> — try the cached slider.';
+else if(decode>prefill*1.4)note='<strong>Decode-dominated.</strong> Your latency is mostly generation. Biggest wins: speculative decoding, a smaller/quantized model, more bandwidth.';
+else note='<strong>Balanced.</strong> Both phases matter — measure TTFT and TPOT separately before optimizing.';
+$('#lc-note').innerHTML=note;}
+var presets={rag:[15000,25,0],chat:[700,800,0],agent:[12000,150,80]};
+root.querySelectorAll('[data-p]').forEach(function(b){b.onclick=function(){var p=presets[b.dataset.p];inEl.value=p[0];outEl.value=p[1];cacheEl.value=p[2];root.querySelectorAll('[data-p]').forEach(function(x){x.classList.remove('active');});b.classList.add('active');calc();};});
+[inEl,outEl,cacheEl].forEach(function(e){e.oninput=function(){root.querySelectorAll('[data-p]').forEach(function(x){x.classList.remove('active');});calc();};});
+calc();})();</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=content%2F01-inference-internals%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="ai/01-inference-internals.html"</script><script defer src="../assets/glossary.js"></script></body></html>

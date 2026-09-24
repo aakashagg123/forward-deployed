@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: fraud-investigation
+description: CMMN case — human tasks, a stage, a milestone, and sentries as guardrails
+kind: case-model
+phase: 06
+lesson: 02
+Deployable to flowable-rest (CMMN engine) with zero custom code.
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL"
+    xmlns:flowable="http://flowable.org/cmmn"
+    targetNamespace="http://flowable.org/cmmn">
+
+  <case id="fraudInvestigation" name="Fraud investigation">
+    <casePlanModel id="casePlan" name="Investigation">
+
+      <!-- ===== plan items: what MAY happen while the case is open ===== -->
+      <planItem id="piStatements" name="Request account statements"
+          definitionRef="htStatements"/>
+      <planItem id="piInterview" name="Interview customer"
+          definitionRef="htInterview"/>
+
+      <!-- milestone: fires when the evidence work is done -->
+      <planItem id="piEvidenceDone" name="Evidence complete"
+          definitionRef="msEvidenceDone">
+        <entryCriterion id="entryEvidence" sentryRef="sentryEvidence"/>
+      </planItem>
+
+      <!-- escalation stage: AVAILABLE only after the milestone (the guardrail) -->
+      <planItem id="piEscalation" name="Escalation" definitionRef="stageEscalation">
+        <entryCriterion id="entryEscalation" sentryRef="sentryEscalation"/>
+      </planItem>
+
+      <!-- ===== sentries: the guardrails ===== -->
+      <sentry id="sentryEvidence">
+        <planItemOnPart id="onStatements" sourceRef="piStatements">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+        <planItemOnPart id="onInterview" sourceRef="piInterview">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+
+      <sentry id="sentryEscalation">
+        <planItemOnPart id="onEvidenceDone" sourceRef="piEvidenceDone">
+          <standardEvent>occur</standardEvent>
+        </planItemOnPart>
+      </sentry>
+
+      <!-- ===== definitions the plan items point at ===== -->
+      <humanTask id="htStatements" name="Request account statements"
+          flowable:candidateGroups="fraud-ops"/>
+      <humanTask id="htInterview" name="Interview customer"
+          flowable:candidateGroups="fraud-ops"/>
+
+      <milestone id="msEvidenceDone" name="Evidence complete"/>
+
+      <stage id="stageEscalation" name="Escalation">
+        <planItem id="piLegal" name="Refer to legal" definitionRef="htLegal"/>
+        <planItem id="piReport" name="File regulator report" definitionRef="htReport"/>
+        <humanTask id="htLegal" name="Refer to legal"
+            flowable:candidateGroups="legal"/>
+        <humanTask id="htReport" name="File regulator report"
+            flowable:candidateGroups="compliance"/>
+      </stage>
+
+    </casePlanModel>
+  </case>
+</definitions>

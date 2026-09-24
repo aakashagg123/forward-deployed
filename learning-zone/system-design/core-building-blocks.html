@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Core building blocks — System Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>System Design</span><em>a standalone module</em></a>
+  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink active" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Lesson 02</span>
+    <h1>Core building blocks</h1>
+  </div>
+  <h2 id="tldr">TL;DR</h2>
+<p>Every large-scale system assembles from a small set of reusable primitives. <strong>Rate limiters</strong> protect services from being overwhelmed by users, by bugs, or by attacks. They use algorithms that trade precision for memory and latency. <strong>Consistent hashing</strong> distributes data across a changing set of servers without triggering full re-mappings. Virtual nodes smooth out the inevitable hot spots. <strong>Distributed key-value stores</strong> force you to choose between consistency and availability (the CAP theorem). They then give you dials — quorum parameters, vector clocks, gossip protocols — to fine-tune that choice. <strong>Unique ID generators</strong> seem trivial until you need 10,000 IDs per second across five datacenters with no coordination. Twitter's Snowflake shows how a 64-bit integer can encode time, location, and sequence without a single network call.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — These four primitives show up inside almost every system in this track. If you don't understand how your rate limiter works, you can't reason about why legitimate users get throttled. If you don't understand consistent hashing, you can't evaluate your team's data-migration plan. If you don't understand quorum math, you'll set the wrong expectations about data freshness.</p>
+<p><strong>What it changes in your decisions</strong> — You stop treating rate limits as "just a number" and start asking which algorithm fits your traffic shape. You evaluate storage migrations by how many keys get remapped. You define product SLAs by understanding the consistency model underneath.</p>
+<p><strong>Ask your eng team</strong> — <em>"What happens to in-flight requests when we add or remove a storage node — how many keys get remapped, and what's the latency during rebalancing?"</em></p>
+<p><strong>Risk if ignored</strong> — Rate limits that either block legitimate traffic or fail to stop abuse. Storage rebalancing that takes the system offline. Stale reads that corrupt business logic because nobody checked the quorum configuration.</p>
+</blockquote>
+<hr />
+<h2 id="rate-limiter">Rate limiter</h2>
+<p>A rate limiter controls the rate of traffic a client can send to a system. It sits in the request path — usually as middleware or at the API gateway — and rejects requests that exceed a defined threshold. Without it, a single misbehaving client (or a DDoS attack, or a retry storm from a buggy mobile app) can saturate a service and take down everything behind it.</p>
+<h3 id="where-to-place-it">Where to place it</h3>
+<p>Three options, each with tradeoffs:</p>
+<table>
+<thead>
+<tr>
+<th>Placement</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client-side</strong></td>
+<td>Zero server load</td>
+<td>Easily forged or bypassed; can't enforce across clients</td>
+</tr>
+<tr>
+<td><strong>Server-side</strong></td>
+<td>Full control; sees real request</td>
+<td>Adds latency to every request; tied to app deployment</td>
+</tr>
+<tr>
+<td><strong>Middleware / API gateway</strong></td>
+<td>Decoupled from app; centralized policy</td>
+<td>Separate infrastructure to operate; may lack app context</td>
+</tr>
+</tbody>
+</table>
+<p>In practice, most production systems use middleware or a dedicated API gateway (AWS API Gateway, Kong, Envoy) that applies rate limiting before traffic reaches application servers. If you already have an API gateway, put rate limiting there rather than building a second layer.</p>
+<h3 id="algorithms">Algorithms</h3>
+<p>Five algorithms dominate production use. Each trades off memory, precision, and burst tolerance:</p>
+<style>
+.sd-bb{background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:16px;padding:28px 24px 24px;box-shadow:0 1px 3px rgba(31,35,40,.04);
+  margin:26px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.sd-bb-title{font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;
+  color:#59636e;font-weight:700;margin:0 0 18px}
+.sd-bb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sd-bb-card{background:#ffffff;border:1px solid #d1d9e0;border-radius:12px;padding:16px;
+  position:relative;overflow:hidden}
+.sd-bb-card-head{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+.sd-bb-card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.sd-bb-card:nth-child(1) .sd-bb-card-icon{background:#ddf4ff;color:#0969da;border:1px solid #b6e3ff}
+.sd-bb-card:nth-child(2) .sd-bb-card-icon{background:#dafbe1;color:#1a7f37;border:1px solid #aceebb}
+.sd-bb-card:nth-child(3) .sd-bb-card-icon{background:#fbefff;color:#8250df;border:1px solid #eecef7}
+.sd-bb-card:nth-child(4) .sd-bb-card-icon{background:#f6f8fa;color:#59636e;border:1px solid #d1d9e0}
+.sd-bb-card-name{font-size:13px;font-weight:650;color:#1f2328}
+.sd-bb-card-sub{font-size:10.5px;color:#59636e;font-weight:500}
+.sd-bb-visual{margin:0 0 10px;position:relative}
+/* Token bucket visual */
+.sd-bb-bucket{display:flex;align-items:flex-end;gap:3px;height:40px;padding:6px 8px;
+  background:#ddf4ff;border:1px solid #b6e3ff;border-radius:8px}
+.sd-bb-token{width:14px;border-radius:3px;background:#0969da}
+.sd-bb-token:nth-child(1){height:28px}
+.sd-bb-token:nth-child(2){height:28px}
+.sd-bb-token:nth-child(3){height:28px}
+.sd-bb-token:nth-child(4){height:28px;opacity:.35;border:1px dashed #0969da;background:transparent}
+.sd-bb-token:nth-child(5){height:28px;opacity:.2;border:1px dashed #0969da;background:transparent}
+.sd-bb-refill{position:absolute;top:4px;right:8px;font-size:9px;color:#59636e;font-weight:600}
+/* Hash ring visual */
+.sd-bb-ring{width:80px;height:80px;border:2px solid #aceebb;border-radius:50%;
+  position:relative;margin:0 auto}
+.sd-bb-node{position:absolute;width:16px;height:16px;border-radius:50%;
+  font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  color:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.sd-bb-node-a{background:#1a7f37;top:-8px;left:50%;transform:translateX(-50%)}
+.sd-bb-node-b{background:#1a7f37;right:-8px;top:50%;transform:translateY(-50%)}
+.sd-bb-node-c{background:#2da44e;bottom:-8px;left:50%;transform:translateX(-50%)}
+.sd-bb-key{position:absolute;width:10px;height:10px;border-radius:50%;background:#0969da;
+  border:1.5px solid #ffffff}
+.sd-bb-key1{top:6px;right:6px}
+.sd-bb-key2{bottom:14px;left:4px}
+/* Quorum visual */
+.sd-bb-quorum{display:flex;gap:4px;justify-content:center;align-items:center}
+.sd-bb-replica{width:28px;height:34px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:9px;font-weight:700;color:#ffffff}
+.sd-bb-replica-ack{background:#8250df;border:1px solid #6639ba}
+.sd-bb-replica-wait{background:#eecef7;border:1px solid #d8b9ec}
+.sd-bb-quorum-label{font-size:9px;color:#8250df;font-weight:600;margin:0 2px}
+/* Snowflake visual */
+.sd-bb-snowflake{display:flex;gap:1px;border-radius:6px;overflow:hidden;height:22px}
+.sd-bb-sf-seg{display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;font-weight:700;color:#ffffff;padding:0 3px;white-space:nowrap}
+.sd-bb-sf-sign{background:#59636e;flex:0 0 12px}
+.sd-bb-sf-ts{background:#59636e;flex:3}
+.sd-bb-sf-dc{background:#59636e;flex:0.6}
+.sd-bb-sf-wk{background:#59636e;flex:0.6}
+.sd-bb-sf-seq{background:#1f2328;flex:1.2}
+.sd-bb-details{display:flex;flex-wrap:wrap;gap:4px}
+.sd-bb-detail{font-size:10px;font-weight:550;border-radius:6px;padding:3px 7px;
+  line-height:1.3;display:inline-flex;align-items:center;gap:3px}
+.sd-bb-detail-warm{background:#ddf4ff;border:1px solid #b6e3ff;color:#0969da}
+.sd-bb-detail-green{background:#dafbe1;border:1px solid #aceebb;color:#1a7f37}
+.sd-bb-detail-blue{background:#fbefff;border:1px solid #eecef7;color:#8250df}
+.sd-bb-detail-neutral{background:#f6f8fa;border:1px solid #d1d9e0;color:#1f2328}
+.sd-bb-connections{margin:14px 0 0;padding:12px 14px;background:#ffffff;
+  border:1px solid #d1d9e0;border-radius:10px}
+.sd-bb-conn-title{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:#59636e;margin:0 0 8px}
+.sd-bb-conn-row{display:flex;align-items:center;gap:6px;font-size:11px;
+  color:#59636e;line-height:1.5;margin:3px 0}
+.sd-bb-conn-arrow{color:#8c959f;font-weight:700;flex-shrink:0}
+@media (max-width:640px){
+  .sd-bb{padding:18px 14px 16px}
+  .sd-bb-grid{grid-template-columns:1fr}
+}
+</style>
+<div class="sd-bb">
+  <div class="sd-bb-title">Four core building blocks</div>
+  <div class="sd-bb-grid">
+    <!-- Rate Limiter -->
+    <div class="sd-bb-card">
+      <div class="sd-bb-card-head">
+        <div class="sd-bb-card-icon">RL</div>
+        <div>
+          <div class="sd-bb-card-name">Rate Limiter</div>
+          <div class="sd-bb-card-sub">Token bucket algorithm</div>
+        </div>
+      </div>
+      <div class="sd-bb-visual">
+        <div class="sd-bb-bucket">
+          <div class="sd-bb-token"></div>
+          <div class="sd-bb-token"></div>
+          <div class="sd-bb-token"></div>
+          <div class="sd-bb-token"></div>
+          <div class="sd-bb-token"></div>
+        </div>
+        <div class="sd-bb-refill">refill rate: r/sec</div>
+      </div>
+      <div class="sd-bb-details">
+        <span class="sd-bb-detail sd-bb-detail-warm">Token bucket</span>
+        <span class="sd-bb-detail sd-bb-detail-warm">Sliding window</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">Redis counters</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">HTTP 429</span>
+      </div>
+    </div>
+    <!-- Consistent Hashing -->
+    <div class="sd-bb-card">
+      <div class="sd-bb-card-head">
+        <div class="sd-bb-card-icon">CH</div>
+        <div>
+          <div class="sd-bb-card-name">Consistent Hashing</div>
+          <div class="sd-bb-card-sub">Hash ring with virtual nodes</div>
+        </div>
+      </div>
+      <div class="sd-bb-visual" style="display:flex;align-items:center;justify-content:center;padding:4px 0">
+        <div class="sd-bb-ring">
+          <div class="sd-bb-node sd-bb-node-a">S1</div>
+          <div class="sd-bb-node sd-bb-node-b">S2</div>
+          <div class="sd-bb-node sd-bb-node-c">S3</div>
+          <div class="sd-bb-key sd-bb-key1" title="key"></div>
+          <div class="sd-bb-key sd-bb-key2" title="key"></div>
+        </div>
+        <div style="margin-left:14px;font-size:9.5px;color:#59636e;line-height:1.6">
+          <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1a7f37;vertical-align:middle;margin-right:3px"></span> Server</div>
+          <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0969da;vertical-align:middle;margin-right:3px"></span> Key</div>
+          <div style="color:#59636e;margin-top:2px">walk CW to find server</div>
+        </div>
+      </div>
+      <div class="sd-bb-details">
+        <span class="sd-bb-detail sd-bb-detail-green">Virtual nodes</span>
+        <span class="sd-bb-detail sd-bb-detail-green">Minimal rebalance</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">Uniform load</span>
+      </div>
+    </div>
+    <!-- KV Store -->
+    <div class="sd-bb-card">
+      <div class="sd-bb-card-head">
+        <div class="sd-bb-card-icon">KV</div>
+        <div>
+          <div class="sd-bb-card-name">Key-Value Store</div>
+          <div class="sd-bb-card-sub">Quorum consensus (W + R > N)</div>
+        </div>
+      </div>
+      <div class="sd-bb-visual" style="padding:6px 0">
+        <div class="sd-bb-quorum">
+          <div class="sd-bb-replica sd-bb-replica-ack">ACK</div>
+          <div class="sd-bb-replica sd-bb-replica-ack">ACK</div>
+          <div class="sd-bb-replica sd-bb-replica-wait">...</div>
+          <div class="sd-bb-quorum-label">W=2, R=2, N=3</div>
+        </div>
+      </div>
+      <div class="sd-bb-details">
+        <span class="sd-bb-detail sd-bb-detail-blue">Gossip protocol</span>
+        <span class="sd-bb-detail sd-bb-detail-blue">Vector clocks</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">Merkle trees</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">Sloppy quorum</span>
+      </div>
+    </div>
+    <!-- Unique ID Generator -->
+    <div class="sd-bb-card">
+      <div class="sd-bb-card-head">
+        <div class="sd-bb-card-icon">ID</div>
+        <div>
+          <div class="sd-bb-card-name">Unique ID Generator</div>
+          <div class="sd-bb-card-sub">Snowflake 64-bit layout</div>
+        </div>
+      </div>
+      <div class="sd-bb-visual" style="padding:8px 0 6px">
+        <div class="sd-bb-snowflake">
+          <div class="sd-bb-sf-seg sd-bb-sf-sign">0</div>
+          <div class="sd-bb-sf-seg sd-bb-sf-ts">timestamp (41 bits)</div>
+          <div class="sd-bb-sf-seg sd-bb-sf-dc">dc</div>
+          <div class="sd-bb-sf-seg sd-bb-sf-wk">wk</div>
+          <div class="sd-bb-sf-seg sd-bb-sf-seq">sequence (12)</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8.5px;color:#59636e;margin-top:3px;padding:0 2px">
+          <span>1 bit</span><span>41 bits = 69 years</span><span>5+5 bits</span><span>12 bits = 4096/ms</span>
+        </div>
+      </div>
+      <div class="sd-bb-details">
+        <span class="sd-bb-detail sd-bb-detail-neutral">Time-sortable</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">No coordination</span>
+        <span class="sd-bb-detail sd-bb-detail-neutral">~4M IDs/sec/machine</span>
+      </div>
+    </div>
+  </div>
+  <div class="sd-bb-connections">
+    <div class="sd-bb-conn-title">How they connect</div>
+    <div class="sd-bb-conn-row">
+      <span style="color:#0969da;font-weight:600">Rate Limiter</span>
+      <span class="sd-bb-conn-arrow">→</span>
+      uses <strong style="color:#1a7f37">Consistent Hashing</strong> to distribute counters across Redis nodes
+    </div>
+    <div class="sd-bb-conn-row">
+      <span style="color:#8250df;font-weight:600">KV Store</span>
+      <span class="sd-bb-conn-arrow">→</span>
+      uses <strong style="color:#1a7f37">Consistent Hashing</strong> to partition data and <strong style="color:#1f2328">Snowflake IDs</strong> for write ordering
+    </div>
+    <div class="sd-bb-conn-row">
+      <span style="color:#1a7f37;font-weight:600">Consistent Hashing</span>
+      <span class="sd-bb-conn-arrow">→</span>
+      underpins every distributed system that needs <strong style="color:#1f2328">horizontal scaling</strong>
+    </div>
+  </div>
+</div>
+
+<p><strong>Token bucket</strong> — A bucket holds up to <em>b</em> tokens. Tokens are added at rate <em>r</em> per second. Each request consumes one token (or more for expensive operations). If the bucket is empty, the request is rejected. This naturally allows short bursts (up to <em>b</em> requests) while enforcing the long-term rate <em>r</em>. Used by Amazon and Stripe. Two parameters per rule: bucket size and refill rate.</p>
+<p><strong>Leaking bucket</strong> — Requests enter a FIFO queue of fixed size. The queue drains at a constant rate. If the queue is full, new requests are dropped. Unlike token bucket, this produces a perfectly smooth output rate — no bursts. Useful when the downstream service can't handle spikes. Shopify uses this via their Leaky Bucket library.</p>
+<p><strong>Fixed window counter</strong> — Divide time into windows (e.g., 60-second intervals). Maintain a counter per window. Increment on each request. Reject when the counter exceeds the threshold. Simple, low memory (one counter per window). Problem: a burst at the boundary between two windows can allow 2x the intended rate. 100 requests in the last 500ms of window 1, plus 100 requests in the first 500ms of window 2, gives 200 requests in a one-second span — despite a 100/minute limit.</p>
+<p><strong>Sliding window log</strong> — Keep a sorted set of timestamps for each request. When a new request arrives, remove all timestamps older than the window. If the remaining count exceeds the threshold, reject. Precise, but memory-intensive — every request is logged.</p>
+<p><strong>Sliding window counter</strong> — A hybrid: take the weighted count from the previous window and add the current window's count. If the previous window had 70 requests, and the current window is 30% elapsed, the weighted count is <code>70 * 0.70 + current_count</code>. Only two counters per window, near-zero memory, and the boundary spike problem is smoothed. This is the most common choice in production.</p>
+<h3 id="distributed-rate-limiting-with-redis">Distributed rate limiting with Redis</h3>
+<p>In a distributed system, rate limit counters must be shared across all application instances. Redis is the standard choice: its <code>INCR</code> and <code>EXPIRE</code> commands are atomic, fast, and cluster-friendly.</p>
+<style>
+.dgm-rl{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-rl-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-rl h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-rl-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-rl-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.dgm-rl-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 12px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328}
+.dgm-rl-n.redis{background:#faece5;border-color:#e8b39a;color:#8a3d20}
+.dgm-rl-arr{color:#8c959f;font-size:12px}
+.dgm-rl-branches{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dgm-rl-b{border-radius:10px;padding:9px 12px;text-align:center;font-size:10.5px;font-weight:700}
+.dgm-rl-b.ok{background:#dafbe1;border:1.5px solid #aceebb;color:#1a614f}
+.dgm-rl-b.no{background:#ffebe9;border:1.5px solid #ffcecb;color:#82061e}
+@media (max-width:640px){.dgm-rl{padding:20px 16px 18px}.dgm-rl-row{flex-direction:column}}
+</style>
+<div class="dgm-rl">
+  <span class="dgm-rl-chip">Distributed rate limiting with Redis</span>
+  <h4>Counters must be shared across all application instances</h4>
+  <p class="dgm-rl-sub">Redis's atomic INCR and EXPIRE keep counters correct under concurrent requests.</p>
+
+  <div class="dgm-rl-row">
+    <div class="dgm-rl-n">Client request</div>
+    <span class="dgm-rl-arr">→</span>
+    <div class="dgm-rl-n">API Gateway / Middleware</div>
+    <span class="dgm-rl-arr">→</span>
+    <div class="dgm-rl-n redis">Redis cluster — atomic counter</div>
+  </div>
+
+  <div class="dgm-rl-branches">
+    <div class="dgm-rl-b ok">counter &lt; limit → allow → application servers</div>
+    <div class="dgm-rl-b no">counter ≥ limit → 429 Too Many Requests → client</div>
+  </div>
+</div>
+
+<p>Two race conditions emerge in distributed setups:</p>
+<ol>
+<li><strong>Read-then-write race</strong> — Two processes read the same counter, both see it below the limit, both increment. Fix: use Redis's atomic <code>INCR</code> or a Lua script that reads, checks, and increments in a single operation.</li>
+<li><strong>Synchronization across rate-limiter instances</strong> — If you run multiple rate-limiter nodes, each with its own Redis connection, they may disagree on the current count during network partitions. Fix: use a single Redis cluster as the source of truth, or accept slight over-admission during brief partitions.</li>
+</ol>
+<h3 id="response-headers">Response headers</h3>
+<p>Clients need to know their rate-limit status. Standard headers returned with every response:</p>
+<ul>
+<li><code>X-Ratelimit-Remaining</code> — allowed requests left in the current window</li>
+<li><code>X-Ratelimit-Limit</code> — total calls the client can make per window</li>
+<li><code>X-Ratelimit-Retry-After</code> — seconds to wait before retrying (returned with 429)</li>
+</ul>
+<p>These headers are essential for well-behaved clients to implement backoff. Without them, clients either retry blindly (making the overload worse) or give up entirely (degrading user experience unnecessarily).</p>
+<hr />
+<h2 id="consistent-hashing">Consistent hashing</h2>
+<p>When you have <em>n</em> servers and need to decide which server stores a given key, the naive approach is <code>hash(key) % n</code>. This works until you add or remove a server. Then <em>n</em> changes, and almost every key maps to a different server. In a cache layer, that means a mass cache miss. In a database, it means a full data migration.</p>
+<p>Consistent hashing solves this: when a server is added or removed, only <code>k/n</code> keys need to move (where <em>k</em> is the total number of keys), rather than nearly all of them.</p>
+<h3 id="the-hash-ring">The hash ring</h3>
+<p>Imagine the output space of a hash function (SHA-1 gives 0 to 2^160) bent into a circle — a ring. Both servers and keys are hashed onto this ring. To find which server owns a key, start at the key's position and walk clockwise until you hit a server.</p>
+<style>
+.dgm-hr{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-hr-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-hr h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-hr-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-hr-ring{position:relative;width:220px;height:220px;margin:10px auto 14px;border:2px dashed #e8b39a;border-radius:50%}
+.dgm-hr-srv{position:absolute;width:34px;height:34px;border-radius:50%;background:#bd5d3a;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transform:translate(-50%,-50%)}
+.dgm-hr-key{position:absolute;width:22px;height:22px;border-radius:50%;background:#0969da;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;transform:translate(-50%,-50%);
+  border:2px solid #fff}
+.dgm-hr-legend{display:flex;justify-content:center;gap:16px;font-size:10px;color:#59636e;margin-bottom:10px}
+.dgm-hr-legend span{display:inline-flex;align-items:center;gap:5px}
+.dgm-hr-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dgm-hr-map{display:flex;flex-direction:column;gap:5px}
+.dgm-hr-row{display:flex;align-items:center;gap:8px;font-size:10.5px;color:#1f2328;background:#f6f8fa;
+  border:1px solid #d1d9e0;border-radius:8px;padding:7px 10px}
+.dgm-hr-row b{color:#0969da}
+@media (max-width:640px){.dgm-hr{padding:20px 16px 18px}.dgm-hr-ring{width:180px;height:180px}}
+</style>
+<div class="dgm-hr">
+  <span class="dgm-hr-chip">The hash ring</span>
+  <h4>Walk clockwise from the key's position until you hit a server</h4>
+  <p class="dgm-hr-sub">Only the keys between the changed server and its neighbor need to move.</p>
+
+  <div class="dgm-hr-ring">
+    <div class="dgm-hr-srv" style="top:0%;left:50%">A</div>
+    <div class="dgm-hr-srv" style="top:75%;left:93%">B</div>
+    <div class="dgm-hr-srv" style="top:83%;left:15%">C</div>
+    <div class="dgm-hr-key" style="top:12%;left:80%">K1</div>
+    <div class="dgm-hr-key" style="top:55%;left:97%">K2</div>
+    <div class="dgm-hr-key" style="top:35%;left:8%">K3</div>
+  </div>
+  <div class="dgm-hr-legend">
+    <span><i class="dgm-hr-dot" style="background:#bd5d3a"></i>Server</span>
+    <span><i class="dgm-hr-dot" style="background:#0969da"></i>Key</span>
+  </div>
+
+  <div class="dgm-hr-map">
+    <div class="dgm-hr-row">Key 1 (hash: 45°) → walks CW → <b>Server B</b></div>
+    <div class="dgm-hr-row">Key 2 (hash: 130°) → walks CW → <b>Server C</b></div>
+    <div class="dgm-hr-row">Key 3 (hash: 330°) → walks CW → <b>Server A</b></div>
+  </div>
+</div>
+
+<p><strong>Adding a server:</strong> Only keys between the new server and its counter-clockwise neighbor need to move. Everything else stays put.</p>
+<p><strong>Removing a server:</strong> Only that server's keys move — they walk clockwise to the next server. The rest of the ring is undisturbed.</p>
+<h3 id="the-problem-with-basic-consistent-hashing">The problem with basic consistent hashing</h3>
+<p>With a small number of servers, the ring can be badly unbalanced. Three servers won't divide a ring into three equal arcs — their hash positions are effectively random. One server might own 60% of the key space while another owns 10%. Worse, when a server is removed, its entire load transfers to a single neighbor, potentially doubling that neighbor's traffic.</p>
+<h3 id="virtual-nodes">Virtual nodes</h3>
+<p>The fix: map each physical server to multiple positions on the ring. Server A gets <code>hash("A-0")</code>, <code>hash("A-1")</code>, ... <code>hash("A-199")</code>. With 200 virtual nodes per physical server, the distribution becomes nearly uniform. Removing a server spreads its load across many neighbors rather than one.</p>
+<p>The tradeoff is space: you need to store the mapping from virtual node to physical server. With 200 virtual nodes per server and 1,000 servers, that's 200,000 ring entries — trivially small.</p>
+<h3 id="where-its-used">Where it's used</h3>
+<p>Consistent hashing is everywhere in distributed infrastructure:</p>
+<ul>
+<li><strong>Amazon DynamoDB</strong> — partitions data across storage nodes</li>
+<li><strong>Apache Cassandra</strong> — distributes data across the cluster ring</li>
+<li><strong>Discord</strong> — routes users to chat servers</li>
+<li><strong>Akamai CDN</strong> — maps content to edge servers</li>
+<li><strong>Maglev (Google)</strong> — load balancing with consistent hashing for connection affinity</li>
+</ul>
+<hr />
+<h2 id="distributed-key-value-store">Distributed key-value store</h2>
+<p>A key-value store maps keys to values — <code>put(key, value)</code> and <code>get(key)</code>. At small scale, this is a hash map in memory. At large scale, it's a distributed system that must handle node failures, network partitions, and concurrent writes. That forces you into the most fundamental tradeoff in distributed computing.</p>
+<h3 id="cap-theorem">CAP theorem</h3>
+<p>The CAP theorem (Brewer, 2000) states that a distributed system can deliver at most two of three guarantees simultaneously:</p>
+<ul>
+<li><strong>Consistency</strong> — every read returns the most recent write</li>
+<li><strong>Availability</strong> — every request receives a (non-error) response</li>
+<li><strong>Partition tolerance</strong> — the system continues operating despite network partitions between nodes</li>
+</ul>
+<p>Since network partitions are unavoidable in any real distributed system, the practical choice is between <strong>CP</strong> (consistency + partition tolerance) and <strong>AP</strong> (availability + partition tolerance):</p>
+<table>
+<thead>
+<tr>
+<th>Choice</th>
+<th>Behavior during partition</th>
+<th>Example</th>
+<th>Good for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CP</strong></td>
+<td>Rejects writes to maintain consistency</td>
+<td>HBase, MongoDB (default)</td>
+<td>Banking, inventory</td>
+</tr>
+<tr>
+<td><strong>AP</strong></td>
+<td>Accepts writes, resolves conflicts later</td>
+<td>Cassandra, DynamoDB</td>
+<td>Social feeds, session stores</td>
+</tr>
+</tbody>
+</table>
+<p>This isn't a one-time architectural decision — many systems let you choose per-operation or per-table.</p>
+<h3 id="data-partitioning">Data partitioning</h3>
+<p>Data is distributed across nodes using consistent hashing with virtual nodes (see above). Each key hashes to a position on the ring and is stored on the first <em>N</em> nodes encountered clockwise.</p>
+<h3 id="data-replication">Data replication</h3>
+<p>For durability, each key is replicated across <em>N</em> nodes. After hashing a key to its position on the ring, the system walks clockwise and places replicas on the next <em>N-1</em> distinct physical servers (skipping virtual nodes that map to the same physical machine).</p>
+<h3 id="consistency-quorum-consensus">Consistency: quorum consensus</h3>
+<p>Three parameters control the consistency-availability tradeoff:</p>
+<ul>
+<li><strong>N</strong> — number of replicas</li>
+<li><strong>W</strong> — number of replicas that must acknowledge a write for it to succeed</li>
+<li><strong>R</strong> — number of replicas that must respond to a read</li>
+</ul>
+<p>The rule: <strong>if W + R &gt; N, strong consistency is guaranteed</strong> — at least one node in the read set will have the latest write.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Guarantee</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W=1, R=N</td>
+<td>Fast writes, slow reads</td>
+<td>Write-heavy workloads</td>
+</tr>
+<tr>
+<td>W=N, R=1</td>
+<td>Slow writes, fast reads</td>
+<td>Read-heavy workloads</td>
+</tr>
+<tr>
+<td>W=N/2+1, R=N/2+1</td>
+<td>Balanced</td>
+<td>General purpose</td>
+</tr>
+<tr>
+<td>W=1, R=1</td>
+<td>Fast but eventually consistent</td>
+<td>Caching, analytics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="conflict-resolution-with-vector-clocks">Conflict resolution with vector clocks</h3>
+<p>When two replicas accept concurrent writes to the same key, you have a conflict. <strong>Vector clocks</strong> track causality: each replica maintains a vector of <code>[server, version]</code> pairs. When vectors are ordered (one is a strict superset), the superset wins. When they're concurrent (neither is a superset), the system presents both versions to the application for resolution.</p>
+<style>
+.dgm-vc{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-vc-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-vc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-vc-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-vc-root{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:10px;color:#1f2328;margin:0 auto 8px;max-width:280px}
+.dgm-vc-arr{display:flex;justify-content:center;color:#8c959f;padding:2px 0}
+.dgm-vc-arr svg{width:16px;height:16px}
+.dgm-vc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.dgm-vc-n{background:#faece5;border:1px solid #e8b39a;border-radius:9px;padding:8px 9px;text-align:center;
+  font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:9.5px;color:#8a3d20}
+.dgm-vc-conf{background:#ffebe9;border:1.5px solid #ffcecb;border-radius:11px;padding:9px 16px;text-align:center;
+  color:#82061e;font-weight:700;font-size:11px;margin:0 auto 8px;max-width:340px}
+.dgm-vc-res{background:#dafbe1;border:1.5px solid #aceebb;border-radius:11px;padding:9px 16px;text-align:center;
+  color:#1a614f;font-weight:700;font-size:11px;margin:0 auto;max-width:340px}
+@media (max-width:640px){.dgm-vc{padding:20px 16px 18px}.dgm-vc-row{grid-template-columns:1fr}}
+</style>
+<div class="dgm-vc">
+  <span class="dgm-vc-chip">Vector clocks</span>
+  <h4>Track causality, not just time · concurrent writes need a human or a rule</h4>
+  <p class="dgm-vc-sub">When vectors are ordered, the superset wins. When they're concurrent, both versions surface.</p>
+
+  <div class="dgm-vc-root">D([S1,1]) — initial write</div>
+  <div class="dgm-vc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-vc-row">
+    <div class="dgm-vc-n">D([S1,1],[S2,1]) — S2 modifies</div>
+    <div class="dgm-vc-n">D([S1,1],[S3,1]) — S3 modifies concurrently</div>
+  </div>
+  <div class="dgm-vc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-vc-conf">Conflict — neither vector dominates</div>
+  <div class="dgm-vc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+  <div class="dgm-vc-res">Application resolves — e.g. last-writer-wins or merge</div>
+</div>
+
+<p>Vector clocks grow in size as more servers handle writes. In practice, a clock-truncation threshold removes the oldest entries when the vector exceeds a limit — a rare source of reconciliation errors, but unavoidable for bounded memory.</p>
+<h3 id="failure-detection-gossip-protocol">Failure detection: gossip protocol</h3>
+<p>How does the system know when a node is down? Heartbeats to a central monitor create a single point of failure. Instead, distributed KV stores use the <strong>gossip protocol</strong>:</p>
+<p>Each node maintains a membership list with heartbeat counters. Periodically, each node increments its own counter and sends its list to a random subset of peers. If a node's counter hasn't increased for a configurable period, it's considered offline. The protocol converges quickly — information spreads exponentially, like gossip in a social network.</p>
+<h3 id="handling-temporary-failures">Handling temporary failures</h3>
+<p><strong>Sloppy quorum</strong> — when a node in the designated replica set is unreachable, the system temporarily routes writes to the next healthy node on the hash ring. This node holds the data in a <strong>hinted handoff</strong> — when the original node recovers, the temporary holder ships the data back and deletes its copy.</p>
+<h3 id="permanent-failure-recovery-merkle-trees">Permanent failure recovery: Merkle trees</h3>
+<p>When a replica comes back after a prolonged outage, how do you know which keys are out of date? Comparing every key is expensive. <strong>Merkle trees</strong> (hash trees) solve this: each node maintains a tree where leaves are hashes of key ranges and parent nodes are hashes of children. Two replicas compare their root hashes. If they match, the data is identical. If not, they recurse down the tree, comparing children until they find the divergent key ranges. This reduces the data transferred during synchronization from <em>O(n)</em> to <em>O(log n)</em>.</p>
+<h3 id="write-and-read-paths">Write and read paths</h3>
+<p>The internal storage engine follows the <strong>LSM-tree</strong> (Log-Structured Merge-Tree) pattern:</p>
+<p><strong>Write path:</strong></p>
+<ol>
+<li>Write is appended to a <strong>commit log</strong> on disk (for durability)</li>
+<li>Data is inserted into an in-memory <strong>memtable</strong> (sorted structure, typically a red-black tree or skip list)</li>
+<li>When the memtable exceeds a size threshold, it's flushed to disk as an <strong>SSTable</strong> (Sorted String Table) — an immutable, sorted file</li>
+</ol>
+<p><strong>Read path:</strong></p>
+<ol>
+<li>Check the <strong>memtable</strong> first (most recent writes)</li>
+<li>If not found, check a <strong>Bloom filter</strong> — a probabilistic data structure that tells you if a key is <em>definitely not</em> in an SSTable (avoiding disk reads for keys that don't exist)</li>
+<li>If the Bloom filter says "maybe," read the SSTable from disk</li>
+</ol>
+<style>
+.dgm-lsm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-lsm-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-lsm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-lsm-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-lsm-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dgm-lsm-col{border-radius:12px;padding:12px 13px;position:relative}
+.dgm-lsm-col.w{background:#faece5;border:1.5px solid #e8b39a}
+.dgm-lsm-col.r{background:#ddf4ff;border:1.5px solid #b6e3ff}
+.dgm-lsm-col .tag{position:absolute;top:-9px;left:12px;background:#ffffff;border:1px solid;
+  font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 7px;border-radius:5px}
+.dgm-lsm-col.w .tag{color:#8a3d20;border-color:#e8b39a}
+.dgm-lsm-col.r .tag{color:#0550ae;border-color:#b6e3ff}
+.dgm-lsm-step{background:#ffffff;border-radius:8px;padding:7px 9px;font-size:10px;color:#1f2328;
+  margin-top:6px;line-height:1.35}
+.dgm-lsm-col.w .dgm-lsm-step{border:1px solid #f2d6c4}
+.dgm-lsm-col.r .dgm-lsm-step{border:1px solid #d4ecfa}
+.dgm-lsm-arr{text-align:center;font-size:9px;color:#8c959f}
+@media (max-width:640px){.dgm-lsm{padding:20px 16px 18px}.dgm-lsm-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-lsm">
+  <span class="dgm-lsm-chip">The LSM-tree write &amp; read path</span>
+  <h4>Writes are always sequential · reads check memory first, then disk</h4>
+  <p class="dgm-lsm-sub">Bloom filters avoid disk reads for keys that don't exist.</p>
+
+  <div class="dgm-lsm-cols">
+    <div class="dgm-lsm-col w">
+      <span class="tag">Write path</span>
+      <div class="dgm-lsm-step">Client write</div>
+      <div class="dgm-lsm-arr">↓</div>
+      <div class="dgm-lsm-step">Commit log — durability</div>
+      <div class="dgm-lsm-arr">↓</div>
+      <div class="dgm-lsm-step">Memtable — sorted, in-memory</div>
+      <div class="dgm-lsm-arr">↓ threshold exceeded</div>
+      <div class="dgm-lsm-step">Flush to SSTable — sorted, on disk</div>
+    </div>
+    <div class="dgm-lsm-col r">
+      <span class="tag">Read path</span>
+      <div class="dgm-lsm-step">Client read</div>
+      <div class="dgm-lsm-arr">↓</div>
+      <div class="dgm-lsm-step">In memtable? Yes → return</div>
+      <div class="dgm-lsm-arr">↓ no</div>
+      <div class="dgm-lsm-step">Bloom filter: definitely not → key not found</div>
+      <div class="dgm-lsm-arr">↓ maybe</div>
+      <div class="dgm-lsm-step">Read SSTable from disk</div>
+    </div>
+  </div>
+</div>
+
+<p>This design optimizes for write throughput: writes are always sequential (append to log, then sequential flush). Reads may require checking multiple SSTables, but Bloom filters and compaction (periodically merging SSTables) keep read amplification manageable.</p>
+<hr />
+<h2 id="unique-id-generator">Unique ID generator</h2>
+<p>Generating unique IDs seems trivial — <code>auto_increment</code> in a single database does the job. But at scale, you need IDs that are:</p>
+<ul>
+<li><strong>Globally unique</strong> across all servers, datacenters, and time</li>
+<li><strong>Sortable by time</strong> (so IDs roughly correspond to creation order)</li>
+<li><strong>64-bit</strong> (fits in a long integer, database-friendly, network-efficient)</li>
+<li><strong>Generated at high throughput</strong> (10,000+ IDs/second) without coordination</li>
+</ul>
+<p>No single approach satisfies all requirements. Here are the options and their tradeoffs:</p>
+<h3 id="multi-master-replication">Multi-master replication</h3>
+<p>Use the database's <code>auto_increment</code>, but with a step size equal to the number of servers. With 3 servers: server 1 generates 1, 4, 7, 10...; server 2 generates 2, 5, 8, 11...; server 3 generates 3, 6, 9, 12...</p>
+<p><strong>Pros:</strong> Simple, uses existing infrastructure.
+<strong>Cons:</strong> Does not scale with multiple datacenters. IDs don't sort by time across servers (server 1's ID 7 may be generated after server 2's ID 8). Adding or removing servers requires changing the step on all nodes — operationally dangerous.</p>
+<h3 id="uuid">UUID</h3>
+<p>A 128-bit universally unique identifier. Generated independently on any server with near-zero collision probability (2^122 random bits in v4). No coordination needed.</p>
+<p><strong>Pros:</strong> Simple, no coordination, scales to any number of servers.
+<strong>Cons:</strong> 128 bits, not 64. Not sortable by time. Not numeric — bad for database index performance. The string representation (<code>550e8400-e29b-41d4-a716-446655440000</code>) is 36 characters, wasteful in URLs and logs.</p>
+<h3 id="ticket-server">Ticket server</h3>
+<p>A centralized service (Flickr's approach) that hands out IDs from a single <code>auto_increment</code> counter. Simple, numeric, sequential.</p>
+<p><strong>Pros:</strong> Numeric, easy to implement, IDs are ordered.
+<strong>Cons:</strong> Single point of failure. If you run two ticket servers with even/odd allocation, you lose global ordering. Becomes a throughput bottleneck at high scale.</p>
+<h3 id="twitter-snowflake-the-winner-for-most-use-cases">Twitter Snowflake (the winner for most use cases)</h3>
+<p>A 64-bit ID with a structured layout that encodes time, location, and sequence:</p>
+<style>
+.dgm-sf2{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #bd5d3a;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-sf2-chip{position:absolute;top:-11px;left:24px;background:#bd5d3a;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(189,93,58,.28)}
+.dgm-sf2 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-sf2-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-sf2-bits{display:flex;border-radius:8px;overflow:hidden;height:44px}
+.dgm-sf2-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
+  color:#ffffff;text-align:center;line-height:1.2;padding:0 4px}
+.dgm-sf2-seg.sign{background:#59636e;flex:0 0 5%}
+.dgm-sf2-seg.ts{background:#bd5d3a;flex:0 0 55%}
+.dgm-sf2-seg.dc{background:#8a3d20;flex:0 0 12%}
+.dgm-sf2-seg.wk{background:#8a3d20;flex:0 0 12%}
+.dgm-sf2-seg.seq{background:#1f2328;flex:0 0 16%}
+.dgm-sf2-labels{display:flex;justify-content:space-between;font-size:9px;color:#59636e;margin-top:6px}
+.dgm-sf2-notes{margin-top:14px;display:flex;flex-direction:column;gap:5px}
+.dgm-sf2-note{font-size:10.5px;color:#1f2328;line-height:1.4;padding:7px 10px;background:#f6f8fa;
+  border:1px solid #d1d9e0;border-radius:8px}
+.dgm-sf2-note b{color:#8a3d20}
+@media (max-width:640px){.dgm-sf2{padding:20px 16px 18px}}
+</style>
+<div class="dgm-sf2">
+  <span class="dgm-sf2-chip">Twitter Snowflake — 64-bit layout</span>
+  <h4>Time, location, and sequence, zero coordination</h4>
+  <p class="dgm-sf2-sub">Sortable by time, globally unique, 4,096,000 IDs/second per machine.</p>
+
+  <div class="dgm-sf2-bits">
+    <div class="dgm-sf2-seg sign">0</div>
+    <div class="dgm-sf2-seg ts">Timestamp — 41 bits</div>
+    <div class="dgm-sf2-seg dc">DC — 5</div>
+    <div class="dgm-sf2-seg wk">Wk — 5</div>
+    <div class="dgm-sf2-seg seq">Sequence — 12</div>
+  </div>
+  <div class="dgm-sf2-labels"><span>1 bit</span><span>~69 years</span><span>0–31</span><span>0–31</span><span>0–4095</span></div>
+
+  <div class="dgm-sf2-notes">
+    <div class="dgm-sf2-note"><b>1 sign bit</b> — always 0 (unsigned)</div>
+    <div class="dgm-sf2-note"><b>41-bit timestamp</b> — ms since a custom epoch, ~69 years before wraparound</div>
+    <div class="dgm-sf2-note"><b>5+5 bits</b> — datacenter ID (32) and machine ID (32)</div>
+    <div class="dgm-sf2-note"><b>12-bit sequence</b> — 4,096 IDs per millisecond per machine, zero coordination</div>
+  </div>
+</div>
+
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>1 sign bit</strong> — always 0 (unsigned)</li>
+<li><strong>41 bits for timestamp</strong> — milliseconds since a custom epoch. 2^41 ms = ~69 years of IDs before wraparound</li>
+<li><strong>5 bits for datacenter ID</strong> — supports 32 datacenters</li>
+<li><strong>5 bits for machine ID</strong> — supports 32 machines per datacenter</li>
+<li><strong>12 bits for sequence number</strong> — allows 4,096 IDs per millisecond per machine. That's 4,096,000 IDs/second per machine, or 4 billion per second across 1,024 machines</li>
+</ul>
+<p><strong>Why this wins:</strong> IDs are 64-bit (database-friendly), sortable by time (the timestamp is the most significant bits after the sign), globally unique (datacenter + machine + sequence), and generated with zero coordination (each machine generates independently). The custom epoch can be set to your system's launch date to maximize the 69-year range.</p>
+<p><strong>The clock dependency:</strong> Snowflake IDs assume clocks are roughly synchronized (NTP). If a machine's clock goes backward (NTP correction), it could generate duplicate IDs. Production implementations refuse to generate IDs when the clock moves backward, and alert operations.</p>
+<hr />
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Rate limiter bypassed by client IP rotation</strong> — IP-based rate limiting fails against distributed attacks. Combine with user-ID, API-key, and behavioral-pattern limiting.</li>
+<li><strong>Rate limiter as a bottleneck</strong> — If the rate limiter (or its Redis backend) fails, you must choose: fail open (allow all traffic, losing protection) or fail closed (reject all traffic, causing an outage). Neither is safe by default — this must be an explicit design decision.</li>
+<li><strong>Consistent hashing with too few virtual nodes</strong> — Uneven distribution causes hot spots. Monitor per-node load and increase virtual node count if skew exceeds 20%.</li>
+<li><strong>Vector clock explosion</strong> — In a KV store with many writers, vector clocks grow unbounded. Truncation is necessary but can cause incorrect conflict resolution in rare cases.</li>
+<li><strong>Gossip protocol slow convergence</strong> — In large clusters (1000+ nodes), gossip can take seconds to propagate a failure. During that window, clients may route requests to a dead node.</li>
+<li><strong>Snowflake clock skew</strong> — NTP corrections or leap seconds can cause a machine's clock to jump backward, producing duplicate or out-of-order IDs. Monitor clock drift; halt ID generation if the clock moves backward.</li>
+<li><strong>Quorum misconfiguration</strong> — Setting W=1, R=1 with N=3 gives you speed but no consistency guarantee. If the product requires read-your-writes consistency, this configuration will produce bugs that are almost impossible to reproduce.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is your rate limiter algorithm matched to your traffic pattern? (Bursty traffic needs token bucket; smooth output needs leaking bucket.)</li>
+<li class="task todo">Are rate-limit counters shared across all application instances via a central store (Redis)?</li>
+<li class="task todo">Do your rate-limit responses include <code>X-Ratelimit-Remaining</code> and <code>Retry-After</code> headers?</li>
+<li class="task todo">Does your consistent hashing use virtual nodes? How many per physical node?</li>
+<li class="task todo">Have you measured the actual key distribution across nodes, not just the theoretical distribution?</li>
+<li class="task todo">Is your KV store configured as CP or AP, and does the product team understand what that means for user-visible behavior?</li>
+<li class="task todo">Do your quorum parameters (N, W, R) satisfy W + R &gt; N if you need strong consistency?</li>
+<li class="task todo">Is your unique ID generator resilient to clock skew? What happens when NTP corrects the clock?</li>
+<li class="task todo">Can your ID generator sustain the peak throughput you estimated in <a href="foundations-and-framework.html">lesson 1</a>?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — the scaling path and estimation techniques these building blocks support</li>
+<li><a href="web-scale-services.html">Web-scale services</a> — URL shortener, web crawler, and news feed that use these primitives directly</li>
+<li><a href="data-infrastructure.html">Data infrastructure</a> — distributed message queues and metrics systems built on the same KV store and hashing primitives</li>
+<li><a href="transactional-and-financial.html">Transactional &amp; financial systems</a> — payment systems where quorum configuration is a business-critical decision</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="foundations-and-framework.html"><span class="lbl">← Previous</span><span class="ttl">Foundations &amp; framework</span></a><a class="navcard next" href="web-scale-services.html"><span class="lbl">→ Next</span><span class="ttl">Web-scale services</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#rate-limiter">Rate limiter</a><a class="h3" href="#where-to-place-it">Where to place it</a><a class="h3" href="#algorithms">Algorithms</a><a class="h3" href="#distributed-rate-limiting-with-redis">Distributed rate limiting with Redis</a><a class="h3" href="#response-headers">Response headers</a><a class="h2" href="#consistent-hashing">Consistent hashing</a><a class="h3" href="#the-hash-ring">The hash ring</a><a class="h3" href="#the-problem-with-basic-consistent-hashing">The problem with basic consistent hashing</a><a class="h3" href="#virtual-nodes">Virtual nodes</a><a class="h3" href="#where-its-used">Where it&#x27;s used</a><a class="h2" href="#distributed-key-value-store">Distributed key-value store</a><a class="h3" href="#cap-theorem">CAP theorem</a><a class="h3" href="#data-partitioning">Data partitioning</a><a class="h3" href="#data-replication">Data replication</a><a class="h3" href="#consistency-quorum-consensus">Consistency: quorum consensus</a><a class="h3" href="#conflict-resolution-with-vector-clocks">Conflict resolution with vector clocks</a><a class="h3" href="#failure-detection-gossip-protocol">Failure detection: gossip protocol</a><a class="h3" href="#handling-temporary-failures">Handling temporary failures</a><a class="h3" href="#permanent-failure-recovery-merkle-trees">Permanent failure recovery: Merkle trees</a><a class="h3" href="#write-and-read-paths">Write and read paths</a><a class="h2" href="#unique-id-generator">Unique ID generator</a><a class="h3" href="#multi-master-replication">Multi-master replication</a><a class="h3" href="#uuid">UUID</a><a class="h3" href="#ticket-server">Ticket server</a><a class="h3" href="#twitter-snowflake-the-winner-for-most-use-cases">Twitter Snowflake (the winner for most use cases)</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=system-design%2Fcore-building-blocks.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="system-design/core-building-blocks.html"</script><script defer src="../assets/glossary.js"></script></body></html>

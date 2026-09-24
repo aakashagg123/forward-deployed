@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: leave-request-form
+description: Form properties on a user task — the engine-side contract a UI renders
+kind: process-model
+phase: 03
+lesson: 04
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:flowable="http://flowable.org/bpmn"
+    targetNamespace="http://flowable.org/examples">
+
+  <process id="leaveRequestForm" name="Leave request (form demo)" isExecutable="true">
+
+    <startEvent id="start"/>
+
+    <userTask id="approve" name="Approve leave request"
+        flowable:candidateGroups="managers">
+      <extensionElements>
+        <flowable:formProperty id="approved" name="Approve?" type="boolean"
+            required="true"/>
+        <flowable:formProperty id="comment" name="Comment" type="string"/>
+        <flowable:formProperty id="coverage" name="Coverage arranged by"
+            type="enum">
+          <flowable:value id="peer" name="A peer"/>
+          <flowable:value id="manager" name="The manager"/>
+          <flowable:value id="none" name="Not needed"/>
+        </flowable:formProperty>
+        <flowable:formProperty id="employee" name="Employee" type="string"
+            expression="${employee}" writable="false"/>
+      </extensionElements>
+    </userTask>
+
+    <endEvent id="done"/>
+
+    <sequenceFlow id="f1" sourceRef="start" targetRef="approve"/>
+    <sequenceFlow id="f2" sourceRef="approve" targetRef="done"/>
+
+  </process>
+</definitions>

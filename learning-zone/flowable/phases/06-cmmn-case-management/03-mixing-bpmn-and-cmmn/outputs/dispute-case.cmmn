@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: dispute-case
+description: CMMN case orchestrating BPMN — discretionary investigation wrapping prescribed processes
+kind: case-model
+phase: 06
+lesson: 03
+The process tasks reference BPMN definitions by key (deploy chargeback/refund
+processes with those keys, or watch them fail fast — reference-by-key, Phase 0 map).
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL"
+    xmlns:flowable="http://flowable.org/cmmn"
+    targetNamespace="http://flowable.org/cmmn">
+
+  <case id="disputeCase" name="Card dispute">
+    <casePlanModel id="casePlan" name="Dispute handling">
+
+      <!-- discretionary work: the case worker's calls, any order -->
+      <planItem id="piContact" name="Contact customer" definitionRef="htContact"/>
+      <planItem id="piEvidence" name="Review transaction evidence"
+          definitionRef="htEvidence"/>
+
+      <!-- prescribed work: entire BPMN processes, launched from the case.
+           The worker DECIDES WHETHER/WHEN; BPMN owns the HOW. -->
+      <planItem id="piChargeback" name="Run chargeback process"
+          definitionRef="ptChargeback">
+        <entryCriterion id="entryCb" sentryRef="sentryEvidenceDone"/>
+      </planItem>
+      <planItem id="piRefund" name="Run goodwill refund process"
+          definitionRef="ptRefund">
+        <entryCriterion id="entryRf" sentryRef="sentryEvidenceDone"/>
+      </planItem>
+
+      <sentry id="sentryEvidenceDone">
+        <planItemOnPart id="onEvidence" sourceRef="piEvidence">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+
+      <humanTask id="htContact" name="Contact customer"
+          flowable:candidateGroups="disputes-ops"/>
+      <humanTask id="htEvidence" name="Review transaction evidence"
+          flowable:candidateGroups="disputes-ops"/>
+
+      <!-- the bridge construct: a plan item that runs a BPMN process -->
+      <processTask id="ptChargeback" name="Chargeback (BPMN)"
+          flowable:fallbackToDefaultTenant="true">
+        <processRefExpression><![CDATA[chargebackProcess]]></processRefExpression>
+      </processTask>
+      <processTask id="ptRefund" name="Goodwill refund (BPMN)"
+          flowable:fallbackToDefaultTenant="true">
+        <processRefExpression><![CDATA[goodwillRefundProcess]]></processRefExpression>
+      </processTask>
+
+    </casePlanModel>
+  </case>
+</definitions>

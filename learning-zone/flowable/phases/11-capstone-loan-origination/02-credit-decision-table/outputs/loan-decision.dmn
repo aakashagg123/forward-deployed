@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: loan-decision
+description: Capstone credit decision — score x amount x employment, FIRST hit policy
+kind: decision-table
+phase: 11
+lesson: 02
+Extends Phase 5's table with an employment axis; exception rows first, catch-all last.
+-->
+<definitions
+    xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+    id="loanDecisionDefinitions"
+    name="Loan decision"
+    namespace="http://flowable.org/dmn">
+
+  <decision id="loanDecision" name="Loan decision">
+    <decisionTable id="loanDecisionTable" hitPolicy="FIRST">
+
+      <input id="scoreIn" label="Bureau score">
+        <inputExpression id="scoreExpr" typeRef="number"><text>score</text></inputExpression>
+      </input>
+      <input id="amountIn" label="Loan amount">
+        <inputExpression id="amountExpr" typeRef="number"><text>amount</text></inputExpression>
+      </input>
+      <input id="employmentIn" label="Employment">
+        <inputExpression id="employmentExpr" typeRef="string"><text>employment</text></inputExpression>
+      </input>
+
+      <output id="decisionOut" label="Decision" name="decision" typeRef="string"/>
+      <output id="rateOut" label="Rate %" name="rate" typeRef="number"/>
+
+      <!-- salaried: standard bands -->
+      <rule>
+        <inputEntry id="r1a"><text><![CDATA[>= 750]]></text></inputEntry>
+        <inputEntry id="r1b"><text><![CDATA[<= 1000000]]></text></inputEntry>
+        <inputEntry id="r1c"><text><![CDATA["salaried"]]></text></inputEntry>
+        <outputEntry id="r1x"><text><![CDATA["auto-approve"]]></text></outputEntry>
+        <outputEntry id="r1y"><text><![CDATA[10.5]]></text></outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="r2a"><text><![CDATA[>= 700]]></text></inputEntry>
+        <inputEntry id="r2b"><text><![CDATA[<= 500000]]></text></inputEntry>
+        <inputEntry id="r2c"><text><![CDATA["salaried"]]></text></inputEntry>
+        <outputEntry id="r2x"><text><![CDATA["auto-approve"]]></text></outputEntry>
+        <outputEntry id="r2y"><text><![CDATA[11.5]]></text></outputEntry>
+      </rule>
+
+      <!-- self-employed: no auto-approve above 5L; stricter pricing -->
+      <rule>
+        <inputEntry id="r3a"><text><![CDATA[>= 750]]></text></inputEntry>
+        <inputEntry id="r3b"><text><![CDATA[<= 500000]]></text></inputEntry>
+        <inputEntry id="r3c"><text><![CDATA["self-employed"]]></text></inputEntry>
+        <outputEntry id="r3x"><text><![CDATA["auto-approve"]]></text></outputEntry>
+        <outputEntry id="r3y"><text><![CDATA[12.0]]></text></outputEntry>
+      </rule>
+
+      <!-- grey zone -> human judgment -->
+      <rule>
+        <inputEntry id="r4a"><text><![CDATA[>= 650]]></text></inputEntry>
+        <inputEntry id="r4b"><text><![CDATA[-]]></text></inputEntry>
+        <inputEntry id="r4c"><text><![CDATA[-]]></text></inputEntry>
+        <outputEntry id="r4x"><text><![CDATA["manual-review"]]></text></outputEntry>
+        <outputEntry id="r4y"><text><![CDATA[13.5]]></text></outputEntry>
+      </rule>
+
+      <!-- catch-all -->
+      <rule>
+        <inputEntry id="r5a"><text><![CDATA[-]]></text></inputEntry>
+        <inputEntry id="r5b"><text><![CDATA[-]]></text></inputEntry>
+        <inputEntry id="r5c"><text><![CDATA[-]]></text></inputEntry>
+        <outputEntry id="r5x"><text><![CDATA["decline"]]></text></outputEntry>
+        <outputEntry id="r5y"><text><![CDATA[0]]></text></outputEntry>
+      </rule>
+
+    </decisionTable>
+  </decision>
+</definitions>

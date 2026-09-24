@@ -1,0 +1,26 @@
+{
+  "$comment": "Ship It — fill this in and get human approval BEFORE any worker is dispatched (principle 01). kind: settings · phase: 10 · lesson: 01",
+  "sprint_name": "",
+  "tasks": [
+    {
+      "name": "",
+      "description": "",
+      "files": [],
+      "deps": [],
+      "acceptance_criteria": []
+    }
+  ],
+  "budget": {
+    "maxWorkers": 3,
+    "maxCallsPerWorker": 15,
+    "maxWaves": 2
+  },
+  "file_manifest": [],
+  "acceptance_criteria": [],
+  "review": {
+    "dimensions": ["correctness", "security", "regression_risk", "type_safety", "test_coverage", "requirements_traceability", "domain_rule"],
+    "merge_score_weights": {"conflicts": 0.30, "tests": 0.25, "build": 0.20, "blast_radius": 0.15, "spec": 0.10},
+    "threshold": 70,
+    "verdicts": ["ship", "hold"]
+  }
+}

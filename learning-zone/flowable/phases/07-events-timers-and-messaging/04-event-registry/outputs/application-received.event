@@ -1,0 +1,13 @@
+{
+  "key": "applicationReceived",
+  "name": "Application received",
+  "correlationParameters": [
+    { "name": "applicationId", "type": "string" }
+  ],
+  "payload": [
+    { "name": "applicationId", "type": "string" },
+    { "name": "pan",           "type": "string" },
+    { "name": "amount",        "type": "double" },
+    { "name": "channel",       "type": "string" }
+  ]
+}

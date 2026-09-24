@@ -1,0 +1,28 @@
+# <Project Name>
+
+> Keep this file ~100 lines. It is a table of contents, not a manual. Works as
+> `CLAUDE.md` (Claude Code) or `AGENTS.md` (Codex).
+
+## What this is
+<One-line description of the project and the agent's job in it.>
+
+## Commands
+- Test: `<command>`
+- Lint: `<command>`
+- Build / run: `<command>`
+
+## Conventions (non-obvious, recurring)
+- <e.g. Import from the public barrel `src/index.ts`, never internal paths.>
+- <e.g. New API routes go in `api/routes/`, one file per resource.>
+
+## Approach
+- Make the smallest change that satisfies the task; run tests before claiming done.
+- Stop and ask before destructive or out-of-scope actions.
+
+## Where to look (load on demand)
+- Architecture overview → `docs/architecture.md`
+- Domain rules → `docs/domain.md`
+- Testing guide → `docs/testing.md`
+
+<!-- Don't inline the docs here. Don't restate the system prompt. Don't add volatile data.
+     Recurring mistakes → a lint rule or hook, not another paragraph here. -->

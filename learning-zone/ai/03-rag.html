@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>03 · RAG &amp; retrieval — AI engineering for PMs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
+  <nav class="topnav"><a href="00-foundations.html">00</a><a href="01-inference-internals.html">01</a><a href="02-reliable-outputs.html">02</a><a href="03-rag.html">03</a><a href="04-evals-observability.html">04</a><a href="05-safety-multitenancy.html">05</a><a href="06-strategy-tradeoffs.html">06</a></nav>
+</header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="00-foundations.html"><span class="num">00</span>Foundations</a><a class="modlink" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink active" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#rag-architecture">RAG architecture: chunking, embeddings, hybrid search, reranking, and freshness</a><a href="#retrieval-evals">Retrieval evals: recall, precision, grounding, attribution, and citation quality</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Module 03</span>
+    <h1>RAG &amp; retrieval</h1>
+    <p class="lede">Grounding models in your data — and proving they actually used it.</p>
+    <div class="hero-meta">2 lessons · interactive demo · every lesson includes a
+      <strong>🎯 For the AI-native PM</strong> briefing</div>
+  </div>
+  <div class="intro"><p>Retrieval-Augmented Generation grounds a model in <em>your</em> data — docs, tickets, code,
+records the model never saw in training and that change every day. Done well, it's how
+you get current, attributable, domain-specific answers without retraining. Done badly,
+it's a confident model reciting the wrong or stale passage.</p>
+<ul>
+<li><a href="#rag-architecture"><strong>RAG architecture</strong></a> — the pipeline: chunking, embeddings,
+  hybrid search, reranking, and freshness. Where quality is won or lost.</li>
+<li><a href="#retrieval-evals"><strong>Retrieval evals</strong></a> — measuring it: recall, precision,
+  grounding, attribution, and citation quality. You cannot tune what you don't measure.</li>
+</ul>
+<p>RAG is applied <a href="00-foundations.html#context-engineering">context engineering</a>. The
+retriever decides what occupies the window, and the generator can only be as good as
+what the retriever found. The two lessons here are a matched pair — build the pipeline,
+then prove it works.</p>
+<h2>Connects to other tracks</h2>
+<ul>
+<li><a href="../rag-vector-databases/index.html">RAG &amp; vector databases</a> — the same pipeline at product-decision altitude: embeddings, vector databases, chunking, retrieval quality, and when to reach for long-context or fine-tuning instead.</li>
+<li><a href="../knowledge-graphs/what-is-a-knowledge-graph.html">What is a knowledge graph?</a> — structured retrieval and GraphRAG.</li>
+<li><a href="../harness/phases/13-retrieval-and-codebase-understanding/README.html">Retrieval &amp; codebase understanding</a> — the same retrieval stack at repo scale.</li>
+<li><a href="../agentic-ai/context-and-memory.html">Context &amp; memory in agents</a> — retrieval as the agent's working memory.</li>
+</ul>
+<p><strong>📌 Close out the module:</strong> <a href="#recap">Recap &amp; real-world examples</a> — war stories from production plus the key takeaways.</p>
+<hr /></div>
+  <nav class="toc"><div class="toc-h">In this module</div><a href="#interactive"><span>◆</span>Interactive demo</a><a href="#rag-architecture"><span>03.1</span>RAG architecture: chunking, embeddings, hybrid search, reranking, and freshness</a><a href="#retrieval-evals"><span>03.2</span>Retrieval evals: recall, precision, grounding, attribution, and citation quality</a><a href="#recap"><span>📌</span>Recap &amp; real-world examples</a></nav>
+  <section class="interactive" id="interactive"><div class="iw-head"><span class="tag">Interactive</span><h3>Retrieval tradeoff — top-k and reranking</h3></div><div class="iw-body"><div class="iw-controls">
+ <div class="iw-field"><label>Retrieved (top-k) <span class="v" id="rg-kv"></span></label><input type="range" id="rg-k" min="1" max="50" step="1" value="8"></div>
+ <label class="iw-toggle" style="margin-bottom:7px"><input type="checkbox" id="rg-rr"> Add reranking (keep top 5)</label>
+</div>
+<div class="iw-grid" id="rg-grid"></div>
+<div class="iw-out">
+ <div class="iw-metric"><span class="ml">Recall@k</span><span class="iw-track"><span class="iw-fill" id="rg-rcf"></span></span><span class="mv" id="rg-rc"></span></div>
+ <div class="iw-metric"><span class="ml">Precision@k</span><span class="iw-track"><span class="iw-fill" id="rg-prf" style="background:#1A7F37"></span></span><span class="mv" id="rg-pr"></span></div>
+ <div class="iw-metric"><span class="ml">Context tokens</span><span class="mv" id="rg-tok"></span></div>
+ <div class="iw-note" id="rg-note"></div>
+</div>
+<div class="iw-legend"><span><i style="background:#0969DA"></i>relevant</span><span><i style="background:#EAEEF2"></i>noise</span><span><i style="background:#fff;outline:2px solid #1F2328"></i>kept after rerank</span></div></div></section>
+  <section class="lesson" id="rag-architecture"><div class="lesson-head"><span class="lesson-num">03.1</span><h2>RAG architecture: chunking, embeddings, hybrid search, reranking, and freshness</h2></div><h2 id="tldr">TL;DR</h2>
+<p>RAG is a pipeline, and quality is bounded by its weakest stage. <strong>Chunking</strong>
+decides what a retrievable unit <em>is</em>. <strong>Embeddings</strong> decide how meaning is
+matched. <strong>Hybrid search</strong> combines keyword and vector recall. <strong>Reranking</strong>
+sharpens precision before the prompt. <strong>Freshness</strong> keeps the index from
+lying. The generator can only answer from what retrieval surfaces, so most
+"the LLM is wrong" RAG bugs are actually retrieval bugs. Optimize retrieval
+first, generation second.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — Most "the AI gave a wrong answer" bugs are actually <em>retrieval</em> bugs, not model bugs. RAG quality is where grounded, current, citeable answers come from — the core of enterprise trust.</p>
+<p><strong>What it changes in your decisions</strong> — What data you invest in indexing, your freshness SLAs, and whether you can promise citations.</p>
+<p><strong>Ask your eng team</strong> — <em>"When an answer is wrong, is it because we never retrieved the right source in the first place?"</em></p>
+<p><strong>Product risk if ignored</strong> — You blame the model and tune prompts for months while the real defect — retrieval — goes unfixed.</p>
+</blockquote>
+<h2 id="the-pipeline">The pipeline</h2>
+<pre><code>INDEX TIME:   documents ──▶ chunk ──▶ embed ──▶ vector store (+ keyword index)
+                                  └──▶ keep fresh (re-index on change)
+
+QUERY TIME:   query ──▶ (rewrite) ──▶ hybrid search (dense + lexical)
+                    ──▶ rerank top-N ──▶ trim to budget ──▶ context + cite ──▶ generate
+</code></pre>
+<p>This is <a href="00-foundations.html#context-engineering">context engineering</a> in
+motion: retrieval is <em>how the right information gets into the window</em>.</p>
+<h2 id="chunking-define-the-retrievable-unit">Chunking — define the retrievable unit</h2>
+<ul>
+<li><strong>Why it matters:</strong> chunks that are too big dilute relevance and waste
+  tokens; chunks that are too small lose the context needed to answer.
+  Chunk size is a recall/precision dial.</li>
+<li><strong>Strategies:</strong> fixed-size with <strong>overlap</strong> is simple and robust.
+  <strong>Structure-aware</strong> chunking splits on headings, sections, or functions,
+  and is usually better because it respects meaning. <strong>Semantic chunking</strong>
+  splits where the topic shifts.</li>
+<li><strong>Match chunk size to task shape:</strong> fixed-output tasks — extract a field,
+  answer a pointed question — tolerate <strong>large chunks</strong>, since the model
+  finds the needle. Expansive-output tasks — summarize, synthesize across
+  sources — want <strong>smaller chunks</strong>, so retrieval can compose coverage from
+  many places instead of drowning in a few.</li>
+<li><strong>Carry metadata</strong> on every chunk: source id, title, section, timestamp,
+  tenant, permissions. Metadata powers <a href="#retrieval-evals">citations</a>,
+  <a href="#freshness">freshness</a>, and
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">tenant filtering</a>.</li>
+<li><strong>Tabular/structured data</strong> often shouldn't be free-text chunked at all.
+  Consider text-to-SQL or structured retrieval instead.</li>
+</ul>
+<h2 id="embeddings-how-meaning-is-matched">Embeddings — how meaning is matched</h2>
+<ul>
+<li>Embeddings map text to vectors, so semantic nearness equals vector
+  nearness. The choice of model sets your semantic ceiling.</li>
+<li><strong>Match query and document embeddings</strong> to the same model and space.
+  <strong>Domain fit matters</strong> — a general embedder may miss jargon, code, or
+  multilingual content, so sometimes a domain-tuned embedder is the
+  highest-leverage change.</li>
+<li><strong>Asymmetric search:</strong> short queries versus long passages benefit from
+  models trained for that, such as query/passage encoders.</li>
+<li><strong>Cost and latency:</strong> embedding dimension and model size trade retrieval
+  quality against storage and query speed. Re-embedding the whole corpus on
+  a model change is a real migration cost, so version your embeddings.</li>
+</ul>
+<h2 id="hybrid-search-recall-from-two-angles">Hybrid search — recall from two angles</h2>
+<p>Dense (vector) search captures <em>meaning</em> but can miss exact terms — IDs,
+error codes, rare names, acronyms. Lexical search (BM25/keyword) nails
+exact matches but misses paraphrase. <strong>Hybrid</strong> search runs both and fuses
+the results, for example with Reciprocal Rank Fusion or weighted scores.</p>
+<ul>
+<li>Hybrid almost always beats either alone, especially for technical or
+  enterprise corpora full of exact identifiers.</li>
+<li>Add <strong>metadata filters</strong> — tenant, date, doc type, ACL — as hard
+  constraints <em>before</em> ranking. This helps both relevance and
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">isolation/security</a>.</li>
+</ul>
+<h2 id="reranking-precision-before-the-prompt">Reranking — precision before the prompt</h2>
+<p>First-stage retrieval optimizes recall by casting a wide net, say the top</p>
+<ol start="50">
+<li>A <strong>cross-encoder reranker</strong> then scores each (query, chunk) pair
+jointly for true relevance and keeps the top few.</li>
+</ol>
+<ul>
+<li><strong>Why:</strong> you cheaply pull many candidates, then spend a precise model on
+  a short list. This is usually the single biggest precision win in a RAG
+  system.</li>
+<li><strong>Effect on the generator:</strong> fewer, better chunks reduce distraction and
+  <a href="00-foundations.html#context-engineering">lost-in-the-middle</a> failures,
+  and cut <a href="01-inference-internals.html#prefill-vs-decode">prefill cost</a>.</li>
+<li><strong>Cost:</strong> an extra model call and latency, but on a small candidate set.
+  It often lets you <em>shrink</em> the context you send, paying for itself.</li>
+</ul>
+<h2 id="freshness-keep-the-index-honest">Freshness — keep the index honest</h2>
+<p>A retrieval index is a cache of your data, and it goes stale the moment the
+source changes.</p>
+<ul>
+<li><strong>Incremental indexing / CDC:</strong> re-embed and upsert on create, update, or
+  delete. Don't full-rebuild nightly if data changes continuously.</li>
+<li><strong>Deletions and tombstones:</strong> removed source docs must leave the index,
+  or you'll cite deleted or retracted content.</li>
+<li><strong>Recency signals:</strong> timestamp chunks and let ranking prefer recent
+  versions. Expire or down-weight stale ones.</li>
+<li>Freshness failures mirror
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">semantic-cache staleness</a>:
+  a confident answer from outdated data.</li>
+</ul>
+<h2 id="generation-attribution">Generation &amp; attribution</h2>
+<ul>
+<li>Pass reranked, trimmed chunks <strong>with source tags</strong> and instruct the model
+  to answer <em>from the context</em> and <strong>cite</strong> sources. This enables
+  <a href="#retrieval-evals">grounding and citation evals</a>.</li>
+<li>Handle "<strong>not in the context</strong>" explicitly: the model should say it
+  doesn't know rather than fill the gap from parametric memory — a
+  hallucination guard.</li>
+</ul>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Dial toward recall</th>
+<th>Dial toward precision/cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chunk size</td>
+<td>Smaller, more overlap</td>
+<td>Larger, structure-aware</td>
+</tr>
+<tr>
+<td>Retrieval k</td>
+<td>Higher k</td>
+<td>Lower k + reranking</td>
+</tr>
+<tr>
+<td>Search type</td>
+<td>Hybrid + loose filters</td>
+<td>Tight filters</td>
+</tr>
+<tr>
+<td>Reranking</td>
+<td>(skip for speed)</td>
+<td>Add for precision</td>
+</tr>
+<tr>
+<td>Freshness</td>
+<td>Frequent re-index</td>
+<td>Cheaper, staler index</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Right answer never retrieved</strong> — a chunking, embedding, or recall
+  problem. No prompt fix helps. Measure
+  <a href="#retrieval-evals">retrieval recall</a>.</li>
+<li><strong>Answer buried in noise</strong> — too many chunks with no reranking, so
+  distraction degrades the answer.</li>
+<li><strong>Stale/deleted content cited</strong> — a freshness or deletion gap.</li>
+<li><strong>Exact-match misses</strong> — dense-only search can't find an error code. Add
+  lexical search.</li>
+<li><strong>Cross-tenant leakage</strong> — a missing ACL or tenant filter returns another
+  customer's docs. See
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">isolation</a>.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is chunking structure-aware with rich metadata (source, time, tenant, ACL)?</li>
+<li class="task todo">Do query and document embeddings share a model/space, fit to your domain?</li>
+<li class="task todo">Is search hybrid (dense + lexical) with metadata pre-filters?</li>
+<li class="task todo">Is there a reranking stage feeding a small, trimmed context?</li>
+<li class="task todo">Is the index updated incrementally, with deletions honored?</li>
+<li class="task todo">Does the prompt enforce cite-from-context and "say I don't know"?</li>
+<li class="task todo">Do you measure retrieval quality separately from answer quality?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#retrieval-evals">Retrieval evals</a></li>
+<li><a href="00-foundations.html#context-engineering">Context engineering</a></li>
+<li><a href="01-inference-internals.html#prompt-vs-semantic-caching">Prompt vs. semantic caching</a></li>
+<li><a href="05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a></li>
+<li><a href="06-strategy-tradeoffs.html#finetune-vs-icl-vs-rag">Fine-tuning vs. ICL vs. RAG vs. distillation</a></li>
+<li><a href="../rag-vector-databases/why-rag.html">Why RAG</a> — this same pipeline at product-decision altitude, plus vector-database indexing and retrieval-quality tuning in their own dedicated lessons.</li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="retrieval-evals"><div class="lesson-head"><span class="lesson-num">03.2</span><h2>Retrieval evals: recall, precision, grounding, attribution, and citation quality</h2></div><h2 id="tldr">TL;DR</h2>
+<p>A <a href="#rag-architecture">RAG system</a> has two failure surfaces: <em>did we
+retrieve the right thing?</em> and <em>did the model use it faithfully?</em> You must
+measure them <strong>separately</strong>, or you'll tune the prompt to fix a retrieval
+bug, or the reverse. Retrieval is judged by <strong>recall</strong> and <strong>precision</strong>.
+Generation-over-retrieval is judged by <strong>grounding</strong> (faithfulness),
+<strong>attribution</strong> (claims traced to sources), and <strong>citation quality</strong>.
+End-to-end answer quality alone hides which half is broken.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — You can't claim "grounded" or "accurate" unless you measure grounding and attribution <em>separately</em>. This turns a marketing claim into a number you can defend to customers and legal.</p>
+<p><strong>What it changes in your decisions</strong> — The quality bar you commit to, how you report accuracy externally, and any citation guarantees.</p>
+<p><strong>Ask your eng team</strong> — <em>"How do we measure that answers are actually supported by sources, instead of plausibly made up?"</em></p>
+<p><strong>Product risk if ignored</strong> — You market accuracy you can't substantiate; hallucinated citations become a credibility — and legal — problem.</p>
+</blockquote>
+<h2 id="why-split-the-evaluation">Why split the evaluation</h2>
+<pre><code>query ──▶ [ retriever ] ──chunks──▶ [ generator ] ──▶ answer
+            measure here:                measure here:
+            recall, precision            grounding, attribution, citations
+</code></pre>
+<p>If end-to-end accuracy is low, the split tells you where to invest: better
+chunking, embeddings, and reranking, or better prompting and grounding
+constraints. Without it, you're guessing. This mirrors the general
+<a href="04-evals-observability.html#evals">evals</a> discipline applied to
+retrieval.</p>
+<p>(Every long-context model release re-raises "is RAG dead?" The answer stays
+no. As long as knowledge is larger than the window, changes faster than
+retraining, or is permissioned per user, retrieval is how freshness, access
+control, and cost control happen. What the question <em>should</em> prompt is
+exactly this lesson: measure your retrieval separately, so you know what
+it's contributing.)</p>
+<h2 id="retrieval-metrics">Retrieval metrics</h2>
+<p>You need labeled data: queries paired with the documents or chunks that
+<em>should</em> be retrieved — a <a href="04-evals-observability.html#evals">golden set</a>
+for retrieval.</p>
+<ul>
+<li><strong>Recall@k</strong> — of all relevant chunks, how many appear in the top <em>k</em>?
+  This is the ceiling on the whole system: <strong>if the right chunk isn't
+  retrieved, no prompt can fix the answer.</strong> It's usually the first metric
+  to optimize.</li>
+<li><strong>Precision@k</strong> — of the top <em>k</em> retrieved, how many are actually
+  relevant? Low precision means the
+  <a href="00-foundations.html#context-engineering">context</a> is noisy, the
+  generator gets distracted, and you pay for junk tokens.</li>
+<li><strong>MRR / nDCG</strong> — rank-aware metrics: is the relevant chunk near the <em>top</em>,
+  not just present? These matter because of
+  <a href="00-foundations.html#context-engineering">lost-in-the-middle</a>, and
+  because <a href="#rag-architecture">reranking</a> is judged on ordering.</li>
+<li><strong>Context recall vs. context precision</strong> — recall asks did we get enough
+  to answer; precision asks how much of what we got was needed. This is the
+  classic recall/precision tension.</li>
+</ul>
+<p>Use these to tune chunk size, k, hybrid weighting, and reranking directly —
+each metric points at a specific stage.</p>
+<h2 id="generation-over-retrieval-metrics">Generation-over-retrieval metrics</h2>
+<p>Even with perfect retrieval, the model can ignore or misuse the context.</p>
+<ul>
+<li><strong>Grounding / faithfulness</strong> — is every claim in the answer <em>supported by
+  the retrieved context</em>, not invented from parametric memory? Low
+  grounding means hallucination despite good retrieval. Measure it by
+  checking each answer claim against the provided chunks, often via an
+  <a href="04-evals-observability.html#evals">LLM-as-judge</a> or NLI/entailment
+  scoring.</li>
+<li><strong>Attribution</strong> — can each claim be <em>traced to the specific source</em> that
+  supports it? This is stronger than grounding: not just "supported
+  somewhere" but "supported <em>by this citation</em>."</li>
+<li><strong>Citation quality</strong> — are the citations (a) <strong>present</strong> where claims
+  need them, (b) <strong>correct</strong> — the cited source actually supports the
+  claim, not a hallucinated or mismatched reference — and (c) <strong>complete</strong>,
+  with no unsupported claims left uncited?</li>
+<li><strong>Answer relevance / completeness</strong> — does the answer actually address
+  the question, using the retrieved material?</li>
+</ul>
+<p>A useful framing is the "RAG triad": <strong>context relevance</strong> (retrieval),
+<strong>groundedness</strong> (answer ⊆ context), and <strong>answer relevance</strong> (answer ⊆
+question). All three must hold.</p>
+<h2 id="how-to-actually-run-these">How to actually run these</h2>
+<ol>
+<li><strong>Build a retrieval golden set</strong> — representative queries with labeled
+   relevant chunks. Include hard cases: exact-identifier lookups,
+   paraphrases, multi-hop, "answer not in corpus."</li>
+<li><strong>Score retrieval offline</strong> (recall@k, precision@k, nDCG) on every
+   index, chunking, embedding, or reranker change. It's cheap,
+   deterministic, and fast to iterate.</li>
+<li><strong>Score grounding and attribution</strong> with an
+   <a href="04-evals-observability.html#evals">LLM judge</a> against a rubric,
+   spot-validated by humans. Calibrate the judge before trusting it.</li>
+<li><strong>Track freshness explicitly</strong> — include time-sensitive queries whose
+   correct answer changes, to catch
+   <a href="#rag-architecture">stale-index</a> regressions.</li>
+<li><strong>Gate changes in CI</strong> so a chunking tweak that quietly drops recall
+   can't ship.</li>
+</ol>
+<h2 id="tradeoffs-what-each-metric-pushes">Tradeoffs &amp; what each metric pushes</h2>
+<table>
+<thead>
+<tr>
+<th>If this is low…</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recall@k</td>
+<td>Chunking/embedding/recall</td>
+<td>Hybrid search, better embedder, more overlap</td>
+</tr>
+<tr>
+<td>Precision@k</td>
+<td>Too many/loose results</td>
+<td>Reranking, tighter filters, lower k</td>
+</tr>
+<tr>
+<td>nDCG/MRR</td>
+<td>Bad ordering</td>
+<td>Reranking</td>
+</tr>
+<tr>
+<td>Grounding</td>
+<td>Model ignoring context</td>
+<td>Cite-from-context prompt, "say I don't know"</td>
+</tr>
+<tr>
+<td>Attribution/citations</td>
+<td>Weak provenance</td>
+<td>Tag chunks with source ids; enforce citation</td>
+</tr>
+</tbody>
+</table>
+<p>Don't chase recall to 100%. Beyond "enough," extra chunks hurt precision,
+grounding, and cost. The objective is the <em>right</em> context, not the <em>most</em>.</p>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Grading only end-to-end</strong> — you can't tell whether retrieval or
+  generation is the problem, so you fix the wrong one.</li>
+<li><strong>Hallucinated citations</strong> — the answer cites a source that doesn't
+  support the claim. It reads authoritative but is wrong. A
+  citation-correctness eval catches it.</li>
+<li><strong>Recall regressions hidden by the LLM</strong> — a strong model papers over
+  weak retrieval using parametric knowledge, inflating accuracy while
+  grounding silently drops.</li>
+<li><strong>Stale golden set</strong> — labels drift from the live corpus. Refresh them.</li>
+<li><strong>Untrusted judge</strong> — an uncalibrated LLM judge for grounding gives false
+  confidence.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do you measure retrieval (recall/precision/nDCG) <em>separately</em> from answers?</li>
+<li class="task todo">Is there a labeled retrieval golden set, including "answer not in corpus"?</li>
+<li class="task todo">Do you score grounding and attribution, not just answer correctness?</li>
+<li class="task todo">Are citations checked for presence, correctness, and completeness?</li>
+<li class="task todo">Is your LLM grounding-judge calibrated against human labels?</li>
+<li class="task todo">Do retrieval evals gate index/chunking/embedding/reranker changes in CI?</li>
+<li class="task todo">Do time-sensitive queries guard against freshness regressions?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#rag-architecture">RAG architecture</a></li>
+<li><a href="04-evals-observability.html#evals">Evals</a></li>
+<li><a href="00-foundations.html#context-engineering">Context engineering</a></li>
+<li><a href="04-evals-observability.html#observability">Observability</a></li>
+<li><a href="06-strategy-tradeoffs.html#production-failure-modes">Production failure modes</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section>
+  <section class="recap" id="recap"><div class="recap-head"><span class="recap-ic">📌</span><h2>Recap &amp; real-world examples</h2></div><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
+<p><strong>Air Canada's invented refund policy (2024).</strong> This is the canonical
+grounding failure: the bot answered from "imagination" instead of the
+airline's actual, current policy, and a tribunal made the company honor the
+made-up version. 🎯 <em>PM takeaway:</em> the fix is architectural. Answer <strong>only
+from retrieved, current sources, with citations</strong>, and say "I don't know"
+when the context is silent. See <a href="#rag-architecture">RAG architecture</a>.</p>
+<p><strong>Enterprise RAG with permissions (Glean, Notion AI, Sourcegraph).</strong>
+Production systems that search across a company's docs, tickets, and code
+live or die on three things this module covers: <strong>hybrid search</strong>, so exact
+identifiers and error codes are found; <strong>permission/ACL filtering</strong>, so
+retrieval never crosses a user's access — a
+<a href="05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant boundary</a>;
+and <strong>freshness</strong>, so deleted or superseded docs stop being cited. 🎯 <em>PM
+takeaway:</em> retrieval quality and access scoping <em>are</em> the product.</p>
+<p><strong>Citations as a feature (Perplexity, Bing/Copilot).</strong> These products made
+inline source attribution a core trust signal. 🎯 <em>PM takeaway:</em> if you want
+users, or legal, to trust answers, you need
+<a href="#retrieval-evals">attribution and citation quality</a> you can measure,
+not just a confident paragraph.</p>
+<p><strong>"Lost in the middle," again.</strong> The same research that warns against
+over-stuffing context is why dumping your top-50 chunks <em>hurts</em>: the answer
+gets buried. 🎯 <em>PM takeaway:</em> <strong>reranking down to a few great chunks</strong>
+beats retrieving many mediocre ones. You get better answers <em>and</em> lower
+<a href="04-evals-observability.html#cost-attribution">token cost</a>.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The decision it drives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#rag-architecture">RAG architecture</a></td>
+<td>Quality is capped by the weakest pipeline stage</td>
+<td>Data to index; freshness SLA; citations</td>
+</tr>
+<tr>
+<td><a href="#retrieval-evals">Retrieval evals</a></td>
+<td>Measure retrieval <em>and</em> grounding separately</td>
+<td>The accuracy bar you can defend</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> most "the AI gave a wrong answer" bugs are
+<strong>retrieval</strong> bugs, not model bugs. Build the pipeline — chunk, embed,
+hybrid search, rerank, keep fresh — then <strong>prove it</strong> by measuring recall
+and precision (did we find it?) separately from grounding and attribution
+(did we use it faithfully?). The generator can only be as good as what
+retrieval surfaces.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"When an answer is wrong, did we fail to </em><em>retrieve</em><em> the right
+source, or fail to </em><em>ground</em><em> the answer in it?"</em> Different bug, different fix.</p>
+</blockquote>
+<hr />
+<p>← Back to <a href="03-rag.html">module index</a> · → Next module: <a href="04-evals-observability.html">04 · Evals &amp; Observability</a></p><a class="totop" href="#top">↑ back to top</a></section>
+  <div class="pagenav"><a class="navcard prev" href="02-reliable-outputs.html"><span class="lbl">← Previous</span><span class="ttl">02 · Reliable outputs &amp; tool use</span></a><a class="navcard next" href="04-evals-observability.html"><span class="lbl">→ Next</span><span class="ttl">04 · Evals &amp; observability</span></a></div><footer class="foot">Educational content · part of the <a href="index.html">AI engineering</a> curriculum for AI-native PMs.</footer>
+  </main></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>(function(){var root=document.getElementById('interactive');var $=function(id){return root.querySelector(id);};
+var R=8,k=$('#rg-k'),rr=$('#rg-rr');
+function calc(){var K=+k.value,rerank=rr.checked;
+var found=Math.round(R*(1-Math.exp(-K/12)));if(found>K)found=K;
+var keep=rerank?Math.min(5,K):K;var keptRel=rerank?Math.min(keep,found):found;
+var recall=found/R;var precision=(rerank?keptRel/keep:found/K);var tokens=keep*250;
+$('#rg-kv').textContent=K;$('#rg-rc').textContent=Math.round(recall*100)+'%';$('#rg-pr').textContent=Math.round(precision*100)+'%';
+$('#rg-rcf').style.width=(recall*100)+'%';$('#rg-prf').style.width=(precision*100)+'%';
+$('#rg-tok').textContent=tokens.toLocaleString()+' tok';
+var grid=$('#rg-grid');grid.innerHTML='';var order=[];for(var i=0;i<K;i++)order.push(i<found);
+if(rerank)order.sort(function(a,b){return (b?1:0)-(a?1:0);});
+order.forEach(function(isRel,i){var c=document.createElement('span');c.className='iw-chunk'+(isRel?' rel':'');if(rerank&&i<keep)c.className+=' kept';grid.appendChild(c);});
+var note;if(rerank)note='<strong>Reranked.</strong> You still retrieved widely (recall held), but kept only the few best chunks — precision jumps, context shrinks, the generator is less distracted, and you pay fewer tokens.';
+else if(K<=4)note='<strong>Low k.</strong> Precision is high but you may miss relevant chunks — recall is the ceiling on the whole system.';
+else if(K>=18)note='<strong>High k, no rerank.</strong> Recall is near-max but precision craters — the answer is buried in noise and you pay for junk tokens. This is “lost in the middle.”';
+else note='<strong>Mid k.</strong> Reasonable — but turn on reranking to get high recall <em>and</em> high precision at once.';
+$('#rg-note').innerHTML=note;}
+k.oninput=calc;rr.onchange=calc;calc();})();</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=content%2F03-rag%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="ai/03-rag.html"</script><script defer src="../assets/glossary.js"></script></body></html>

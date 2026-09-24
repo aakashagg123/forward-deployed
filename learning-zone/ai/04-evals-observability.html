@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>04 · Evals &amp; observability — AI engineering for PMs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
+  <nav class="topnav"><a href="00-foundations.html">00</a><a href="01-inference-internals.html">01</a><a href="02-reliable-outputs.html">02</a><a href="03-rag.html">03</a><a href="04-evals-observability.html">04</a><a href="05-safety-multitenancy.html">05</a><a href="06-strategy-tradeoffs.html">06</a></nav>
+</header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="00-foundations.html"><span class="num">00</span>Foundations</a><a class="modlink" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink active" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#evals">Evals: golden sets, regression tests, adversarial tests, LLM-as-judge, and human evals</a><a href="#observability">LLM observability: traces, spans, tokens, latency, errors, and drift</a><a href="#cost-attribution">Cost attribution per feature, workflow, tenant, and user journey — not just per model</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Module 04</span>
+    <h1>Evals &amp; observability</h1>
+    <p class="lede">You cannot operate what you cannot measure.</p>
+    <div class="hero-meta">3 lessons · interactive demo · every lesson includes a
+      <strong>🎯 For the AI-native PM</strong> briefing</div>
+  </div>
+  <div class="intro"><p>LLM systems fail <em>silently</em>. A wrong answer looks exactly like a right one, and quality
+can regress with no code change at all — a model update, a data shift, an aging index.
+The only defense is measurement: evals before you ship, observability while you run,
+and clear knowledge of what it all costs.</p>
+<ul>
+<li><a href="#evals"><strong>Evals</strong></a> — golden sets, regression tests, adversarial tests,
+  LLM-as-judge, and human evals. How you know an output is <em>correct</em>.</li>
+<li><a href="#observability"><strong>Observability</strong></a> — traces, spans, tokens, latency, errors, and
+  drift. How you know the system is <em>working</em> in production.</li>
+<li><a href="#cost-attribution"><strong>Cost attribution</strong></a> — per feature, workflow, tenant, and
+  journey. How you know what it's <em>costing</em> and who's paying.</li>
+</ul>
+<p>This module is the backbone the rest of the curriculum leans on. Every "validate before
+shipping" step in <a href="02-reliable-outputs.html">reliable outputs</a>, every "measure
+retrieval" step in <a href="03-rag.html">RAG</a>, and every quality claim about
+<a href="01-inference-internals.html#quantization-formats">quantization</a> routes through here.</p>
+<h2>Connects to other tracks</h2>
+<ul>
+<li><a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals for agents</a> — trajectory evals on top of this stack.</li>
+<li><a href="../harness/phases/15-evals-and-testing-the-harness/README.html">Evals &amp; testing the harness</a> — building the eval harness by hand.</li>
+<li><a href="../technical-product-management/tpm-for-ai-products.html">TPM for AI products</a> — eval-driven development as an operating discipline.</li>
+<li><a href="../product-sense/product-sense-for-ai.html">Product sense for AI products</a> — where product taste becomes an eval set.</li>
+</ul>
+<p><strong>📌 Close out the module:</strong> <a href="#recap">Recap &amp; real-world examples</a> — war stories from production plus the key takeaways.</p>
+<hr /></div>
+  <nav class="toc"><div class="toc-h">In this module</div><a href="#interactive"><span>◆</span>Interactive demo</a><a href="#evals"><span>04.1</span>Evals: golden sets, regression tests, adversarial tests, LLM-as-judge, and human evals</a><a href="#observability"><span>04.2</span>LLM observability: traces, spans, tokens, latency, errors, and drift</a><a href="#cost-attribution"><span>04.3</span>Cost attribution per feature, workflow, tenant, and user journey — not just per model</a><a href="#recap"><span>📌</span>Recap &amp; real-world examples</a></nav>
+  <section class="interactive" id="interactive"><div class="iw-head"><span class="tag">Interactive</span><h3>Trace waterfall — one request, span by span</h3></div><div class="iw-body"><div class="iw-btns">
+ <button class="iw-btn active" data-s="healthy">Healthy</button>
+ <button class="iw-btn" data-s="slow">Slow retrieval</button>
+ <button class="iw-btn" data-s="repair">Repair loop</button>
+ <button class="iw-btn" data-s="timeout">Tool timeout</button>
+</div>
+<div id="tr-rows" style="margin:8px 0 4px"></div>
+<div class="iw-out" style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+ <div><div style="font-size:12px;color:var(--mut)">Total latency</div><div class="mv" id="tr-lat"></div></div>
+ <div><div style="font-size:12px;color:var(--mut)">Total cost</div><div class="mv" id="tr-cost"></div></div>
+ <div><div style="font-size:12px;color:var(--mut)">Tokens in/out</div><div class="mv" id="tr-tok"></div></div>
+ <div style="flex:1;min-width:180px"><div style="font-size:12px;color:var(--mut)">Selected span</div><div class="iw-note" id="tr-sel" style="margin-top:2px">Click a span to inspect tokens, latency &amp; cost.</div></div>
+</div></div></section>
+  <section class="lesson" id="evals"><div class="lesson-head"><span class="lesson-num">04.1</span><h2>Evals: golden sets, regression tests, adversarial tests, LLM-as-judge, and human evals</h2></div><h2 id="tldr">TL;DR</h2>
+<p>Evals are the test suite for a non-deterministic system. You can't assert exact
+equality, so you build different tools instead. <strong>Golden sets</strong> are curated inputs with
+known-good outputs. <strong>Regression tests</strong> run those golden sets in CI to block quality
+drops. <strong>Adversarial tests</strong> cover the ways you expect the system to break.
+<strong>LLM-as-judge</strong> scores open-ended outputs, calibrated against <strong>human evals</strong>. Without
+evals you're flying blind: every prompt tweak, model swap, or
+<a href="01-inference-internals.html#quantization-formats">quantization</a> change becomes a coin
+flip, and regressions ship silently.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — Evals are the difference between "we think it got better" and "we know." For an AI-native PM, the eval set <em>is</em> the product spec. It encodes what "good" actually means.</p>
+<p><strong>What it changes in your decisions</strong> — Your release gates, how you compare model options, and how you prove improvement to stakeholders.</p>
+<p><strong>Ask your eng team</strong> — <em>"What's our regression eval, and does it run before every model or prompt change ships?"</em></p>
+<p><strong>Product risk if ignored</strong> — A model update silently regresses 5% of cases and you hear about it from users, not from CI.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>Traditional tests assert <code>f(x) == expected</code>. LLM outputs are variable and open-ended,
+so exact-match doesn't work. Instead you grade <strong>quality over a representative
+distribution</strong>:</p>
+<ul>
+<li>For closed tasks (classification, extraction, structured output) you <em>can</em> use
+  exact/structural checks.</li>
+<li>For open tasks (summaries, answers, code) you grade against a <strong>rubric</strong> with a judge
+  (model or human). Track <em>aggregate</em> scores and <em>regressions</em>, not single outputs.</li>
+</ul>
+<p>Evals turn "it feels better" into a number you can gate on.</p>
+<h2 id="error-analysis-look-at-your-traces-first">Error analysis — look at your traces first</h2>
+<p>Before you choose metrics or build graders, practice <strong>error analysis</strong>. This
+discipline, borrowed from qualitative research, turns raw production behavior into an
+eval suite that measures <em>your</em> failures, not generic ones:</p>
+<ol>
+<li><strong>Create a dataset.</strong> Pull real traces: random samples plus anything flagged by
+   users, cheap screens, or your own suspicion.</li>
+<li><strong>Open coding.</strong> Read traces one by one and label failures free-form, in your own
+   words — "ignored the date constraint," "cited the wrong doc." Don't build a taxonomy
+   yet.</li>
+<li><strong>Axial coding.</strong> Cluster those labels into a failure taxonomy: the five or ten
+   recurring modes that actually matter.</li>
+<li><strong>Iterate.</strong> Build automated evaluators only for the <em>recurring, high-impact</em> modes.
+   Re-run the analysis on fresh production traces regularly, because the taxonomy rots
+   as users find new ways to use — and break — the product.</li>
+</ol>
+<p>This is also the minimum viable eval setup. A spreadsheet of traces, pass/fail labels,
+and notes beats a metrics dashboard you haven't validated. Most teams over-invest in
+scoring infrastructure and under-invest in the hours of reading traces that tell you
+what's worth scoring.</p>
+<h2 id="golden-sets-the-backbone">Golden sets — the backbone</h2>
+<p>A golden set is a curated, <strong>version-controlled</strong> collection of inputs paired with
+known-good outputs or acceptance criteria.</p>
+<ul>
+<li><strong>Representative.</strong> Mirror real production traffic — common cases <em>and</em> the long tail,
+  per feature and per <a href="#cost-attribution">tenant</a> segment where behavior differs.</li>
+<li><strong>Labeled with intent.</strong> Store <em>why</em> an output is correct (criteria/rubric), not just
+  the string, so judges and humans can grade consistently.</li>
+<li><strong>Living.</strong> Grow it from production. Every incident and bug becomes a new golden case,
+  so the same regression can't recur. This is how evals compound in value.</li>
+<li><strong>Stratified.</strong> Tag cases by capability (math, extraction, refusal, multi-hop) so you
+  see <em>where</em> quality moves, not just an aggregate.</li>
+</ul>
+<h2 id="regression-tests-gate-every-change">Regression tests — gate every change</h2>
+<p>Run the golden set automatically before prompt, model, retrieval, or infra changes
+ship, and block the change on score drops.</p>
+<ul>
+<li>Catches the silent killers: a model upgrade that helps 95% and breaks 5%, a prompt
+  edit with side effects, a <a href="01-inference-internals.html#quantization-formats">quantization</a>
+  step that hurts strict-format tasks.</li>
+<li>Report per-stratum deltas, not one number. A flat average can hide a category falling
+  off a cliff.</li>
+<li>This is the CI gate referenced throughout the curriculum
+  (<a href="02-reliable-outputs.html#structured-output">structured output</a>,
+  <a href="03-rag.html#retrieval-evals">retrieval evals</a>,
+  <a href="02-reliable-outputs.html#model-routing">routing</a> portability).</li>
+</ul>
+<h2 id="adversarial-tests-break-it-on-purpose">Adversarial tests — break it on purpose</h2>
+<p>Beyond "does it work," test "how does it fail":</p>
+<ul>
+<li><strong>Prompt injection / jailbreaks</strong> — does retrieved or user content hijack behavior?
+  (see <a href="05-safety-multitenancy.html#safety-engineering">safety engineering</a>).</li>
+<li><strong>Edge inputs</strong> — empty, huge, malformed, multilingual, contradictory, out-of-scope.</li>
+<li><strong>Hallucination bait</strong> — questions whose answer isn't in context. Does it say "I don't
+  know," or does it fabricate an answer?
+  (<a href="03-rag.html#retrieval-evals">grounding</a>).</li>
+<li><strong>Format stress</strong> — does structured output stay valid under weird inputs?</li>
+<li><strong>Tool misuse</strong> — does it call dangerous tools when goaded?
+Adversarial cases join the golden set and run in regression.</li>
+</ul>
+<h2 id="llm-as-judge-scoring-at-scale">LLM-as-judge — scoring at scale</h2>
+<p>Use a model to grade outputs against a rubric — correctness, grounding, helpfulness,
+style. It's powerful, but it has failure modes you must control:</p>
+<ul>
+<li><strong>Calibrate against humans.</strong> Establish agreement between judge and human labels
+  before you trust it, and re-check periodically.</li>
+<li><strong>Known biases:</strong> position bias (favoring the first option), verbosity bias (longer =
+  better), self-preference (favoring its own family), and leniency. Mitigate them with
+  randomized order, pairwise comparison, clear rubrics, and reference answers.</li>
+<li><strong>Prefer comparative grading</strong> (A vs. B) over absolute scores where possible. It's
+  more reliable.</li>
+<li><strong>Don't judge with the same model under test</strong> for safety-critical evals. A separate
+  judge avoids blind spots.</li>
+<li>The judge is itself a system to evaluate — its accuracy is a metric you monitor.</li>
+</ul>
+<h2 id="human-evals-the-ground-truth">Human evals — the ground truth</h2>
+<p>The anchor everything else calibrates to.</p>
+<ul>
+<li><strong>Use for:</strong> establishing rubrics, calibrating judges, ambiguous/subjective quality,
+  high-stakes decisions, and sampling production for blind spots.</li>
+<li><strong>Make it rigorous:</strong> clear guidelines, multiple raters, inter-rater agreement,
+  blind/randomized presentation to avoid bias.</li>
+<li>Expensive and slow, so spend it where it matters most and let calibrated judges scale
+  the rest.</li>
+</ul>
+<p>A vocabulary note for eng conversations: public <strong>agent benchmarks</strong> became the
+industry's shared shorthand. <strong>SWE-bench Verified</strong> covers real GitHub issues resolved
+end-to-end. <strong>GAIA</strong> covers general assistant tasks. <strong>OSWorld</strong> covers computer use.
+<strong>tau-bench</strong> covers tool-using customer-service agents. <strong>Terminal-Bench</strong> covers
+command-line work. Know what each measures, so "we're at X%" means something to you.
+Know the caveat too: public benchmarks saturate and leak into training data. That's why
+serious teams treat them as market signals and run <em>private</em> evals (this lesson) as the
+real gate. On the observability side, <strong>OpenTelemetry's GenAI semantic conventions</strong>
+are standardizing trace formats. That means eval and observability tooling is becoming
+portable across vendors, not a lock-in decision.</p>
+<h2 id="grading-choices-that-keep-evals-honest">Grading choices that keep evals honest</h2>
+<ul>
+<li><strong>Binary beats Likert.</strong> Prefer pass/fail judgments over 1–5 scales. Forced decisions
+  are more consistent across annotators, easy to aggregate, and map directly to a
+  launch bar. A 3.7 average hides exactly the disagreement a pass/fail split exposes.</li>
+<li><strong>Skip generic similarity metrics.</strong> BERTScore, ROUGE, and off-the-shelf "quality"
+  metric packs correlate poorly with what <em>your</em> users consider good. A custom
+  evaluator per failure mode, built from your error analysis, is worth a dozen
+  ready-made scores.</li>
+<li><strong>Don't automate everything.</strong> An evaluator for every failure mode you've ever seen
+  becomes maintenance debt. Automate the recurring, high-impact modes, and keep the
+  long tail in periodic human review.</li>
+<li><strong>Annotation is product judgment — keep it in-house.</strong> Outsourced labelers apply
+  <em>their</em> judgment of good, not yours, and the learning — what's failing and why —
+  leaves with the vendor. PM and eng should label traces together. Disagreements
+  between them are requirement discoveries, not noise. A minimal custom review
+  interface (render the trace intelligently, keyboard shortcuts, cluster/filter) pays
+  for itself in review throughput.</li>
+</ul>
+<h2 id="how-the-layers-fit">How the layers fit</h2>
+<pre><code>human evals ──calibrate──▶ LLM-as-judge ──scores──▶ golden set ──runs in──▶ regression CI gate
+     ▲                                                   ▲
+     └──────────── production sampling &amp; incidents ──────┘  (adversarial cases added here)
+</code></pre>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Strength</th>
+<th>Cost / risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exact/structural</td>
+<td>Cheap, objective</td>
+<td>Only for closed tasks</td>
+</tr>
+<tr>
+<td>Golden + regression</td>
+<td>Catches drift, gateable</td>
+<td>Curation effort; must stay representative</td>
+</tr>
+<tr>
+<td>Adversarial</td>
+<td>Finds failure modes</td>
+<td>Needs creativity; never "complete"</td>
+</tr>
+<tr>
+<td>LLM-as-judge</td>
+<td>Scales, cheap-ish</td>
+<td>Bias; needs calibration</td>
+</tr>
+<tr>
+<td>Human</td>
+<td>Ground truth</td>
+<td>Slow, expensive</td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>No regression gate</strong> — silent quality drop after a model/prompt change.</li>
+<li><strong>Unrepresentative golden set</strong> — green evals, unhappy users. The set doesn't match
+  reality.</li>
+<li><strong>Trusting an uncalibrated judge</strong> — confident, biased scores.</li>
+<li><strong>Aggregate hides a cliff</strong> — average flat while a category collapses. Stratify to
+  catch it.</li>
+<li><strong>Stale evals</strong> — the set rots as the product evolves. Prune and grow it.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is there a version-controlled, representative, stratified golden set?</li>
+<li class="task todo">Do regression evals gate prompt/model/retrieval/infra changes in CI?</li>
+<li class="task todo">Do adversarial cases (injection, hallucination bait, format stress) run too?</li>
+<li class="task todo">Is any LLM judge calibrated against humans and checked for bias?</li>
+<li class="task todo">Do incidents and bugs get added back as permanent eval cases?</li>
+<li class="task todo">Do you report per-capability deltas, not just one average?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#observability">Observability</a></li>
+<li><a href="03-rag.html#retrieval-evals">Retrieval evals</a></li>
+<li><a href="02-reliable-outputs.html#structured-output">Structured output</a></li>
+<li><a href="01-inference-internals.html#quantization-formats">Quantization formats</a></li>
+<li><a href="06-strategy-tradeoffs.html#production-failure-modes">Production failure modes</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="observability"><div class="lesson-head"><span class="lesson-num">04.2</span><h2>LLM observability: traces, spans, tokens, latency, errors, and drift</h2></div><h2 id="tldr">TL;DR</h2>
+<p><a href="#evals">Evals</a> tell you if the system is correct <em>before</em> you ship. Observability
+tells you what it's doing <em>in production</em>. LLM observability is a first-class
+discipline because these systems fail silently and non-deterministically. You need
+end-to-end <strong>traces</strong> made of <strong>spans</strong>, with <strong>tokens</strong>, <strong>latency</strong> (split into
+TTFT/TPOT), <strong>errors</strong>, <strong>quality</strong>, and <strong>cost</strong> on every step. You also need
+<strong>drift</strong> detection to catch the slow regressions that no deploy caused. If you can't
+replay exactly what happened on a bad request, you can't fix it.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — AI fails silently. Wrong answers look exactly like right ones. Without traces, tokens, latency, and drift, you're operating blind, and you learn about problems from churn.</p>
+<p><strong>What it changes in your decisions</strong> — What you instrument, your incident-response plan, and how you detect slow quality decay.</p>
+<p><strong>Ask your eng team</strong> — <em>"Can we pull up exactly what happened on a specific bad request?"</em></p>
+<p><strong>Product risk if ignored</strong> — Quality drifts down for weeks with no alarm, you can't debug complaints, and you're flying blind.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>A single LLM request is a distributed transaction across many components: retrieval,
+rerank, model calls, tools, validation, repair. Borrow distributed-tracing ideas, but
+add the LLM-specific dimensions:</p>
+<pre><code>TRACE: &quot;answer support ticket #4821&quot;  (tenant=acme, feature=support_copilot)
+ ├─ span: retrieve         42ms   chunks=8  recall_proxy=...
+ ├─ span: rerank           18ms   kept=3
+ ├─ span: model.generate  910ms   ttft=210ms tpot=14ms in=3,100 out=180 tok  $0.0042
+ │    ├─ prompt (full context, redacted as needed)
+ │    └─ completion + finish_reason
+ ├─ span: validate         2ms    repairs=0
+ └─ span: tool.create_note 75ms   idempotency_key=... status=ok
+TOTAL 1.05s   $0.0046   status=ok
+</code></pre>
+<p>The trace is the unit of debugging. The span is the unit of measurement.</p>
+<h2 id="what-to-capture">What to capture</h2>
+<h3 id="traces-spans">Traces &amp; spans</h3>
+<ul>
+<li>One trace per request, and one span per meaningful step: retrieve, rerank, each model
+  call, each tool, validate, repair, route decision.</li>
+<li>Record inputs/outputs <strong>with privacy controls</strong>. Prompts and completions are gold for
+  debugging, but they may contain PII. Redact or tokenize them, and respect
+  <a href="05-safety-multitenancy.html#multi-tenant-isolation">tenant boundaries</a>.</li>
+<li>Capture the <em>decisions</em>: which model/route was chosen, why fallback fired, which
+  budget terminated an <a href="02-reliable-outputs.html#agent-guardrails">agent</a>.</li>
+</ul>
+<h3 id="tokens">Tokens</h3>
+<ul>
+<li>Input vs. output tokens per call. They cost differently and behave differently — see
+  <a href="01-inference-internals.html#prefill-vs-decode">prefill vs. decode</a>.</li>
+<li>Prompt-cache hit/miss (a cheap cost lever — see
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">caching</a>).</li>
+<li>Tokens are the raw material for <a href="#cost-attribution">cost attribution</a>.</li>
+</ul>
+<h3 id="latency">Latency</h3>
+<ul>
+<li><strong>Split it.</strong> Track TTFT (≈ prefill) and TPOT/inter-token (≈ decode) separately. A
+  single "latency" number hides which phase is slow.</li>
+<li>Queueing time vs. compute time; end-to-end including retrieval/tools.</li>
+<li>Report <strong>distributions (p50/p95/p99)</strong>, never just the mean. Tails are where SLOs and
+  <a href="01-inference-internals.html#kv-cache-management">preemption spikes</a> live.</li>
+</ul>
+<h3 id="errors">Errors</h3>
+<ul>
+<li>Provider errors (timeout, rate-limit, 5xx), validation/parse failures, repair
+  exhaustion, tool failures, budget terminations, refusals.</li>
+<li><strong>The hard part: silent errors.</strong> A grounded-looking hallucination throws no error.
+  Approximate quality online with proxy signals: validation pass rate, grounding
+  spot-checks, <a href="#evals">judge</a> sampling, and user thumbs/edits/retries.</li>
+</ul>
+<h3 id="drift">Drift</h3>
+<p>The regression that no deploy caused:</p>
+<ul>
+<li><strong>Input drift</strong> — query mix, length, language, new topics shift over time.</li>
+<li><strong>Output/quality drift</strong> — judge scores, refusal rate, format-validity, grounding
+  trending down.</li>
+<li><strong>Model drift</strong> — the provider updated weights underneath you, and behavior changes
+  with no code change.</li>
+<li><strong>Data/retrieval drift</strong> — corpus grows/ages; <a href="03-rag.html#retrieval-evals">recall</a>
+  decays.
+Detect drift by tracking these distributions over time and alerting on shifts. Also
+<strong>re-run evals on a schedule</strong>, not only at deploy.</li>
+</ul>
+<h2 id="from-signals-to-operations">From signals to operations</h2>
+<ul>
+<li><strong>Dashboards &amp; SLOs:</strong> latency (p95/p99 TTFT/TPOT), error rate, token/cost per
+  request, cache-hit rate, eval scores — per feature and tenant.</li>
+<li><strong>Alerts:</strong> on error spikes, cost spikes, cache-hit collapse, drift, budget-hit rate.</li>
+<li><strong>Trace-level debugging:</strong> jump from an alert or a user complaint to the exact trace,
+  with the full chain reconstructed.</li>
+<li><strong>Feed the loop.</strong> Sampled production traces become new <a href="#evals">eval</a> cases, and
+  observed failures become <a href="#evals">adversarial tests</a>. Observability and evals form
+  a cycle, not two silos.</li>
+</ul>
+<h2 id="guardrails-vs-evaluators">Guardrails vs. evaluators</h2>
+<p>Two production roles that get conflated because both "check outputs":</p>
+<ul>
+<li><strong>Guardrails</strong> run <strong>inline</strong>, per request, and can <em>block</em> the output. They check
+  for PII, policy violations, bad format, and obvious hallucination signals before the
+  user sees the output. They must be fast and cheap enough to sit on the critical path,
+  and they fail closed for the worst categories.</li>
+<li><strong>Evaluators</strong> run <strong>offline</strong> — in CI to gate changes, and over sampled production
+  traffic to measure quality trends. They can be slow, expensive, and thorough, because
+  no user is waiting.</li>
+</ul>
+<p>This distinction disciplines your architecture. An evaluator too slow or too expensive
+to run on every request is not a guardrail. A guardrail lightweight enough for the hot
+path is usually too crude to be your quality measurement. Using an evaluator to
+auto-<em>correct</em> outputs in production — grade, then regenerate on failure — is possible,
+but it pays latency and cost on every retry. Reserve it for high-stakes surfaces, and
+log every correction as an eval case.</p>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<table>
+<thead>
+<tr>
+<th>Capture more…</th>
+<th>Buys</th>
+<th>Costs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full prompt/completion logging</td>
+<td>Best debugging</td>
+<td>Storage, PII/privacy risk</td>
+</tr>
+<tr>
+<td>High sampling rate for judges</td>
+<td>Tight quality signal</td>
+<td>Extra model spend</td>
+</tr>
+<tr>
+<td>Fine-grained spans</td>
+<td>Pinpoint bottlenecks</td>
+<td>Instrumentation overhead</td>
+</tr>
+<tr>
+<td>Long retention</td>
+<td>Trend/drift analysis</td>
+<td>Cost, compliance scope</td>
+</tr>
+</tbody>
+</table>
+<p>Sample intelligently: trace everything cheaply (metrics), retain full payloads for a
+sample + all errors, and judge-score a representative slice.</p>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Mean-only latency</strong> — hides a terrible p99; users feel the tail.</li>
+<li><strong>No silent-error signal</strong> — hallucinations and quality drops invisible until users
+  churn.</li>
+<li><strong>Undetected drift</strong> — slow decay over weeks with no alarm because nothing was
+  trended.</li>
+<li><strong>PII in logs</strong> — debugging convenience becomes a compliance/leakage incident.</li>
+<li><strong>Untagged traces</strong> — can't slice by feature/tenant, so you can't localize a problem
+  or attribute cost.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is every request a trace with per-step spans (retrieve, model, tool, validate)?</li>
+<li class="task todo">Do you record input/output tokens, cache hits, TTFT, TPOT, cost per call?</li>
+<li class="task todo">Are latency and cost reported as p50/p95/p99 distributions?</li>
+<li class="task todo">Do you capture validation failures, repairs, refusals, and budget hits?</li>
+<li class="task todo">Is there an online proxy for <em>quality</em> (judge sampling, user signals)?</li>
+<li class="task todo">Do you trend input/output/model/data drift and alert on shifts?</li>
+<li class="task todo">Are traces tagged by feature and tenant, with PII redaction?</li>
+<li class="task todo">Do production traces feed back into the eval set?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#evals">Evals</a></li>
+<li><a href="#cost-attribution">Cost attribution</a></li>
+<li><a href="01-inference-internals.html#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="02-reliable-outputs.html#agent-guardrails">Agent guardrails</a></li>
+<li><a href="06-strategy-tradeoffs.html#production-failure-modes">Production failure modes</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="cost-attribution"><div class="lesson-head"><span class="lesson-num">04.3</span><h2>Cost attribution per feature, workflow, tenant, and user journey — not just per model</h2></div><h2 id="tldr">TL;DR</h2>
+<p>"Our LLM bill is $80k/month" is not an actionable number. To optimize, control, and
+price an AI product, you must attribute cost along the dimensions you make decisions on:
+<strong>which feature, which workflow, which tenant, which user journey</strong> is spending the
+tokens. Per-model spend is what the provider invoices. Per-<em>feature</em>/<em>tenant</em> spend
+tells you what to cache, route, cap, or bill. Cost attribution is a product and
+business capability, not just a finance line item.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — "What does this AI feature cost, and who's driving the spend?" is a core PM question. Per-tenant and per-feature cost is the foundation of pricing, packaging, and margin.</p>
+<p><strong>What it changes in your decisions</strong> — Pricing and plan limits, which tenants are unprofitable, and where optimization actually pays off.</p>
+<p><strong>Ask your eng team</strong> — <em>"Can we see cost per feature and per tenant — not just the total bill?"</em></p>
+<p><strong>Product risk if ignored</strong> — You price blind, a few power users quietly destroy margin, and you can't tell which feature to fix.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>Tokens are the currency, and every token is generated <em>for a reason</em>: a feature
+serving a workflow for a tenant during a user journey. If your <a href="#observability">traces</a>
+carry those tags, cost rolls up along any of them:</p>
+<pre><code>$ total
+ ├─ by feature      (support_copilot vs. search vs. summarize)
+ ├─ by workflow      (onboarding flow vs. report generation)
+ ├─ by tenant        (acme: $9k, globex: $40 — wildly uneven)
+ ├─ by user journey  (first 3 messages cost 5× the rest)
+ └─ by model/route   (what the invoice shows)
+</code></pre>
+<p>The provider gives you only the last row. You have to build the rest.</p>
+<h2 id="why-per-model-is-not-enough">Why per-model is not enough</h2>
+<ul>
+<li><strong>You can't optimize what you can't localize.</strong> A 30% cost cut might hide in <em>which</em>
+  feature's prompt is bloated, or <em>which</em> workflow loops too much. Neither is visible
+  at the model level.</li>
+<li><strong>Tenants are wildly uneven.</strong> In multi-tenant SaaS, a tiny fraction of tenants often
+  drives most spend. Without per-<a href="05-safety-multitenancy.html#multi-tenant-isolation">tenant</a>
+  cost, you can't find unprofitable accounts, set quotas, or price fairly.</li>
+<li><strong>Unit economics need a denominator.</strong> "Cost per resolved ticket," "per generated
+  report," "per active user" — these require attribution to the <em>unit</em>, not the model.</li>
+<li><strong>Runaway detection.</strong> A <a href="02-reliable-outputs.html#agent-guardrails">runaway agent</a> or
+  a <a href="01-inference-internals.html#prompt-vs-semantic-caching">cache-busting prefix</a> shows
+  up as a feature/tenant cost spike, but only if cost is sliced that way.</li>
+</ul>
+<h2 id="what-to-capture-per-call-then-roll-up">What to capture (per call, then roll up)</h2>
+<p>On every model/tool span, record:</p>
+<ul>
+<li><strong>Tokens:</strong> input and output <strong>separately</strong> (priced differently), plus
+  cache-read/cache-write tokens (cached input is much cheaper —
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">prompt caching</a>).</li>
+<li><strong>Model &amp; route</strong> chosen (and whether a <a href="02-reliable-outputs.html#model-routing">fallback/escalation</a>
+  fired — escalations are a cost driver).</li>
+<li><strong>Dimensional tags:</strong> feature, workflow step, tenant, user, request/journey id.</li>
+<li><strong>Derived cost:</strong> apply the price book (per-model, per-token-type) to the tokens.</li>
+</ul>
+<p>These are the same <a href="#observability">tags on your traces</a>. Cost attribution is an
+aggregation over instrumented spans, not a separate system.</p>
+<h2 id="dimensions-that-matter">Dimensions that matter</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Question it answers</th>
+<th>Decision it drives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Feature</strong></td>
+<td>Which capability costs most?</td>
+<td>Where to cache/route/optimize</td>
+</tr>
+<tr>
+<td><strong>Workflow</strong></td>
+<td>Which step burns tokens?</td>
+<td>Compress context, cut loops</td>
+</tr>
+<tr>
+<td><strong>Tenant</strong></td>
+<td>Who's expensive/unprofitable?</td>
+<td>Quotas, pricing, plan limits</td>
+</tr>
+<tr>
+<td><strong>User journey</strong></td>
+<td>Where in the funnel is spend?</td>
+<td>UX changes, cheap paths early</td>
+</tr>
+<tr>
+<td><strong>Model/route</strong></td>
+<td>What's the per-route blend?</td>
+<td>Routing strategy, vendor mix</td>
+</tr>
+</tbody>
+</table>
+<h2 id="from-attribution-to-control">From attribution to control</h2>
+<p>Attribution is the input. Control is the point:</p>
+<ul>
+<li><strong>Budgets &amp; quotas</strong> per tenant/feature; alert and throttle on breach (ties to
+  <a href="02-reliable-outputs.html#agent-guardrails">agent budgets</a>).</li>
+<li><strong>Routing decisions.</strong> Push cheap traffic to small models, and reserve big models for
+  hard cases (<a href="02-reliable-outputs.html#model-routing">routing</a>). Measure this by
+  cost-per-route.</li>
+<li><strong>Caching ROI.</strong> Quantify savings from prompt/semantic caching, and protect cache-hit
+  rate as a cost metric.</li>
+<li><strong>Context discipline.</strong> Target the bloated prompts attribution exposes
+  (<a href="00-foundations.html#context-engineering">context engineering</a>).</li>
+<li><strong>Compression &amp; summarization.</strong> Prompt-compression tools (LLMLingua-class, up to
+  ~20x on long prompts with little quality loss) and summarizing multi-turn
+  conversation history shrink exactly the token lines attribution flags first.</li>
+<li><strong>Serving efficiency.</strong> For self-hosted models, the runtime itself is a lever.
+  Optimized inference engines (vLLM, TGI) and inference-specialized hardware change the
+  per-token price without touching the product.</li>
+<li><strong>Pricing &amp; packaging.</strong> Set plan limits and prices from real unit economics, not
+  guesses.</li>
+</ul>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<ul>
+<li><strong>Tag granularity vs. overhead</strong> — more dimensions mean richer slicing but more
+  instrumentation and cardinality cost. Tag the dimensions you actually <em>decide</em> on.</li>
+<li><strong>Real-time vs. batch</strong> — live cost dashboards enable fast reaction but cost more to
+  run than daily rollups. Match the choice to how fast you need to act.</li>
+<li><strong>Cost vs. quality vs. latency</strong> — the cheapest route isn't always acceptable.
+  Attribution lets you optimize cost <em>within</em> quality/latency SLOs, the theme of
+  <a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">stack tradeoffs</a>.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Flat bill, no slices</strong> — a cost spike, no idea which feature/tenant caused it.</li>
+<li><strong>Ignoring cache-read pricing</strong> — over-reporting cost or missing the value of caching.</li>
+<li><strong>Input/output lumped together</strong> — misreads where spend really is (long context vs.
+  long generation need different fixes).</li>
+<li><strong>No per-tenant view</strong> — unprofitable accounts hide; pricing is guesswork.</li>
+<li><strong>Attribution without action</strong> — pretty dashboards, no budgets/routing changes.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do spans record input/output (and cache-read/write) tokens separately?</li>
+<li class="task todo">Is every call tagged with feature, workflow, tenant, and journey?</li>
+<li class="task todo">Can you produce cost per tenant and per unit (ticket, report, active user)?</li>
+<li class="task todo">Do you track cost-per-route and escalation rate?</li>
+<li class="task todo">Are there per-tenant/feature budgets with alerts and throttling?</li>
+<li class="task todo">Is prompt-cache hit rate tracked as a cost metric?</li>
+<li class="task todo">Does attribution actually drive routing/caching/pricing decisions?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#observability">Observability</a></li>
+<li><a href="01-inference-internals.html#prompt-vs-semantic-caching">Prompt vs. semantic caching</a></li>
+<li><a href="02-reliable-outputs.html#model-routing">Model routing</a></li>
+<li><a href="05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a></li>
+<li><a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">Inference-stack tradeoffs</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section>
+  <section class="recap" id="recap"><div class="recap-head"><span class="recap-ic">📌</span><h2>Recap &amp; real-world examples</h2></div><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
+<p><strong>Klarna's AI assistant (2024).</strong> Klarna reported its OpenAI-powered assistant handled
+<strong>~two-thirds of customer-service chats</strong> within months — work it equated to hundreds of
+full-time agents. 🎯 <em>PM takeaway:</em> at that volume you cannot operate on vibes.
+<a href="#cost-attribution">Cost attribution</a> (what does each resolved chat cost?) and
+continuous <a href="#observability">quality monitoring</a> make a number like that safe rather
+than terrifying.</p>
+<p><strong>"Did the model change?" (the GPT-4 drift debates).</strong> Practitioners repeatedly reported
+that hosted models <em>behaved differently over time</em> on the same prompts. This sparked
+public debate about silent regressions. 🎯 <em>PM takeaway:</em> you can't control the
+provider's weights, so you need <strong>your own</strong> <a href="#evals">regression evals</a>. Teams with a
+golden set find out from CI. Teams without one find out from churn.</p>
+<p><strong>The LLM-observability category exists now.</strong> LangSmith, Langfuse, Arize Phoenix,
+Braintrust, and others turned <a href="#observability">traces, spans, token/cost accounting, and eval runs</a>
+into a standard tooling layer. 🎯 <em>PM takeaway:</em> this is no longer exotic. "We have no
+tracing or evals" is now a visible maturity gap, not a defensible default.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The decision it drives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#evals">Evals</a></td>
+<td>The eval set <em>is</em> the product spec for a stochastic system</td>
+<td>Release gates; how you compare models</td>
+</tr>
+<tr>
+<td><a href="#observability">Observability</a></td>
+<td>LLMs fail silently; you must instrument quality, not just errors</td>
+<td>Incident response; drift detection</td>
+</tr>
+<tr>
+<td><a href="#cost-attribution">Cost attribution</a></td>
+<td>Per-feature/tenant cost, not just the total bill</td>
+<td>Pricing, packaging, where to optimize</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> <strong>you cannot operate what you cannot measure.</strong> Evals tell you an
+output is <em>correct</em> before you ship. Observability tells you the system is <em>working</em>
+while it runs. Cost attribution tells you what it's <em>costing</em> and who's driving it. All
+three feed each other: production traces become new eval cases, and incidents become
+adversarial tests.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"If quality dropped 10% tomorrow, would we find out from our
+dashboards — or from angry users three weeks later?"</em></p>
+</blockquote>
+<hr />
+<p>← Back to <a href="04-evals-observability.html">module index</a> · → Next module: <a href="05-safety-multitenancy.html">05 · Safety &amp; Multi-tenancy</a></p><a class="totop" href="#top">↑ back to top</a></section>
+  <div class="pagenav"><a class="navcard prev" href="03-rag.html"><span class="lbl">← Previous</span><span class="ttl">03 · RAG &amp; retrieval</span></a><a class="navcard next" href="05-safety-multitenancy.html"><span class="lbl">→ Next</span><span class="ttl">05 · Safety &amp; multi-tenancy</span></a></div><footer class="foot">Educational content · part of the <a href="index.html">AI engineering</a> curriculum for AI-native PMs.</footer>
+  </main></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>(function(){var root=document.getElementById('interactive');var $=function(id){return root.querySelector(id);};
+var SC={
+healthy:{lat:1040,cost:0.0046,tok:'3,100 / 180',spans:[['retrieve',0,42,'8 chunks · vector+BM25',false],['rerank',42,18,'kept 3 of 8',false],['model.generate',60,900,'ttft 210ms · 180 out tok · $0.0042',false],['validate',960,4,'schema OK · 0 repairs',false],['tool.create_note',964,76,'idempotent · 200 OK',false]]},
+slow:{lat:1680,cost:0.0048,tok:'3,100 / 180',spans:[['retrieve',0,690,'cold index · 690ms (!)',true],['rerank',690,18,'kept 3 of 8',false],['model.generate',708,900,'ttft 210ms · 180 out tok',false],['validate',1608,4,'schema OK',false],['tool.create_note',1612,68,'200 OK',false]]},
+repair:{lat:1890,cost:0.0079,tok:'3,100 / 410',spans:[['retrieve',0,42,'8 chunks',false],['rerank',42,18,'kept 3',false],['model.generate',60,900,'180 tok · returned malformed JSON',true],['validate',960,5,'✗ missing field “priority”',true],['model.generate#2',965,840,'repair · 190 tok · valid',false],['validate#2',1805,4,'schema OK',false],['tool.create_note',1809,80,'200 OK',false]]},
+timeout:{lat:4120,cost:0.0050,tok:'3,100 / 180',spans:[['retrieve',0,42,'8 chunks',false],['rerank',42,18,'kept 3',false],['model.generate',60,900,'180 tok',false],['validate',960,4,'schema OK',false],['tool.create_note',964,3000,'⏱ timeout 3s → fallback',true]]}};
+function render(key){var s=SC[key],max=s.lat,rows=$('#tr-rows');rows.innerHTML='';
+s.spans.forEach(function(sp){var row=document.createElement('div');row.className='iw-span';
+var name=document.createElement('span');name.className='sn';name.textContent=sp[0];
+var wrap=document.createElement('span');wrap.className='iw-spanbar-wrap';
+var bar=document.createElement('span');bar.className='iw-spanbar';bar.style.left=(sp[1]/max*100)+'%';bar.style.width=Math.max(1.2,sp[2]/max*100)+'%';if(sp[4])bar.style.background='#D1242F';
+wrap.appendChild(bar);row.appendChild(name);row.appendChild(wrap);
+row.onclick=function(){rows.querySelectorAll('.iw-span').forEach(function(x){x.classList.remove('sel');});row.classList.add('sel');
+$('#tr-sel').innerHTML='<strong>'+sp[0]+'</strong> · '+sp[2]+' ms — '+sp[3];};
+rows.appendChild(row);});
+$('#tr-lat').textContent=(s.lat/1000).toFixed(2)+' s';$('#tr-cost').textContent='$'+s.cost.toFixed(4);$('#tr-tok').textContent=s.tok;
+$('#tr-sel').innerHTML='Click a span to inspect tokens, latency &amp; cost.';}
+root.querySelectorAll('[data-s]').forEach(function(b){b.onclick=function(){root.querySelectorAll('[data-s]').forEach(function(x){x.classList.remove('active');});b.classList.add('active');render(b.dataset.s);};});
+render('healthy');})();</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=content%2F04-evals-observability%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="ai/04-evals-observability.html"</script><script defer src="../assets/glossary.js"></script></body></html>
