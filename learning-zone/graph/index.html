@@ -112,6 +112,23 @@
   }
 </style></head>
 <body>
+<div id="fd-lz-bar" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<style>
+  /* This page's own fixed header/canvas normally anchor to the viewport
+     top; offset them below the injected wayfinding bar above so the two
+     don't overlap. */
+  .bar{ top:44px !important; }
+  #cv, #cv3d{ top:44px !important; }
+  #panel{ top:44px !important; }
+</style>
+
 <header class="bar">
   <a class="back" href="../index.html">← All courses</a>
   <span class="brand">Knowledge graph</span>
