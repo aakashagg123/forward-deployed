@@ -703,7 +703,7 @@ function loadScript(src, timeoutMs) {
 (async function boot() {
   if (!canTry3D()) { boot2D(); return; }
   try {
-    await loadScript("https://unpkg.com/3d-force-graph@1", 4000);
+    await loadScript("3d-force-graph.min.js", 4000);
     if (typeof window.ForceGraph3D !== "function") throw new Error("3d-force-graph global missing");
     boot3D();
   } catch (e) {
