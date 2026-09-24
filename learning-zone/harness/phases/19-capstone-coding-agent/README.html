@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en"><head><link rel="icon" type="image/png" sizes="32x32" href="../../../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../../../assets/favicon-180.png"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 19 — Capstone: build your own coding agent · Harness engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;--surface:#ffffff;--ink:#1f2328;--muted:#59636e;
+    --accent:#0969da;--accent-deep:#0550ae;--line:#d1d9e0;--code-bg:#f6f8fa;--soft:#f6f8fa;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;
+    font-size:16px;line-height:1.7;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"cv11","ss01","ss03";
+    overflow-x:hidden}
+  img,svg{max-width:100%;height:auto}
+  .top{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.96);
+    box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03);
+    border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;gap:20px;font-size:.9rem}
+  .top a{color:var(--ink);text-decoration:none;font-weight:500}
+  .top a:hover{color:var(--accent-deep)}
+  .top .brand{color:var(--accent-deep);font-weight:600}
+  .menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+    border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);
+    font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0}
+  .menu-btn:hover{border-color:var(--accent)}
+  #sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+    transition:opacity .2s;z-index:34}
+  #sb-scrim.open{opacity:1;visibility:visible}
+  .layout{display:grid;grid-template-columns:268px minmax(0,1fr)}
+  .layout.no-sidebar{grid-template-columns:minmax(0,1fr)}
+  .sidebar{border-right:1px solid var(--line);padding:26px 16px 60px;font-size:.86rem;
+    max-height:calc(100vh - 49px);overflow-y:auto;position:sticky;top:49px;align-self:start}
+  .sidebar .sb-top{display:block;color:var(--muted);font-weight:600;font-size:.78rem;
+    letter-spacing:.02em;padding:6px 10px;margin-bottom:8px}
+  .sb-phase{margin-bottom:2px}
+  .sb-phase-title{display:block;padding:7px 10px;border-radius:6px;color:var(--ink);
+    font-weight:500;line-height:1.35}
+  .sb-phase-title:hover{background:var(--soft);text-decoration:none}
+  .sb-phase.active > .sb-phase-title{color:var(--accent-deep);font-weight:600;background:var(--soft)}
+  .sb-lessons{display:flex;flex-direction:column;margin:2px 0 10px;padding-left:10px;
+    border-left:1px solid var(--line)}
+  .sb-lesson{display:block;padding:6px 12px;border-radius:6px;color:var(--muted);
+    font-size:.85rem;line-height:1.35}
+  .sb-lesson:hover{background:var(--soft);color:var(--ink);text-decoration:none}
+  .sb-lesson.current{color:var(--accent-deep);font-weight:600;background:#ddf4ff}
+  main{max-width:760px;margin:0 auto;padding:48px 24px 64px}
+  .layout main{margin:0}
+  .layout .lessonnav{margin:8px 0 64px;max-width:760px}
+  @media (max-width:880px){
+    .layout{grid-template-columns:minmax(0,1fr)}
+    .menu-btn{display:inline-flex}
+    .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+      width:280px;max-width:86vw;background:var(--bg);
+      box-shadow:12px 0 40px rgba(31,35,40,.16);
+      transform:translateX(-100%);transition:transform .22s ease;
+      max-height:100%;padding:26px 16px 60px}
+    .sidebar.open{transform:translateX(0)}
+    .layout main{padding:32px 20px 40px}
+  }
+  h1,h2,h3,h4{line-height:1.25;letter-spacing:-0.01em;font-weight:600}
+  h1{font-size:2.2rem;margin:0 0 .6em}
+  h2{font-size:1.5rem;margin-top:2.2em;padding-bottom:.35em;border-bottom:1px solid var(--line)}
+  h3{font-size:1.18rem;margin-top:1.8em}
+  a{color:var(--accent);text-decoration:none;text-underline-offset:3px}
+  a:hover{text-decoration:underline}
+  code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;background:var(--soft);color:var(--ink);
+    padding:.12em .4em;border-radius:5px;font-size:.86em}
+  pre{background:var(--code-bg);color:var(--ink);padding:16px 18px;border-radius:6px;overflow:auto;
+    font-size:.86em;line-height:1.55;border:1px solid var(--line)}
+  pre code{background:none;color:inherit;padding:0;font-size:1em}
+  pre.mermaid{background:#ffffff;color:var(--ink);
+    border:1px solid var(--line);border-radius:6px;padding:26px 20px;margin:26px 0;
+    text-align:center;overflow-x:auto}
+  pre.mermaid svg{max-width:100%;height:auto;display:inline-block;
+    shape-rendering:geometricPrecision}
+  .mm-hint{position:sticky;left:8px;display:block;width:max-content;
+    font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;
+    border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}
+  table{border-collapse:collapse;width:100%;margin:1.4em 0;font-size:.92em}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600}
+  tr:nth-child(even) td{background:var(--soft)}
+  blockquote{border-left:.25em solid var(--line);margin:1.4em 0;padding:0 1em;
+    color:var(--muted);background:none}
+  blockquote p{margin:.3em 0}
+  details{background:var(--surface);border:1px solid var(--line);border-radius:6px;
+    padding:12px 18px;margin:.8em 0}
+  summary{cursor:pointer;font-weight:600;color:var(--accent-deep)}
+  hr{border:none;border-top:1px solid var(--line);margin:2.4em 0}
+  ::selection{background:#ddf4ff}
+  .lessonnav{max-width:760px;margin:8px auto 64px;padding:24px;
+    display:flex;gap:14px;flex-wrap:wrap}
+  .lessonnav a{flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);
+    border-radius:6px;padding:14px 16px;font-size:.92rem;font-weight:500;color:var(--ink);
+    transition:border-color .15s}
+  .lessonnav a:hover{border-color:var(--accent);text-decoration:none}
+  .lessonnav .up{flex:0 0 auto;text-align:center}
+  .lessonnav .nx{text-align:right}
+  .lessonnav .lbl{display:block;color:var(--muted);font-size:.72rem;font-weight:600;
+    letter-spacing:.03em;margin-bottom:3px}
+  /* phone-first: high readability on iPhone-class widths */
+  @media (max-width:600px){
+    body{font-size:16.5px;line-height:1.72}
+    .top{padding:12px 16px;gap:14px;font-size:.86rem}
+    main{padding:28px 18px 48px}
+    h1{font-size:1.85rem;line-height:1.18}
+    h2{font-size:1.32rem;margin-top:1.8em}
+    h3{font-size:1.12rem}
+    pre{padding:14px 14px;font-size:.82em;border-radius:10px}
+    code{word-break:break-word}
+    /* wide tables scroll instead of breaking the page */
+    main table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      white-space:nowrap;font-size:.86em}
+    blockquote{margin:1.1em 0;padding:.5em 1em}
+    .lessonnav{flex-direction:column;gap:10px;margin:4px auto 48px;padding:20px 18px}
+    .lessonnav a{width:100%}
+    .lessonnav .up{order:3}
+    .lessonnav .nx{text-align:left}
+  }
+</style></head><body>
+<div class="top"><button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a href="../../../index.html">← All courses</a><a class="brand" href="../../index.html">Harness engineering</a></div>
+<div id="sb-scrim"></div>
+<div class="layout">
+<nav class="sidebar" id="sbNav"><a class="sb-top" href="../../index.html">← Track overview</a><div class="sb-phase"><a class="sb-phase-title" href="../00-setup-and-tooling/README.html">Phase 00 — Setup &amp; tooling</a></div><div class="sb-phase"><a class="sb-phase-title" href="../01-llm-io-foundations/README.html">Phase 01 — LLM I/O foundations</a></div><div class="sb-phase"><a class="sb-phase-title" href="../02-the-agent-loop/README.html">Phase 02 — The agent loop</a></div><div class="sb-phase"><a class="sb-phase-title" href="../03-tool-engineering/README.html">Phase 03 — Tool engineering</a></div><div class="sb-phase"><a class="sb-phase-title" href="../04-context-engineering/README.html">Phase 04 — Context engineering</a></div><div class="sb-phase"><a class="sb-phase-title" href="../05-prompt-instruction-architecture/README.html">Phase 05 — Prompt &amp; instruction architecture</a></div><div class="sb-phase"><a class="sb-phase-title" href="../06-file-and-code-operations/README.html">Phase 06 — File &amp; code operations</a></div><div class="sb-phase"><a class="sb-phase-title" href="../07-shell-and-sandbox-execution/README.html">Phase 07 — Shell &amp; sandbox execution</a></div><div class="sb-phase"><a class="sb-phase-title" href="../08-permissions-and-safety-gating/README.html">Phase 08 — Permissions &amp; safety gating</a></div><div class="sb-phase"><a class="sb-phase-title" href="../09-memory-and-persistence/README.html">Phase 09 — Memory &amp; persistence</a></div><div class="sb-phase"><a class="sb-phase-title" href="../10-subagents-and-orchestration/README.html">Phase 10 — Subagents &amp; orchestration</a></div><div class="sb-phase"><a class="sb-phase-title" href="../11-planning-and-task-management/README.html">Phase 11 — Planning &amp; task management</a></div><div class="sb-phase"><a class="sb-phase-title" href="../12-mcp-and-extensibility/README.html">Phase 12 — MCP &amp; extensibility</a></div><div class="sb-phase"><a class="sb-phase-title" href="../13-retrieval-and-codebase-understanding/README.html">Phase 13 — Retrieval &amp; codebase understanding</a></div><div class="sb-phase"><a class="sb-phase-title" href="../14-reliability-engineering/README.html">Phase 14 — Reliability engineering</a></div><div class="sb-phase"><a class="sb-phase-title" href="../15-evals-and-testing-the-harness/README.html">Phase 15 — Evals &amp; testing the harness</a></div><div class="sb-phase"><a class="sb-phase-title" href="../16-observability-and-cost/README.html">Phase 16 — Observability &amp; cost</a></div><div class="sb-phase"><a class="sb-phase-title" href="../17-security-and-alignment/README.html">Phase 17 — Security &amp; alignment</a></div><div class="sb-phase"><a class="sb-phase-title" href="../18-production-and-deployment/README.html">Phase 18 — Production &amp; deployment</a></div><div class="sb-phase active"><a class="sb-phase-title" href="README.html">Phase 19 — Capstone: build your own coding agent</a><div class="sb-lessons"><a class="sb-lesson" href="01-minimal-agent/docs/en.html">Minimal coding agent (loop + tools + files)</a><a class="sb-lesson" href="02-context-memory-permissions/docs/en.html">Add context, memory &amp; permissions</a><a class="sb-lesson" href="03-subagents-mcp-retrieval/docs/en.html">Add subagents, MCP &amp; retrieval</a><a class="sb-lesson" href="04-evals-observability-ship/docs/en.html">Add evals, observability &amp; ship it</a></div></div></nav>
+<div><main id="content">Loading…</main>
+
+</div>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({startOnLoad:false, theme:'base', securityLevel:'loose',
+  themeVariables:{
+    background:'#ffffff',
+    primaryColor:'#f6f8fa', primaryTextColor:'#1f2328', primaryBorderColor:'#d1d9e0',
+    secondaryColor:'#eaeef2', secondaryBorderColor:'#d1d9e0', secondaryTextColor:'#1f2328',
+    tertiaryColor:'#ffffff', tertiaryBorderColor:'#d1d9e0', tertiaryTextColor:'#1f2328',
+    lineColor:'#59636e', textColor:'#1f2328', nodeTextColor:'#1f2328',
+    clusterBkg:'#f6f8fa', clusterBorder:'#d1d9e0', edgeLabelBackground:'#ffffff',
+    actorBkg:'#ddf4ff', actorBorder:'#0969da', actorTextColor:'#1f2328',
+    actorLineColor:'#d1d9e0', signalColor:'#59636e', signalTextColor:'#1f2328',
+    noteBkgColor:'#f6f8fa', noteBorderColor:'#d1d9e0',
+    activationBkgColor:'#eaeef2', activationBorderColor:'#0969da',
+    fontFamily:'Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif', fontSize:'15.5px'},
+  flowchart:{useMaxWidth:false, htmlLabels:true, curve:'basis',
+    nodeSpacing:36, rankSpacing:46, diagramPadding:12},
+  sequence:{useMaxWidth:false, mirrorActors:false, actorMargin:56, messageMargin:34},
+  quadrantChart:{useMaxWidth:false, chartWidth:640, chartHeight:440,
+    quadrantLabelFontSize:13, pointLabelFontSize:12, pointRadius:4, titleFontSize:16},
+  themeCSS:'.node rect{rx:9;ry:9} .cluster rect{rx:12;ry:12} '+
+    '.edgeLabel{border-radius:6px;padding:1px 5px} .label{font-weight:500} '+
+    '.cluster-label .nodeLabel{font-weight:600;letter-spacing:.02em}'
+});
+const md = await (await fetch('./README.md')).text();
+// protect mermaid fences so marked doesn't treat them as code
+const blocks=[]; const stripped = md.replace(/```mermaid\n([\s\S]*?)```/g,(m,c)=>{
+  blocks.push(c); return `<pre class="mermaid">__MERMAID_${blocks.length-1}__</pre>`;});
+let html = marked.parse(stripped);
+html = html.replace(/__MERMAID_(\d+)__/g,(m,i)=>blocks[+i]);
+const el = document.getElementById('content'); el.innerHTML = html;
+// rewrite intra-site .md links to their .html viewers. AI-engineering lessons
+// deploy under ai/<module>.html#<lesson> (not content/), so remap those first.
+el.querySelectorAll('a[href]').forEach(a=>{
+  let h=a.getAttribute('href');
+  if(!h || /^https?:|^#/.test(h)) return;
+  h = h.replace(/(^|\/)content\/(\d\d-[\w-]+)\/README\.md/,'$1ai/$2.html')
+       .replace(/(^|\/)content\/(\d\d-[\w-]+)\/([\w-]+)\.md/,'$1ai/$2.html#$3')
+       .replace(/\.md(#|$)/,'.html$1');
+  a.setAttribute('href', h);
+});
+await mermaid.run({querySelector:'pre.mermaid'});
+document.querySelectorAll('pre.mermaid svg').forEach(s=>{
+  const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+  const cw=s.parentElement.clientWidth||0;
+  if(cw&&w>cw*1.6){s.style.maxWidth='none';
+    const h=document.createElement('span');h.className='mm-hint';
+    h.textContent='⟷ scroll';s.parentElement.insertBefore(h,s);}
+});
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../../../graph/index.html?focus=harness-engineering%2Fphases%2F19-capstone-coding-agent%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../../../assets/glossary.css"><script>window.__glossRoot="../../../";window.__glossPage="harness/phases/19-capstone-coding-agent/README.html"</script><script defer src="../../../assets/glossary.js"></script></body></html>

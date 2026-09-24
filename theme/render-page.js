@@ -266,7 +266,11 @@ export function renderLanding({ site, spaces, landing, latestBook }) {
           <p>${escapeHtml(s.blurb)}</p>
         </a>`,
     )
-    .join('');
+    .join('') + `
+        <a href="/learning-zone/">
+          <h4>Learning zone</h4>
+          <p>A 19-track curriculum on AI engineering, built for product leaders who own AI features.</p>
+        </a>`;
 
   const jsonLd = [
     {

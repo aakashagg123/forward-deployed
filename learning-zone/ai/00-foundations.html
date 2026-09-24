@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>00 · Foundations — AI engineering for PMs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+</style>
+</head>
+<body><header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
+  <nav class="topnav"><a href="00-foundations.html">00</a><a href="01-inference-internals.html">01</a><a href="02-reliable-outputs.html">02</a><a href="03-rag.html">03</a><a href="04-evals-observability.html">04</a><a href="05-safety-multitenancy.html">05</a><a href="06-strategy-tradeoffs.html">06</a></nav>
+</header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink active" href="00-foundations.html"><span class="num">00</span>Foundations</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#harness-engineering">Harness engineering, not just prompt engineering</a><a href="#context-engineering">Context engineering, not just long prompts</a><a href="#infra-not-demos">Shipping LLM systems as infrastructure, not demos</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Module 00</span>
+    <h1>Foundations</h1>
+    <p class="lede">The mindset shift from “writing prompts” to “engineering systems.”</p>
+    <div class="hero-meta">3 lessons · interactive demo · every lesson includes a
+      <strong>🎯 For the AI-native PM</strong> briefing</div>
+  </div>
+  <div class="intro"><p>The hardest part of AI engineering is not the model. It is everything <em>around</em> the
+model: the control flow, the context you feed it, and the validation you wrap it
+in. Operational discipline is what turns a clever demo into a system people can
+depend on.</p>
+<p>This module establishes the three mindset shifts that the rest of the curriculum
+assumes:</p>
+<ol>
+<li><strong><a href="#harness-engineering">Harness engineering, not just prompt engineering</a></strong>
+   — the value lives in the code around the model, not only the words you send it.</li>
+<li><strong><a href="#context-engineering">Context engineering, not just long prompts</a></strong>
+   — managing the context window is an active engineering problem, not "paste more."</li>
+<li><strong><a href="#infra-not-demos">Shipping LLM systems as infrastructure, not demos</a></strong>
+   — reliability, observability, and cost are features, not afterthoughts.</li>
+</ol>
+<p>If you internalize only one idea from this whole repository, make it this: <strong>a
+production LLM feature is a distributed system with a stochastic component in the
+middle.</strong> Engineer it like one.</p>
+<h2>Connects to other tracks</h2>
+<ul>
+<li><a href="../agentic-ai/context-and-memory.html">Context &amp; memory in agents</a> — the same curation discipline inside the loop.</li>
+<li><a href="../harness/phases/04-context-engineering/README.html">Context engineering in the harness</a> — budgeting and assembling context by hand.</li>
+<li><a href="../technical-product-sense/technical-sense-for-ai.html">Technical sense for AI systems</a> — the PM-altitude view of the same stack.</li>
+</ul>
+<p><strong>📌 Close out the module:</strong> <a href="#recap">Recap &amp; real-world examples</a> — war stories from production plus the key takeaways.</p>
+<hr /></div>
+  <nav class="toc"><div class="toc-h">In this module</div><a href="#interactive"><span>◆</span>Interactive demo</a><a href="#harness-engineering"><span>00.1</span>Harness engineering, not just prompt engineering</a><a href="#context-engineering"><span>00.2</span>Context engineering, not just long prompts</a><a href="#infra-not-demos"><span>00.3</span>Shipping LLM systems as infrastructure, not demos</a><a href="#recap"><span>📌</span>Recap &amp; real-world examples</a></nav>
+  <section class="interactive" id="interactive"><div class="iw-head"><span class="tag">Interactive</span><h3>Harness vs. prompt — what catches a bad model call?</h3></div><div class="iw-body"><p class="iw-note" style="margin-top:0">The model is one fast, unreliable function call. Watch what the <strong>harness</strong> around it does when the model misbehaves — and what happens without it.</p>
+<div class="iw-btns">
+  <button class="iw-btn primary" id="hz-good">▶ Run a good call</button>
+  <button class="iw-btn" id="hz-bad">▶ Run a bad call (model returns garbage)</button>
+  <label class="iw-toggle" style="margin-left:6px"><input type="checkbox" id="hz-harness" checked> Harness enabled</label>
+</div>
+<div class="iw-stages" id="hz-stages"></div>
+<div class="iw-out"><div class="iw-verdict" id="hz-verdict">Ready.</div><div class="iw-note" id="hz-detail">Pick a scenario above.</div></div></div></section>
+  <section class="lesson" id="harness-engineering"><div class="lesson-head"><span class="lesson-num">00.1</span><h2>Harness engineering, not just prompt engineering</h2></div><h2 id="tldr">TL;DR</h2>
+<p>Prompt engineering optimizes the <em>string</em> you send the model. Harness engineering
+optimizes the <em>system</em> that sends it: retries, validators, tool wiring, budgets,
+fallbacks, caching, and observability. In production, the harness is where most of
+your reliability — and most of your bugs — actually live. A great prompt inside a
+naive harness is fragile. An average prompt inside a strong harness ships.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — The reliability your users feel comes from the system <em>around</em> the model, not the prompt inside it. "Improve the prompt" is rarely your highest-leverage roadmap item. The work that actually moves retention is harness work — validation, fallbacks, budgets, routing.</p>
+<p><strong>What it changes in your decisions</strong> — How you scope "AI quality" epics, where you spend engineering cycles, and what you can credibly promise in an SLA.</p>
+<p><strong>Ask your eng team</strong> — <em>"If the model returns garbage on a single call, what does the user actually see?"</em></p>
+<p><strong>Product risk if ignored</strong> — You ship a dazzling demo, then burn quarters firefighting reliability you never put on the roadmap.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>Think of the model as a single, fast, unreliable, stateless function call:</p>
+<pre><code>output = model(context)   // non-deterministic, occasionally wrong, no memory
+</code></pre>
+<p>Everything that makes that call <em>useful and safe</em> is the harness:</p>
+<pre><code>result = harness(input):
+    context   = assemble_context(input)        # context engineering
+    raw       = call_model(context)            # the easy part
+    parsed    = validate_and_repair(raw)       # structured output
+    effects   = execute_tools(parsed)          # function calling, idempotency
+    guarded   = enforce_budgets(...)           # loop/tool budgets
+    observed  = trace_everything(...)          # spans, tokens, cost
+    return    fallback_if_needed(guarded)      # routing, degraded mode
+</code></pre>
+<p>Each of those lines is a lesson elsewhere in this repo. The point of <em>this</em> lesson
+is that they are <strong>one discipline</strong>, and that discipline — not prompt wording — is
+what separates a demo from a service.</p>
+<h2 id="why-the-harness-dominates-in-production">Why the harness dominates in production</h2>
+<ul>
+<li><strong>Models are stochastic.</strong> The same input can produce a valid result once and a
+  malformed one the next time. Only the harness can make the <em>system</em> deterministic
+  enough to depend on (via validation, retries, and fallbacks).</li>
+<li><strong>Models are stateless.</strong> Memory, history, scratchpads, and tool results all live
+  in the harness. What the model "knows" on any given call is whatever your harness
+  decided to put in the context.</li>
+<li><strong>Models don't have side effects — your harness does.</strong> The moment a tool call
+  writes to a database, sends an email, or moves money, correctness becomes an
+  engineering property (see <a href="02-reliable-outputs.html#function-calling">idempotency</a>),
+  not a prompting property.</li>
+<li><strong>Models don't have SLAs — your service does.</strong> Latency, availability, and cost
+  targets are met by <a href="02-reliable-outputs.html#model-routing">routing</a>,
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">caching</a>, and
+  <a href="01-inference-internals.html#batching-and-paged-attention">batching</a> — all harness.</li>
+</ul>
+<h2 id="what-lives-in-a-serious-harness">What lives in a serious harness</h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Harness responsibility</th>
+<th>Lesson</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input shaping</td>
+<td>Assemble, compress, order context</td>
+<td><a href="#context-engineering">Context engineering</a></td>
+</tr>
+<tr>
+<td>Output trust</td>
+<td>Schema validation + repair + fallback</td>
+<td><a href="02-reliable-outputs.html#structured-output">Structured output</a></td>
+</tr>
+<tr>
+<td>Side effects</td>
+<td>Tool contracts, arg validation, idempotency</td>
+<td><a href="02-reliable-outputs.html#function-calling">Function calling</a></td>
+</tr>
+<tr>
+<td>Termination</td>
+<td>Loop budgets, tool budgets, stop conditions</td>
+<td><a href="02-reliable-outputs.html#agent-guardrails">Agent guardrails</a></td>
+</tr>
+<tr>
+<td>Availability</td>
+<td>Routing + graceful fallback</td>
+<td><a href="02-reliable-outputs.html#model-routing">Model routing</a></td>
+</tr>
+<tr>
+<td>Truth</td>
+<td>Evals + regression gates</td>
+<td><a href="04-evals-observability.html#evals">Evals</a></td>
+</tr>
+<tr>
+<td>Operability</td>
+<td>Traces, spans, drift detection</td>
+<td><a href="04-evals-observability.html#observability">Observability</a></td>
+</tr>
+<tr>
+<td>Economics</td>
+<td>Per-feature/tenant cost attribution</td>
+<td><a href="04-evals-observability.html#cost-attribution">Cost attribution</a></td>
+</tr>
+<tr>
+<td>Safety</td>
+<td>Injection defense, permission boundaries</td>
+<td><a href="05-safety-multitenancy.html#safety-engineering">Safety engineering</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="failure-modes-when-teams-over-invest-in-prompts-and-under-invest-in-harness">Failure modes (when teams over-invest in prompts and under-invest in harness)</h2>
+<ul>
+<li><strong>"It worked yesterday."</strong> No regression evals, so a prompt tweak or model update
+  silently breaks 5% of cases. Fix: <a href="04-evals-observability.html#evals">golden sets + CI gates</a>.</li>
+<li><strong>The JSON sometimes doesn't parse.</strong> No validation/repair, so one malformed
+  output takes down a workflow. Fix: <a href="02-reliable-outputs.html#structured-output">structured output pipeline</a>.</li>
+<li><strong>The agent ran for 40 steps and spent $12.</strong> No budgets. Fix:
+  <a href="02-reliable-outputs.html#agent-guardrails">loop &amp; tool budgets</a>.</li>
+<li><strong>Latency spikes at peak.</strong> No routing/caching. Fix:
+  <a href="02-reliable-outputs.html#model-routing">routing</a> +
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">caching</a>.</li>
+<li><strong>A prompt injection from a retrieved doc exfiltrated data.</strong> The harness trusted
+  model output as control flow. Fix:
+  <a href="05-safety-multitenancy.html#safety-engineering">permission boundaries</a>.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Can your system survive the model returning garbage on any single call?</li>
+<li class="task todo">Is every side-effecting tool call idempotent and validated?</li>
+<li class="task todo">Is there a hard ceiling on iterations, tokens, and cost per request?</li>
+<li class="task todo">Is every model call traced with tokens, latency, and cost?</li>
+<li class="task todo">Can you change models without rewriting business logic?</li>
+<li class="task todo">Do you have a regression eval that runs before prompt/model changes ship?</li>
+</ul>
+<p>If the answer to any of these is "no," your reliability gap is in the harness, not
+the prompt.</p>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#context-engineering">Context engineering, not just long prompts</a></li>
+<li><a href="#infra-not-demos">Shipping LLM systems as infrastructure, not demos</a></li>
+<li><a href="02-reliable-outputs.html#agent-guardrails">Agent guardrails</a></li>
+<li><a href="06-strategy-tradeoffs.html#production-failure-modes">Production failure modes</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="context-engineering"><div class="lesson-head"><span class="lesson-num">00.2</span><h2>Context engineering, not just long prompts</h2></div><h2 id="tldr">TL;DR</h2>
+<p>The context window is a scarce, expensive, and <em>quality-sensitive</em> resource. Context
+engineering is the discipline of deciding <strong>what</strong> goes into it, <strong>in what order</strong>,
+<strong>in what form</strong>, and <strong>what gets left out</strong> — on every single call. "Just stuff in
+more text" is the anti-pattern. Longer context costs more, runs slower, and often
+makes answers <em>worse</em>, not better.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — Context is a budget you spend on <em>every</em> request. It shows up directly in latency, cost, and answer quality. "Just give the model more info" is a product decision with a bill and a quality cost attached.</p>
+<p><strong>What it changes in your decisions</strong> — What data you invest in making retrievable, how you scope memory/personalization features, and your cost-per-interaction.</p>
+<p><strong>Ask your eng team</strong> — <em>"What's actually in the context window on a typical request, and what does each part cost us?"</em></p>
+<p><strong>Product risk if ignored</strong> — Prompt creep quietly triples unit cost and <em>lowers</em> quality. It stays invisible until the invoice or the churn shows up.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>Treat the context window like a working set in a memory hierarchy, not a junk
+drawer. The model can only attend to what is in front of it. Its effective
+attention is <strong>non-uniform</strong>: information at the start and end of the window is used
+more reliably than information buried in the middle ("lost in the middle"). So
+context engineering optimizes three things at once:</p>
+<ol>
+<li><strong>Relevance</strong> — is the right information present at all? (a retrieval problem →
+   <a href="03-rag.html#rag-architecture">RAG architecture</a>)</li>
+<li><strong>Signal-to-noise</strong> — is it <em>crowded out</em> by irrelevant tokens?</li>
+<li><strong>Position &amp; format</strong> — is it placed and shaped so the model actually uses it?</li>
+</ol>
+<h2 id="from-data-first-to-context-first">From data-first to context-first</h2>
+<p>Two era-framings from the PM side of this discipline are worth knowing. First, the
+data-first playbook ("collect, clean, analyze; more data wins") is giving way to a
+<strong>context-first</strong> one. The question is no longer <em>"what data do we have?"</em> It is
+<em>"what context does this decision need to be meaningful?"</em> Data is inert until it's
+framed. The same model with the same data behaves entirely differently, depending on
+what makes it into the window and in what form.</p>
+<p>Second: <strong>prompt engineering alone is stagecraft, not architecture.</strong> Clever wording
+dazzles in a demo and fails as a system, for three structural reasons:</p>
+<ul>
+<li><strong>Fragility</strong> — a prompt tuned for "how do I request a refund?" falters on "can I
+  get my money back if I cancel mid-cycle?" One phrasing shift collapses the trick.</li>
+<li><strong>No memory</strong> — prompts operate in isolation. Without engineered context, the
+  system contradicts itself across sessions: the assistant recommends the SMB market
+  on Monday and enterprise-only on Tuesday, because nothing carried the strategy
+  forward.</li>
+<li><strong>Operational debt</strong> — every new use case demands fresh tinkering. Over time the
+  team ends up maintaining a library of brittle bespoke prompts instead of one
+  adaptive system.</li>
+</ul>
+<p>The enterprise bar is higher than any single output. The context pipeline has to
+carry what the user is <em>entitled to</em>, what policy dictates, and when to escalate —
+CRM data, legal guardrails, strategic goals — assembled systematically on every
+request. That pipeline is this lesson's subject. The prompt is just its last mile.</p>
+<h2 id="why-more-tokens-is-not-more-quality">Why more tokens is not more quality</h2>
+<ul>
+<li><strong>Distraction.</strong> Irrelevant retrieved chunks pull attention away from the answer.
+  Precision often matters more than recall once you have <em>enough</em> signal — see
+  <a href="03-rag.html#retrieval-evals">retrieval evals</a>.</li>
+<li><strong>Lost in the middle.</strong> Long contexts degrade for facts placed mid-window. Put the
+  most decision-critical material near the top or bottom.</li>
+<li><strong>Cost &amp; latency scale with input length.</strong> Every input token is paid for in the
+  <a href="01-inference-internals.html#prefill-vs-decode">prefill</a> phase and in dollars.
+  Doubling context roughly doubles prefill compute.</li>
+<li><strong>Contamination risk.</strong> Every extra source (a retrieved doc, a tool result, prior
+  turns) is a potential <a href="05-safety-multitenancy.html#safety-engineering">prompt-injection</a>
+  vector. More context = larger attack surface.</li>
+</ul>
+<h2 id="the-components-of-a-well-engineered-context">The components of a well-engineered context</h2>
+<p>A typical context is assembled from layered sources, each with its own budget:</p>
+<pre><code>[ system / role + policy ]      ← stable, cache-friendly prefix
+[ tool definitions / contracts ] ← stable
+[ task instructions ]
+[ retrieved knowledge ]          ← ranked, reranked, trimmed, cited
+[ relevant memory / history ]    ← summarized, not raw
+[ the user's actual request ]    ← often best placed last
+</code></pre>
+<p>Engineering decisions for each layer:</p>
+<ul>
+<li><strong>Stable prefix first.</strong> Keep system prompt, policies, and tool contracts at the
+  front and <em>unchanging</em> so they can be reused by
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">prompt caching</a>. Putting a
+  timestamp or user name at the very top silently breaks prefix caching.</li>
+<li><strong>Retrieve, then rerank, then trim.</strong> Don't paste your top-50 chunks. Rerank and
+  keep the few that matter — see <a href="03-rag.html#rag-architecture">RAG architecture</a>.</li>
+<li><strong>Summarize history, don't replay it.</strong> Long agent transcripts should be
+  compressed into running summaries plus the last few turns.</li>
+<li><strong>Make provenance explicit.</strong> Tag each retrieved chunk with a source id so the
+  model can produce <a href="03-rag.html#retrieval-evals">citations</a> and so you can defend
+  against <a href="05-safety-multitenancy.html#safety-engineering">injection</a>.</li>
+</ul>
+<h2 id="tradeoffs-decisions">Tradeoffs &amp; decisions</h2>
+<table>
+<thead>
+<tr>
+<th>Lever</th>
+<th>More of it helps</th>
+<th>But costs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Retrieved chunks</td>
+<td>Recall / coverage</td>
+<td>Precision, distraction, $$</td>
+</tr>
+<tr>
+<td>History depth</td>
+<td>Continuity</td>
+<td>Tokens, drift, latency</td>
+</tr>
+<tr>
+<td>Few-shot examples</td>
+<td>Format adherence</td>
+<td>Tokens; can overfit to examples</td>
+</tr>
+<tr>
+<td>Long system prompt</td>
+<td>Control</td>
+<td>Cache-stable but pricey on every call</td>
+</tr>
+</tbody>
+</table>
+<p>The recurring tension is <strong>recall vs. precision vs. budget</strong>. Context engineering is
+the art of spending your token budget where it moves the answer.</p>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Prompt bloat creep.</strong> Every incident adds "also, never do X" to the system
+  prompt until it is 4,000 tokens of contradictory rules. Treat the system prompt
+  like code: review it, test it, and prune it with <a href="04-evals-observability.html#evals">evals</a>.</li>
+<li><strong>Cache-busting prefixes.</strong> Dynamic content near the top destroys
+  <a href="01-inference-internals.html#prompt-vs-semantic-caching">prefix cache hits</a> and
+  quietly triples cost.</li>
+<li><strong>Raw history replay.</strong> Feeding the entire conversation every turn → quadratic
+  cost growth and lost-in-the-middle degradation.</li>
+<li><strong>Unbounded retrieval.</strong> "Top-k = 20" with no reranking buries the answer in noise.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is your context assembled from explicit, budgeted layers — not string concat?</li>
+<li class="task todo">Is the stable prefix actually stable (cache-friendly)?</li>
+<li class="task todo">Do you rerank and trim retrieved context instead of dumping it?</li>
+<li class="task todo">Is conversation history summarized rather than replayed?</li>
+<li class="task todo">Is every external chunk tagged with provenance and treated as untrusted?</li>
+<li class="task todo">Have you measured whether <em>adding</em> context improves your evals, or just cost?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#harness-engineering">Harness engineering</a></li>
+<li><a href="03-rag.html#rag-architecture">RAG architecture</a></li>
+<li><a href="01-inference-internals.html#prompt-vs-semantic-caching">Prompt caching vs. semantic caching</a></li>
+<li><a href="01-inference-internals.html#prefill-vs-decode">Prefill vs. decode</a></li>
+<li><a href="05-safety-multitenancy.html#safety-engineering">Safety engineering</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section><section class="lesson" id="infra-not-demos"><div class="lesson-head"><span class="lesson-num">00.3</span><h2>Shipping LLM systems as infrastructure, not demos</h2></div><h2 id="tldr">TL;DR</h2>
+<p>A demo proves the model <em>can</em> do the task once. Infrastructure makes it do the task
+correctly, observably, affordably, and safely. It must work for every user, every
+tenant, at p99, indefinitely. The gap between the two is almost entirely engineering:
+evaluation, observability, cost control, safety, and graceful degradation. Demos are
+judged by their best case. Infrastructure is judged by its worst case.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI-native PM</strong></p>
+<p><strong>Why it matters</strong> — The gap between an impressive demo and a dependable feature is work that doesn't demo well. It is most of the project timeline. PMs who can't see that gap chronically under-scope AI projects.</p>
+<p><strong>What it changes in your decisions</strong> — Your launch-readiness criteria, your definition of done for AI features, and the expectations you set with execs.</p>
+<p><strong>Ask your eng team</strong> — <em>"What would it take to operate this for a year without it surprising us?"</em></p>
+<p><strong>Product risk if ignored</strong> — Friday-demo, Monday-outage: you green-light a launch that was never operationally real.</p>
+</blockquote>
+<h2 id="mental-model">Mental model</h2>
+<p>Ask of every LLM feature the same questions you'd ask of any production service:</p>
+<ul>
+<li><strong>How do I know it's working?</strong> → <a href="04-evals-observability.html#observability">observability</a></li>
+<li><strong>How do I know it's <em>correct</em>?</strong> → <a href="04-evals-observability.html#evals">evals</a></li>
+<li><strong>What happens when a dependency fails?</strong> → <a href="02-reliable-outputs.html#model-routing">routing &amp; fallback</a></li>
+<li><strong>What's the worst a malicious input can do?</strong> → <a href="05-safety-multitenancy.html#safety-engineering">safety engineering</a></li>
+<li><strong>What does it cost, and who's paying?</strong> → <a href="04-evals-observability.html#cost-attribution">cost attribution</a></li>
+<li><strong>Can it leak one customer's data to another?</strong> → <a href="05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a></li>
+</ul>
+<p>If you can't answer these, you have a demo.</p>
+<h2 id="the-demo-to-infrastructure-gap">The demo-to-infrastructure gap</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Demo</th>
+<th>Infrastructure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Correctness</td>
+<td>"Looks right" in a few runs</td>
+<td>Measured against a <a href="04-evals-observability.html#evals">golden set</a>, gated in CI</td>
+</tr>
+<tr>
+<td>Failure</td>
+<td>Crashes / hangs</td>
+<td>Degrades gracefully with <a href="02-reliable-outputs.html#model-routing">fallbacks</a></td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Trusted as-is</td>
+<td>Validated, repaired, schema-checked</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Ignored</td>
+<td>Attributed, budgeted, alerted</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>"Fast enough on my laptop"</td>
+<td>p50/p95/p99 SLOs under load</td>
+</tr>
+<tr>
+<td>Safety</td>
+<td>Trusts all input</td>
+<td>Defends against <a href="05-safety-multitenancy.html#safety-engineering">injection</a></td>
+</tr>
+<tr>
+<td>Observability</td>
+<td><code>print()</code></td>
+<td><a href="04-evals-observability.html#observability">Traces, spans, metrics, drift</a></td>
+</tr>
+<tr>
+<td>Change safety</td>
+<td>Hope</td>
+<td>Regression evals before every change</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-llm-systems-are-harder-to-operationalize-than-typical-services">Why LLM systems are <em>harder</em> to operationalize than typical services</h2>
+<ul>
+<li><strong>Non-determinism</strong> breaks "write a test that asserts equality." You need
+  distribution-level and rubric-based evaluation, not exact-match unit tests.</li>
+<li><strong>Silent failure.</strong> A wrong answer looks exactly like a right one. Errors don't
+  throw; they <em>read plausibly</em>. Detecting them requires
+  <a href="04-evals-observability.html#evals">evals</a> and
+  <a href="04-evals-observability.html#observability">drift monitoring</a>, not exception
+  handlers.</li>
+<li><strong>Upstream drift.</strong> The model provider can update weights, your data can change,
+  and your retrieval index can age. The system can regress with <em>no code change at
+  all</em>.</li>
+<li><strong>Unbounded cost and latency.</strong> Token usage — and therefore dollars and seconds —
+  depends on inputs and on how many times an <a href="02-reliable-outputs.html#agent-guardrails">agent loops</a>.</li>
+</ul>
+<h2 id="the-operational-baseline-minimum-bar-to-call-it-shipped">The operational baseline (minimum bar to call it "shipped")</h2>
+<ol>
+<li><strong>A golden eval set</strong> that runs in CI and blocks regressions —
+   <a href="04-evals-observability.html#evals">Evals</a>.</li>
+<li><strong>End-to-end tracing</strong> with tokens, latency, cost, and errors per request —
+   <a href="04-evals-observability.html#observability">Observability</a>.</li>
+<li><strong>Output validation</strong> so malformed responses never reach downstream systems —
+   <a href="02-reliable-outputs.html#structured-output">Structured output</a>.</li>
+<li><strong>Budgets</strong> on iterations, tokens, and tool calls —
+   <a href="02-reliable-outputs.html#agent-guardrails">Agent guardrails</a>.</li>
+<li><strong>Fallback paths</strong> for provider outage, timeout, or low confidence —
+   <a href="02-reliable-outputs.html#model-routing">Model routing</a>.</li>
+<li><strong>Cost attribution</strong> per feature and tenant —
+   <a href="04-evals-observability.html#cost-attribution">Cost attribution</a>.</li>
+<li><strong>Safety boundaries</strong> for injection and data leakage —
+   <a href="05-safety-multitenancy.html#safety-engineering">Safety engineering</a>.</li>
+</ol>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The "Friday demo, Monday outage" pattern</strong> — impressive launch, then a long tail
+  of edge cases nobody measured.</li>
+<li><strong>Cost surprise</strong> — a feature that was "basically free" in testing costs
+  five figures a month at scale because nobody attributed tokens.</li>
+<li><strong>Silent regression</strong> — quality drops after a model upgrade and no one notices for
+  three weeks because there were no evals.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Could you operate this feature for a year without it surprising you?</li>
+<li class="task todo">Do you measure correctness with numbers, not vibes?</li>
+<li class="task todo">Does every external dependency have a fallback?</li>
+<li class="task todo">Can you attribute every dollar of spend to a feature and tenant?</li>
+<li class="task todo">Would a malicious document in your retrieval corpus be contained?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="#harness-engineering">Harness engineering</a></li>
+<li><a href="04-evals-observability.html#evals">Evals</a></li>
+<li><a href="04-evals-observability.html#observability">Observability</a></li>
+<li><a href="06-strategy-tradeoffs.html#production-failure-modes">Production failure modes</a></li>
+</ul><a class="totop" href="#top">↑ back to top</a></section>
+  <section class="recap" id="recap"><div class="recap-head"><span class="recap-ic">📌</span><h2>Recap &amp; real-world examples</h2></div><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
+<p><strong>Samsung's source-code leak (2023).</strong> Within weeks of allowing ChatGPT, Samsung
+engineers pasted confidential source code and internal meeting notes into it to debug
+and summarize. That data left the company's control, so Samsung restricted the tool.
+🎯 <em>PM takeaway:</em> you own the product and policy boundary for what data is <em>allowed into
+the context</em> — and where it goes after that. That's <a href="#harness-engineering">harness</a>,
+not prompting.</p>
+<p><strong>"Lost in the Middle" (Liu et al., 2023).</strong> A widely-cited study showed that models
+reliably use information at the <em>beginning and end</em> of a long context. They "lose" facts
+buried in the middle, even when the answer is right there. 🎯 <em>PM takeaway:</em> giving the
+model more context can <em>lower</em> quality, not raise it. Placement and trimming are real
+work — see <a href="#context-engineering">context engineering</a>.</p>
+<p><strong>The POC graveyard.</strong> Industry surveys repeatedly find that most generative-AI
+proof-of-concepts never reach production. The demo works. The <em>operational</em> version —
+evals, guardrails, monitoring, cost control — is where projects stall. 🎯 <em>PM takeaway:</em>
+the demo-to-prod gap is mostly <a href="#infra-not-demos">harness and ops</a> work. Budget for
+it explicitly, or you'll relaunch the same demo three times.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The decision it drives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#harness-engineering">Harness engineering</a></td>
+<td>Reliability lives in the code <em>around</em> the model</td>
+<td>Where you spend eng cycles, and what "AI quality" means</td>
+</tr>
+<tr>
+<td><a href="#context-engineering">Context engineering</a></td>
+<td>The context window is a budget, not a junk drawer</td>
+<td>Cost per call, and data you make retrievable</td>
+</tr>
+<tr>
+<td><a href="#infra-not-demos">Infra, not demos</a></td>
+<td>Demos are judged on their best case; infra is judged on its worst case</td>
+<td>Launch readiness, and definition of done</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> a production LLM feature is <em>a distributed system with a stochastic
+component in the middle.</em> Engineer it like one. The model is one fast, unreliable,
+stateless function call. Everything that makes it useful and safe — assembly, validation,
+budgets, fallbacks, observability — is yours to build.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"If the model returns garbage on a single call, what does the
+user actually see — and who would notice?"</em> If you can't answer it, your gap is in the
+foundations.</p>
+</blockquote>
+<hr />
+<p>← Back to <a href="00-foundations.html">module index</a> · → Next module: <a href="01-inference-internals.html">01 · Inference Internals</a></p><a class="totop" href="#top">↑ back to top</a></section>
+  <div class="pagenav"><span></span><a class="navcard next" href="01-inference-internals.html"><span class="lbl">→ Next</span><span class="ttl">01 · Inference internals</span></a></div><footer class="foot">Educational content · part of the <a href="index.html">AI engineering</a> curriculum for AI-native PMs.</footer>
+  </main></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>(function(){var root=document.getElementById('interactive');
+var stagesEl=root.querySelector('#hz-stages'),verdict=root.querySelector('#hz-verdict'),detail=root.querySelector('#hz-detail'),harness=root.querySelector('#hz-harness');
+function render(st){stagesEl.innerHTML='';st.forEach(function(s,i){if(i){var a=document.createElement('span');a.className='iw-arrow';a.textContent='→';stagesEl.appendChild(a);}var d=document.createElement('span');d.className='iw-stage '+s.cls;d.textContent=s.label;stagesEl.appendChild(d);});}
+function run(bad){var on=harness.checked,st=[];
+if(on){st.push({label:'Assemble context',cls:'on'});st.push({label:'Model call',cls:bad?'kill':'on'});st.push({label:'Validate',cls:'on'});if(bad)st.push({label:'Repair loop',cls:'on'});st.push({label:'Tools (idempotent)',cls:'on'});st.push({label:'Budgets',cls:'on'});st.push({label:'Response',cls:'on'});
+if(bad){verdict.innerHTML='<span class="iw-good">✅ Caught &amp; repaired</span>';detail.textContent='The model returned malformed output — Validate flagged it, the bounded repair loop fixed it, and a clean, schema-valid result reached the user. Worst case, the fallback chain returns a typed error — never a crash.';}
+else{verdict.innerHTML='<span class="iw-good">✅ Valid response delivered</span>';detail.textContent='Every stage did its job. The same path is what protects you on the calls that go wrong.';}}
+else{st.push({label:'Assemble context',cls:'on'});st.push({label:'Model call',cls:bad?'kill':'on'});st.push({label:'Response',cls:bad?'kill':'on'});
+if(bad){verdict.innerHTML='<span class="iw-bad">💥 Broken output reaches the user</span>';detail.textContent='No validation, no repair, no fallback. The garbage flows straight through — the JSON fails to parse downstream and the workflow breaks. This is the demo that wowed on stage and pages you at 2am.';}
+else{verdict.innerHTML='<span class="iw-good">✅ Worked… this time</span>';detail.textContent='With no harness it is fine until the first bad call. Your reliability is just whatever the model happened to do.';}}
+render(st);}
+root.querySelector('#hz-good').onclick=function(){run(false);};root.querySelector('#hz-bad').onclick=function(){run(true);};harness.onchange=function(){run(false);};run(false);})();</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=content%2F00-foundations%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="ai/00-foundations.html"</script><script defer src="../assets/glossary.js"></script></body></html>

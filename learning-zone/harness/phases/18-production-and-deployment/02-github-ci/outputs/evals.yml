@@ -1,0 +1,18 @@
+# Run the harness eval gate on every PR. Place at .github/workflows/evals.yml
+# kind: settings · phase: 18 · lesson: 2
+name: Harness Evals
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run eval gate (fails the build on regression)
+        run: python3 harness-engineering/phases/15-evals-and-testing-the-harness/06-eval-harness/code/eval_harness.py

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>The cost stack, and the build-vs-buy breakeven — Cost optimization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
+</head>
+<body><header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Cost optimization</span><em>a Generative AI module</em></a>
+  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-cost-stack-and-the-build-vs-buy-breakeven.html">1 · The cost stack, and the build-vs-buy breakeven</a><a class="modlink" href="finops-budgets-forecasting-and-the-cost-review.html">2 · FinOps for AI: budgets, forecasting &amp; the cost review</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Lesson 01</span>
+    <h1>The cost stack, and the build-vs-buy breakeven</h1>
+  </div>
+  <h2 id="tldr">TL;DR</h2>
+<p>AI cost optimization looks like a grab-bag of unrelated tactics — cache this, route that,
+trim the prompt — until you see that every tactic attacks one of four points on the
+request path. <strong>Token mechanics</strong> set the floor price of a single call. <strong>Caching</strong>
+skips work the system already did. <strong>Routing</strong> sends the call to the cheapest model that
+can still do the job. <strong>Context control</strong> shrinks what you pay for in the first place.
+Naming which lever fixes which driver is what turns "our AI bill is too high" into a
+specific, assignable fix instead of a vague mandate to "optimize." Underneath all four
+sits one decision this family hasn't priced yet: at what volume does running your own
+model beat paying a provider per token — the <strong>build-vs-buy breakeven</strong>, done as
+arithmetic instead of a gut call.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — "Make it cheaper" isn't a roadmap item until it names which of the
+four levers is actually slack, and self-hosting is a real, quantifiable option most
+teams evaluate on vibes instead of a number.</p>
+<p><strong>What it changes in your decisions</strong> — You diagnose a cost problem to one of four
+categories before proposing a fix, and you calculate — not guess — the volume at which
+build starts beating buy.</p>
+<p><strong>Ask your eng team</strong> — <em>"Of tokens, caching, routing, and context, which one is
+actually our biggest lever right now — and have we run the self-host breakeven math, or
+are we assuming the answer?"</em></p>
+<p><strong>Risk if ignored</strong> — A team optimizes the lever that's easiest to talk about instead of
+the one that's actually expensive, and a self-hosting decision gets made — or avoided —
+on intuition at a volume where the arithmetic would have said the opposite.</p>
+</blockquote>
+<h2 id="the-cost-stack">The cost stack</h2>
+<!-- Cost stack lesson — the 4 levers → the bill → the build-vs-buy decision → 2 outcomes.
+     Diagram type: LAYERED STACK with convergence + branching outcome. -->
+<style>
+.dgm-cs{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #1a7f37;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),
+  0 8px 24px rgba(31,35,40,.04);margin:26px 0;max-width:100%;
+  font-family:inherit;text-align:left;position:relative}
+.dgm-cs-chip{position:absolute;top:-11px;left:24px;background:#1a7f37;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(26,127,55,.28)}
+.dgm-cs h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;
+  text-transform:uppercase;color:#59636e}
+.dgm-cs .dgm-cs-sub{font-size:12px;color:#59636e;margin:0 0 14px}
+.dgm-cs-layers{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.dgm-cs-layer{border:1px solid #d1d9e0;border-radius:11px;padding:12px 14px;background:#f6f8fa;
+  display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;
+  transition:none}
+.dgm-cs-layer .dgm-cs-ico{width:26px;height:26px;padding:4px;background:#ffffff;
+  border:1px solid #d1d9e0;border-radius:8px;color:#1a7f37}
+.dgm-cs-layer h5{margin:0 0 2px;font-size:13px;font-weight:700;color:#1f2328;
+  letter-spacing:.02em}
+.dgm-cs-layer p{margin:0;font-size:11.5px;color:#59636e;line-height:1.4}
+.dgm-cs-layer .dgm-cs-idx{background:#ffffff;border:1px solid #d1d9e0;color:#59636e;
+  font-size:10.5px;font-weight:700;letter-spacing:.4px;padding:3px 8px;border-radius:6px;
+  font-variant-numeric:tabular-nums;text-transform:uppercase}
+.dgm-cs-conv{display:flex;justify-content:center;color:#8c959f;margin:2px 0 8px}
+.dgm-cs-conv svg{width:20px;height:20px}
+.dgm-cs-bill{background:#dafbe1;border:1.5px solid #aceebb;border-radius:12px;
+  padding:12px 18px;text-align:center;color:#1a7f37;font-weight:700;font-size:13px;
+  letter-spacing:.02em;display:inline-flex;align-items:center;gap:8px;
+  margin:0 auto 12px;width:fit-content;box-shadow:0 2px 8px rgba(26,127,55,.10)}
+.dgm-cs-bill-wrap{display:flex;justify-content:center;margin-bottom:12px}
+.dgm-cs-bill svg{width:18px;height:18px}
+.dgm-cs-question{background:#ffffff;border:1.5px dashed #b6e3ff;border-radius:12px;
+  padding:14px 18px;text-align:center;color:#0550ae;font-weight:600;font-size:13px;
+  margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px}
+.dgm-cs-question .dgm-cs-tag{background:#ddf4ff;color:#0969da;font-size:10px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:6px}
+.dgm-cs-fork{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:stretch}
+.dgm-cs-branch{border-radius:12px;padding:14px 16px;position:relative;display:flex;
+  gap:12px;align-items:flex-start}
+.dgm-cs-branch.no{background:#f6f8fa;border:1px solid #d1d9e0}
+.dgm-cs-branch.yes{background:#ddf4ff;border:1.5px solid #b6e3ff}
+.dgm-cs-branch .dgm-cs-ico{width:26px;height:26px;flex:0 0 26px;color:#0969da;margin-top:2px}
+.dgm-cs-branch.no .dgm-cs-ico{color:#59636e}
+.dgm-cs-branch .dgm-cs-answer{position:absolute;top:-9px;left:14px;background:#ffffff;
+  border:1px solid #d1d9e0;color:#0969da;font-size:9.5px;font-weight:700;letter-spacing:.6px;
+  text-transform:uppercase;padding:2px 8px;border-radius:6px}
+.dgm-cs-branch.no .dgm-cs-answer{color:#59636e}
+.dgm-cs-branch h5{margin:0 0 3px;font-size:13px;font-weight:700;color:#1f2328}
+.dgm-cs-branch p{margin:0;font-size:11.5px;color:#59636e;line-height:1.4}
+.dgm-cs-vs{align-self:center;text-align:center;color:#8c959f;font-size:11px;font-weight:700;
+  letter-spacing:.4px;text-transform:uppercase;background:#f6f8fa;border:1px solid #d1d9e0;
+  border-radius:20px;padding:6px 4px}
+@media (max-width:640px){
+  .dgm-cs{padding:20px 16px 18px}
+  .dgm-cs-fork{grid-template-columns:1fr}
+  .dgm-cs-vs{width:fit-content;margin:6px auto;padding:4px 14px}
+}
+</style>
+<div class="dgm-cs">
+  <span class="dgm-cs-chip">Cost stack</span>
+
+  <h4>The four levers · each with a full engineering deep-dive elsewhere</h4>
+  <p class="dgm-cs-sub">A cost complaint gets a specific fix, not a vague mandate to "optimize."</p>
+
+  <div class="dgm-cs-layers">
+    <div class="dgm-cs-layer">
+      <svg class="dgm-cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 6v12M9 9h4.5a2 2 0 010 4h-3a2 2 0 000 4H15"/></svg>
+      <div><h5>Token mechanics</h5><p>Prefill vs. decode — input and output priced differently</p></div>
+      <span class="dgm-cs-idx">Layer 1</span>
+    </div>
+    <div class="dgm-cs-layer">
+      <svg class="dgm-cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+      <div><h5>Caching</h5><p>Prompt cache (lossless) · semantic cache (lossy)</p></div>
+      <span class="dgm-cs-idx">Layer 2</span>
+    </div>
+    <div class="dgm-cs-layer">
+      <svg class="dgm-cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.5 6.5h1a3 3 0 013 3v0a3 3 0 003 3M8.5 17.5h1a3 3 0 003-3"/></svg>
+      <div><h5>Routing</h5><p>Cheap model first, escalate only when needed</p></div>
+      <span class="dgm-cs-idx">Layer 3</span>
+    </div>
+    <div class="dgm-cs-layer">
+      <svg class="dgm-cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M3 12l9 4.5 9-4.5M3 16.5l9 4.5 9-4.5"/></svg>
+      <div><h5>Context control</h5><p>Retrieval, chunking, RAG vs. long-context vs. fine-tune</p></div>
+      <span class="dgm-cs-idx">Layer 4</span>
+    </div>
+  </div>
+
+  <div class="dgm-cs-conv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-cs-bill-wrap">
+    <div class="dgm-cs-bill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      The bill · four layers, one number
+    </div>
+  </div>
+
+  <div class="dgm-cs-question">
+    <span class="dgm-cs-tag">Breakeven</span>
+    Volume high enough to re-run the build-vs-buy math?
+  </div>
+
+  <div class="dgm-cs-fork">
+    <div class="dgm-cs-branch no">
+      <span class="dgm-cs-answer">No</span>
+      <svg class="dgm-cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 100-9 5.5 5.5 0 00-10.9-1 4 4 0 00-.6 8h11.5z"/></svg>
+      <div><h5>Stay metered</h5><p>API pricing wins — no fixed cost to amortize</p></div>
+    </div>
+    <div class="dgm-cs-vs">vs.</div>
+    <div class="dgm-cs-branch yes">
+      <span class="dgm-cs-answer">Yes</span>
+      <svg class="dgm-cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><circle cx="7" cy="7.5" r=".8" fill="currentColor"/><circle cx="7" cy="16.5" r=".8" fill="currentColor"/></svg>
+      <div><h5>Self-host or fine-tune</h5><p>Fixed cost amortizes at scale</p></div>
+    </div>
+  </div>
+</div>
+
+<p>Each layer already has a full, deep treatment elsewhere in this curriculum, developed at
+exactly this product-decision altitude. This lesson doesn't re-derive any of it — it maps
+the terrain so a team knows which door to open.</p>
+<ul>
+<li><strong>Token mechanics</strong> — input tokens (prefill) and output tokens (decode) are computed
+  differently and priced differently, which is why "shorten the output" and "shorten the
+  input" are different optimizations with different payoffs. Fully developed in
+  <a href="../ai/01-inference-internals.html#prefill-vs-decode">Prefill vs. decode</a> and
+  <a href="../ai/01-inference-internals.html#batching-and-paged-attention">Continuous batching &amp; paged attention</a>,
+  which also covers why serving many users at once — not just one clever prompt — is the
+  biggest lever on cost-per-token for anyone running their own inference.</li>
+<li><strong>Caching</strong> — a prompt cache skips recomputation for an identical prefix, losslessly. A
+  semantic cache skips the model call entirely for a <em>similar</em> query, at the risk of
+  serving a wrong or stale answer. Fully developed in
+  <a href="../ai/01-inference-internals.html#prompt-vs-semantic-caching">Prompt vs. semantic caching</a>.</li>
+<li><strong>Routing</strong> — send easy requests to a cheap model and escalate only the hard ones,
+  instead of running every request through the most capable (and most expensive) model
+  available. Fully developed in
+  <a href="../ai/02-reliable-outputs.html#model-routing">Model routing</a>.</li>
+<li><strong>Context control</strong> — every token you feed the model, you pay for, so what you retrieve
+  and how much of it you keep is a cost decision as much as a quality one. Fully developed
+  in <a href="../ai/00-foundations.html#context-engineering">Context engineering</a> and
+  <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">RAG vs. long-context vs. fine-tuning</a>.</li>
+</ul>
+<p>The move this lesson makes that those four don't: once you can see all four levers on one
+map, a cost complaint stops being "everything is expensive" and becomes "which of these
+four is actually the slack one, this quarter, for this feature" — a question
+<a href="../ai/04-evals-observability.html#cost-attribution">cost attribution</a> is built to
+answer with data instead of guesses.</p>
+<h2 id="the-build-vs-buy-breakeven">The build-vs-buy breakeven</h2>
+<p>Every team renting a frontier model's API eventually asks: <em>should we run this
+ourselves?</em> The honest answer is arithmetic, not instinct — a crossover volume where a
+provider's per-token price, multiplied by your usage, exceeds the fixed and variable cost
+of serving it yourself.</p>
+<p><strong>The metered side</strong> scales linearly with volume: <code>tokens/month × price/token</code>. It has
+no fixed cost, and it falls automatically whenever the provider cuts prices — which,
+historically, has been often and steeply.</p>
+<p><strong>The self-hosted side</strong> has a large fixed cost (GPU capacity, whether reserved or
+committed) plus a much smaller marginal cost per token once that capacity is running.
+<a href="../ai/01-inference-internals.html#batching-and-paged-attention">Continuous batching and paged attention</a>
+are exactly what determine how low that marginal cost goes — a well-tuned serving stack
+extracts far more tokens per dollar of GPU than a naive one, which shifts the whole
+crossover point.</p>
+<p>The two lines cross at a specific volume: below it, metered API pricing wins because
+you're not using enough of the fixed capacity to justify owning it. Above it,
+self-hosting wins because the fixed cost is now spread across enough tokens that the
+marginal cost per token undercuts the provider's price. The crossover volume isn't a
+constant — it moves whenever token prices drop (pushing it higher, favoring "stay
+metered") or your serving efficiency improves (pushing it lower, favoring "self-host
+sooner"). A team that calculates this once and never rechecks it is optimizing against a
+number that's already stale, in one direction or the other, within a quarter.</p>
+<p><strong>Fine-tuning a smaller model</strong> is the same math with a different fixed cost: not GPU
+capacity, but the fine-tuning run and the ongoing work of keeping a smaller, specialized
+model current. It clears the bar when the task is narrow enough that a smaller model
+reaches acceptable quality — the same scoping judgment
+<a href="../technical-product-sense/technical-sense-for-ai.html">technical sense for AI systems</a>
+develops for the reliable frontier, applied to cost instead of capability.</p>
+<h2 id="a-worked-pass-the-self-hosting-decision-nobody-re-ran">A worked pass: the self-hosting decision nobody re-ran</h2>
+<p>A support-automation product launches on a frontier model's API. At 2 million tokens a
+month, the bill is a rounding error next to the eng team's own salaries, and self-hosting
+is obviously not worth the operational burden — nobody runs the numbers because the
+answer is visibly "stay metered." Eighteen months later, volume has grown 40x to 80
+million tokens a month, the API bill is now a material line on the P&amp;L, and the team is
+still on the same provider, because the original "not worth it" conclusion was never
+revisited. When someone finally runs the crossover math, self-hosting a well-tuned
+open-weight model clears breakeven at roughly a third of current volume — the team has
+been overpaying for over a year. The lesson isn't "always self-host." It's that the
+build-vs-buy answer has an expiration date tied to volume, and the failure mode is never
+checking it again after the first, correct call.</p>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Random-lever optimization</strong> — a team caches aggressively while the real driver is an
+  unrouted flood of easy requests hitting the most expensive model, because nobody
+  diagnosed which of the four levers was actually slack.</li>
+<li><strong>Build-vs-buy decided once, never re-run</strong> — a "stay metered" call made at low volume
+  is treated as permanent, while usage grows past the crossover point unnoticed.</li>
+<li><strong>Ignoring the moving crossover</strong> — the breakeven volume shifts with every provider
+  price cut and every serving-efficiency gain, and a team that calculated it once treats
+  the number as fixed.</li>
+<li><strong>Self-hosting without the serving-stack investment</strong> — running your own model without
+  continuous batching and paged attention lands nowhere near the marginal cost the
+  breakeven math assumed, so the crossover that looked favorable on paper never
+  materializes in practice.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">For the current cost complaint, can I name which of the four levers — tokens,
+      caching, routing, context — is actually the slack one, with data behind it?</li>
+<li class="task todo">Have we calculated the self-host or fine-tune breakeven volume with real numbers,
+      not intuition?</li>
+<li class="task todo">When did we last recheck that calculation against current token prices and current
+      usage?</li>
+<li class="task todo">If we're self-hosting, is the serving stack (batching, paged attention) actually
+      tuned to the marginal cost the breakeven math assumed?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="finops-budgets-forecasting-and-the-cost-review.html">FinOps for AI: budgets, forecasting &amp; the cost review</a></li>
+<li><a href="../ai/04-evals-observability.html#cost-attribution">Cost attribution</a></li>
+<li><a href="../ai/02-reliable-outputs.html#model-routing">Model routing</a></li>
+<li><a href="../ai/01-inference-internals.html#prompt-vs-semantic-caching">Prompt vs. semantic caching</a></li>
+<li><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a>
+  — the general unit-economics napkin this lesson's breakeven specializes for the
+  build-vs-buy decision.</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="finops-budgets-forecasting-and-the-cost-review.html"><span class="lbl">→ Next</span><span class="ttl">FinOps for AI: budgets, forecasting &amp; the cost review</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-cost-stack">The cost stack</a><a class="h2" href="#the-build-vs-buy-breakeven">The build-vs-buy breakeven</a><a class="h2" href="#a-worked-pass-the-self-hosting-decision-nobody-re-ran">A worked pass: the self-hosting decision nobody re-ran</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=cost-optimization%2Fthe-cost-stack-and-the-build-vs-buy-breakeven.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="cost-optimization/the-cost-stack-and-the-build-vs-buy-breakeven.html"</script><script defer src="../assets/glossary.js"></script></body></html>

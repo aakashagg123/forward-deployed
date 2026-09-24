@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en"><head><link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supercharge your AI learning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;--surface:#ffffff;--ink:#1f2328;--muted:#59636e;
+    --accent:#0969da;--accent-deep:#0550ae;--line:#d1d9e0;--soft:#f6f8fa;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{margin:0;color:var(--ink);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;
+    font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"cv11","ss01","ss03";
+    overflow-x:hidden;
+    background:
+      radial-gradient(1000px 620px at 40px 10px, rgba(1,106,151,.40), transparent 60%),
+      radial-gradient(900px 560px at calc(100% - 60px) 0px, rgba(1,132,152,.34), transparent 58%),
+      radial-gradient(950px 560px at 50% 340px, rgba(197,152,1,.28), transparent 62%),
+      var(--bg);
+    background-repeat:no-repeat}
+  .wrap{max-width:1400px;margin:0 auto;padding:104px 32px 80px}
+  .eyebrow{display:inline-block;font-size:.78rem;font-weight:600;letter-spacing:.02em;
+    color:var(--accent-deep);margin-bottom:16px}
+  h1{font-size:clamp(1.15rem,calc(6.8vw - 2.5px),3rem);line-height:1.1;letter-spacing:-0.02em;
+    font-weight:600;margin:0 0 .3em;white-space:nowrap}
+  p.sub{color:var(--muted);font-size:1.2rem;margin:0;max-width:54ch}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:22px;margin-top:52px}
+  @media(max-width:680px){
+    .wrap{padding:64px 18px 64px}
+    .cards{grid-template-columns:1fr;gap:16px;margin-top:36px}
+    p.sub{font-size:1.08rem}
+    a.card{padding:24px;border-radius:6px}
+  }
+  a.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--surface);
+    border:1px solid var(--line);border-radius:6px;padding:30px;
+    transition:border-color .15s}
+  a.card:hover{border-color:var(--accent)}
+  a.card .tag{display:inline-block;font-size:.74rem;color:var(--accent-deep);font-weight:600;
+    letter-spacing:.02em}
+  a.card h2{margin:.5em 0 .35em;font-size:1.4rem;font-weight:600;letter-spacing:-0.01em}
+  a.card p{color:var(--muted);margin:0;font-size:.98rem;line-height:1.6}
+  footer{color:var(--muted);font-size:.85rem;margin-top:64px;border-top:1px solid var(--line);padding-top:24px}
+  ::selection{background:#ddf4ff}
+</style></head><body>
+<div class="wrap">
+  <h1>Supercharge your AI learning</h1>
+  <p class="sub">Hands-on tracks for PMs and engineers moving into AI — from first principles to production.</p>
+  <div class="cards">
+    <a class="card" href="ai/index.html">
+      <span class="tag">Module</span>
+      <h2>AI engineering →</h2>
+      <p>The engineering discipline under production LLM systems — inference, retrieval,
+      evals, observability, safety, cost. Designed reading editions.</p>
+    </a>
+    <a class="card" href="harness/index.html">
+      <span class="tag">Module</span>
+      <h2>Harness engineering →</h2>
+      <p>Build a coding agent's harness from scratch — loop, tools, context, memory,
+      subagents — then use the real SDK. Build it / use it, ships an artifact each lesson.</p>
+    </a>
+    <a class="card" href="flowable/index.html">
+      <span class="tag">Module</span>
+      <h2>Flowable →</h2>
+      <p>Process automation from scratch — build a token engine, wait states, and a job
+      executor by hand, then run real BPMN on the Flowable engine. Concept-first for
+      PMs, with a build layer for engineers.</p>
+    </a>
+    <a class="card" href="first-principles/index.html">
+      <span class="tag">Module</span>
+      <h2>First principles →</h2>
+      <p>Reason from fundamentals and build range across disciplines — the method,
+      a latticework of mental models, becoming a polymath, and learning how to learn.</p>
+    </a>
+    <a class="card" href="product-sense/index.html">
+      <span class="tag">Module</span>
+      <h2>Product sense →</h2>
+      <p>The instinct for what makes a product succeed, for APMs & PMs moving into AI PM —
+      motivation, empathy, creativity, communication, domain expertise, and product sense for AI.</p>
+    </a>
+    <a class="card" href="technical-product-sense/index.html">
+      <span class="tag">Module</span>
+      <h2>Technical product sense →</h2>
+      <p>Read systems like an engineer — architecture, APIs, data, latency, reliability,
+      and tech debt — with a diagram in every lesson. For APMs & PMs moving into AI PM.</p>
+    </a>
+    <a class="card" href="technical-product-management/index.html">
+      <span class="tag">Module</span>
+      <h2>Technical product management →</h2>
+      <p>The operating discipline of shipping — the role, specs, prioritization, execution,
+      metrics, and releases — with a diagram in every lesson. For APMs & PMs moving into AI PM.</p>
+    </a>
+    <a class="card" href="agentic-ai/index.html">
+      <span class="tag">Module</span>
+      <h2>Agentic AI →</h2>
+      <p>What agents actually are — the loop, tools, memory, planning — plus reliability,
+      security, and economics. Opens with a knowledge graph; a diagram in every lesson.</p>
+    </a>
+    <a class="card" href="knowledge-graphs/index.html">
+      <span class="tag">Module</span>
+      <h2>Knowledge graphs →</h2>
+      <p>Treat what the company knows as a product — entities and ontologies, the
+      construction pipeline, GraphRAG, governance, and the business case, in product leader language.</p>
+    </a>
+    <a class="card" href="generative-ai/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>Generative AI: the big picture →</h2>
+      <p>What makes AI "generative," the five modalities, why output is probabilistic, the
+      four-layer product stack, and build vs. buy vs. fine-tune. Opens the
+      Generative AI family.</p>
+    </a>
+    <a class="card" href="llms/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>LLMs →</h2>
+      <p>Tokens, the context window, the jagged frontier, prompting, sampling, choosing a
+      model, and the order to reach for prompting, RAG, or fine-tuning.</p>
+    </a>
+    <a class="card" href="api-integrations/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>APIs &amp; integrations →</h2>
+      <p>The request/response contract, authentication, rate limits, streaming, retries,
+      structured output, webhooks, and fitting a model call into a real system.</p>
+    </a>
+    <a class="card" href="rag-vector-databases/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>RAG &amp; vector databases →</h2>
+      <p>Grounding models in your data — embeddings, vector databases, chunking, retrieval
+      quality, and when to reach for long-context, fine-tuning, or a graph.</p>
+    </a>
+    <a class="card" href="memory-and-context/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>Memory &amp; context →</h2>
+      <p>Memory as a product decision, the three shapes it takes, retrieval as its most
+      common implementation, and the trust failures it has to be designed against.</p>
+    </a>
+    <a class="card" href="tool-calling/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>Tool calling →</h2>
+      <p>The line where an AI product stops talking and starts doing: designing a tool
+      worth trusting, and keeping the permission boundary around it real.</p>
+    </a>
+    <a class="card" href="ai-agents/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>AI agents →</h2>
+      <p>The loop behind every agent, how much autonomy a task needs, what keeps it
+      reliable across many steps, and when not to build one at all.</p>
+    </a>
+    <a class="card" href="agentic-workflows/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>Agentic workflows →</h2>
+      <p>Orchestrating more than one agent when a single loop isn't enough, and what
+      it takes to make a workflow durable enough, and valuable enough, to own end to
+      end.</p>
+    </a>
+    <a class="card" href="evaluation-and-observability/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>Evaluation &amp; observability →</h2>
+      <p>Why the eval set is the product spec for a non-deterministic system, and the
+      order to actually build the eval and observability stack in.</p>
+    </a>
+    <a class="card" href="ai-security-and-guardrails/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>AI security &amp; guardrails →</h2>
+      <p>Jailbreak, injection, extraction, and poisoning are four different attacks —
+      and why governance only counts once it becomes compliance evidence a regulator
+      or buyer can check.</p>
+    </a>
+    <a class="card" href="cost-optimization/index.html">
+      <span class="tag">Generative AI</span>
+      <h2>Cost optimization →</h2>
+      <p>Which lever fixes which cost driver, the build-vs-buy breakeven done as
+      arithmetic, and the FinOps practice that turns attribution into governance
+      before the invoice, not after.</p>
+    </a>
+    <a class="card" href="system-design/index.html">
+      <span class="tag">Module</span>
+      <h2>System design →</h2>
+      <p>How real systems are designed at scale — from rate limiters to stock exchanges —
+      with the architecture, tradeoffs, and failure modes that shape product decisions.
+      28 systems across 8 lessons, diagrams included.</p>
+    </a>
+    <a class="card" href="context-engineering/index.html">
+      <span class="tag">Module</span>
+      <h2>Context engineering →</h2>
+      <p>Treat what the model gets to see as a product decision — instructions,
+      retrieval, memory, and live state, spec'd, governed, and evaluated with the same
+      rigor as the output it produces.</p>
+    </a>
+    <a class="card" href="prompt-engineering/index.html">
+      <span class="tag">Module</span>
+      <h2>Prompt engineering →</h2>
+      <p>The craft of writing input a model will reliably act on — from ChatGPT
+      productivity patterns, through few-shot and chain-of-thought, into the prompts
+      that drive Claude Code and other coding agents. 9 lessons.</p>
+    </a>
+    <a class="card" href="graph/index.html" style="border-color:#0d8fa5;background:linear-gradient(135deg,#e6f4f6 0%,#fdf3d9 100%)">
+      <span class="tag">Explore</span>
+      <h2>Knowledge graph →</h2>
+      <p>Every page across all nine modules as one interactive map — 405 pages,
+      1550 cross-references. Search it, filter by track, click any node to jump in.</p>
+    </a>
+  </div>
+  <footer>Educational content. Use it, fork it, teach from it.</footer>
+</div></body></html>

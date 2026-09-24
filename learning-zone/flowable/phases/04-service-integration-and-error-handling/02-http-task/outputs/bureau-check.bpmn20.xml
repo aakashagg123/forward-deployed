@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: bureau-check
+description: HTTP task calling a REST API from a process, with HTTP failure surfaced as a BPMN error
+kind: process-model
+phase: 04
+lesson: 02
+Deployable to flowable-rest with zero custom code.
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:flowable="http://flowable.org/bpmn"
+    targetNamespace="http://flowable.org/examples">
+
+  <process id="bureauCheck" name="Bureau check" isExecutable="true">
+
+    <startEvent id="start"/>
+
+    <!-- flowable:type="http" turns a plain service task into an HTTP client.
+         Everything is a field; ${...} expressions read process variables. -->
+    <serviceTask id="fetchScore" name="Fetch bureau score" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[GET]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[https://bureau.example.com/v1/score?pan=${pan}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:expression><![CDATA[Authorization: Bearer ${bureauToken}
+Accept: application/json]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[5000]]></flowable:string>
+        </flowable:field>
+        <!-- store status/body as variables prefixed 'bureau' -->
+        <flowable:field name="resultVariablePrefix">
+          <flowable:string><![CDATA[bureau]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[true]]></flowable:string>
+        </flowable:field>
+        <!-- 4xx/5xx become catchable BPMN errors instead of raw exceptions -->
+        <flowable:field name="failStatusCodes">
+          <flowable:string><![CDATA[400, 404, 5XX]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="handleStatusCodes">
+          <flowable:string><![CDATA[400, 404, 5XX]]></flowable:string>
+        </flowable:field>
+      </extensionElements>
+    </serviceTask>
+
+    <!-- business path continues with the response variables -->
+    <userTask id="reviewScore" name="Review bureau result"
+        flowable:candidateGroups="credit-ops"/>
+
+    <endEvent id="done"/>
+
+    <!-- HTTP failure, surfaced on the diagram (lesson 04 explains the mechanics) -->
+    <boundaryEvent id="bureauFailed" attachedToRef="fetchScore">
+      <errorEventDefinition errorRef="HTTP_FAULT"/>
+    </boundaryEvent>
+    <userTask id="manualPull" name="Pull bureau report manually"
+        flowable:candidateGroups="credit-ops"/>
+    <endEvent id="doneManual"/>
+
+    <sequenceFlow id="f1" sourceRef="start" targetRef="fetchScore"/>
+    <sequenceFlow id="f2" sourceRef="fetchScore" targetRef="reviewScore"/>
+    <sequenceFlow id="f3" sourceRef="reviewScore" targetRef="done"/>
+    <sequenceFlow id="f4" sourceRef="bureauFailed" targetRef="manualPull"/>
+    <sequenceFlow id="f5" sourceRef="manualPull" targetRef="doneManual"/>
+
+  </process>
+</definitions>

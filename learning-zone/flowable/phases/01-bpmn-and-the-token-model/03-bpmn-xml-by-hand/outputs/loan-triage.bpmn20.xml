@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: loan-triage
+description: Hand-written BPMN 2.0 model — parallel checks, score-based routing, manual review
+kind: process-model
+phase: 01
+lesson: 03
+Deployable to any BPMN 2.0 engine; uses only expressions, no custom Java classes.
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:flowable="http://flowable.org/bpmn"
+    targetNamespace="http://flowable.org/examples">
+
+  <process id="loanTriage" name="Loan triage" isExecutable="true">
+
+    <startEvent id="applicationReceived"/>
+
+    <parallelGateway id="fork"/>
+
+    <serviceTask id="creditCheck" name="Credit check"
+        flowable:expression="${execution.setVariable('creditChecked', true)}"/>
+    <serviceTask id="kycCheck" name="KYC check"
+        flowable:expression="${execution.setVariable('kycChecked', true)}"/>
+
+    <parallelGateway id="join"/>
+
+    <exclusiveGateway id="route" default="toReview"/>
+
+    <serviceTask id="autoApprove" name="Auto approve"
+        flowable:expression="${execution.setVariable('decision', 'auto-approved')}"/>
+
+    <userTask id="manualReview" name="Manual credit review"
+        flowable:candidateGroups="credit-ops"/>
+
+    <endEvent id="decided"/>
+
+    <sequenceFlow id="f1" sourceRef="applicationReceived" targetRef="fork"/>
+    <sequenceFlow id="f2" sourceRef="fork" targetRef="creditCheck"/>
+    <sequenceFlow id="f3" sourceRef="fork" targetRef="kycCheck"/>
+    <sequenceFlow id="f4" sourceRef="creditCheck" targetRef="join"/>
+    <sequenceFlow id="f5" sourceRef="kycCheck" targetRef="join"/>
+    <sequenceFlow id="f6" sourceRef="join" targetRef="route"/>
+
+    <sequenceFlow id="toAuto" sourceRef="route" targetRef="autoApprove">
+      <conditionExpression xsi:type="tFormalExpression">${score &gt;= 700}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toReview" sourceRef="route" targetRef="manualReview"/>
+
+    <sequenceFlow id="f7" sourceRef="autoApprove" targetRef="decided"/>
+    <sequenceFlow id="f8" sourceRef="manualReview" targetRef="decided"/>
+
+  </process>
+</definitions>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: application-with-events
+description: Event subprocesses — interrupting withdrawal (message) and non-interrupting weekly nudge (timer)
+kind: process-model
+phase: 07
+lesson: 05
+Deployable to flowable-rest with zero custom code.
+-->
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:flowable="http://flowable.org/bpmn"
+    targetNamespace="http://flowable.org/examples">
+
+  <message id="withdrawalMsg" name="customerWithdrawal"/>
+
+  <process id="applicationWithEvents" name="Application with event subprocesses"
+      isExecutable="true">
+
+    <!-- ============ the happy path ============ -->
+    <startEvent id="start"/>
+    <userTask id="collectDocs" name="Collect documents"
+        flowable:candidateGroups="ops"/>
+    <userTask id="verifyDocs" name="Verify documents"
+        flowable:candidateGroups="ops"/>
+    <endEvent id="done"/>
+
+    <sequenceFlow id="f1" sourceRef="start" targetRef="collectDocs"/>
+    <sequenceFlow id="f2" sourceRef="collectDocs" targetRef="verifyDocs"/>
+    <sequenceFlow id="f3" sourceRef="verifyDocs" targetRef="done"/>
+
+    <!-- ============ interrupting: customer withdraws ============
+         One drawn scope handles withdrawal wherever the main flow happens
+         to be — no boundary event on every task. triggeredByEvent marks
+         the subprocess as event-driven; the interrupting message start
+         kills the main flow when it fires. -->
+    <subProcess id="withdrawalHandler" triggeredByEvent="true">
+      <startEvent id="withdrawalStart" isInterrupting="true">
+        <messageEventDefinition messageRef="withdrawalMsg"/>
+      </startEvent>
+      <serviceTask id="recordWithdrawal" name="Record withdrawal"
+          flowable:expression="${execution.setVariable('outcome', 'withdrawn')}"/>
+      <endEvent id="withdrawn"/>
+      <sequenceFlow id="w1" sourceRef="withdrawalStart" targetRef="recordWithdrawal"/>
+      <sequenceFlow id="w2" sourceRef="recordWithdrawal" targetRef="withdrawn"/>
+    </subProcess>
+
+    <!-- ============ non-interrupting: weekly status nudge ============
+         Fires every 7 days while the instance is open; the main flow
+         keeps running. isInterrupting="false" is the whole difference. -->
+    <subProcess id="nudgeHandler" triggeredByEvent="true">
+      <startEvent id="nudgeStart" isInterrupting="false">
+        <timerEventDefinition><timeCycle>R/P7D</timeCycle></timerEventDefinition>
+      </startEvent>
+      <serviceTask id="sendNudge" name="Send status nudge"
+          flowable:expression="${execution.setVariable('lastNudge', 'sent')}"/>
+      <endEvent id="nudged"/>
+      <sequenceFlow id="n1" sourceRef="nudgeStart" targetRef="sendNudge"/>
+      <sequenceFlow id="n2" sourceRef="sendNudge" targetRef="nudged"/>
+    </subProcess>
+
+  </process>
+</definitions>

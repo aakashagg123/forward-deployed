@@ -1,0 +1,12 @@
+{
+  "key": "loanApplicationsChannel",
+  "category": "channel",
+  "name": "Loan applications inbound channel",
+  "channelType": "inbound",
+  "type": "kafka",
+  "topics": ["loan-applications"],
+  "deserializerType": "json",
+  "channelEventKeyDetection": {
+    "fixedValue": "applicationReceived"
+  }
+}

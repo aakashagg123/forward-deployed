@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+name: credit-decision
+description: Hand-written DMN decision table for the credit decision, wired into BPMN by a decision task
+kind: decision-table
+phase: 05
+lesson: 03
+Hit policy FIRST by design: exception rows first, catch-all last (see lesson 02).
+-->
+<definitions
+    xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+    id="creditDecisionDefinitions"
+    name="Credit decision"
+    namespace="http://flowable.org/dmn">
+
+  <decision id="creditDecision" name="Credit decision">
+    <decisionTable id="creditDecisionTable" hitPolicy="FIRST">
+
+      <input id="scoreInput" label="Bureau score">
+        <inputExpression id="scoreExpr" typeRef="number">
+          <text>score</text>
+        </inputExpression>
+      </input>
+      <input id="amountInput" label="Loan amount">
+        <inputExpression id="amountExpr" typeRef="number">
+          <text>amount</text>
+        </inputExpression>
+      </input>
+
+      <output id="decisionOutput" label="Decision" name="decision" typeRef="string"/>
+      <output id="rateOutput" label="Rate %" name="rate" typeRef="number"/>
+
+      <!-- exception rows first, catch-all last: the FIRST contract -->
+      <rule>
+        <inputEntry id="r1c1"><text><![CDATA[>= 750]]></text></inputEntry>
+        <inputEntry id="r1c2"><text><![CDATA[<= 1000000]]></text></inputEntry>
+        <outputEntry id="r1o1"><text><![CDATA["auto-approve"]]></text></outputEntry>
+        <outputEntry id="r1o2"><text><![CDATA[10.5]]></text></outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="r2c1"><text><![CDATA[>= 700]]></text></inputEntry>
+        <inputEntry id="r2c2"><text><![CDATA[<= 500000]]></text></inputEntry>
+        <outputEntry id="r2o1"><text><![CDATA["auto-approve"]]></text></outputEntry>
+        <outputEntry id="r2o2"><text><![CDATA[11.5]]></text></outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="r3c1"><text><![CDATA[>= 650]]></text></inputEntry>
+        <inputEntry id="r3c2"><text><![CDATA[-]]></text></inputEntry>
+        <outputEntry id="r3o1"><text><![CDATA["manual-review"]]></text></outputEntry>
+        <outputEntry id="r3o2"><text><![CDATA[13.0]]></text></outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="r4c1"><text><![CDATA[-]]></text></inputEntry>
+        <inputEntry id="r4c2"><text><![CDATA[-]]></text></inputEntry>
+        <outputEntry id="r4o1"><text><![CDATA["decline"]]></text></outputEntry>
+        <outputEntry id="r4o2"><text><![CDATA[0]]></text></outputEntry>
+      </rule>
+
+    </decisionTable>
+  </decision>
+</definitions>
