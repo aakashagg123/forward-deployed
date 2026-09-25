@@ -20,22 +20,50 @@ have a demo.
 The fix is a discipline, not a feature: **between wait states, the instance exists only
 in the database.**
 
-```mermaid
-sequenceDiagram
-  participant C as client
-  participant E as engine (any node)
-  participant DB as database
-  C->>E: start instance
-  E->>E: advance tokens until wait state
-  E->>DB: INSERT execution rows (tokens + variables)
-  E-->>C: return (nothing is running now)
-  Note over E,DB: hours / days pass — engine may restart, scale, redeploy
-  C->>E: complete task
-  E->>DB: SELECT execution rows (rehydrate)
-  E->>E: advance tokens until next wait state
-  E->>DB: UPDATE / DELETE rows
-  E-->>C: return
-```
+<style>
+.dgm-wsp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-wsp-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-wsp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-wsp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-wsp-actors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.dgm-wsp-actor{border-radius:9px;padding:7px 6px;text-align:center;font-size:9.5px;font-weight:700}
+.dgm-wsp-actor.a{background:#ddf4ff;border:1px solid #b6e3ff;color:#0550ae}
+.dgm-wsp-actor.b{background:#faeceb;border:1px solid #e3b3ad;color:#7a2c2e}
+.dgm-wsp-actor.c{background:#dafbe1;border:1px solid #aceebb;color:#1a614f}
+.dgm-wsp-msgs{display:flex;flex-direction:column;gap:5px}
+.dgm-wsp-msg{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;font-size:10.5px;
+  color:#1f2328;line-height:1.35;padding:7px 10px;border-radius:8px;background:#f6f8fa}
+.dgm-wsp-msg .tag{font-size:9px;font-weight:700;color:#8c959f}
+.dgm-wsp-msg.note{display:block;background:#faeceb;color:#7a2c2e;font-style:italic;text-align:center}
+@media (max-width:640px){.dgm-wsp{padding:20px 16px 18px}.dgm-wsp-actors{grid-template-columns:1fr 1fr}}
+</style>
+<div class="dgm-wsp">
+  <span class="dgm-wsp-chip">Wait states are rows, not threads</span>
+  <h4>Nothing is ‘running’ between requests — the database is the only thing that remembers</h4>
+  <p class="dgm-wsp-sub">A wait state survives a restart because it was never held in memory.</p>
+  <div class="dgm-wsp-actors">
+    <div class="dgm-wsp-actor a">Client</div>
+    <div class="dgm-wsp-actor b">Engine (any node)</div>
+    <div class="dgm-wsp-actor c">Database</div>
+  </div>
+  <div class="dgm-wsp-msgs">
+    <div class="dgm-wsp-msg"><span class="tag">1</span><span>Client → Engine: start instance</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">2</span><span>Engine advances tokens until wait state</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">3</span><span>Engine → DB: INSERT execution rows (tokens + variables)</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">4</span><span>Engine → Client: return (nothing is running now)</span></div>
+    <div class="dgm-wsp-msg note">Hours or days pass — the engine may restart, scale, or redeploy</div>
+    <div class="dgm-wsp-msg"><span class="tag">5</span><span>Client → Engine: complete task</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">6</span><span>Engine → DB: SELECT execution rows (rehydrate)</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">7</span><span>Engine advances tokens until the next wait state</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">8</span><span>Engine → DB: UPDATE / DELETE rows</span></div>
+    <div class="dgm-wsp-msg"><span class="tag">9</span><span>Engine → Client: return</span></div>
+  </div>
+</div>
+
 
 This discipline has consequences, and you'll rely on all of them later:
 

@@ -19,21 +19,58 @@ pure service orchestration that no human will ever read.
 
 ## The Concept
 
-```mermaid
-quadrantChart
-    title Who authors the flow x where state lives
-    x-axis Code-first --> Model-first
-    y-axis Your database --> Separate platform
-    quadrant-1 BPM platform
-    quadrant-2 Orchestration platform
-    quadrant-3 Durable execution embedded
-    quadrant-4 Embeddable BPM
-    "Flowable OSS": [0.72, 0.30]
-    "Camunda 7 (CE: EOL)": [0.68, 0.35]
-    "Camunda 8": [0.78, 0.80]
-    "Temporal": [0.15, 0.72]
-    "DIY status+queue": [0.08, 0.15]
-```
+<style>
+.dgm-lnd{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-lnd-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-lnd h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-lnd-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-lnd-axis{display:flex;justify-content:space-between;font-size:9px;font-weight:700;color:#8c959f;
+  text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px}
+.dgm-lnd-matrix{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-lnd-cell{border-radius:11px;padding:11px 13px;position:relative;border:1.5px solid}
+.dgm-lnd-cell h6{margin:2px 0 4px;font-size:11px;font-weight:700}
+.dgm-lnd-cell p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-lnd-cell.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-lnd-cell.accent h6{color:#7a2c2e}
+.dgm-lnd-cell.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-lnd-cell.blue h6{color:#0550ae}
+.dgm-lnd-cell.green{background:#dafbe1;border-color:#aceebb}
+.dgm-lnd-cell.green h6{color:#1a614f}
+.dgm-lnd-cell.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-lnd-cell.red h6{color:#82061e}
+.dgm-lnd-cell.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-lnd-cell.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-lnd{padding:20px 16px 18px}.dgm-lnd-matrix{grid-template-columns:1fr}}
+</style>
+<div class="dgm-lnd">
+  <span class="dgm-lnd-chip">The landscape</span>
+  <h4>Four ways to run a process, mapped on two axes</h4>
+  <p class="dgm-lnd-sub">Who authors the flow (code vs. model) and where the state lives (your DB vs. a separate platform).</p>
+  <div class="dgm-lnd-axis"><span>← code-first · model-first →</span><span>your database ↓ · separate platform ↑</span></div>
+  <div class="dgm-lnd-matrix">
+    <div class="dgm-lnd-cell accent">
+      <h6>Orchestration platform</h6>
+      <p>Code-first, its own separate platform — Temporal.</p>
+    </div>
+    <div class="dgm-lnd-cell blue">
+      <h6>BPM platform</h6>
+      <p>Model-first, its own separate platform — Camunda 8.</p>
+    </div>
+    <div class="dgm-lnd-cell neutral">
+      <h6>Durable execution, embedded</h6>
+      <p>Code-first, lives in your database — a DIY status+queue table.</p>
+    </div>
+    <div class="dgm-lnd-cell green">
+      <h6>Embeddable BPM</h6>
+      <p>Model-first, lives in your database — Flowable OSS, Camunda 7 (CE: EOL).</p>
+    </div>
+  </div>
+</div>
+
 
 The five, honestly:
 

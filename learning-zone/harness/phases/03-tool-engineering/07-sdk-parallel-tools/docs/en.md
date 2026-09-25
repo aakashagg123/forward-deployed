@@ -13,13 +13,41 @@ forever for the rest. If you return results in the wrong shape, the API rejects 
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  M["assistant turn"] --> B["[tool_use, tool_use, …]"]
-  B --> P["run each (validate, budget, idempotent, wrap)"]
-  P --> U["one user turn: [tool_result, tool_result, …]"]
-  U --> M
-```
+<style>
+.dgm-spt{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-spt-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-spt h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-spt-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-spt-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-spt-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-spt-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-spt-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-spt-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-spt-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-spt-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-spt-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-spt{padding:20px 16px 18px}.dgm-spt-row{flex-direction:column}}
+</style>
+<div class="dgm-spt">
+  <span class="dgm-spt-chip">Parallel tool calls resolve as one user turn</span>
+  <h4>Several tool_use blocks in, one tool_result batch out</h4>
+  <p class="dgm-spt-sub">Each call is validated, budgeted and dispatched independently — but they return together.</p>
+  <div class="dgm-spt-row">
+    <div class="dgm-spt-n neutral">Assistant turn</div>
+    <span class="dgm-spt-arr">→</span>
+    <div class="dgm-spt-n accent">[tool_use, tool_use, …]</div>
+    <span class="dgm-spt-arr">→</span>
+    <div class="dgm-spt-n blue">Run each (validate, budget, idempotent, wrap)</div>
+    <span class="dgm-spt-arr">→</span>
+    <div class="dgm-spt-n green">One user turn: [tool_result, tool_result, …]</div>
+  </div>
+</div>
+
 
 All results for a turn go back together in a single user message, each paired by
 `tool_use_id`. Independent tools can run concurrently.

@@ -20,11 +20,35 @@ own it.
 
 Three architectures, in ascending order of seriousness:
 
-```mermaid
-flowchart TB
-  A["1 · built-in IDM<br/>engine tables own users/groups"] --> B["2 · synced<br/>IdP is source of truth,<br/>engine tables are a mirror"]
-  B --> C["3 · delegated<br/>engine stores NO identity;<br/>groups arrive as claims per request"]
-```
+<style>
+.dgm-im{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-im-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-im h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-im-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-im-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-im-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-im-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-im-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-im{padding:20px 16px 18px}}
+</style>
+<div class="dgm-im">
+  <span class="dgm-im-chip">Three identity models</span>
+  <h4>Who owns the truth about users and groups?</h4>
+  <p class="dgm-im-sub">Each step moves ownership further away from the engine's own tables.</p>
+  <div class="dgm-im-chain">
+    <div class="dgm-im-node alt">1 · Built-in IDM — engine tables own users/groups</div>
+    <div class="dgm-im-arr">↓</div>
+    <div class="dgm-im-node accent">2 · Synced — IdP is the source of truth; engine tables are a mirror</div>
+    <div class="dgm-im-arr">↓</div>
+    <div class="dgm-im-node alt">3 · Delegated — engine stores no identity; groups arrive as claims per request</div>
+  </div>
+</div>
+
 
 | | Built-in IDM | Synced | Delegated (recommended) |
 | :-- | :-- | :-- | :-- |

@@ -16,12 +16,41 @@ look like success. The feedback channel needs structure.
 A well-formed result carries: the `tool_use_id` it answers, a concise `content`, and an
 `is_error` flag.
 
-```mermaid
-flowchart LR
-  T["tool runs"] --> W["wrap: id + content + is_error"]
-  W --> B["budget: truncate if huge"]
-  B --> M["model"]
-```
+<style>
+.dgm-rae{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-rae-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-rae h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-rae-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-rae-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-rae-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-rae-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-rae-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-rae-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-rae-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-rae-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-rae-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-rae{padding:20px 16px 18px}.dgm-rae-row{flex-direction:column}}
+</style>
+<div class="dgm-rae">
+  <span class="dgm-rae-chip">Every result gets the same envelope</span>
+  <h4>Wrap, then budget — a huge result never reaches the model whole</h4>
+  <p class="dgm-rae-sub">id + content + is_error is the same shape whether the tool succeeded or not.</p>
+  <div class="dgm-rae-row">
+    <div class="dgm-rae-n neutral">Tool runs</div>
+    <span class="dgm-rae-arr">→</span>
+    <div class="dgm-rae-n accent">Wrap: id + content + is_error</div>
+    <span class="dgm-rae-arr">→</span>
+    <div class="dgm-rae-n blue">Budget: truncate if huge</div>
+    <span class="dgm-rae-arr">→</span>
+    <div class="dgm-rae-n green">Model</div>
+  </div>
+</div>
+
 
 Three rules: pair to the request id, mark errors explicitly, and cap the size (truncate
 with a note rather than dumping 50KB).

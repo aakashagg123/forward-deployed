@@ -14,13 +14,43 @@ complete: an agent you understand, trust, measure, and deploy.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  A["full agent (01–03)"] --> B["budgets + degraded mode (P14)"]
-  B --> E["eval gate (P15)"]
-  E --> O["traces + cost (P16)"]
-  O --> D["deploy checklist (P18)"]
-```
+<style>
+.dgm-ca4{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ca4-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-ca4 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ca4-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ca4-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-ca4-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-ca4-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-ca4-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-ca4-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-ca4-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-ca4-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-ca4-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-ca4{padding:20px 16px 18px}.dgm-ca4-row{flex-direction:column}}
+</style>
+<div class="dgm-ca4">
+  <span class="dgm-ca4-chip">Capstone 4: the full agent, gated for production</span>
+  <h4>Budgets, evals, traces, and a deploy checklist — the last four phases, in order</h4>
+  <p class="dgm-ca4-sub">This is the same shape as Phase 18's deploy diagram, now applied to the capstone agent itself.</p>
+  <div class="dgm-ca4-row">
+    <div class="dgm-ca4-n neutral">Full agent (01–03)</div>
+    <span class="dgm-ca4-arr">→</span>
+    <div class="dgm-ca4-n accent">Budgets + degraded mode (P14)</div>
+    <span class="dgm-ca4-arr">→</span>
+    <div class="dgm-ca4-n blue">Eval gate (P15)</div>
+    <span class="dgm-ca4-arr">→</span>
+    <div class="dgm-ca4-n accent">Traces + cost (P16)</div>
+    <span class="dgm-ca4-arr">→</span>
+    <div class="dgm-ca4-n green">Deploy checklist (P18)</div>
+  </div>
+</div>
+
 
 ## Build It
 

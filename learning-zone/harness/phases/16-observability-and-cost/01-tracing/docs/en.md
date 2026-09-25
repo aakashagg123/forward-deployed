@@ -15,12 +15,38 @@ reconstruct and diagnose any run.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  R["span: agent run"] --> S1["span: model call (tokens, ms)"]
-  R --> S2["span: tool call (name, ms)"]
-  S2 --> S3["span: bash (exit, ms)"]
-```
+<style>
+.dgm-trc{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-trc-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-trc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-trc-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-trc-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-trc-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-trc-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-trc-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-trc{padding:20px 16px 18px}}
+</style>
+<div class="dgm-trc">
+  <span class="dgm-trc-chip">One run, nested spans</span>
+  <h4>The run span contains model-call spans and tool-call spans, which can nest further</h4>
+  <p class="dgm-trc-sub">Bash calls nest under their tool span — the trace mirrors the actual call structure.</p>
+  <div class="dgm-trc-chain">
+    <div class="dgm-trc-node accent">Span: agent run</div>
+    <div class="dgm-trc-arr">↓</div>
+    <div class="dgm-trc-node alt">Span: model call (tokens, ms)</div>
+  </div>
+  <div class="dgm-trc-chain">
+    <div class="dgm-trc-node alt">Span: tool call (name, ms)</div>
+    <div class="dgm-trc-arr">↓</div>
+    <div class="dgm-trc-node accent">Span: bash (exit, ms)</div>
+  </div>
+</div>
+
 
 Spans nest — a tool span sits inside the run span, and each span carries its own timing and
 attributes. It's the same model as distributed tracing, applied to an agent loop.

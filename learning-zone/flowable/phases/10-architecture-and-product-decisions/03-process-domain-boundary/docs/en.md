@@ -24,19 +24,58 @@ veteran has seen this exact failure, and it has a boundary-shaped cure.
 
 Two kinds of state, and the translation layer between them:
 
-```mermaid
-flowchart LR
-  subgraph engine ["engine (coordination state)"]
-    E["where are the tokens<br/>who must act, by when<br/>which version, what path"]
-  end
-  subgraph acl ["anti-corruption layer<br/>(delegates + facade)"]
-    A["translate: IDs across,<br/>payloads never"]
-  end
-  subgraph domain ["domain (business truth)"]
-    D["Loan aggregate, Customer,<br/>ledger, documents —<br/>your services & tables"]
-  end
-  engine <--> acl <--> domain
-```
+<style>
+.dgm-pdb{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pdb-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-pdb h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pdb-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pdb-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dgm-pdb-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-pdb-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-pdb-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-pdb-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-pdb-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pdb-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-pdb-col.neutral h6{color:#59636e}
+.dgm-pdb-col.accent h6{color:#7a2c2e}
+.dgm-pdb-col.blue h6{color:#0550ae}
+.dgm-pdb-col.green h6{color:#1a614f}
+.dgm-pdb-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-pdb-item:last-child{margin-bottom:0}
+.dgm-pdb-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-pdb{padding:20px 16px 18px}.dgm-pdb-cols{grid-template-columns:1fr}}
+.dgm-pdb-note{margin-top:10px;padding:9px 14px;background:#faeceb;border:1px dashed #e3b3ad;border-radius:10px;
+  font-size:10.5px;color:#7a2c2e;line-height:1.4}
+</style>
+<div class="dgm-pdb">
+  <span class="dgm-pdb-chip">The engine is not the domain</span>
+  <h4>An anti-corruption layer keeps coordination state out of your domain model</h4>
+  <p class="dgm-pdb-sub">IDs cross the boundary; payloads never do.</p>
+  <div class="dgm-pdb-cols">
+    <div class="dgm-pdb-col accent">
+      <h6>Engine (coordination state)</h6>
+      <div class="dgm-pdb-item">Where are the tokens</div>
+      <div class="dgm-pdb-item">Who must act, by when</div>
+      <div class="dgm-pdb-item">Which version, what path</div>
+    </div>
+    <div class="dgm-pdb-col neutral">
+      <h6>Anti-corruption layer (delegates + facade)</h6>
+      <div class="dgm-pdb-item">Translate: IDs across, payloads never</div>
+    </div>
+    <div class="dgm-pdb-col blue">
+      <h6>Domain (business truth)</h6>
+      <div class="dgm-pdb-item">Loan aggregate, Customer, ledger, documents — your services &amp; tables</div>
+    </div>
+  </div>
+  <div class="dgm-pdb-note">Engine and domain never call each other directly — everything crosses through the anti-corruption layer, both ways.</div>
+</div>
+
 
 The four boundary rules:
 

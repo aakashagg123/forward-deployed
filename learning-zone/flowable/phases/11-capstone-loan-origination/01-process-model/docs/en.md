@@ -11,26 +11,98 @@ One process —
 [`outputs/loan-origination.bpmn20.xml`](../outputs/loan-origination.bpmn20.xml) —
 carrying a loan application from arrival to disbursal, decline, or expiry:
 
-```mermaid
-flowchart LR
-  S(("start")) --> F{{"fork"}}
-  F --> B["bureau pull 🌐 async"]
-  B -. "⚡ error" .-> MB["manual bureau pull 👤"]
-  F --> K["KYC review 👤"]
-  B --> J{{"join"}}
-  MB --> J
-  K --> J
-  J --> KG{"KYC ok?"}
-  KG -- no --> RK(("rejected"))
-  KG -- yes --> D["credit decision 📋 DMN"]
-  D --> R{"decision?"}
-  R -- auto-approve --> O["accept offer 👤 ⏰P30D"]
-  R -- manual-review --> CR["credit review 👤"] --> RR{"?"} -- approve --> O
-  RR -- decline --> X(("declined"))
-  R -- decline --> X
-  O -- accepted --> DI["disburse ⚙️"] --> OK(("disbursed"))
-  O -. "⏰ expired" .-> E(("expired"))
-```
+<style>
+.dgm-cap{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-cap-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-cap h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-cap-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-cap-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-cap-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-cap-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-cap-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-cap{padding:20px 16px 18px}}
+.dgm-cap-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-cap-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-cap-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-cap-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-cap-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-cap-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-cap-b.accent h6{color:#7a2c2e}
+.dgm-cap-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-cap-b.blue h6{color:#0550ae}
+.dgm-cap-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-cap-b.green h6{color:#1a614f}
+.dgm-cap-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-cap-b.red h6{color:#82061e}
+.dgm-cap-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-cap-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-cap{padding:20px 16px 18px}.dgm-cap-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-cap">
+  <span class="dgm-cap-chip">Capstone: loan origination, end to end</span>
+  <h4>One process, four decision points, three ways to end</h4>
+  <p class="dgm-cap-sub">Bureau pull and KYC review run in parallel; everything else is sequential.</p>
+  <div class="dgm-cap-chain">
+    <div class="dgm-cap-node alt">● Start → fork</div>
+  </div>
+  <div class="dgm-cap-q">Parallel branches</div>
+  <div class="dgm-cap-branches" style="grid-template-columns:repeat(2,1fr)">
+    <div class="dgm-cap-b blue">
+      <h6>Bureau pull 🌐 (async)</h6>
+      <p>⚡ error → manual bureau pull 👤</p>
+    </div>
+    <div class="dgm-cap-b accent">
+      <h6>KYC review 👤</h6>
+      <p>Runs alongside the bureau pull</p>
+    </div>
+  </div>
+  <div class="dgm-cap-chain">
+    <div class="dgm-cap-node alt">Join</div>
+  </div>
+  <div class="dgm-cap-q">KYC ok?</div>
+  <div class="dgm-cap-branches" style="grid-template-columns:repeat(2,1fr)">
+    <div class="dgm-cap-b red">
+      <h6>No → ● rejected</h6>
+    </div>
+    <div class="dgm-cap-b green">
+      <h6>Yes → continue</h6>
+      <p>Credit decision 📋 DMN</p>
+    </div>
+  </div>
+  <div class="dgm-cap-q">Decision?</div>
+  <div class="dgm-cap-branches">
+    <div class="dgm-cap-b green">
+      <h6>Auto-approve</h6>
+      <p>→ Accept offer 👤 ⏰ P30D</p>
+    </div>
+    <div class="dgm-cap-b accent">
+      <h6>Manual review</h6>
+      <p>Credit review 👤 → approve or decline</p>
+    </div>
+    <div class="dgm-cap-b red">
+      <h6>Decline</h6>
+      <p>→ ● declined</p>
+    </div>
+  </div>
+  <div class="dgm-cap-q">Offer outcome</div>
+  <div class="dgm-cap-branches" style="grid-template-columns:repeat(2,1fr)">
+    <div class="dgm-cap-b green">
+      <h6>Accepted</h6>
+      <p>Disburse ⚙️ → ● disbursed</p>
+    </div>
+    <div class="dgm-cap-b neutral">
+      <h6>⏰ Expired (P30D)</h6>
+      <p>→ ● expired</p>
+    </div>
+  </div>
+</div>
+
 
 Every element cites its lesson:
 

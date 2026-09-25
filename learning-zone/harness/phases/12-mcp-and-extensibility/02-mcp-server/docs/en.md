@@ -14,12 +14,51 @@ server any MCP client can use.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  S["MCP server"] --> T["tools/list, tools/call"]
-  S --> R["resources/list, resources/read"]
-  S --> P["prompts/list, prompts/get"]
-```
+<style>
+.dgm-ms{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ms-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-ms h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ms-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ms-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-ms-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-ms-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-ms-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-ms-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-ms-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-ms-b.accent h6{color:#0d5c0d}
+.dgm-ms-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-ms-b.blue h6{color:#0550ae}
+.dgm-ms-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-ms-b.green h6{color:#1a614f}
+.dgm-ms-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-ms-b.red h6{color:#82061e}
+.dgm-ms-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-ms-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-ms{padding:20px 16px 18px}.dgm-ms-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ms">
+  <span class="dgm-ms-chip">Three capability families, one server</span>
+  <h4>Tools, resources, and prompts each get their own list/call or list/read pair</h4>
+  <p class="dgm-ms-sub">A server can offer any subset — nothing requires implementing all three.</p>
+  <div class="dgm-ms-q">MCP server</div>
+  <div class="dgm-ms-branches">
+    <div class="dgm-ms-b accent">
+      <h6>tools/list, tools/call</h6>
+    </div>
+    <div class="dgm-ms-b blue">
+      <h6>resources/list, resources/read</h6>
+    </div>
+    <div class="dgm-ms-b green">
+      <h6>prompts/list, prompts/get</h6>
+    </div>
+  </div>
+</div>
+
 
 ## Build It
 

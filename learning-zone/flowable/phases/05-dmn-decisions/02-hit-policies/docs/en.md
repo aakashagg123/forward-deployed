@@ -19,14 +19,58 @@ order.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  M["rules matching the input"] --> HP{"hit policy"}
-  HP -- "UNIQUE" --> U["0 or 1 may match<br/>2+ ⇒ ERROR — table bug"]
-  HP -- "FIRST" --> F["row order decides<br/>reordering = policy change"]
-  HP -- "ANY" --> A["overlaps fine IF all agree<br/>disagreement ⇒ error"]
-  HP -- "COLLECT" --> C["return all matches<br/>± SUM / MIN / MAX / COUNT"]
-```
+<style>
+.dgm-hp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-hp-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-hp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-hp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-hp-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-hp-branches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.dgm-hp-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-hp-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-hp-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-hp-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-hp-b.accent h6{color:#7a2c2e}
+.dgm-hp-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-hp-b.blue h6{color:#0550ae}
+.dgm-hp-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-hp-b.green h6{color:#1a614f}
+.dgm-hp-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-hp-b.red h6{color:#82061e}
+.dgm-hp-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-hp-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-hp{padding:20px 16px 18px}.dgm-hp-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-hp">
+  <span class="dgm-hp-chip">Four hit policies</span>
+  <h4>Which rows match the input decides what ‘hit policy’ even means</h4>
+  <p class="dgm-hp-sub">The same overlapping table is a bug under UNIQUE and perfectly fine under COLLECT.</p>
+  <div class="dgm-hp-q">Rules matching the input</div>
+  <div class="dgm-hp-branches">
+    <div class="dgm-hp-b accent">
+      <h6>UNIQUE</h6>
+      <p>0 or 1 may match — 2+ is an ERROR (table bug)</p>
+    </div>
+    <div class="dgm-hp-b blue">
+      <h6>FIRST</h6>
+      <p>Row order decides — reordering rows is a policy change</p>
+    </div>
+    <div class="dgm-hp-b green">
+      <h6>ANY</h6>
+      <p>Overlaps are fine if all agree — disagreement is an error</p>
+    </div>
+    <div class="dgm-hp-b neutral">
+      <h6>COLLECT</h6>
+      <p>Return all matches, optionally SUM / MIN / MAX / COUNT</p>
+    </div>
+  </div>
+</div>
+
 
 | Policy | Overlap is… | Result | Reach for it when |
 | :-- | :-- | :-- | :-- |

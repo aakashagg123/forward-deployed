@@ -14,13 +14,50 @@ agent ingests untrusted data. Step one is to *test* for it.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  U["untrusted content (file/tool result)"] --> A["agent reads it"]
-  A --> X{"does the agent obey injected instructions?"}
-  X -- "yes" --> BAD["compromised"]
-  X -- "no" --> OK["treated as data"]
-```
+<style>
+.dgm-pi{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pi-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-pi h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pi-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pi-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-pi-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-pi-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-pi-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-pi-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-pi-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-pi-b.accent h6{color:#0d5c0d}
+.dgm-pi-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-pi-b.blue h6{color:#0550ae}
+.dgm-pi-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pi-b.green h6{color:#1a614f}
+.dgm-pi-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-pi-b.red h6{color:#82061e}
+.dgm-pi-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-pi-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-pi{padding:20px 16px 18px}.dgm-pi-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-pi">
+  <span class="dgm-pi-chip">The question is whether the agent obeys what it reads</span>
+  <h4>Untrusted content becomes compromising only if its instructions get followed</h4>
+  <p class="dgm-pi-sub">Treating retrieved content as data, never as instructions, is the entire defense.</p>
+  <div class="dgm-pi-q">Agent reads untrusted content — does it obey injected instructions?</div>
+  <div class="dgm-pi-branches">
+    <div class="dgm-pi-b red">
+      <h6>Yes</h6>
+      <p>Compromised</p>
+    </div>
+    <div class="dgm-pi-b green">
+      <h6>No</h6>
+      <p>Treated as data</p>
+    </div>
+  </div>
+</div>
+
 
 The defense is layered across lessons 02–05. This lesson builds the **eval** that proves the
 defenses hold against a battery of injection payloads.

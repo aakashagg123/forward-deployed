@@ -17,21 +17,81 @@ that hard-stop for a human between them.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  S["spec"] --> P["plan → sprint contract"]
-  P --> G{"human approves?"}
-  G -- "no" --> X["halt"]
-  G -- "yes" --> D["dependency graph → file ownership"]
-  D --> W["dispatch wave (zero shared files)"]
-  W --> B{"budget hit?"}
-  B -- "yes" --> R["report & halt"]
-  B -- "no" --> C["checkpoint each worker"]
-  C --> H["wave summary + HARD STOP"]
-  H --> Y{"human: continue?"}
-  Y -- "yes" --> W
-  Y -- "no" --> E["end"]
-```
+<style>
+.dgm-scw{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-scw-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-scw h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-scw-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-scw-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-scw-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-scw-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-scw-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-scw{padding:20px 16px 18px}}
+.dgm-scw-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-scw-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-scw-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-scw-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-scw-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-scw-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-scw-b.accent h6{color:#0d5c0d}
+.dgm-scw-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-scw-b.blue h6{color:#0550ae}
+.dgm-scw-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-scw-b.green h6{color:#1a614f}
+.dgm-scw-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-scw-b.red h6{color:#82061e}
+.dgm-scw-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-scw-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-scw{padding:20px 16px 18px}.dgm-scw-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-scw">
+  <span class="dgm-scw-chip">A human gate before every wave, a budget check inside it</span>
+  <h4>Plan, approve, dispatch a wave, checkpoint, then stop for the human again</h4>
+  <p class="dgm-scw-sub">The loop only continues if a human says so after every wave summary.</p>
+  <div class="dgm-scw-chain">
+    <div class="dgm-scw-node accent">Spec → plan → sprint contract</div>
+  </div>
+  <div class="dgm-scw-q">Human approves?</div>
+  <div class="dgm-scw-branches">
+    <div class="dgm-scw-b red">
+      <h6>No</h6>
+      <p>Halt</p>
+    </div>
+    <div class="dgm-scw-b green">
+      <h6>Yes</h6>
+      <p>Dependency graph → file ownership → dispatch wave (zero shared files)</p>
+    </div>
+  </div>
+  <div class="dgm-scw-q">Budget hit?</div>
+  <div class="dgm-scw-branches">
+    <div class="dgm-scw-b red">
+      <h6>Yes</h6>
+      <p>Report &amp; halt</p>
+    </div>
+    <div class="dgm-scw-b accent">
+      <h6>No</h6>
+      <p>Checkpoint each worker → wave summary + HARD STOP</p>
+    </div>
+  </div>
+  <div class="dgm-scw-q">Human: continue?</div>
+  <div class="dgm-scw-branches">
+    <div class="dgm-scw-b green">
+      <h6>Yes</h6>
+      <p>Next wave</p>
+    </div>
+    <div class="dgm-scw-b neutral">
+      <h6>No</h6>
+      <p>End</p>
+    </div>
+  </div>
+</div>
+
 
 Four invariants, straight from the principles:
 

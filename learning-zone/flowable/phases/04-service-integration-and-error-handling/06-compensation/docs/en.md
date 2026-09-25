@@ -24,13 +24,72 @@ gets a **compensation handler** — its undo action — attached like a boundary
 If the process later throws a compensation event, the engine runs the handlers of
 *completed* activities in reverse order:
 
-```mermaid
-flowchart LR
-  A["reserve funds ⚙️"] --> B["issue policy ⚙️"] --> C["sign agreement 👤"] --> E(("end"))
-  A -. "compensate ↩" .- CA["release reservation ⚙️"]
-  B -. "compensate ↩" .- CB["cancel policy ⚙️"]
-  C -- "✖ withdrawn" --> X["throw compensation"] --> F(("cancelled"))
-```
+<style>
+.dgm-cmp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-cmp-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-cmp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-cmp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-cmp-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-cmp-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-cmp-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-cmp-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-cmp-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-cmp-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-cmp-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-cmp-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-cmp{padding:20px 16px 18px}.dgm-cmp-row{flex-direction:column}}
+.dgm-cmp-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-cmp-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-cmp-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-cmp-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-cmp-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-cmp-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-cmp-b.accent h6{color:#7a2c2e}
+.dgm-cmp-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-cmp-b.blue h6{color:#0550ae}
+.dgm-cmp-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-cmp-b.green h6{color:#1a614f}
+.dgm-cmp-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-cmp-b.red h6{color:#82061e}
+.dgm-cmp-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-cmp-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-cmp{padding:20px 16px 18px}.dgm-cmp-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-cmp">
+  <span class="dgm-cmp-chip">Compensation undoes committed work</span>
+  <h4>Compensation runs backwards through completed steps, not forwards</h4>
+  <p class="dgm-cmp-sub">Each task can carry its own undo, triggered explicitly if the agreement is withdrawn.</p>
+  <div class="dgm-cmp-row">
+    <div class="dgm-cmp-n ">Reserve funds ⚙️</div>
+    <span class="dgm-cmp-arr">→</span>
+    <div class="dgm-cmp-n ">Issue policy ⚙️</div>
+    <span class="dgm-cmp-arr">→</span>
+    <div class="dgm-cmp-n accent">Sign agreement 👤</div>
+    <span class="dgm-cmp-arr">→</span>
+    <div class="dgm-cmp-n green">● end</div>
+  </div>
+  <div class="dgm-cmp-branches">
+    <div class="dgm-cmp-b neutral">
+      <h6>Compensate: reserve funds</h6>
+      <p>↩ Release reservation ⚙️</p>
+    </div>
+    <div class="dgm-cmp-b neutral">
+      <h6>Compensate: issue policy</h6>
+      <p>↩ Cancel policy ⚙️</p>
+    </div>
+    <div class="dgm-cmp-b red">
+      <h6>✖ Withdrawn after signing</h6>
+      <p>Throw compensation → cancelled</p>
+    </div>
+  </div>
+</div>
+
 
 The rules that make it predictable:
 

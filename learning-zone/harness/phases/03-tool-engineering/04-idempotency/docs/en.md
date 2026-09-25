@@ -19,12 +19,50 @@ Make each side-effecting call carry an **idempotency key** derived from its inte
 harness records completed keys. A repeat with the same key returns the stored result
 instead of acting again.
 
-```mermaid
-flowchart LR
-  C["call + idempotency key"] --> S{"key seen?"}
-  S -- "yes" --> R["return stored result (no re-action)"]
-  S -- "no" --> A["act, store result under key"]
-```
+<style>
+.dgm-idem{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-idem-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-idem h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-idem-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-idem-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-idem-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-idem-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-idem-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-idem-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-idem-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-idem-b.accent h6{color:#0d5c0d}
+.dgm-idem-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-idem-b.blue h6{color:#0550ae}
+.dgm-idem-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-idem-b.green h6{color:#1a614f}
+.dgm-idem-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-idem-b.red h6{color:#82061e}
+.dgm-idem-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-idem-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-idem{padding:20px 16px 18px}.dgm-idem-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-idem">
+  <span class="dgm-idem-chip">A seen key means the action already happened</span>
+  <h4>The idempotency key is what makes a retried call safe</h4>
+  <p class="dgm-idem-sub">Without it, a retry after a timeout can double-charge or double-send.</p>
+  <div class="dgm-idem-q">Call + idempotency key — key seen before?</div>
+  <div class="dgm-idem-branches">
+    <div class="dgm-idem-b accent">
+      <h6>Yes</h6>
+      <p>Return stored result — no re-action</p>
+    </div>
+    <div class="dgm-idem-b green">
+      <h6>No</h6>
+      <p>Act, store result under key</p>
+    </div>
+  </div>
+</div>
+
 
 ## Build It
 

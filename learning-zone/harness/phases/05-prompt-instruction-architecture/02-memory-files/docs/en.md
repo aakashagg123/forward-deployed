@@ -14,13 +14,50 @@ rather than inlining it (the legibility principle from harness foundations).
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  M["CLAUDE.md / AGENTS.md (~100 lines)"] --> R["the few rules that apply to every task"]
-  M --> P["pointers → docs/, pattern files"]
-  R --> A["agent reads once, every session"]
-  P --> L["agent loads detail on demand"]
-```
+<style>
+.dgm-mf{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-mf-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-mf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-mf-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-mf-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-mf-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-mf-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-mf-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-mf-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-mf-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-mf-b.accent h6{color:#0d5c0d}
+.dgm-mf-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-mf-b.blue h6{color:#0550ae}
+.dgm-mf-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-mf-b.green h6{color:#1a614f}
+.dgm-mf-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-mf-b.red h6{color:#82061e}
+.dgm-mf-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-mf-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-mf{padding:20px 16px 18px}.dgm-mf-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-mf">
+  <span class="dgm-mf-chip">A short file, read every session</span>
+  <h4>CLAUDE.md stays under 100 lines by pointing, not explaining</h4>
+  <p class="dgm-mf-sub">Rules load every time; the pointed-to docs load only when the task needs them.</p>
+  <div class="dgm-mf-q">CLAUDE.md / AGENTS.md (~100 lines)</div>
+  <div class="dgm-mf-branches">
+    <div class="dgm-mf-b accent">
+      <h6>The few rules that apply to every task</h6>
+      <p>Agent reads once, every session</p>
+    </div>
+    <div class="dgm-mf-b blue">
+      <h6>Pointers → docs/, pattern files</h6>
+      <p>Agent loads detail on demand</p>
+    </div>
+  </div>
+</div>
+
 
 Keep the root file ~100 lines: the handful of always-true rules plus links to deeper docs.
 Detail lives one hop away, loaded only when needed.

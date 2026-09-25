@@ -19,14 +19,50 @@ design time.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  F["a step fails"] --> Q{"would retrying<br/>change the answer?"}
-  Q -- "no — it's an outcome" --> B["BPMN error<br/>throw BpmnError('NO_BUREAU_RECORD')"]
-  B --> BB["caught by error boundary / event subprocess<br/>→ an explicit path on the diagram"]
-  Q -- "yes — it's a malfunction" --> T["technical error<br/>any other exception"]
-  T --> TT["transaction rolls back<br/>async: job retries → dead letter<br/>sync: caller gets the exception"]
-```
+<style>
+.dgm-bet{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-bet-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-bet h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-bet-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-bet-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-bet-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-bet-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-bet-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-bet-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-bet-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-bet-b.accent h6{color:#7a2c2e}
+.dgm-bet-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-bet-b.blue h6{color:#0550ae}
+.dgm-bet-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-bet-b.green h6{color:#1a614f}
+.dgm-bet-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-bet-b.red h6{color:#82061e}
+.dgm-bet-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-bet-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-bet{padding:20px 16px 18px}.dgm-bet-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-bet">
+  <span class="dgm-bet-chip">Two failure families</span>
+  <h4>Would retrying change the answer?</h4>
+  <p class="dgm-bet-sub">An outcome is a BPMN error the diagram catches; a malfunction is a technical error the engine retries.</p>
+  <div class="dgm-bet-q">A step fails</div>
+  <div class="dgm-bet-branches">
+    <div class="dgm-bet-b accent">
+      <h6>No — it's an outcome</h6>
+      <p>BPMN error: throw BpmnError('NO_BUREAU_RECORD') — caught by an error boundary or event subprocess, an explicit path on the diagram</p>
+    </div>
+    <div class="dgm-bet-b red">
+      <h6>Yes — it's a malfunction</h6>
+      <p>Technical error: any other exception — transaction rolls back; async retries then dead-letters, sync throws to the caller</p>
+    </div>
+  </div>
+</div>
+
 
 | | BPMN error | Technical error |
 | :-- | :-- | :-- |

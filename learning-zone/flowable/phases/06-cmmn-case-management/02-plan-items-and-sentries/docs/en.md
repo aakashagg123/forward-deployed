@@ -17,21 +17,60 @@ Guardrails without a route.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  subgraph case ["case plan: fraud investigation"]
-    S1["◻ request statements<br/>(plan item — enabled at start)"]
-    S2["◻ interview customer<br/>(enabled at start)"]
-    M{{"⚑ evidence complete<br/>(milestone)"}}
-    subgraph stage ["stage: escalation — entry gated by sentry"]
-      L["◻ refer to legal"]
-      R["◻ file regulator report"]
-    end
-  end
-  S1 -- "complete ─┐" --> M
-  S2 -- "complete ─┘ (sentry: BOTH)" --> M
-  M -- "occur (sentry)" --> stage
-```
+<style>
+.dgm-pis{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pis-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-pis h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pis-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pis-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.dgm-pis-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-pis-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-pis-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-pis-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-pis-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pis-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-pis-col.neutral h6{color:#59636e}
+.dgm-pis-col.accent h6{color:#7a2c2e}
+.dgm-pis-col.blue h6{color:#0550ae}
+.dgm-pis-col.green h6{color:#1a614f}
+.dgm-pis-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-pis-item:last-child{margin-bottom:0}
+.dgm-pis-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-pis{padding:20px 16px 18px}.dgm-pis-cols{grid-template-columns:1fr}}
+.dgm-pis-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-pis-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-pis-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-pis-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-pis{padding:20px 16px 18px}}
+</style>
+<div class="dgm-pis">
+  <span class="dgm-pis-chip">Plan items &amp; sentries</span>
+  <h4>Two plan items, a sentry, and a gated stage</h4>
+  <p class="dgm-pis-sub">The stage doesn't exist as 'next' — it's enabled once both items complete, not skipped.</p>
+  <div class="dgm-pis-cols">
+    <div class="dgm-pis-col neutral">
+      <h6>◻ Request statements</h6>
+      <div class="dgm-pis-item">plan item — enabled at start</div>
+    </div>
+    <div class="dgm-pis-col neutral">
+      <h6>◻ Interview customer</h6>
+      <div class="dgm-pis-item">plan item — enabled at start</div>
+    </div>
+  </div>
+  <div class="dgm-pis-chain">
+    <div class="dgm-pis-node accent">⚑ Evidence complete — milestone (sentry: BOTH must complete)</div>
+    <div class="dgm-pis-arr">↓</div>
+    <div class="dgm-pis-node alt">Stage: escalation — unlocked (◻ refer to legal, ◻ file regulator report)</div>
+  </div>
+</div>
+
 
 | Construct | Is | Lifecycle essence |
 | :-- | :-- | :-- |

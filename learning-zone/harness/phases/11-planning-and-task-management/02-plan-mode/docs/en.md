@@ -13,13 +13,65 @@ act. It's the spec-first principle (Phase 10) at the single-agent level.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  T["task"] --> P["PLAN MODE: read-only — analyze + propose"]
-  P --> H{"human approves plan?"}
-  H -- "no" --> R["revise / redirect"]
-  H -- "yes" --> A["exit plan mode → act"]
-```
+<style>
+.dgm-plm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-plm-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-plm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-plm-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-plm-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-plm-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-plm-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-plm-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-plm-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-plm-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-plm-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-plm-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-plm{padding:20px 16px 18px}.dgm-plm-row{flex-direction:column}}
+.dgm-plm-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-plm-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-plm-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-plm-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-plm-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-plm-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-plm-b.accent h6{color:#0d5c0d}
+.dgm-plm-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-plm-b.blue h6{color:#0550ae}
+.dgm-plm-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-plm-b.green h6{color:#1a614f}
+.dgm-plm-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-plm-b.red h6{color:#82061e}
+.dgm-plm-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-plm-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-plm{padding:20px 16px 18px}.dgm-plm-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-plm">
+  <span class="dgm-plm-chip">Read-only, until a human says go</span>
+  <h4>Plan mode can analyze and propose — it cannot act until the plan is approved</h4>
+  <p class="dgm-plm-sub">That read-only boundary is what makes it safe to let the agent plan autonomously.</p>
+  <div class="dgm-plm-row">
+    <div class="dgm-plm-n neutral">Task</div>
+    <span class="dgm-plm-arr">→</span>
+    <div class="dgm-plm-n accent">PLAN MODE: read-only — analyze + propose</div>
+  </div>
+  <div class="dgm-plm-q">Human approves plan?</div>
+  <div class="dgm-plm-branches">
+    <div class="dgm-plm-b red">
+      <h6>No</h6>
+      <p>Revise / redirect</p>
+    </div>
+    <div class="dgm-plm-b green">
+      <h6>Yes</h6>
+      <p>Exit plan mode → act</p>
+    </div>
+  </div>
+</div>
+
 
 The enforcement is a permission mode (Phase 8). In plan mode, mutating tools
 (write/edit/bash) are denied, but reads are allowed.

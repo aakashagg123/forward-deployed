@@ -22,16 +22,67 @@ that loop, the rest of harness engineering has nowhere to live.
 The model is a function: `messages -> message`. The loop is everything around it that
 turns a one-shot function into an agent that acts.
 
-```mermaid
-flowchart LR
-  Q["user query"] --> H["append to history"]
-  H --> M["call model"]
-  M --> D{"tool calls?"}
-  D -- "yes" --> T["run each tool"]
-  T --> R["append results to history"]
-  R --> M
-  D -- "no" --> F["final answer"]
-```
+<style>
+.dgm-al{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-al-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-al h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-al-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-al-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-al-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-al-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-al-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-al-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-al-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-al-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-al-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-al{padding:20px 16px 18px}.dgm-al-row{flex-direction:column}}
+.dgm-al-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-al-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-al-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-al-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-al-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-al-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-al-b.accent h6{color:#0d5c0d}
+.dgm-al-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-al-b.blue h6{color:#0550ae}
+.dgm-al-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-al-b.green h6{color:#1a614f}
+.dgm-al-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-al-b.red h6{color:#82061e}
+.dgm-al-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-al-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-al{padding:20px 16px 18px}.dgm-al-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-al">
+  <span class="dgm-al-chip">The whole harness is this one loop</span>
+  <h4>Call the model, run its tools, feed results back — repeat until done</h4>
+  <p class="dgm-al-sub">Every later phase is an elaboration on one edge of this diagram.</p>
+  <div class="dgm-al-row">
+    <div class="dgm-al-n neutral">User query</div>
+    <span class="dgm-al-arr">→</span>
+    <div class="dgm-al-n ">Append to history</div>
+    <span class="dgm-al-arr">→</span>
+    <div class="dgm-al-n accent">Call model</div>
+  </div>
+  <div class="dgm-al-q">Tool calls?</div>
+  <div class="dgm-al-branches">
+    <div class="dgm-al-b blue">
+      <h6>Yes</h6>
+      <p>Run each tool → append results to history → call model again</p>
+    </div>
+    <div class="dgm-al-b green">
+      <h6>No</h6>
+      <p>Final answer</p>
+    </div>
+  </div>
+</div>
+
 
 Three invariants make it work:
 

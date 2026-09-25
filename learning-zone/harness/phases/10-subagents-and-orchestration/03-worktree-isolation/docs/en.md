@@ -17,13 +17,39 @@ wave. Give each worker its own git worktree so even the filesystem is isolated.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  T["tasks + file ownership + deps"] --> G["dependency graph"]
-  G --> W1["wave 1: disjoint files, no unmet deps"]
-  W1 --> W2["wave 2: deps satisfied"]
-  W2 --> WN["…"]
-```
+<style>
+.dgm-wi{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-wi-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-wi h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-wi-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-wi-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-wi-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-wi-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-wi-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-wi{padding:20px 16px 18px}}
+</style>
+<div class="dgm-wi">
+  <span class="dgm-wi-chip">Waves are just dependency depth</span>
+  <h4>A wave is every task whose dependencies are already satisfied and whose files don't overlap</h4>
+  <p class="dgm-wi-sub">Disjoint files inside a wave is what makes parallel workers safe without locking.</p>
+  <div class="dgm-wi-chain">
+    <div class="dgm-wi-node alt">Tasks + file ownership + deps</div>
+    <div class="dgm-wi-arr">↓</div>
+    <div class="dgm-wi-node accent">Dependency graph</div>
+    <div class="dgm-wi-arr">↓</div>
+    <div class="dgm-wi-node alt">Wave 1: disjoint files, no unmet deps</div>
+    <div class="dgm-wi-arr">↓</div>
+    <div class="dgm-wi-node accent">Wave 2: deps satisfied</div>
+    <div class="dgm-wi-arr">↓</div>
+    <div class="dgm-wi-node alt">…</div>
+  </div>
+</div>
+
 
 Two rules turn a task list into safe waves:
 

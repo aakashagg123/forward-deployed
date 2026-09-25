@@ -13,14 +13,59 @@ Without versioning you can't even tell which prompt produced a given result.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  R[("prompt registry: name → versions")] --> A["A: v3 (current)"]
-  R --> B["B: v4 (candidate)"]
-  A --> E["run eval set on both"]
-  B --> E
-  E --> W["pick winner; promote or roll back"]
-```
+<style>
+.dgm-pv{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pv-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-pv h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pv-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pv-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-pv-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-pv-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-pv-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-pv-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-pv-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-pv-b.accent h6{color:#0d5c0d}
+.dgm-pv-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-pv-b.blue h6{color:#0550ae}
+.dgm-pv-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pv-b.green h6{color:#1a614f}
+.dgm-pv-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-pv-b.red h6{color:#82061e}
+.dgm-pv-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-pv-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-pv{padding:20px 16px 18px}.dgm-pv-branches{grid-template-columns:1fr}}
+.dgm-pv-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-pv-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-pv-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-pv-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-pv{padding:20px 16px 18px}}
+</style>
+<div class="dgm-pv">
+  <span class="dgm-pv-chip">A/B the prompt like you'd A/B anything else</span>
+  <h4>Two versions, one eval set, one winner</h4>
+  <p class="dgm-pv-sub">The registry keeps the losing version around — rollback is just re-promoting it.</p>
+  <div class="dgm-pv-q">Prompt registry: name → versions</div>
+  <div class="dgm-pv-branches">
+    <div class="dgm-pv-b neutral">
+      <h6>A: v3 (current)</h6>
+    </div>
+    <div class="dgm-pv-b accent">
+      <h6>B: v4 (candidate)</h6>
+    </div>
+  </div>
+  <div class="dgm-pv-chain">
+    <div class="dgm-pv-node alt">Run eval set on both</div>
+    <div class="dgm-pv-arr">↓</div>
+    <div class="dgm-pv-node accent">Pick winner; promote or roll back</div>
+  </div>
+</div>
+
 
 A registry stores versioned prompts. An A/B run scores both on a fixed eval set. You
 promote the winner, and can revert instantly.

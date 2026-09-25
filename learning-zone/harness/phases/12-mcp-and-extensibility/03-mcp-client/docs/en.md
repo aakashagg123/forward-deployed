@@ -14,13 +14,44 @@ model.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  H["harness"] --> C["MCP client"]
-  C -->|tools/list| S["server"]
-  C --> M["merge discovered tools into registry (Phase 3)"]
-  M --> X["model calls tool → client routes tools/call → server"]
-```
+<style>
+.dgm-mc{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-mc-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-mc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-mc-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-mc-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-mc-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-mc-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-mc-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-mc-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-mc-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-mc-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-mc-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-mc{padding:20px 16px 18px}.dgm-mc-row{flex-direction:column}}
+</style>
+<div class="dgm-mc">
+  <span class="dgm-mc-chip">Discovered tools merge into the same registry</span>
+  <h4>The MCP client lists what a server offers, then routes calls back through it</h4>
+  <p class="dgm-mc-sub">From the model's point of view, an MCP tool looks identical to a native one.</p>
+  <div class="dgm-mc-row">
+    <div class="dgm-mc-n neutral">Harness</div>
+    <span class="dgm-mc-arr">→</span>
+    <div class="dgm-mc-n accent">MCP client</div>
+    <span class="dgm-mc-arr"><span class='lbl'>tools/list</span>→</span>
+    <div class="dgm-mc-n blue">Server</div>
+  </div>
+  <div class="dgm-mc-row" style="margin-top:8px">
+    <div class="dgm-mc-n accent">Merge discovered tools into registry (Phase 3)</div>
+    <span class="dgm-mc-arr">→</span>
+    <div class="dgm-mc-n green">Model calls tool → client routes tools/call → server</div>
+  </div>
+</div>
+
 
 ## Build It
 

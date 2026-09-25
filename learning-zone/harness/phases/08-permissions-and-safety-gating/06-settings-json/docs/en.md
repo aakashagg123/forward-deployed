@@ -14,13 +14,50 @@ not code you maintain.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  S["settings.json"] --> P["permissions.allow / permissions.deny"]
-  S --> H["hooks.PreToolUse / PostToolUse"]
-  P --> G["the gate (lessons 01–02)"]
-  H --> K["the hooks (lesson 03)"]
-```
+<style>
+.dgm-sj{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-sj-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-sj h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-sj-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-sj-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-sj-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-sj-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-sj-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-sj-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-sj-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-sj-b.accent h6{color:#0d5c0d}
+.dgm-sj-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-sj-b.blue h6{color:#0550ae}
+.dgm-sj-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-sj-b.green h6{color:#1a614f}
+.dgm-sj-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-sj-b.red h6{color:#82061e}
+.dgm-sj-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-sj-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-sj{padding:20px 16px 18px}.dgm-sj-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-sj">
+  <span class="dgm-sj-chip">One file, two mechanisms</span>
+  <h4>permissions.* feeds the gate, hooks.* feeds the hook points</h4>
+  <p class="dgm-sj-sub">settings.json is the single source both the gate and the hooks read from.</p>
+  <div class="dgm-sj-q">settings.json</div>
+  <div class="dgm-sj-branches">
+    <div class="dgm-sj-b accent">
+      <h6>permissions.allow / permissions.deny</h6>
+      <p>→ the gate (lessons 01–02)</p>
+    </div>
+    <div class="dgm-sj-b blue">
+      <h6>hooks.PreToolUse / PostToolUse</h6>
+      <p>→ the hooks (lesson 03)</p>
+    </div>
+  </div>
+</div>
+
 
 `permissions` encodes the allow/deny lists. `hooks` wires the deterministic pre/post
 scripts — the `.env` guard, the linter, the egress guard.

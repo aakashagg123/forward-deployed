@@ -16,13 +16,61 @@ a list.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  U["user"] --> H[("history")]
-  A["assistant (+ tool_use)"] --> H
-  T["tool_result (paired to tool_use)"] --> H
-  H --> M["serialize / replay / token-count"]
-```
+<style>
+.dgm-th{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-th-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-th h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-th-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-th-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dgm-th-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-th-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-th-col.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-th-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-th-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-th-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-th-col.neutral h6{color:#59636e}
+.dgm-th-col.accent h6{color:#0d5c0d}
+.dgm-th-col.blue h6{color:#0550ae}
+.dgm-th-col.green h6{color:#1a614f}
+.dgm-th-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-th-item:last-child{margin-bottom:0}
+.dgm-th-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-th{padding:20px 16px 18px}.dgm-th-cols{grid-template-columns:1fr}}
+.dgm-th-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-th-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-th-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-th-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-th{padding:20px 16px 18px}}
+</style>
+<div class="dgm-th">
+  <span class="dgm-th-chip">Three message kinds feed one history</span>
+  <h4>User, assistant, and paired tool_result all accumulate into one structure</h4>
+  <p class="dgm-th-sub">That structure is what gets serialized, replayed, and token-counted.</p>
+  <div class="dgm-th-cols">
+    <div class="dgm-th-col blue">
+      <h6>User</h6>
+    </div>
+    <div class="dgm-th-col accent">
+      <h6>Assistant (+ tool_use)</h6>
+    </div>
+    <div class="dgm-th-col green">
+      <h6>Tool_result (paired to tool_use)</h6>
+    </div>
+  </div>
+  <div class="dgm-th-chain">
+    <div class="dgm-th-node alt">History</div>
+    <div class="dgm-th-arr">↓</div>
+    <div class="dgm-th-node ">Serialize / replay / token-count</div>
+  </div>
+</div>
+
 
 Two invariants the harness must keep:
 

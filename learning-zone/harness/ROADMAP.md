@@ -10,33 +10,36 @@ The phases stack. **The model-as-a-function is the floor. A full coding agent is
 roof.** Skip ahead if you know a lower layer, but don't skip and then wonder why the
 top is breaking.
 
-```mermaid
-flowchart TB
-  P0["Phase 0 — Setup & Tooling"] --> P1["Phase 1 — LLM I/O Foundations"]
-  P1 --> P2["Phase 2 — The Agent Loop"]
-  P2 --> P3["Phase 3 — Tool Engineering"]
-  P2 --> P4["Phase 4 — Context Engineering"]
-  P3 --> P5["Phase 5 — Prompt & Instruction Architecture"]
-  P4 --> P5
-  P3 --> P6["Phase 6 — File & Code Operations"]
-  P3 --> P7["Phase 7 — Shell & Sandbox Execution"]
-  P6 --> P8["Phase 8 — Permissions & Safety Gating"]
-  P7 --> P8
-  P4 --> P9["Phase 9 — Memory & Persistence"]
-  P2 --> P10["Phase 10 — Subagents & Orchestration"]
-  P5 --> P11["Phase 11 — Planning & Task Management"]
-  P3 --> P12["Phase 12 — MCP & Extensibility"]
-  P4 --> P13["Phase 13 — Retrieval & Codebase Understanding"]
-  P8 --> P14["Phase 14 — Reliability Engineering"]
-  P14 --> P15["Phase 15 — Evals & Testing the Harness"]
-  P14 --> P16["Phase 16 — Observability & Cost"]
-  P8 --> P17["Phase 17 — Security & Alignment"]
-  P15 --> P18["Phase 18 — Production & Deployment"]
-  P16 --> P18
-  P17 --> P18
-  P10 --> P19["Phase 19 — Capstone: Build Your Own Coding Agent"]
-  P18 --> P19
-```
+<style>
+.dgm-rmap{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-rmap-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-rmap h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-rmap-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-rmap-tier{margin-bottom:10px}
+.dgm-rmap-tier-label{font-size:9px;font-weight:700;color:#8c959f;text-transform:uppercase;
+  letter-spacing:.4px;margin-bottom:6px}
+.dgm-rmap-row{display:flex;flex-wrap:wrap;gap:6px}
+.dgm-rmap-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:7px 10px;
+  font-size:10px;font-weight:700;color:#1f2328}
+.dgm-rmap-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+@media (max-width:640px){.dgm-rmap{padding:20px 16px 18px}}
+</style>
+<div class="dgm-rmap">
+  <span class="dgm-rmap-chip">The roadmap</span>
+  <h4>Twenty phases, five dependency tiers</h4>
+  <p class="dgm-rmap-sub">Skip ahead if you already know a lower tier — but don't skip and wonder why a higher one breaks.</p>
+  <div class="dgm-rmap-tier"><div class="dgm-rmap-tier-label">Tier 0 — foundation</div><div class="dgm-rmap-row"><div class="dgm-rmap-n accent">P0 Setup & Tooling</div><div class="dgm-rmap-n accent">P1 LLM I/O Foundations</div></div></div>
+  <div class="dgm-rmap-tier"><div class="dgm-rmap-tier-label">Tier 1 — the loop</div><div class="dgm-rmap-row"><div class="dgm-rmap-n accent">P2 The Agent Loop</div></div></div>
+  <div class="dgm-rmap-tier"><div class="dgm-rmap-tier-label">Tier 2 — what the loop acts through</div><div class="dgm-rmap-row"><div class="dgm-rmap-n">P3 Tool Engineering</div><div class="dgm-rmap-n">P4 Context Engineering</div><div class="dgm-rmap-n">P10 Subagents & Orchestration</div></div></div>
+  <div class="dgm-rmap-tier"><div class="dgm-rmap-tier-label">Tier 3 — built on tools + context</div><div class="dgm-rmap-row"><div class="dgm-rmap-n">P5 Prompt & Instruction Architecture</div><div class="dgm-rmap-n">P6 File & Code Operations</div><div class="dgm-rmap-n">P7 Shell & Sandbox Execution</div><div class="dgm-rmap-n">P9 Memory & Persistence</div><div class="dgm-rmap-n">P11 Planning & Task Management</div><div class="dgm-rmap-n">P12 MCP & Extensibility</div><div class="dgm-rmap-n">P13 Retrieval & Codebase Understanding</div></div></div>
+  <div class="dgm-rmap-tier"><div class="dgm-rmap-tier-label">Tier 4 — safety + production</div><div class="dgm-rmap-row"><div class="dgm-rmap-n">P8 Permissions & Safety Gating</div><div class="dgm-rmap-n accent">P14 Reliability Engineering</div><div class="dgm-rmap-n">P15 Evals & Testing the Harness</div><div class="dgm-rmap-n">P16 Observability & Cost</div><div class="dgm-rmap-n">P17 Security & Alignment</div></div></div>
+  <div class="dgm-rmap-tier"><div class="dgm-rmap-tier-label">Tier 5 — ship it</div><div class="dgm-rmap-row"><div class="dgm-rmap-n accent">P18 Production & Deployment</div><div class="dgm-rmap-n accent">P19 Capstone: Coding Agent</div></div></div>
+</div>
+
 
 ---
 

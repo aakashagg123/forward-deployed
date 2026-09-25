@@ -21,12 +21,37 @@ events to process actions becomes deployable configuration.
 
 Three declarative pieces, deployed like models, versioned like models:
 
-```mermaid
-flowchart LR
-  K[("Kafka topic<br/>loan-applications")] --> CH["channel (.channel)<br/>WHERE events come from:<br/>broker, topic, serialization"]
-  CH --> EV["event definition (.event)<br/>WHAT an event is:<br/>key, payload fields, correlation params"]
-  EV --> M["model reference<br/>WHAT HAPPENS:<br/>start event or intermediate catch<br/>with eventType=applicationReceived"]
-```
+<style>
+.dgm-er{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-er-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-er h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-er-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-er-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-er-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-er-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-er-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-er{padding:20px 16px 18px}}
+</style>
+<div class="dgm-er">
+  <span class="dgm-er-chip">From broker message to BPMN event</span>
+  <h4>Channel, then event, then model — three translations from Kafka to a token</h4>
+  <p class="dgm-er-sub">Each layer answers a different question.</p>
+  <div class="dgm-er-chain">
+    <div class="dgm-er-node alt">Kafka topic — loan-applications</div>
+    <div class="dgm-er-arr">↓</div>
+    <div class="dgm-er-node blue">Channel (.channel) — WHERE events come from: broker, topic, serialization</div>
+    <div class="dgm-er-arr">↓</div>
+    <div class="dgm-er-node accent">Event definition (.event) — WHAT an event is: key, payload fields, correlation params</div>
+    <div class="dgm-er-arr">↓</div>
+    <div class="dgm-er-node green">Model reference — WHAT HAPPENS: start event or intermediate catch, eventType=applicationReceived</div>
+  </div>
+</div>
+
 
 | Piece | Owns | Analogy |
 | :-- | :-- | :-- |

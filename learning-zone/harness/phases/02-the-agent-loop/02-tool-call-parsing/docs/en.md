@@ -16,14 +16,65 @@ input or executes something the model didn't actually request.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  M["model message"] --> P["parse → [(name, args), …]"]
-  P --> V{"valid shape?"}
-  V -- "no" --> E["structured error back to model"]
-  V -- "yes" --> D["dispatch each call"]
-  D --> R["collect results"]
-```
+<style>
+.dgm-tcp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-tcp-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-tcp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-tcp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-tcp-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-tcp-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-tcp-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-tcp-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-tcp-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-tcp-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-tcp-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-tcp-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-tcp{padding:20px 16px 18px}.dgm-tcp-row{flex-direction:column}}
+.dgm-tcp-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-tcp-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-tcp-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-tcp-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-tcp-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-tcp-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-tcp-b.accent h6{color:#0d5c0d}
+.dgm-tcp-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-tcp-b.blue h6{color:#0550ae}
+.dgm-tcp-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-tcp-b.green h6{color:#1a614f}
+.dgm-tcp-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-tcp-b.red h6{color:#82061e}
+.dgm-tcp-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-tcp-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-tcp{padding:20px 16px 18px}.dgm-tcp-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-tcp">
+  <span class="dgm-tcp-chip">Validate the shape before you dispatch</span>
+  <h4>A model message becomes a list of (name, args) pairs — or an error</h4>
+  <p class="dgm-tcp-sub">Invalid shape never reaches a tool; it goes back to the model as a structured error.</p>
+  <div class="dgm-tcp-row">
+    <div class="dgm-tcp-n neutral">Model message</div>
+    <span class="dgm-tcp-arr">→</span>
+    <div class="dgm-tcp-n accent">Parse → [(name, args), …]</div>
+  </div>
+  <div class="dgm-tcp-q">Valid shape?</div>
+  <div class="dgm-tcp-branches">
+    <div class="dgm-tcp-b red">
+      <h6>No</h6>
+      <p>Structured error back to model</p>
+    </div>
+    <div class="dgm-tcp-b green">
+      <h6>Yes</h6>
+      <p>Dispatch each call → collect results</p>
+    </div>
+  </div>
+</div>
+
 
 The act step has three jobs: **extract** every tool call from one message, **validate**
 each against the tool's schema, and **dispatch** them, in order or in parallel if they're

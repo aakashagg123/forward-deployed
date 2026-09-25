@@ -22,15 +22,64 @@ off that path, and the short list of cases where CMMN earns its keep.
 Why "too dynamic for BPMN" is usually false — the three escape hatches you
 already own:
 
-```mermaid
-flowchart TB
-  claim["'our flow is too dynamic'"] --> h1["event subprocesses (7.05)<br/>react to X anytime in scope"]
-  claim --> h2["boundary events + loops (4.04, 1.02)<br/>exceptions & rework paths"]
-  claim --> h3["DMN routing (Phase 5)<br/>data-driven variation without<br/>drawing every variant"]
-  h1 & h2 & h3 --> verdict{"still not enough?"}
-  verdict -- "rarely" --> cmmn["CMMN — lesson 02"]
-  verdict -- "usually" --> bpmn["BPMN, simpler than feared"]
-```
+<style>
+.dgm-wco{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-wco-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-wco h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-wco-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-wco-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-wco-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-wco-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-wco-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-wco-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-wco-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-wco-b.accent h6{color:#7a2c2e}
+.dgm-wco-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-wco-b.blue h6{color:#0550ae}
+.dgm-wco-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-wco-b.green h6{color:#1a614f}
+.dgm-wco-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-wco-b.red h6{color:#82061e}
+.dgm-wco-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-wco-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-wco{padding:20px 16px 18px}.dgm-wco-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-wco">
+  <span class="dgm-wco-chip">Reach for CMMN last</span>
+  <h4>‘Our flow is too dynamic’ — have you tried these first?</h4>
+  <p class="dgm-wco-sub">Most dynamism is really a boundary event, a loop, or a routing table in disguise.</p>
+  <div class="dgm-wco-branches">
+    <div class="dgm-wco-b blue">
+      <h6>Event subprocesses (7.05)</h6>
+      <p>React to X anytime, anywhere in scope</p>
+    </div>
+    <div class="dgm-wco-b green">
+      <h6>Boundary events + loops (4.04, 1.02)</h6>
+      <p>Exceptions &amp; rework paths</p>
+    </div>
+    <div class="dgm-wco-b accent">
+      <h6>DMN routing (Phase 5)</h6>
+      <p>Data-driven variation without drawing every variant</p>
+    </div>
+  </div>
+  <div class="dgm-wco-q">Still not enough?</div>
+  <div class="dgm-wco-branches" style="grid-template-columns:repeat(2,1fr)">
+    <div class="dgm-wco-b red">
+      <h6>Rarely</h6>
+      <p>CMMN — lesson 06.02</p>
+    </div>
+    <div class="dgm-wco-b neutral">
+      <h6>Usually</h6>
+      <p>BPMN, simpler than feared</p>
+    </div>
+  </div>
+</div>
+
 
 Most "dynamic" requirements decompose into *interruptions* (event
 subprocesses), *exceptions* (boundary events), *rework* (loops), and
