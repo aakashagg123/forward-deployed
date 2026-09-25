@@ -13,12 +13,50 @@ cleanly, and return a timeout result the model can react to.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  C["run with timeout T"] --> W{"finished < T?"}
-  W -- "yes" --> R["return result"]
-  W -- "no" --> K["kill process group → return timeout"]
-```
+<style>
+.dgm-to{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-to-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-to h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-to-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-to-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-to-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-to-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-to-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-to-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-to-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-to-b.accent h6{color:#0d5c0d}
+.dgm-to-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-to-b.blue h6{color:#0550ae}
+.dgm-to-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-to-b.green h6{color:#1a614f}
+.dgm-to-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-to-b.red h6{color:#82061e}
+.dgm-to-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-to-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-to{padding:20px 16px 18px}.dgm-to-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-to">
+  <span class="dgm-to-chip">A deadline the process can't ignore</span>
+  <h4>Finish in time and you get the result; miss it and the whole group gets killed</h4>
+  <p class="dgm-to-sub">Killing the process group, not just the process, is what stops orphaned children.</p>
+  <div class="dgm-to-q">Run with timeout T — finished &lt; T?</div>
+  <div class="dgm-to-branches">
+    <div class="dgm-to-b green">
+      <h6>Yes</h6>
+      <p>Return result</p>
+    </div>
+    <div class="dgm-to-b red">
+      <h6>No</h6>
+      <p>Kill process group → return timeout</p>
+    </div>
+  </div>
+</div>
+
 
 Killing the process *group* matters. A shell command may spawn children that outlive the
 parent if you kill only the parent.

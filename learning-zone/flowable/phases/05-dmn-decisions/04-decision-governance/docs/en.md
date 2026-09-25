@@ -21,13 +21,55 @@ code got.
 
 Four questions, answered per table and written down:
 
-```mermaid
-flowchart TB
-  T["decision table"] --> O["1 · OWNER<br/>one accountable name<br/>(credit head, not 'the committee')"]
-  T --> C["2 · CHANGE RITUAL<br/>who proposes, who approves,<br/>how it reaches the engine"]
-  T --> V["3 · VALIDATION<br/>golden cases + overlap/completeness<br/>checks before deploy"]
-  T --> A["4 · AUDIT<br/>which version decided this case?<br/>(history + version pinning)"]
-```
+<style>
+.dgm-dg{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-dg-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-dg h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-dg-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-dg-matrix{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-dg-cell{border-radius:11px;padding:11px 13px;position:relative;border:1.5px solid}
+.dgm-dg-cell h6{margin:2px 0 4px;font-size:11px;font-weight:700}
+.dgm-dg-cell p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-dg-cell.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-dg-cell.accent h6{color:#7a2c2e}
+.dgm-dg-cell.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-dg-cell.blue h6{color:#0550ae}
+.dgm-dg-cell.green{background:#dafbe1;border-color:#aceebb}
+.dgm-dg-cell.green h6{color:#1a614f}
+.dgm-dg-cell.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-dg-cell.red h6{color:#82061e}
+.dgm-dg-cell.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-dg-cell.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-dg{padding:20px 16px 18px}.dgm-dg-matrix{grid-template-columns:1fr}}
+</style>
+<div class="dgm-dg">
+  <span class="dgm-dg-chip">Governing a decision table</span>
+  <h4>A decision table needs the same governance as a service</h4>
+  <p class="dgm-dg-sub">Four things to nail down before the credit team can own it.</p>
+  <div class="dgm-dg-matrix">
+    <div class="dgm-dg-cell accent">
+      <h6>1 · Owner</h6>
+      <p>One accountable name (credit head, not 'the committee')</p>
+    </div>
+    <div class="dgm-dg-cell blue">
+      <h6>2 · Change ritual</h6>
+      <p>Who proposes, who approves, how it reaches the engine</p>
+    </div>
+    <div class="dgm-dg-cell green">
+      <h6>3 · Validation</h6>
+      <p>Golden cases + overlap/completeness checks before deploy</p>
+    </div>
+    <div class="dgm-dg-cell neutral">
+      <h6>4 · Audit</h6>
+      <p>Which version decided this case? (history + version pinning)</p>
+    </div>
+  </div>
+</div>
+
 
 **1. Ownership.** One name per table. The engineering smell test: if a UNIQUE
 violation fires in production (lesson 02), does the alert route to a person who can

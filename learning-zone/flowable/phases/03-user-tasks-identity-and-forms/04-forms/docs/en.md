@@ -27,12 +27,41 @@ Three strategies, one axis: *where does the form definition live?*
 
 Form properties are the instructive one because the *engine* enforces the contract:
 
-```mermaid
-flowchart LR
-  M["model declares:<br/>approved: boolean, required<br/>coverage: enum(peer/manager/none)<br/>employee: read-only ${employee}"] --> API["GET form-data<br/>→ contract as JSON"]
-  API --> UI["any UI renders it"]
-  UI --> S["POST form-data<br/>→ engine VALIDATES,<br/>writes variables, completes task"]
-```
+<style>
+.dgm-frm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-frm-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-frm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-frm-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-frm-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-frm-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-frm-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-frm-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-frm-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-frm-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-frm-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-frm-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-frm{padding:20px 16px 18px}.dgm-frm-row{flex-direction:column}}
+</style>
+<div class="dgm-frm">
+  <span class="dgm-frm-chip">The form is a contract, not a UI</span>
+  <h4>The engine validates and writes variables — the UI is just a renderer</h4>
+  <p class="dgm-frm-sub">Any client that speaks the form-data contract can drive the task.</p>
+  <div class="dgm-frm-row">
+    <div class="dgm-frm-n ">Model declares: approved (bool, required), coverage (enum), employee (read-only)</div>
+    <span class="dgm-frm-arr">→</span>
+    <div class="dgm-frm-n blue">GET form-data → contract as JSON</div>
+    <span class="dgm-frm-arr">→</span>
+    <div class="dgm-frm-n ">Any UI renders it</div>
+    <span class="dgm-frm-arr">→</span>
+    <div class="dgm-frm-n accent">POST form-data → engine validates, writes variables, completes task</div>
+  </div>
+</div>
+
 
 Submitting through the form endpoint is the point. Type checks, required checks, and
 enum membership all run **engine-side** before the task completes. The UI can't

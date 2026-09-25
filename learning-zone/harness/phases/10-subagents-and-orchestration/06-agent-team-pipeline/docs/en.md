@@ -15,17 +15,68 @@ human runs `/agent-team "build X"` and gets the whole disciplined flow.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  S["/agent-team 'goal'"] --> P["planning agent → sprint contract + arch options"]
-  P --> G{"human approves contract?"}
-  G -- "no" --> X["halt"]
-  G -- "yes" --> D["discovery agent → codebase map + dep graph"]
-  D --> W["worker agents in worktrees (disjoint files per wave)"]
-  W --> R["review agent (diff only) → ship / hold (≥70)"]
-  R --> H["wave summary + HARD STOP → human: continue?"]
-  H --> M["memory agent → append to knowledge.md"]
-```
+<style>
+.dgm-atp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-atp-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-atp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-atp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-atp-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-atp-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-atp-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-atp-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-atp{padding:20px 16px 18px}}
+.dgm-atp-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-atp-branches{display:grid;grid-template-columns:repeat(1,1fr);gap:10px}
+.dgm-atp-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-atp-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-atp-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-atp-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-atp-b.accent h6{color:#0d5c0d}
+.dgm-atp-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-atp-b.blue h6{color:#0550ae}
+.dgm-atp-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-atp-b.green h6{color:#1a614f}
+.dgm-atp-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-atp-b.red h6{color:#82061e}
+.dgm-atp-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-atp-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-atp{padding:20px 16px 18px}.dgm-atp-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-atp">
+  <span class="dgm-atp-chip">Six roles, one human gate, one hard stop</span>
+  <h4>Plan → approve → discover → build in worktrees → review → stop for the human → remember</h4>
+  <p class="dgm-atp-sub">The review agent only ever sees the diff, and ships only at or above a 70 bar.</p>
+  <div class="dgm-atp-chain">
+    <div class="dgm-atp-node accent">/agent-team 'goal'</div>
+    <div class="dgm-atp-arr">↓</div>
+    <div class="dgm-atp-node alt">Planning agent → sprint contract + arch options</div>
+  </div>
+  <div class="dgm-atp-q">Human approves contract?</div>
+  <div class="dgm-atp-branches">
+    <div class="dgm-atp-b red">
+      <h6>No</h6>
+      <p>Halt</p>
+    </div>
+  </div>
+  <div class="dgm-atp-chain">
+    <div class="dgm-atp-node accent">Discovery agent → codebase map + dep graph</div>
+    <div class="dgm-atp-arr">↓</div>
+    <div class="dgm-atp-node alt">Worker agents in worktrees (disjoint files per wave)</div>
+    <div class="dgm-atp-arr">↓</div>
+    <div class="dgm-atp-node accent">Review agent (diff only) → ship / hold (≥70)</div>
+    <div class="dgm-atp-arr">↓</div>
+    <div class="dgm-atp-node alt">Wave summary + HARD STOP → human: continue?</div>
+    <div class="dgm-atp-arr">↓</div>
+    <div class="dgm-atp-node accent">Memory agent → append to knowledge.md</div>
+  </div>
+</div>
+
 
 Five agents, each with a bounded role. Budgets and hard stops come from lesson 01, file
 isolation from lesson 03, and checkpoints from lesson 04. The skill is the glue.

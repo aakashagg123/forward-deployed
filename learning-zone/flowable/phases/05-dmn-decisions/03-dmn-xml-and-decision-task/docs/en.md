@@ -18,17 +18,52 @@ table, feeds it variables, and collects the outputs.
 
 Two artifacts, two lifecycles, one seam:
 
-```mermaid
-flowchart LR
-  subgraph bpmn ["loan-triage.bpmn20.xml — engineering's cadence"]
-    A["gather data"] --> D["decision task<br/>ref: creditDecision"]
-    D --> G{"route on ${decision}"}
-  end
-  subgraph dmn ["credit-decision.dmn — credit committee's cadence"]
-    T["decision table<br/>creditDecision, v7"]
-  end
-  D -. "evaluate(score, amount)<br/>→ decision, rate" .-> T
-```
+<style>
+.dgm-dxd{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-dxd-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-dxd h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-dxd-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-dxd-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.dgm-dxd-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-dxd-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-dxd-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-dxd-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-dxd-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-dxd-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-dxd-col.neutral h6{color:#59636e}
+.dgm-dxd-col.accent h6{color:#7a2c2e}
+.dgm-dxd-col.blue h6{color:#0550ae}
+.dgm-dxd-col.green h6{color:#1a614f}
+.dgm-dxd-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-dxd-item:last-child{margin-bottom:0}
+.dgm-dxd-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-dxd{padding:20px 16px 18px}.dgm-dxd-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-dxd">
+  <span class="dgm-dxd-chip">Two files, two cadences</span>
+  <h4>A decision task hands off to a DMN table it doesn't own</h4>
+  <p class="dgm-dxd-sub">Engineering ships the process; the credit committee ships the table — independently.</p>
+  <div class="dgm-dxd-cols">
+    <div class="dgm-dxd-col accent">
+      <h6>loan-triage.bpmn20.xml — engineering's cadence</h6>
+      <div class="dgm-dxd-item">Gather data</div>
+      <div class="dgm-dxd-item">Decision task — ref: creditDecision</div>
+      <div class="dgm-dxd-item">Route on ${decision}</div>
+    </div>
+    <div class="dgm-dxd-col blue">
+      <h6>credit-decision.dmn — credit committee's cadence</h6>
+      <div class="dgm-dxd-item">Decision table: creditDecision, v7</div>
+    </div>
+  </div>
+  <div class="dgm-dxd-link">evaluate(score, amount) → decision, rate</div>
+</div>
+
 
 A `.dmn` file mirrors what you built by hand, element for element:
 

@@ -20,23 +20,57 @@ ops mistake — someone says "the instance disappeared!" when it actually
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  subgraph ru ["ACT_RU_* — runtime (hot, small, deleted on completion)"]
-    E["EXECUTION — live tokens"]
-    T["TASK — open tasks only"]
-    V["VARIABLE — current values"]
-    J["JOB / TIMER_JOB / DEADLETTER_JOB"]
-  end
-  subgraph hi ["ACT_HI_* — history (append-only, grows forever)"]
-    PI["PROCINST — every instance ever"]
-    AI["ACTINST — every step taken"]
-    TA["TASKINST — every task incl. completed"]
-    VA["VARINST — final variable values"]
-    ID["IDENTITYLINK — who was candidate/assignee"]
-  end
-  ru -- "on each commit,<br/>rows are mirrored/closed" --> hi
-```
+<style>
+.dgm-hist{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-hist-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-hist h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-hist-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-hist-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.dgm-hist-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-hist-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-hist-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-hist-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-hist-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-hist-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-hist-col.neutral h6{color:#59636e}
+.dgm-hist-col.accent h6{color:#7a2c2e}
+.dgm-hist-col.blue h6{color:#0550ae}
+.dgm-hist-col.green h6{color:#1a614f}
+.dgm-hist-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-hist-item:last-child{margin-bottom:0}
+.dgm-hist-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-hist{padding:20px 16px 18px}.dgm-hist-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-hist">
+  <span class="dgm-hist-chip">Runtime vs. history tables</span>
+  <h4>ACT_RU_* is small and hot; ACT_HI_* is append-only and grows forever</h4>
+  <p class="dgm-hist-sub">On each commit, the runtime row is mirrored into (or closed in) its history counterpart.</p>
+  <div class="dgm-hist-cols">
+    <div class="dgm-hist-col accent">
+      <h6>ACT_RU_* — runtime (hot, small, deleted on completion)</h6>
+      <div class="dgm-hist-item">EXECUTION — live tokens</div>
+      <div class="dgm-hist-item">TASK — open tasks only</div>
+      <div class="dgm-hist-item">VARIABLE — current values</div>
+      <div class="dgm-hist-item">JOB / TIMER_JOB / DEADLETTER_JOB</div>
+    </div>
+    <div class="dgm-hist-col blue">
+      <h6>ACT_HI_* — history (append-only, grows forever)</h6>
+      <div class="dgm-hist-item">PROCINST — every instance ever</div>
+      <div class="dgm-hist-item">ACTINST — every step taken</div>
+      <div class="dgm-hist-item">TASKINST — every task incl. completed</div>
+      <div class="dgm-hist-item">VARINST — final variable values</div>
+      <div class="dgm-hist-item">IDENTITYLINK — who was candidate/assignee</div>
+    </div>
+  </div>
+  <div class="dgm-hist-link">on each commit, rows are mirrored / closed →</div>
+</div>
+
 
 The rules of the split:
 

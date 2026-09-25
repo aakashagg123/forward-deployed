@@ -18,13 +18,64 @@ Once you've built its dispatch logic by hand, the XML is obvious.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  A(("start")) --> B["bureau call ⚙️"]
-  B --> P["post payment ⚙️"] --> E(("end"))
-  B -. "⚡ NO_BUREAU_RECORD" .-> M["pull report manually 👤"]
-  M --> E2(("end"))
-```
+<style>
+.dgm-be{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-be-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-be h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-be-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-be-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-be-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-be-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-be-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-be-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-be-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-be-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-be-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-be{padding:20px 16px 18px}.dgm-be-row{flex-direction:column}}
+.dgm-be-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-be-branches{display:grid;grid-template-columns:repeat(1,1fr);gap:10px}
+.dgm-be-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-be-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-be-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-be-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-be-b.accent h6{color:#7a2c2e}
+.dgm-be-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-be-b.blue h6{color:#0550ae}
+.dgm-be-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-be-b.green h6{color:#1a614f}
+.dgm-be-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-be-b.red h6{color:#82061e}
+.dgm-be-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-be-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-be{padding:20px 16px 18px}.dgm-be-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-be">
+  <span class="dgm-be-chip">Boundary error event</span>
+  <h4>An error boundary is a second exit off the same task</h4>
+  <p class="dgm-be-sub">The happy path never sees the exception — it's a separate, explicit branch.</p>
+  <div class="dgm-be-row">
+    <div class="dgm-be-n blue">● start</div>
+    <span class="dgm-be-arr">→</span>
+    <div class="dgm-be-n accent">Bureau call ⚙️</div>
+    <span class="dgm-be-arr">→</span>
+    <div class="dgm-be-n ">Post payment ⚙️</div>
+    <span class="dgm-be-arr">→</span>
+    <div class="dgm-be-n green">● end</div>
+  </div>
+  <div class="dgm-be-branches">
+    <div class="dgm-be-b red">
+      <h6>⚡ NO_BUREAU_RECORD (boundary)</h6>
+      <p>Pull report manually 👤 → end</p>
+    </div>
+  </div>
+</div>
+
 
 Execution semantics, precisely:
 

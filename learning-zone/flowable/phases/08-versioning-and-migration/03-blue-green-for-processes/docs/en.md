@@ -20,13 +20,54 @@ for any given application, *which rules it ran under and why*.
 Three strategies, all built from lesson 01's version rules and lesson 02's
 migration:
 
-```mermaid
-flowchart TB
-  D["new version v(N+1) deployed<br/>(new starts bind it — automatic)"] --> Q{"what about the<br/>pinned population?"}
-  Q --> DR["DRAIN<br/>old instances finish on old logic"]
-  Q --> MI["MIGRATE<br/>move cohorts to the new version"]
-  Q --> RT["ROUTE<br/>new parallel key; entry point chooses"]
-```
+<style>
+.dgm-bg{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-bg-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-bg h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-bg-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-bg-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-bg-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-bg-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-bg-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-bg-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-bg-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-bg-b.accent h6{color:#7a2c2e}
+.dgm-bg-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-bg-b.blue h6{color:#0550ae}
+.dgm-bg-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-bg-b.green h6{color:#1a614f}
+.dgm-bg-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-bg-b.red h6{color:#82061e}
+.dgm-bg-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-bg-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-bg{padding:20px 16px 18px}.dgm-bg-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-bg">
+  <span class="dgm-bg-chip">Three options for the pinned population</span>
+  <h4>New starts bind the new version automatically — what about instances already running?</h4>
+  <p class="dgm-bg-sub">Drain, migrate, or route — pick per how risky the change is.</p>
+  <div class="dgm-bg-q">New version v(N+1) deployed</div>
+  <div class="dgm-bg-branches">
+    <div class="dgm-bg-b accent">
+      <h6>Drain</h6>
+      <p>Old instances finish on old logic</p>
+    </div>
+    <div class="dgm-bg-b blue">
+      <h6>Migrate</h6>
+      <p>Move cohorts to the new version</p>
+    </div>
+    <div class="dgm-bg-b green">
+      <h6>Route</h6>
+      <p>New parallel key; the entry point chooses</p>
+    </div>
+  </div>
+</div>
+
 
 | Strategy | Mechanics | Choose when | Audit story |
 | :-- | :-- | :-- | :-- |

@@ -18,22 +18,68 @@ a 2016 fork of Activiti, built by that engine's original authors.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  subgraph platform ["Flowable open-source platform"]
-    B["BPMN engine<br/>flows: .bpmn20.xml<br/>Phases 1-4, 7, 8"]
-    C["CMMN engine<br/>cases: .cmmn<br/>Phase 6"]
-    D["DMN engine<br/>decisions: .dmn<br/>Phase 5"]
-    EV["event registry<br/>.event / .channel<br/>Phase 7"]
-  end
-  DB[("one relational database<br/>ACT_RU_* / ACT_HI_* / ACT_DMN_* / ACT_CMMN_*")]
-  API["shared service style:<br/>Repository / Runtime / Task / History<br/>Java + REST"]
-  B --- DB
-  C --- DB
-  D --- DB
-  EV --- DB
-  platform --- API
-```
+<style>
+.dgm-pm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pm-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-pm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pm-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pm-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.dgm-pm-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-pm-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-pm-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-pm-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-pm-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pm-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-pm-col.neutral h6{color:#59636e}
+.dgm-pm-col.accent h6{color:#7a2c2e}
+.dgm-pm-col.blue h6{color:#0550ae}
+.dgm-pm-col.green h6{color:#1a614f}
+.dgm-pm-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-pm-item:last-child{margin-bottom:0}
+.dgm-pm-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-pm{padding:20px 16px 18px}.dgm-pm-cols{grid-template-columns:1fr}}
+.dgm-pm-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-pm-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-pm-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-pm-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-pm{padding:20px 16px 18px}}
+</style>
+<div class="dgm-pm">
+  <span class="dgm-pm-chip">Flowable open-source platform</span>
+  <h4>Four engines, one database, one API style</h4>
+  <p class="dgm-pm-sub">BPMN, CMMN, DMN and the event registry are libraries over a shared schema.</p>
+  <div class="dgm-pm-cols">
+    <div class="dgm-pm-col accent">
+      <h6>BPMN engine</h6>
+      <div class="dgm-pm-item">flows: .bpmn20.xml · Phases 1–4, 7, 8</div>
+    </div>
+    <div class="dgm-pm-col blue">
+      <h6>CMMN engine</h6>
+      <div class="dgm-pm-item">cases: .cmmn · Phase 6</div>
+    </div>
+    <div class="dgm-pm-col green">
+      <h6>DMN engine</h6>
+      <div class="dgm-pm-item">decisions: .dmn · Phase 5</div>
+    </div>
+    <div class="dgm-pm-col neutral">
+      <h6>Event registry</h6>
+      <div class="dgm-pm-item">.event / .channel · Phase 7</div>
+    </div>
+  </div>
+  <div class="dgm-pm-chain">
+    <div class="dgm-pm-node alt">One relational database — ACT_RU_* / ACT_HI_* / ACT_DMN_* / ACT_CMMN_*</div>
+    <div class="dgm-pm-arr">↓ all four engines write here ↓</div>
+    <div class="dgm-pm-node accent">Shared service style — Repository / Runtime / Task / History · Java + REST</div>
+  </div>
+</div>
+
 
 Here is what the map buys you in practice:
 

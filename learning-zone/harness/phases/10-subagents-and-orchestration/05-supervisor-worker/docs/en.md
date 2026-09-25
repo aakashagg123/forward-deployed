@@ -15,17 +15,69 @@ independent work run in parallel (within the budget from lesson 01).
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  S["supervisor: decompose → tasks"] --> D["dispatch workers (isolated)"]
-  D --> W1["worker 1 → result"]
-  D --> W2["worker 2 → result"]
-  D --> W3["worker 3 → result"]
-  W1 --> A["supervisor: aggregate results"]
-  W2 --> A
-  W3 --> A
-  A --> O["combined output"]
-```
+<style>
+.dgm-sw{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-sw-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-sw h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-sw-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-sw-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-sw-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-sw-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-sw-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-sw-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-sw-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-sw-b.accent h6{color:#0d5c0d}
+.dgm-sw-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-sw-b.blue h6{color:#0550ae}
+.dgm-sw-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-sw-b.green h6{color:#1a614f}
+.dgm-sw-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-sw-b.red h6{color:#82061e}
+.dgm-sw-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-sw-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-sw{padding:20px 16px 18px}.dgm-sw-branches{grid-template-columns:1fr}}
+.dgm-sw-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-sw-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-sw-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-sw-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-sw{padding:20px 16px 18px}}
+</style>
+<div class="dgm-sw">
+  <span class="dgm-sw-chip">Fan out, then fan back in</span>
+  <h4>The supervisor decomposes, dispatches isolated workers, and aggregates what comes back</h4>
+  <p class="dgm-sw-sub">Workers never see each other — only the supervisor sees every result.</p>
+  <div class="dgm-sw-chain">
+    <div class="dgm-sw-node accent">Supervisor: decompose → tasks</div>
+    <div class="dgm-sw-arr">↓</div>
+    <div class="dgm-sw-node alt">Dispatch workers (isolated)</div>
+  </div>
+  <div class="dgm-sw-branches">
+    <div class="dgm-sw-b blue">
+      <h6>Worker 1</h6>
+      <p>→ result</p>
+    </div>
+    <div class="dgm-sw-b green">
+      <h6>Worker 2</h6>
+      <p>→ result</p>
+    </div>
+    <div class="dgm-sw-b neutral">
+      <h6>Worker 3</h6>
+      <p>→ result</p>
+    </div>
+  </div>
+  <div class="dgm-sw-chain">
+    <div class="dgm-sw-node accent">Supervisor: aggregate results</div>
+    <div class="dgm-sw-arr">↓</div>
+    <div class="dgm-sw-node alt">Combined output</div>
+  </div>
+</div>
+
 
 The supervisor holds the *plan*. Each worker holds only its *task*. Results flow back up
 — not transcripts. This is bounded roles (lesson 02) applied to delegation.

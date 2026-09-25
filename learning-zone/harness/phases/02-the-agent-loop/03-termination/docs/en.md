@@ -17,16 +17,50 @@ difference between an agent and a runaway bill.
 
 A loop needs **layered** stop conditions, checked every iteration:
 
-```mermaid
-flowchart TB
-  S["step start"] --> A{"model asked for tools?"}
-  A -- "no" --> DONE["✅ natural finish"]
-  A -- "yes" --> B{"step budget left?"}
-  B -- "no" --> STOP["⛔ max_steps"]
-  B -- "yes" --> C{"repeated call?"}
-  C -- "yes" --> NUDGE["nudge / break loop"]
-  C -- "no" --> RUN["run tools → continue"]
-```
+<style>
+.dgm-term{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-term-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-term h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-term-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-term-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-term-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-term-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-term-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-term-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-term-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-term-b.accent h6{color:#0d5c0d}
+.dgm-term-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-term-b.blue h6{color:#0550ae}
+.dgm-term-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-term-b.green h6{color:#1a614f}
+.dgm-term-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-term-b.red h6{color:#82061e}
+.dgm-term-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-term-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-term{padding:20px 16px 18px}.dgm-term-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-term">
+  <span class="dgm-term-chip">Three gates decide when a step ends</span>
+  <h4>Natural finish, budget, or a repeated call — each ends the loop differently</h4>
+  <p class="dgm-term-sub">A repeated call gets nudged before it burns the whole step budget.</p>
+  <div class="dgm-term-q">Model asked for tools?</div>
+  <div class="dgm-term-branches">
+    <div class="dgm-term-b green">
+      <h6>No</h6>
+      <p>✅ Natural finish</p>
+    </div>
+    <div class="dgm-term-b accent">
+      <h6>Yes — step budget left?</h6>
+      <p>No → ⛔ max_steps · Yes, repeated call → nudge / break loop · Yes, new call → run tools, continue</p>
+    </div>
+  </div>
+</div>
+
 
 - **Natural:** the model returns no tool calls → done.
 - **Hard ceiling:** `max_steps` — non-negotiable, always present.

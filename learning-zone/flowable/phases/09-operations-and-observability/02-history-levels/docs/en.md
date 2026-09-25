@@ -39,12 +39,41 @@ findings without touching the level.
 **Lever 2 — how long it stays.** Growth is `rate × record size × retention`, and
 retention is the only lever that bounds it:
 
-```mermaid
-flowchart LR
-  W["written at chosen level"] --> K["kept: the query window<br/>(dashboards, disputes, audits)"]
-  K --> A["archived: exported to warehouse/lake<br/>(cheap, joinable, immutable)"]
-  A --> D["deleted: past the compliance ceiling<br/>(DPDP/GDPR erasure basis ends)"]
-```
+<style>
+.dgm-hl{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-hl-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-hl h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-hl-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-hl-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-hl-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-hl-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-hl-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-hl-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-hl-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-hl-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-hl-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-hl{padding:20px 16px 18px}.dgm-hl-row{flex-direction:column}}
+</style>
+<div class="dgm-hl">
+  <span class="dgm-hl-chip">From written to deleted</span>
+  <h4>History has a lifecycle too — it isn't kept forever by default</h4>
+  <p class="dgm-hl-sub">The compliance ceiling, not disk space, is usually what ends it.</p>
+  <div class="dgm-hl-row">
+    <div class="dgm-hl-n ">Written — at the chosen history level</div>
+    <span class="dgm-hl-arr">→</span>
+    <div class="dgm-hl-n accent">Kept — the query window (dashboards, disputes, audits)</div>
+    <span class="dgm-hl-arr">→</span>
+    <div class="dgm-hl-n blue">Archived — exported to warehouse/lake (cheap, joinable, immutable)</div>
+    <span class="dgm-hl-arr">→</span>
+    <div class="dgm-hl-n red">Deleted — past the compliance ceiling (DPDP/GDPR erasure basis ends)</div>
+  </div>
+</div>
+
 
 The floor comes from audit and regulatory obligations — Phase 8's audit sentence
 must stay answerable. The ceiling comes from data-protection law: *keeping

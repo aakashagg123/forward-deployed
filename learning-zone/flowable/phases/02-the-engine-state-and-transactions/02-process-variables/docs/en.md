@@ -20,12 +20,58 @@ Engines solve this the way programming languages do: **lexical scoping over the
 execution tree**. Every token or execution is a scope with a parent, and the
 process instance is the root.
 
-```mermaid
-flowchart TB
-  I["instance scope<br/>applicant, amount"]
-  I --> C["credit branch scope<br/>attempt (local)"]
-  I --> K["kyc branch scope<br/>attempt (local)"]
-```
+<style>
+.dgm-pv{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-pv-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-pv h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-pv-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-pv-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-pv-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-pv-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-pv-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-pv{padding:20px 16px 18px}}
+.dgm-pv-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.dgm-pv-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-pv-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-pv-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-pv-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-pv-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pv-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-pv-col.neutral h6{color:#59636e}
+.dgm-pv-col.accent h6{color:#7a2c2e}
+.dgm-pv-col.blue h6{color:#0550ae}
+.dgm-pv-col.green h6{color:#1a614f}
+.dgm-pv-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-pv-item:last-child{margin-bottom:0}
+.dgm-pv-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-pv{padding:20px 16px 18px}.dgm-pv-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-pv">
+  <span class="dgm-pv-chip">Variable scoping</span>
+  <h4>Each branch gets its own private copy of local variables</h4>
+  <p class="dgm-pv-sub">Reading walks up to instance scope; writing to a local name never leaks across branches.</p>
+  <div class="dgm-pv-chain">
+    <div class="dgm-pv-node accent">Instance scope — applicant, amount</div>
+  </div>
+  <div class="dgm-pv-cols">
+    <div class="dgm-pv-col blue">
+      <h6>Credit branch scope</h6>
+      <div class="dgm-pv-item">attempt (local)</div>
+    </div>
+    <div class="dgm-pv-col green">
+      <h6>KYC branch scope</h6>
+      <div class="dgm-pv-item">attempt (local)</div>
+    </div>
+  </div>
+</div>
+
 
 Three rules apply identically in the toy build and in Flowable:
 

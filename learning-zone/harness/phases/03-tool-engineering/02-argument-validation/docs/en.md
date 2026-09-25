@@ -17,12 +17,50 @@ model can fix.
 A small JSON-Schema subset covers most tool inputs: `type`, `required`, `enum`, and nested
 `properties`.
 
-```mermaid
-flowchart LR
-  A["model args"] --> V{"valid vs schema?"}
-  V -- "yes" --> RUN["run tool"]
-  V -- "no" --> ERR["typed error → model"]
-```
+<style>
+.dgm-av{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-av-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-av h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-av-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-av-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-av-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-av-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-av-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-av-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-av-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-av-b.accent h6{color:#0d5c0d}
+.dgm-av-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-av-b.blue h6{color:#0550ae}
+.dgm-av-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-av-b.green h6{color:#1a614f}
+.dgm-av-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-av-b.red h6{color:#82061e}
+.dgm-av-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-av-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-av{padding:20px 16px 18px}.dgm-av-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-av">
+  <span class="dgm-av-chip">Validate before you run, not after</span>
+  <h4>Bad args become a typed error, not a stack trace</h4>
+  <p class="dgm-av-sub">The model can read a typed validation error and correct itself next turn.</p>
+  <div class="dgm-av-q">Model args valid vs. schema?</div>
+  <div class="dgm-av-branches">
+    <div class="dgm-av-b green">
+      <h6>Yes</h6>
+      <p>Run tool</p>
+    </div>
+    <div class="dgm-av-b red">
+      <h6>No</h6>
+      <p>Typed error → model</p>
+    </div>
+  </div>
+</div>
+
 
 ## Build It
 

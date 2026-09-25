@@ -22,19 +22,53 @@ An event subprocess is a subprocess with `triggeredByEvent="true"`. It has no
 incoming flows, it sits inside a scope, and its **start event** — message, timer,
 signal, or error — arms when the scope becomes active:
 
-```mermaid
-flowchart TB
-  subgraph scope ["process scope"]
-    direction LR
-    A["collect docs 👤"] --> B["verify docs 👤"] --> E(("end"))
-    subgraph ES1 ["event subprocess ⚡ withdrawal (interrupting)"]
-      W["✉️ customerWithdrawal"] --> RW["record withdrawal"] --> WE(("end"))
-    end
-    subgraph ES2 ["event subprocess ⏰ nudge (non-interrupting)"]
-      N["R/P7D"] --> SN["send nudge"] --> NE(("end"))
-    end
-  end
-```
+<style>
+.dgm-esp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-esp-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-esp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-esp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-esp-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dgm-esp-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-esp-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-esp-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-esp-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-esp-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-esp-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-esp-col.neutral h6{color:#59636e}
+.dgm-esp-col.accent h6{color:#7a2c2e}
+.dgm-esp-col.blue h6{color:#0550ae}
+.dgm-esp-col.green h6{color:#1a614f}
+.dgm-esp-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-esp-item:last-child{margin-bottom:0}
+.dgm-esp-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-esp{padding:20px 16px 18px}.dgm-esp-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-esp">
+  <span class="dgm-esp-chip">Two event subprocesses, one scope</span>
+  <h4>Interrupting kills the main flow; non-interrupting runs beside it</h4>
+  <p class="dgm-esp-sub">Both react to something arriving mid-process, without a boundary event on any one task.</p>
+  <div class="dgm-esp-cols">
+    <div class="dgm-esp-col neutral">
+      <h6>Process scope — main flow</h6>
+      <div class="dgm-esp-item">Collect docs 👤 → Verify docs 👤 → end</div>
+    </div>
+    <div class="dgm-esp-col red">
+      <h6>⚡ Event subprocess: withdrawal (interrupting)</h6>
+      <div class="dgm-esp-item">✉️ customerWithdrawal → Record withdrawal → end</div>
+    </div>
+    <div class="dgm-esp-col blue">
+      <h6>⏰ Event subprocess: nudge (non-interrupting)</h6>
+      <div class="dgm-esp-item">R/P7D → Send nudge → end</div>
+    </div>
+  </div>
+</div>
+
 
 The one attribute that changes everything is on the start event:
 

@@ -22,16 +22,63 @@ The gap is operational, and this lesson closes it.
 
 The failure pipeline for an async task, end to end:
 
-```mermaid
-flowchart LR
-  T["task throws"] --> R{"retries left?"}
-  R -- yes --> W["wait backoff, re-run<br/>(job executor)"] --> T
-  R -- no --> D["dead-letter table<br/>ACT_RU_DEADLETTER_JOB"]
-  D --> M["monitoring alerts a human"]
-  M --> F["fix the cause"]
-  F --> V["move jobs back →<br/>fresh retry budget"]
-  V --> T
-```
+<style>
+.dgm-ri{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ri-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-ri h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ri-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ri-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-ri-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-ri-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-ri-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-ri-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-ri-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-ri-b.accent h6{color:#7a2c2e}
+.dgm-ri-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-ri-b.blue h6{color:#0550ae}
+.dgm-ri-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-ri-b.green h6{color:#1a614f}
+.dgm-ri-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-ri-b.red h6{color:#82061e}
+.dgm-ri-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-ri-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-ri{padding:20px 16px 18px}.dgm-ri-branches{grid-template-columns:1fr}}
+.dgm-ri-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-ri-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-ri-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-ri-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-ri{padding:20px 16px 18px}}
+</style>
+<div class="dgm-ri">
+  <span class="dgm-ri-chip">From retry to incident</span>
+  <h4>Exhausted retries become a human problem, not a silent failure</h4>
+  <p class="dgm-ri-sub">The dead-letter table is where automatic recovery hands off to a person.</p>
+  <div class="dgm-ri-q">Task throws — retries left?</div>
+  <div class="dgm-ri-branches">
+    <div class="dgm-ri-b accent">
+      <h6>Yes</h6>
+      <p>Wait backoff, re-run via the job executor — loops back to the task</p>
+    </div>
+    <div class="dgm-ri-b red">
+      <h6>No</h6>
+      <p>Move to the dead-letter table (ACT_RU_DEADLETTER_JOB)</p>
+    </div>
+  </div>
+  <div class="dgm-ri-chain">
+    <div class="dgm-ri-node alt">Monitoring alerts a human</div>
+    <div class="dgm-ri-arr">↓</div>
+    <div class="dgm-ri-node alt">Fix the cause</div>
+    <div class="dgm-ri-arr">↓</div>
+    <div class="dgm-ri-node accent">Move jobs back — fresh retry budget</div>
+  </div>
+</div>
+
 
 Your three levers, and where each is set:
 

@@ -23,14 +23,68 @@ A job is durable work-to-do. It records *what* (continue this execution / fire
 this timer), *when* (`due`), *how many attempts remain* (`retries`), and *who's
 working on it* (`locked_by`, `lock_until`). Here is the executor loop:
 
-```mermaid
-flowchart LR
-  A["acquire:<br/>lock due, unlocked jobs<br/>(one guarded UPDATE)"] --> E["execute<br/>in a fresh transaction"]
-  E -- ok --> D["delete job"]
-  E -- fail --> R{"retries left?"}
-  R -- yes --> B["unlock; due += backoff"] --> A
-  R -- no --> X["move to dead-letter table"]
-```
+<style>
+.dgm-je{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-je-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-je h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-je-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-je-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-je-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-je-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-je-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-je-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-je-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-je-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-je-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-je{padding:20px 16px 18px}.dgm-je-row{flex-direction:column}}
+.dgm-je-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-je-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dgm-je-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-je-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-je-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-je-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-je-b.accent h6{color:#7a2c2e}
+.dgm-je-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-je-b.blue h6{color:#0550ae}
+.dgm-je-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-je-b.green h6{color:#1a614f}
+.dgm-je-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-je-b.red h6{color:#82061e}
+.dgm-je-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-je-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-je{padding:20px 16px 18px}.dgm-je-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-je">
+  <span class="dgm-je-chip">The acquire → execute → retry loop</span>
+  <h4>Every job either finishes, retries, or dies</h4>
+  <p class="dgm-je-sub">One guarded UPDATE acquires the job; a failed execution either loops back with backoff or moves to the dead-letter table.</p>
+  <div class="dgm-je-row">
+    <div class="dgm-je-n ">Acquire — lock due, unlocked jobs (one guarded UPDATE)</div>
+    <span class="dgm-je-arr">→</span>
+    <div class="dgm-je-n accent">Execute — in a fresh transaction</div>
+  </div>
+  <div class="dgm-je-branches">
+    <div class="dgm-je-b green">
+      <h6>Success</h6>
+      <p>Delete the job</p>
+    </div>
+    <div class="dgm-je-b accent">
+      <h6>Failed, retries left</h6>
+      <p>Unlock; due += backoff; loops back to acquire</p>
+    </div>
+    <div class="dgm-je-b red">
+      <h6>Failed, no retries left</h6>
+      <p>Move to the dead-letter table</p>
+    </div>
+  </div>
+</div>
+
 
 The whole cluster story lives inside **acquire**. Locking is a conditional
 `UPDATE`, and because the database serialises updates, two nodes can run the

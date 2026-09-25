@@ -14,13 +14,39 @@ in a stable order.
 
 ## The Concept
 
-```mermaid
-flowchart TB
-  R["ROLE: who the agent is"] --> C["CONSTRAINTS: must / must-never"]
-  C --> T["TOOLS: when to use which"]
-  T --> W["WORKFLOW: how to approach tasks"]
-  W --> O["OUTPUT CONTRACT: format & tone"]
-```
+<style>
+.dgm-spa{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-spa-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-spa h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-spa-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-spa-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-spa-node{background:#e6f5e6;border:1.5px solid #a8d8a8;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#0d5c0d}
+.dgm-spa-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-spa-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-spa{padding:20px 16px 18px}}
+</style>
+<div class="dgm-spa">
+  <span class="dgm-spa-chip">Five sections, top to bottom</span>
+  <h4>Role, constraints, tools, workflow, output — in an order that matters</h4>
+  <p class="dgm-spa-sub">Constraints sit right after role because they bound everything that follows.</p>
+  <div class="dgm-spa-chain">
+    <div class="dgm-spa-node accent">ROLE — who the agent is</div>
+    <div class="dgm-spa-arr">↓</div>
+    <div class="dgm-spa-node ">CONSTRAINTS — must / must-never</div>
+    <div class="dgm-spa-arr">↓</div>
+    <div class="dgm-spa-node ">TOOLS — when to use which</div>
+    <div class="dgm-spa-arr">↓</div>
+    <div class="dgm-spa-node ">WORKFLOW — how to approach tasks</div>
+    <div class="dgm-spa-arr">↓</div>
+    <div class="dgm-spa-node alt">OUTPUT CONTRACT — format &amp; tone</div>
+  </div>
+</div>
+
 
 Five sections, ordered stable→specific so the prefix caches well: role, hard constraints,
 tool guidance, workflow, output contract.

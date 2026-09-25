@@ -14,10 +14,39 @@ end-state of the phase.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  A["agent spans (model/tool calls)"] --> O["OpenTelemetry SDK"] --> X["exporter → Grafana / Honeycomb / Datadog"]
-```
+<style>
+.dgm-otel{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-otel-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-otel h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-otel-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-otel-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-otel-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-otel-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-otel-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-otel-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-otel-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-otel-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-otel-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-otel{padding:20px 16px 18px}.dgm-otel-row{flex-direction:column}}
+</style>
+<div class="dgm-otel">
+  <span class="dgm-otel-chip">One SDK, any backend</span>
+  <h4>Agent spans go through the OpenTelemetry SDK, which exports to whatever's downstream</h4>
+  <p class="dgm-otel-sub">Swapping Grafana for Honeycomb or Datadog never touches the agent's instrumentation code.</p>
+  <div class="dgm-otel-row">
+    <div class="dgm-otel-n accent">Agent spans (model/tool calls)</div>
+    <span class="dgm-otel-arr">→</span>
+    <div class="dgm-otel-n blue">OpenTelemetry SDK</div>
+    <span class="dgm-otel-arr">→</span>
+    <div class="dgm-otel-n green">Exporter → Grafana / Honeycomb / Datadog</div>
+  </div>
+</div>
+
 
 You instrument once with OTel. The backend is then a config choice.
 

@@ -19,11 +19,35 @@ makes every future model transparent.
 
 A BPMN file is three things stacked in one XML document:
 
-```mermaid
-flowchart TB
-  A["definitions — namespaces, targetNamespace"] --> B["process — the executable graph<br/>(this is what the engine reads)"]
-  B --> C["BPMNDiagram — x/y coordinates for rendering<br/>(optional; the engine ignores it)"]
-```
+<style>
+.dgm-bxh{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-bxh-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-bxh h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-bxh-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-bxh-chain{display:flex;flex-direction:column;gap:2px}
+.dgm-bxh-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:#7a2c2e}
+.dgm-bxh-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
+.dgm-bxh-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+@media (max-width:640px){.dgm-bxh{padding:20px 16px 18px}}
+</style>
+<div class="dgm-bxh">
+  <span class="dgm-bxh-chip">Anatomy of a .bpmn20.xml file</span>
+  <h4>Three nested pieces — only one of them the engine reads</h4>
+  <p class="dgm-bxh-sub">&lt;BPMNDiagram&gt; is optional; the engine ignores it.</p>
+  <div class="dgm-bxh-chain">
+    <div class="dgm-bxh-node alt">&lt;definitions&gt; — namespaces, targetNamespace</div>
+    <div class="dgm-bxh-arr">↓</div>
+    <div class="dgm-bxh-node accent">&lt;process&gt; — the executable graph (this is what the engine reads)</div>
+    <div class="dgm-bxh-arr">↓</div>
+    <div class="dgm-bxh-node alt">&lt;BPMNDiagram&gt; — x/y coordinates for rendering (optional; the engine ignores it)</div>
+  </div>
+</div>
+
 
 The engine only cares about the `<process>` block, and that block is *exactly*
 the graph you built in lessons 01–02: nodes as elements (`startEvent`, `userTask`,

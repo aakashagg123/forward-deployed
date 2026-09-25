@@ -14,12 +14,62 @@ persists while the raw transcripts can be archived or discarded.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  T["finished session transcript"] --> X["extract lessons (symptom→fix)"]
-  X --> M[("long-term memory / knowledge.md")]
-  T --> A["archive/discard raw transcript"]
-```
+<style>
+.dgm-csc{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-csc-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-csc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-csc-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-csc-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-csc-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-csc-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-csc-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-csc-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-csc-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-csc-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-csc-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-csc{padding:20px 16px 18px}.dgm-csc-row{flex-direction:column}}
+.dgm-csc-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-csc-branches{display:grid;grid-template-columns:repeat(1,1fr);gap:10px}
+.dgm-csc-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-csc-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-csc-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-csc-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-csc-b.accent h6{color:#0d5c0d}
+.dgm-csc-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-csc-b.blue h6{color:#0550ae}
+.dgm-csc-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-csc-b.green h6{color:#1a614f}
+.dgm-csc-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-csc-b.red h6{color:#82061e}
+.dgm-csc-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-csc-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-csc{padding:20px 16px 18px}.dgm-csc-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-csc">
+  <span class="dgm-csc-chip">A finished session leaves a lesson, not a transcript</span>
+  <h4>Extract symptom→fix pairs into knowledge.md; archive or discard the rest</h4>
+  <p class="dgm-csc-sub">The next session reads knowledge.md, not the raw transcript of every prior run.</p>
+  <div class="dgm-csc-row">
+    <div class="dgm-csc-n neutral">Finished session transcript</div>
+    <span class="dgm-csc-arr">→</span>
+    <div class="dgm-csc-n accent">Extract lessons (symptom → fix)</div>
+    <span class="dgm-csc-arr">→</span>
+    <div class="dgm-csc-n green">Long-term memory / knowledge.md</div>
+  </div>
+  <div class="dgm-csc-branches">
+    <div class="dgm-csc-b blue">
+      <h6>Raw transcript</h6>
+      <p>Archive / discard</p>
+    </div>
+  </div>
+</div>
+
 
 This is the harness-principles "persistent cross-sprint memory": append precise lessons —
 symptom, root cause, fix. Write evidence, not vague summaries.

@@ -14,14 +14,50 @@ wrong, with no redeploy.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  R["request"] --> K{"kill switch on?"}
-  K -- "yes" --> S["stable version"]
-  K -- "no" --> C{"in canary %?"}
-  C -- "yes" --> N["new version (watched)"]
-  C -- "no" --> S
-```
+<style>
+.dgm-ro{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ro-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-ro h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ro-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ro-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-ro-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-ro-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-ro-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-ro-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-ro-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-ro-b.accent h6{color:#0d5c0d}
+.dgm-ro-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-ro-b.blue h6{color:#0550ae}
+.dgm-ro-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-ro-b.green h6{color:#1a614f}
+.dgm-ro-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-ro-b.red h6{color:#82061e}
+.dgm-ro-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-ro-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-ro{padding:20px 16px 18px}.dgm-ro-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ro">
+  <span class="dgm-ro-chip">A kill switch above the canary check</span>
+  <h4>The kill switch is checked first — canary percentage only matters if it's off</h4>
+  <p class="dgm-ro-sub">That ordering means an incident response never has to reason about canary state at all.</p>
+  <div class="dgm-ro-q">Request — kill switch on?</div>
+  <div class="dgm-ro-branches">
+    <div class="dgm-ro-b red">
+      <h6>Yes</h6>
+      <p>Stable version</p>
+    </div>
+    <div class="dgm-ro-b accent">
+      <h6>No — in canary %?</h6>
+      <p>Yes → new version (watched) · No → stable version</p>
+    </div>
+  </div>
+</div>
+
 
 ## Build It
 

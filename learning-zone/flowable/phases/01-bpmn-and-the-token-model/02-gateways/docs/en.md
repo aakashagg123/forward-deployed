@@ -19,24 +19,104 @@ take?) and joining is impossible (how do you know both branches finished?).
 
 BPMN's answer is a small family of routing nodes. The three you'll actually use:
 
-```mermaid
-flowchart LR
-  subgraph exclusive ["exclusive (XOR) — pick one"]
-    X{"score ≥ 700?"} -- yes --> A["auto approve"]
-    X -- no --> B["manual review"]
-  end
-```
+<style>
+.dgm-gwx{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-gwx-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-gwx h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-gwx-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-gwx-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-gwx-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-gwx-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-gwx-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-gwx-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-gwx-b.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-gwx-b.accent h6{color:#7a2c2e}
+.dgm-gwx-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-gwx-b.blue h6{color:#0550ae}
+.dgm-gwx-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-gwx-b.green h6{color:#1a614f}
+.dgm-gwx-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-gwx-b.red h6{color:#82061e}
+.dgm-gwx-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-gwx-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-gwx{padding:20px 16px 18px}.dgm-gwx-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-gwx">
+  <span class="dgm-gwx-chip">Exclusive gateway (XOR)</span>
+  <h4>Pick exactly one path</h4>
+  <p class="dgm-gwx-sub">The token takes yes or no — never both.</p>
+  <div class="dgm-gwx-q">score ≥ 700?</div>
+  <div class="dgm-gwx-branches">
+    <div class="dgm-gwx-b green">
+      <h6>Yes</h6>
+      <p>Auto approve</p>
+    </div>
+    <div class="dgm-gwx-b accent">
+      <h6>No</h6>
+      <p>Manual review</p>
+    </div>
+  </div>
+</div>
 
-```mermaid
-flowchart LR
-  subgraph parallel ["parallel (AND) — take all, then wait for all"]
-    F{{"fork"}} --> C["credit check"]
-    F --> K["KYC check"]
-    C --> J{{"join"}}
-    K --> J
-    J --> N["continue"]
-  end
-```
+
+<style>
+.dgm-gwp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-gwp-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-gwp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-gwp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-gwp-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-gwp-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-gwp-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-gwp-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-gwp-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-gwp-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-gwp-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-gwp-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-gwp{padding:20px 16px 18px}.dgm-gwp-row{flex-direction:column}}
+.dgm-gwp-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.dgm-gwp-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-gwp-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-gwp-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-gwp-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-gwp-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-gwp-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-gwp-col.neutral h6{color:#59636e}
+.dgm-gwp-col.accent h6{color:#7a2c2e}
+.dgm-gwp-col.blue h6{color:#0550ae}
+.dgm-gwp-col.green h6{color:#1a614f}
+.dgm-gwp-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-gwp-item:last-child{margin-bottom:0}
+.dgm-gwp-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-gwp{padding:20px 16px 18px}.dgm-gwp-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-gwp">
+  <span class="dgm-gwp-chip">Parallel gateway (AND)</span>
+  <h4>Fork now, wait for every branch before continuing</h4>
+  <p class="dgm-gwp-sub">Both paths run; the join doesn't fire until credit check AND KYC check complete.</p>
+  <div class="dgm-gwp-row"><div class="dgm-gwp-n accent">⥂ Fork</div></div>
+  <div class="dgm-gwp-cols">
+    <div class="dgm-gwp-col blue">
+      <h6>Credit check</h6>
+    </div>
+    <div class="dgm-gwp-col green">
+      <h6>KYC check</h6>
+    </div>
+  </div>
+  <div class="dgm-gwp-row" style="margin-top:8px"><div class="dgm-gwp-n accent">⥃ Join — waits for both</div><span class="dgm-gwp-arr">→</span><div class="dgm-gwp-n">Continue</div></div>
+</div>
+
 
 | Gateway | Split behaviour | Join behaviour | Token count |
 | :-- | :-- | :-- | :-- |

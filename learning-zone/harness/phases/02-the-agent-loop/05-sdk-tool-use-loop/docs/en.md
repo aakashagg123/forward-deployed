@@ -14,14 +14,65 @@ plain dicts.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  Q["user"] --> C["messages.create(tools=…)"]
-  C --> SR{"stop_reason"}
-  SR -- "tool_use" --> X["run tools → tool_result blocks"]
-  X --> C
-  SR -- "end_turn" --> F["final text"]
-```
+<style>
+.dgm-stul{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-stul-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-stul h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-stul-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-stul-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-stul-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-stul-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-stul-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-stul-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-stul-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-stul-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-stul-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-stul{padding:20px 16px 18px}.dgm-stul-row{flex-direction:column}}
+.dgm-stul-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-stul-branches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dgm-stul-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
+.dgm-stul-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
+.dgm-stul-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
+.dgm-stul-b.accent{background:#e6f5e6;border-color:#a8d8a8}
+.dgm-stul-b.accent h6{color:#0d5c0d}
+.dgm-stul-b.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-stul-b.blue h6{color:#0550ae}
+.dgm-stul-b.green{background:#dafbe1;border-color:#aceebb}
+.dgm-stul-b.green h6{color:#1a614f}
+.dgm-stul-b.red{background:#ffebe9;border-color:#ffcecb}
+.dgm-stul-b.red h6{color:#82061e}
+.dgm-stul-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-stul-b.neutral h6{color:#1f2328}
+@media (max-width:640px){.dgm-stul{padding:20px 16px 18px}.dgm-stul-branches{grid-template-columns:1fr}}
+</style>
+<div class="dgm-stul">
+  <span class="dgm-stul-chip">The SDK's tool loop in five calls</span>
+  <h4>stop_reason decides whether the SDK loops or returns</h4>
+  <p class="dgm-stul-sub">tool_use always sends results back into the same messages.create call.</p>
+  <div class="dgm-stul-row">
+    <div class="dgm-stul-n neutral">User</div>
+    <span class="dgm-stul-arr">→</span>
+    <div class="dgm-stul-n accent">messages.create(tools=…)</div>
+  </div>
+  <div class="dgm-stul-q">stop_reason</div>
+  <div class="dgm-stul-branches">
+    <div class="dgm-stul-b blue">
+      <h6>tool_use</h6>
+      <p>Run tools → tool_result blocks → call again</p>
+    </div>
+    <div class="dgm-stul-b green">
+      <h6>end_turn</h6>
+      <p>Final text</p>
+    </div>
+  </div>
+</div>
+
 
 The mapping from your scratch version:
 

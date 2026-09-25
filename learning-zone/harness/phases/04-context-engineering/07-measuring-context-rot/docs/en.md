@@ -16,11 +16,41 @@ This lesson builds a tiny eval that *measures* retrieval-from-context as the win
 A **needle-in-a-haystack** test hides a known fact (the needle) in filler (the haystack)
 at varying depths and sizes. It then asks the model to recall the fact and scores accuracy.
 
-```mermaid
-flowchart LR
-  N["needle (known fact)"] --> H["embed at depth d in haystack of size s"]
-  H --> A["ask model to recall"] --> S["score: found? → accuracy grid (s × d)"]
-```
+<style>
+.dgm-mcr{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #008300;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-mcr-chip{position:absolute;top:-11px;left:24px;background:#008300;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(0,131,0,.28)}
+.dgm-mcr h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-mcr-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-mcr-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-mcr-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-mcr-n.accent{background:#e6f5e6;border-color:#a8d8a8;color:#0d5c0d}
+.dgm-mcr-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-mcr-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-mcr-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-mcr-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-mcr-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-mcr{padding:20px 16px 18px}.dgm-mcr-row{flex-direction:column}}
+</style>
+<div class="dgm-mcr">
+  <span class="dgm-mcr-chip">Needle-in-a-haystack, scored on a grid</span>
+  <h4>Vary depth and haystack size, then score whether the model still finds the needle</h4>
+  <p class="dgm-mcr-sub">The result is an accuracy grid, not a single number — rot is depth-dependent.</p>
+  <div class="dgm-mcr-row">
+    <div class="dgm-mcr-n accent">Needle (known fact)</div>
+    <span class="dgm-mcr-arr">→</span>
+    <div class="dgm-mcr-n blue">Embed at depth d in haystack of size s</div>
+    <span class="dgm-mcr-arr">→</span>
+    <div class="dgm-mcr-n ">Ask model to recall</div>
+    <span class="dgm-mcr-arr">→</span>
+    <div class="dgm-mcr-n green">Score: found? → accuracy grid (s × d)</div>
+  </div>
+</div>
+
 
 The output is a grid: accuracy by context size × needle depth. Rot shows up as cells
 dropping off at large sizes or middle depths.

@@ -21,18 +21,53 @@ team wants in.
 
 ## The Concept
 
-```mermaid
-flowchart LR
-  subgraph e ["EMBEDDED — engine inside your service"]
-    A["your Spring Boot app<br/>+ engine library"] --> D1[("your DB<br/>app + ACT_* tables")]
-  end
-  subgraph s ["STANDALONE — engine as a service"]
-    B["your services"] -- REST --> EN["engine service"] --> D2[("engine DB")]
-  end
-  subgraph w ["PLATFORM — Flowable Work"]
-    C["modelers, task UIs,<br/>admin, tenants"] --> EN2["same engines underneath"]
-  end
-```
+<style>
+.dgm-dt{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-dt-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-dt h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-dt-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-dt-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dgm-dt-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
+.dgm-dt-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
+.dgm-dt-col.accent{background:#faeceb;border-color:#e3b3ad}
+.dgm-dt-col.blue{background:#ddf4ff;border-color:#b6e3ff}
+.dgm-dt-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-dt-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.dgm-dt-col.neutral h6{color:#59636e}
+.dgm-dt-col.accent h6{color:#7a2c2e}
+.dgm-dt-col.blue h6{color:#0550ae}
+.dgm-dt-col.green h6{color:#1a614f}
+.dgm-dt-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
+  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-dt-item:last-child{margin-bottom:0}
+.dgm-dt-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
+@media (max-width:640px){.dgm-dt{padding:20px 16px 18px}.dgm-dt-cols{grid-template-columns:1fr}}
+</style>
+<div class="dgm-dt">
+  <span class="dgm-dt-chip">Three shapes for the same engine</span>
+  <h4>Embedded, standalone, or platform — the engine code barely changes</h4>
+  <p class="dgm-dt-sub">What changes is the network hop and who else shares the deployment.</p>
+  <div class="dgm-dt-cols">
+    <div class="dgm-dt-col accent">
+      <h6>Embedded — engine inside your service</h6>
+      <div class="dgm-dt-item">Your Spring Boot app + engine library → your DB (app + ACT_* tables)</div>
+    </div>
+    <div class="dgm-dt-col blue">
+      <h6>Standalone — engine as a service</h6>
+      <div class="dgm-dt-item">Your services — REST → engine service → engine DB</div>
+    </div>
+    <div class="dgm-dt-col green">
+      <h6>Platform — Flowable Work</h6>
+      <div class="dgm-dt-item">Modelers, task UIs, admin, tenants → same engines underneath</div>
+    </div>
+  </div>
+</div>
+
 
 The decision table, with the rows that actually decide it on top:
 

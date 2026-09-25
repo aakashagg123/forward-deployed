@@ -23,11 +23,39 @@ system into a distributed one with extra ceremony.
 A process engine makes three commitments in one runtime. Here is the whole course
 in one diagram:
 
-```mermaid
-flowchart LR
-  M["an executable model<br/>the diagram IS the code<br/>(Phase 1)"] --> E["a state machine<br/>with a database<br/>waits are rows, not threads<br/>(Phase 2)"]
-  E --> S["services around it<br/>tasks, timers, history,<br/>retries, migration<br/>(Phases 3-9)"]
-```
+<style>
+.dgm-wde{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-wde-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
+.dgm-wde h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-wde-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-wde-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.dgm-wde-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
+.dgm-wde-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
+.dgm-wde-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-wde-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
+.dgm-wde-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
+.dgm-wde-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-wde-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+@media (max-width:640px){.dgm-wde{padding:20px 16px 18px}.dgm-wde-row{flex-direction:column}}
+</style>
+<div class="dgm-wde">
+  <span class="dgm-wde-chip">The shape of this track</span>
+  <h4>Three layers, one direction: model → state → services</h4>
+  <p class="dgm-wde-sub">Each phase of this track adds a layer beneath the diagram you started with.</p>
+  <div class="dgm-wde-row">
+    <div class="dgm-wde-n neutral">An executable model — the diagram IS the code (Ph.1)</div>
+    <span class="dgm-wde-arr">→</span>
+    <div class="dgm-wde-n accent">A state machine with a database — waits are rows, not threads (Ph.2)</div>
+    <span class="dgm-wde-arr">→</span>
+    <div class="dgm-wde-n blue">Services around it — tasks, timers, history, retries, migration (Ph.3–9)</div>
+  </div>
+</div>
+
 
 The diagnostic, as a table — count your yes-answers:
 
