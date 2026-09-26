@@ -111,6 +111,9 @@ img { max-width: 100%; }
 .fd-breadcrumb { font-size: 12.5px; color: var(--ink-3); margin: 0 0 20px; }
 .fd-breadcrumb a { color: var(--ink-3); }
 
+.fd-content img { max-width: 100%; height: auto; display: block; }
+.fd-content > p:first-child:has(> img:only-child) { margin: 0 0 28px; }
+.fd-content > p:first-child:has(> img:only-child) img { border: 1px solid var(--rule); }
 .fd-content h1 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; margin: 0 0 20px; }
 .fd-content .fd-post-date { margin: -12px 0 24px; font-size: 13px; color: var(--ink-3); }
 .fd-content h2 { font-size: 21px; font-weight: 700; margin: 40px 0 12px; border-top: 1px solid var(--rule); padding-top: 24px; }
