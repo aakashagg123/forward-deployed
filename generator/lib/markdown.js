@@ -8,8 +8,25 @@ import MarkdownIt from 'markdown-it';
 // A paragraph that is *entirely* bold text becomes a <p class="fd-claim">
 // display statement, matching how the source manuscript uses bold-only
 // paragraphs as standalone claims rather than emphasis within prose.
+//   3. A relative link to another .md source (as authors naturally write
+//      when cross-linking pages, e.g. "[Experience](experience.md)") is
+//      rewritten to .html — the same convention SUMMARY.md links already
+//      get via normalizeHref, applied to inline content links too.
 export function createRenderer({ highlighter }) {
   const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
+
+  const defaultLinkOpen = md.renderer.rules.link_open || ((t, i, o, e, s) => s.renderToken(t, i, o));
+  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const hrefIdx = token.attrIndex('href');
+    if (hrefIdx >= 0) {
+      const href = token.attrs[hrefIdx][1];
+      if (!/^[a-z][a-z0-9+.-]*:/i.test(href) && !href.startsWith('//') && /\.md(?=$|#)/.test(href)) {
+        token.attrs[hrefIdx][1] = href.replace(/\.md(?=$|#)/, '.html');
+      }
+    }
+    return defaultLinkOpen(tokens, idx, options, env, self);
+  };
 
   md.renderer.rules.image = (tokens, idx) => {
     const token = tokens[idx];
