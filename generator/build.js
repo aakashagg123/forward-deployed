@@ -20,7 +20,7 @@ const SITE = {
 
 // Spaces excluded from the build entirely — content stays on disk, just not
 // built/linked/indexed. Remove an id here to bring the space back.
-const HIDDEN_SPACES = new Set(['musings']);
+const HIDDEN_SPACES = new Set();
 
 const SPACE_META = {
   books: { title: 'Books', blurb: 'A small digital library — two long-reads, free to read here.' },
