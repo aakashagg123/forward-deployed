@@ -1,3 +1,7 @@
+---
+date: 2026-09-12
+---
+
 # AI as leverage, not a shortcut
 
 There's a version of using AI at work that's really just outsourcing thinking — ask the model, paste the answer, move on. I've tried to build a different habit, and it's changed how I operate enough that I think it's worth writing down.

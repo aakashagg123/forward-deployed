@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import matter from 'gray-matter';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
@@ -211,6 +212,21 @@ function extractOutline(html) {
   return { html: updated, outline };
 }
 
+// Musings posts carry a `date:` frontmatter field (YYYY-MM-DD); rendered as
+// a byline right under the H1, matching how a blog post would show one.
+function injectPostDate(html, date) {
+  // gray-matter parses an unquoted YAML date (2026-09-26) into a Date
+  // already; a quoted string arrives as-is, so accept either.
+  const d = date instanceof Date ? date : new Date(`${date}T00:00:00Z`);
+  const formatted = d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+  return html.replace(/(<h1>.*?<\/h1>)/s, `$1\n<p class="fd-post-date">${formatted}</p>`);
+}
+
 const MAX_DESCRIPTION = 155;
 
 // Meta-description source: the raw markdown's first plain paragraph — not
@@ -380,8 +396,12 @@ async function build() {
       if (page.external) continue;
       const abs = path.join(spaceDir, page.sourcePath);
       const raw = fs.readFileSync(abs, 'utf8');
-      const rendered = md.render(raw);
+      const { data: frontmatter, content: body } = matter(raw);
+      const rendered = md.render(body);
       let { html: contentHtml, outline } = extractOutline(rendered);
+      if (spaceId === 'musings' && frontmatter.date) {
+        contentHtml = injectPostDate(contentHtml, frontmatter.date);
+      }
       if (spaceId === 'portfolio' && page.sourcePath === 'README.md') {
         contentHtml += renderProductGrid(PRODUCTS);
       }
@@ -391,7 +411,7 @@ async function build() {
       if (spaceId === 'portfolio' && page.sourcePath === 'products/jsw-one-msme-marketplace.md') {
         contentHtml += renderJswArchitecture();
       }
-      const description = extractDescription(raw, SITE.thesis);
+      const description = extractDescription(body, SITE.thesis);
       page.description = description;
 
       const { prev, next } = prevNext.get(i);

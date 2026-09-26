@@ -1,3 +1,7 @@
+---
+date: 2026-09-26
+---
+
 # We have defined product management too far downstream
 
 I increasingly think that product management, as it is practised in most organisations, is defined too far downstream.

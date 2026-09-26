@@ -112,6 +112,7 @@ img { max-width: 100%; }
 .fd-breadcrumb a { color: var(--ink-3); }
 
 .fd-content h1 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; margin: 0 0 20px; }
+.fd-content .fd-post-date { margin: -12px 0 24px; font-size: 13px; color: var(--ink-3); }
 .fd-content h2 { font-size: 21px; font-weight: 700; margin: 40px 0 12px; border-top: 1px solid var(--rule); padding-top: 24px; }
 .fd-content h3 { font-size: 17px; font-weight: 700; margin: 28px 0 10px; }
 .fd-content p { margin: 16px 0; }
