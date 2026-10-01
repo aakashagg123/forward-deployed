@@ -129,52 +129,51 @@
   var ghRoot = document.getElementById('fdGh');
   if (ghRoot) {
     var ghUser = ghRoot.dataset.username;
-    var ghGrid = document.getElementById('fdGhGrid');
     var ghStatus = document.getElementById('fdGhStatus');
     var ghSync = document.getElementById('fdGhSync');
+    var ghImgDark = document.getElementById('fdGhImgDark');
+    var ghImgLight = document.getElementById('fdGhImgLight');
     var ghLoading = false;
 
-    var ghRenderGrid = function (contributions) {
-      ghGrid.innerHTML = '';
-      var frag = document.createDocumentFragment();
-      contributions.forEach(function (day) {
-        var cell = document.createElement('div');
-        cell.className = 'fd-gh-cell';
-        cell.setAttribute('data-level', day.level || 0);
-        cell.setAttribute('title', day.date + ': ' + day.count + ' contribution' + (day.count === 1 ? '' : 's'));
-        frag.appendChild(cell);
-      });
-      ghGrid.appendChild(frag);
-      ghGrid.removeAttribute('aria-hidden');
-    };
-
+    // An <img>, not a fetch() — avoids the CORS failure mode a cross-origin
+    // JSON API read would hit (and did: an earlier version of this widget
+    // used github-contributions-api.jogruber.de via fetch, which a browser
+    // blocks client-side when that API doesn't grant this origin access).
+    // ghchart.rshah.org is a long-standing public SVG-badge service built
+    // exactly for hotlinking, so no CORS question applies to displaying it.
     var ghLoad = function () {
       if (ghLoading) return;
       ghLoading = true;
       if (ghSync) ghSync.classList.add('syncing');
       ghStatus.textContent = 'Syncing…';
-      // Public, unauthenticated read of GitHub's own contribution calendar —
-      // no token involved, same data the profile page itself shows.
-      fetch('https://github-contributions-api.jogruber.de/v4/' + encodeURIComponent(ghUser) + '?y=last', { cache: 'no-store' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('bad response');
-          return res.json();
-        })
-        .then(function (data) {
-          var contributions = data.contributions || [];
-          ghRenderGrid(contributions);
-          var total = contributions.reduce(function (sum, d) { return sum + (d.count || 0); }, 0);
-          var now = new Date();
-          ghStatus.textContent = total + ' contributions in the last year · synced ' +
-            now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        })
-        .catch(function () {
+
+      var cacheBust = Date.now();
+      var base = 'https://ghchart.rshah.org/';
+      var darkUrl = base + 'F4F4F2/' + encodeURIComponent(ghUser) + '?t=' + cacheBust;
+      var lightUrl = base + '000000/' + encodeURIComponent(ghUser) + '?t=' + cacheBust;
+
+      var pending = 2;
+      var failed = false;
+      var settle = function (ok) {
+        if (!ok) failed = true;
+        pending -= 1;
+        if (pending > 0) return;
+        ghLoading = false;
+        if (ghSync) ghSync.classList.remove('syncing');
+        if (failed) {
           ghStatus.textContent = 'Could not load GitHub activity right now — try the sync button, or see the profile above.';
-        })
-        .then(function () {
-          ghLoading = false;
-          if (ghSync) ghSync.classList.remove('syncing');
-        });
+        } else {
+          var now = new Date();
+          ghStatus.textContent = 'Synced ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+      };
+
+      ghImgDark.onload = function () { settle(true); };
+      ghImgDark.onerror = function () { settle(false); };
+      ghImgLight.onload = function () { settle(true); };
+      ghImgLight.onerror = function () { settle(false); };
+      ghImgDark.src = darkUrl;
+      ghImgLight.src = lightUrl;
     };
 
     if (ghSync) ghSync.addEventListener('click', ghLoad);
