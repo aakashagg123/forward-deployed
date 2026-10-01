@@ -126,4 +126,59 @@
     setStackPhase('pre');
   }
 
+  var ghRoot = document.getElementById('fdGh');
+  if (ghRoot) {
+    var ghUser = ghRoot.dataset.username;
+    var ghGrid = document.getElementById('fdGhGrid');
+    var ghStatus = document.getElementById('fdGhStatus');
+    var ghSync = document.getElementById('fdGhSync');
+    var ghLoading = false;
+
+    var ghRenderGrid = function (contributions) {
+      ghGrid.innerHTML = '';
+      var frag = document.createDocumentFragment();
+      contributions.forEach(function (day) {
+        var cell = document.createElement('div');
+        cell.className = 'fd-gh-cell';
+        cell.setAttribute('data-level', day.level || 0);
+        cell.setAttribute('title', day.date + ': ' + day.count + ' contribution' + (day.count === 1 ? '' : 's'));
+        frag.appendChild(cell);
+      });
+      ghGrid.appendChild(frag);
+      ghGrid.removeAttribute('aria-hidden');
+    };
+
+    var ghLoad = function () {
+      if (ghLoading) return;
+      ghLoading = true;
+      if (ghSync) ghSync.classList.add('syncing');
+      ghStatus.textContent = 'Syncing…';
+      // Public, unauthenticated read of GitHub's own contribution calendar —
+      // no token involved, same data the profile page itself shows.
+      fetch('https://github-contributions-api.jogruber.de/v4/' + encodeURIComponent(ghUser) + '?y=last', { cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('bad response');
+          return res.json();
+        })
+        .then(function (data) {
+          var contributions = data.contributions || [];
+          ghRenderGrid(contributions);
+          var total = contributions.reduce(function (sum, d) { return sum + (d.count || 0); }, 0);
+          var now = new Date();
+          ghStatus.textContent = total + ' contributions in the last year · synced ' +
+            now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        })
+        .catch(function () {
+          ghStatus.textContent = 'Could not load GitHub activity right now — try the sync button, or see the profile above.';
+        })
+        .then(function () {
+          ghLoading = false;
+          if (ghSync) ghSync.classList.remove('syncing');
+        });
+    };
+
+    if (ghSync) ghSync.addEventListener('click', ghLoad);
+    ghLoad();
+  }
+
 })();

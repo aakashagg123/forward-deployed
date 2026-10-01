@@ -120,7 +120,7 @@ const CSP = [
   `script-src 'self' https://www.googletagmanager.com '${GA_INLINE_SCRIPT_HASH}'`,
   "style-src 'self'",
   "img-src 'self'",
-  'connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com',
+  'connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de',
   "font-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -232,10 +232,24 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 </html>`;
 }
 
-export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl }) {
+const GH_SYNC_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>`;
+
+export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, githubUsername }) {
   const about = spaces.find((s) => s.id === 'about');
   const linkedinCta = linkedinUrl
     ? `<a class="fd-cta" href="${escapeAttr(linkedinUrl)}" target="_blank" rel="noopener">Connect on LinkedIn →</a>`
+    : '';
+  const githubWidget = githubUsername
+    ? `
+  <div class="fd-gh" id="fdGh" data-username="${escapeAttr(githubUsername)}">
+    <div class="fd-gh-head">
+      <h4>GitHub activity</h4>
+      <a class="fd-gh-profile" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">@${escapeHtml(githubUsername)}</a>
+      <button class="fd-gh-sync" id="fdGhSync" type="button" aria-label="Re-sync GitHub activity">${GH_SYNC_ICON}</button>
+    </div>
+    <div class="fd-gh-grid" id="fdGhGrid" aria-hidden="true"></div>
+    <p class="fd-gh-status" id="fdGhStatus">Loading GitHub activity…</p>
+  </div>`
     : '';
 
   const pillars = landing.pillars
@@ -307,6 +321,7 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
   <div class="fd-pillars">${pillars}</div>
   ${release}
   <div class="fd-spaces-row" id="spaces">${spaceRows}</div>
+  ${githubWidget}
 </div>
 <script src="/theme.js" defer></script>
 </body>
