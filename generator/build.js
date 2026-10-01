@@ -20,6 +20,7 @@ const SITE = {
 };
 
 const LINKEDIN_URL = 'https://in.linkedin.com/in/aakash-aggarwal-1010';
+const GITHUB_USERNAME = 'aakashagg123';
 
 // Spaces excluded from the build entirely — content stays on disk, just not
 // built/linked/indexed. Remove an id here to bring the space back.
@@ -460,7 +461,7 @@ async function build() {
 
   fs.writeFileSync(
     path.join(DIST_DIR, 'index.html'),
-    renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0], linkedinUrl: LINKEDIN_URL }),
+    renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0], linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME }),
   );
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
 
