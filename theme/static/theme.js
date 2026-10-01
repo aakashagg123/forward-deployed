@@ -140,7 +140,11 @@
     // Primary: real per-day data, fetched client-side — gives a hoverable
     // count+date per cell and a real total, which a static image can't.
     var ghRenderGrid = function (contributions) {
-      ghGrid.innerHTML = '';
+      // Not innerHTML = '' — this page's CSP requires a Trusted Types
+      // policy for any innerHTML assignment, even clearing to an empty
+      // string, and none is registered. replaceChildren() is a plain DOM
+      // method, not a Trusted Types sink, so it needs no policy.
+      ghGrid.replaceChildren();
       var frag = document.createDocumentFragment();
       contributions.forEach(function (day) {
         var cell = document.createElement('div');
