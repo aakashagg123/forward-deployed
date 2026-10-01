@@ -471,6 +471,24 @@ structured knowledge graph specifically — is covered in
   quarterly, a retrieval corpus refreshed daily — and alert when a consumer falls behind
   its source's SLA, not just when the source itself goes untouched.</li>
 </ul>
+<h2 id="trust-and-permissions-what-may-enter-the-context">Trust and permissions: what may enter the context</h2>
+<p>Governance also decides which content is allowed into the context, and how much the
+model may trust it. Two problems come with scale.</p>
+<ul>
+<li><strong>Not all context is equally trusted.</strong> Your own instructions are trusted. A retrieved
+  web page, a customer email, or a tool result is not. Any of them can contain text
+  written to look like an instruction. That is <em>indirect prompt injection</em>. Keep
+  untrusted content clearly separated from instructions, and never let it grant new
+  permissions. Delimiters help but do not solve it. The layered defence is in the
+  <a href="../ai-security-and-guardrails/the-threat-model-and-guardrails.html">security module</a>.</li>
+<li><strong>Retrieval must respect access rules.</strong> If the retrieval step can fetch a document
+  the current user may not read, the model can repeat it. Apply the user's permissions
+  when you <em>retrieve</em>, not after the model has answered. Shared corpora make this
+  harder, because one index may hold content for many audiences.</li>
+</ul>
+<p>Add both to the source registry. For each shared source, record who may read it and
+whether its content is trusted or untrusted. Then a review can ask a concrete question:
+<em>which untrusted sources reach which features, and what can those features do?</em></p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Policy drift</strong> — the same rule encoded independently in multiple features, updated
@@ -480,6 +498,10 @@ structured knowledge graph specifically — is covered in
 <li><strong>Governance theater</strong> — a governance document exists, but no registry connects a
   shared source to the features that consume it, so the document can't actually be acted
   on when something changes.</li>
+<li><strong>The over-permissive index</strong> — retrieval searches everything and filters later, so a
+  user's question can surface a document they should never see.</li>
+<li><strong>Untrusted text with authority</strong> — a retrieved page or tool output is placed next to
+  the instructions with no separation, so text inside it is treated as a command.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
@@ -489,6 +511,8 @@ structured knowledge graph specifically — is covered in
       feature, or does each team have to notice on its own?</li>
 <li class="task todo">Could we reconstruct, for a specific past model call, exactly what context it was
       given — for an audit, an incident review, or a legal request?</li>
+<li class="task todo">For each shared source: is it marked trusted or untrusted, and does retrieval apply
+      the current user's access rights before anything reaches the model?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -498,7 +522,7 @@ structured knowledge graph specifically — is covered in
 <li><a href="evaluating-context-quality.html">Evaluating context quality</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="context-as-a-spec-able-requirement.html"><span class="lbl">← Previous</span><span class="ttl">Context as a spec-able requirement</span></a><a class="navcard next" href="evaluating-context-quality.html"><span class="lbl">→ Next</span><span class="ttl">Evaluating context quality</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-one-source-many-consumers">The mental model: one source, many consumers</a><a class="h2" href="#what-this-covers-and-what-it-deliberately-doesnt">What this covers, and what it deliberately doesn&#x27;t</a><a class="h2" href="#the-three-governance-moves-that-actually-scale">The three governance moves that actually scale</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-one-source-many-consumers">The mental model: one source, many consumers</a><a class="h2" href="#what-this-covers-and-what-it-deliberately-doesnt">What this covers, and what it deliberately doesn&#x27;t</a><a class="h2" href="#the-three-governance-moves-that-actually-scale">The three governance moves that actually scale</a><a class="h2" href="#trust-and-permissions-what-may-enter-the-context">Trust and permissions: what may enter the context</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

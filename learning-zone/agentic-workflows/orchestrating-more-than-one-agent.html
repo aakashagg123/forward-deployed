@@ -371,36 +371,34 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Agentic workflows</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="orchestrating-more-than-one-agent.html">1 · Orchestrating more than one agent</a><a class="modlink" href="making-a-workflow-durable-and-worth-owning.html">2 · Making a workflow durable, and worth owning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="choosing-a-workflow-pattern.html">1 · Choosing a workflow pattern</a><a class="modlink active" href="orchestrating-more-than-one-agent.html">2 · Orchestrating more than one agent</a><a class="modlink" href="making-a-workflow-durable-and-worth-owning.html">3 · Making a workflow durable, and worth owning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="chip">Lesson 01</span>
+    <span class="chip">Lesson 02</span>
     <h1>Orchestrating more than one agent</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>Most tasks are better off as one well-built agent. But sometimes one loop genuinely isn't
-enough — the work is too big for one context window, has independent threads that could
-run in parallel, or needs specialists with different tools and permissions. When that's
-true, the same small number of shapes recur: an <strong>orchestrator</strong> delegating to
-<strong>subagents</strong>, a <strong>pipeline</strong> of specialists handling one stage each, and <strong>peer
-handoffs</strong> where an agent recognizes "not my job" and transfers the conversation. Every
-shape buys the same two things — isolating messy context and running work in parallel —
-and pays for them in the same currency: coordination overhead. Adding an agent should
-require the same justification as adding a service: a named bottleneck that a single loop
-demonstrably can't clear, not a diagram that looks more impressive with more boxes on it.</p>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Start with one well-built agent. Sometimes one loop is not enough. The
+work may be too big for one context window. It may have independent threads that can run
+at once. It may need specialists with different tools and permissions.</p>
+<p>Then a lead agent can hand pieces to subagents and combine what they return. This is the
+orchestrator-workers pattern from the
+<a href="choosing-a-workflow-pattern.html">previous lesson</a>. It buys two things: clean context
+and parallel work. It costs one thing: coordination.</p>
+<p>That cost is large. Adding an agent needs the same case as adding a service. Name the
+bottleneck that one loop cannot clear. A diagram with more boxes is not a case.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — Multi-agent architectures are where budgets multiply fastest.
-Token spend scales with how many agents are running, and coordination failures are
-emergent — every individual agent can behave correctly while the system as a whole
-misbehaves.</p>
-<p><strong>What it changes in your decisions</strong> — Every additional agent in a design needs to
-name the specific bottleneck — context, parallelism, or specialization — that a single,
-better-built agent couldn't clear.</p>
-<p><strong>Ask yourself</strong> — <em>"Would one agent with better tools and cleaner context do this —
-and have we actually tried that first?"</em></p>
-<p><strong>Risk if ignored</strong> — A five-agent system that is slower, more expensive, and harder to
-debug than the single agent it replaced, built because the architecture diagram looked
-like progress.</p>
+<p><strong>Why it matters</strong> — Multi-agent designs make token budgets grow quickly. Spend
+scales with the number of agents. Failures are emergent: each agent can behave and the
+system can still misbehave.</p>
+<p><strong>What it changes in your decisions</strong> — Every extra agent must name its bottleneck:
+context, parallelism or specialisation. You also ask for a cost estimate against the
+single-agent version.</p>
+<p><strong>Ask yourself</strong> — <em>"Would one agent with better tools and cleaner context do this? Have
+we tried that first?"</em></p>
+<p><strong>Risk if ignored</strong> — A five-agent system that is slower, costs more and is harder to
+debug than the single agent it replaced, built because the diagram looked like progress.</p>
 </blockquote>
 <h2 id="the-mental-model-three-shapes-one-shared-cost">The mental model: three shapes, one shared cost</h2>
 <!-- Orchestrating lesson — 3 recurring topology shapes as visual mini-diagrams.
@@ -506,68 +504,205 @@ like progress.</p>
   </div>
 </div>
 
-<p>Each shape fits a different reason for splitting the work. An orchestrator delegating to
-subagents suits a task with independent, parallelizable threads, or one messy subtask
-whose noisy detail shouldn't pollute the main agent's context. A pipeline suits work whose
-stages are known in advance and each one is independently checkable — it's the
-multi-agent version of a fixed workflow, and just as predictable. A peer handoff suits the
-case where an agent needs to recognize a request isn't its job and pass it, with its full
-context, to one that specializes in it. All three are developed in full — including the
-protocol landscape (MCP for tools, A2A for agent-to-agent handoffs, and which of the rest
-of the acronym soup is real versus speculative) — in
-<a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a>.</p>
+<ul>
+<li><strong>Orchestrator and subagents.</strong> A lead splits the task. Each subagent works in its own
+  context window and returns a short result. This helps when threads are independent, or
+  when one messy subtask would flood the lead's context.</li>
+<li><strong>Pipeline.</strong> Specialists handle one stage each. It is a fixed workflow with several
+  agents in it, and it is as predictable as one.</li>
+<li><strong>Peer handoff.</strong> An agent sees a request is not its job and passes it on, with context.</li>
+</ul>
+<p>The topologies and the protocols around them (MCP for tools, A2A for agent-to-agent) are
+covered in <a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a>.
+This lesson stays on the decision: when is it worth it?</p>
+<h2 id="the-evidence-it-helps-in-some-work-and-costs-a-lot">The evidence: it helps in some work and costs a lot</h2>
+<p>Anthropic published results from its multi-agent research system in June 2025. Three
+findings matter to a product leader.</p>
+<ul>
+<li><strong>It can win.</strong> The multi-agent setup (a Claude Opus 4 lead with Claude Sonnet 4
+  subagents) beat a single-agent Claude Opus 4 by 90.2% on Anthropic's internal research
+  evaluation, as of June 2025. The tasks were breadth-first, such as
+  gathering facts across many sources.</li>
+<li><strong>It costs a lot.</strong> Agents used about 4 times the tokens of a chat. Multi-agent systems
+  used about 15 times the tokens of a chat.</li>
+<li><strong>It does not suit everything.</strong> Anthropic says multi-agent systems fit "valuable tasks
+  that involve heavy parallelization, information that exceeds single context windows,
+  and interfacing with numerous complex tools." It also says most coding tasks "involve
+  fewer truly parallelizable tasks than research," and that agents are "not yet great at
+  coordinating and delegating to other agents in real time."</li>
+</ul>
+<p>There is a sharper counter-view. Cognition, the maker of a coding agent, argued in June
+2025 that agents working in parallel without shared context make conflicting decisions,
+because every action carries hidden decisions. In April 2026 it published a follow-up,
+"Multi-Agents: What's Actually Working." It says multi-agent setups now work in a narrow
+class of cases: the writes stay single-threaded, and the extra agents contribute
+intelligence rather than actions. Treat this as a real objection and a refinement, not a
+rebuttal of the Anthropic result. Anthropic's own caveat about coding points the same way:
+tightly coupled work resists parallel agents. Research that splits into independent
+searches suits them better.</p>
 <h2 id="the-discipline-that-keeps-any-shape-from-collapsing">The discipline that keeps any shape from collapsing</h2>
-<p>Two things separate a multi-agent system that works from one that quietly produces
-fragments that don't compose. <strong>Handoffs need to be structured artifacts, not vibes</strong> — a
-brief in, a defined deliverable out, with an explicit format and constraints — because
-most multi-agent failures turn out to be specification failures at exactly these seams.
-<strong>Someone has to own the whole</strong> — an orchestrator or a human accountable for the
-integrated result — or a system can produce work where every individual piece was done
-well and the combination is nonsense.</p>
-<h2 id="a-decision-rule-that-survives-contact-with-a-vendor-pitch">A decision rule that survives contact with a vendor pitch</h2>
-<p>Start with one agent, and fix most "we need more agents" symptoms with better tools, a
-tighter prompt, and cleaner context first — that alone resolves more of these situations
-than adding a second agent would. Add a subagent only once a bottleneck has an actual
-name: a messy subtask worth isolating, independent work worth parallelizing, or a genuine
-need for different tools or permissions (a deploy-capable agent that only the deploy step
-ever touches is a security decision as much as an architecture one). Stop adding agents
-the moment coordination cost starts showing up — in the token bill, in added latency, or
-in debugging sessions that now span several transcripts instead of one.</p>
+<p>Two habits separate a multi-agent system that works from one that produces fragments.</p>
+<ul>
+<li><strong>Handoffs are written artifacts, not vibes.</strong> The lead gives each worker a brief. The
+  worker returns a defined result. Many multi-agent failures start as specification
+  failures at these seams. Anthropic reports that vague delegation led subagents to misread the task
+  or repeat the same searches as other agents.</li>
+<li><strong>Someone owns the whole.</strong> An orchestrator, or a human, answers for the combined
+  result. Otherwise every piece can be good and the sum can be nonsense.</li>
+</ul>
+<h2 id="worked-example-a-vague-brief-and-a-good-one">Worked example: a vague brief and a good one</h2>
+<p><em>This example is invented, to show the method.</em></p>
+<p>A lead agent is researching "which payment providers support instant payouts in India."
+It spawns three subagents.</p>
+<p><strong>Vague brief, sent to all three:</strong> "Research payment providers and instant payouts."</p>
+<ul>
+<li>Subagent A lists the ten most famous providers.</li>
+<li>Subagent B lists nine of the same providers.</li>
+<li>Subagent C wanders into card fees, which nobody asked about.</li>
+</ul>
+<p>The lead gets overlapping lists and one off-topic report. It spends tokens merging them.</p>
+<p><strong>Good briefs, one per subagent:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Part of the brief</th>
+<th>Subagent A</th>
+<th>Subagent B</th>
+<th>Subagent C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Goal</td>
+<td>Find providers with instant payouts to bank accounts</td>
+<td>Same goal</td>
+<td>Same goal</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>Providers headquartered in India</td>
+<td>Global providers with Indian operations</td>
+<td>Banks offering their own payout APIs</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>A table: name, payout speed, source link</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Boundaries</td>
+<td>Skip anything without a source. No fee comparison.</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Stop when</td>
+<td>8 providers, or 10 tool calls</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+</tbody>
+</table>
+<p>Now the threads do not overlap. The results share a format, so the lead can merge them
+with a simple step. Each subagent has a stop rule, so cost is capped.</p>
+<h2 id="a-decision-rule-that-survives-a-vendor-pitch">A decision rule that survives a vendor pitch</h2>
+<ol>
+<li><strong>Start with one agent.</strong> Better tools, a tighter prompt and cleaner context often fix
+   "we need more agents" symptoms.</li>
+<li><strong>Add a subagent only for a named bottleneck.</strong> The bottleneck may be context (isolate
+   a messy subtask), parallelism (independent threads), or specialisation (different tools
+   or permissions). A deploy-only agent that alone holds deploy credentials is a security
+   choice as much as an architecture one.</li>
+<li><strong>Stop when coordination cost shows.</strong> It will show in the token bill, in latency, and
+   in debugging sessions that span several transcripts.</li>
+</ol>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<ul>
+<li><strong>Quality vs. cost.</strong> Parallel workers can raise quality on broad tasks. They multiply
+  tokens.</li>
+<li><strong>Speed vs. complexity.</strong> Threads run at once, but briefs, merging and retries add work.</li>
+<li><strong>Isolation vs. shared context.</strong> A worker with its own window stays focused. It also
+  cannot see what the others know.</li>
+<li><strong>Specialisation vs. oversight.</strong> More specialists means more places to look when
+  something breaks.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Org-chart architecture</strong> — a multi-agent design that mirrors the team's own structure
-  rather than the task's actual structure, importing the coordination overhead of a
-  meeting into the system.</li>
-<li><strong>Vague briefs</strong> — two subagents given the same ambiguous instruction, returning
-  contradictory or duplicated work that a clearer handoff would have prevented.</li>
-<li><strong>No one owns the whole</strong> — every subagent's piece individually correct, and the
-  integrated result incoherent, because no orchestrator or human was accountable for it.</li>
-<li><strong>Protocol-driven roadmaps</strong> — betting a plan on a still-speculative "agent internet"
-  standard instead of shipping on what's actually adopted today.</li>
+<li><strong>Org-chart architecture.</strong> The design copies the team's structure, not the task's.</li>
+<li><strong>Vague briefs.</strong> Workers duplicate effort or return different formats.</li>
+<li><strong>No owner for the whole.</strong> Every part is right and the result is incoherent.</li>
+<li><strong>Hidden conflicts.</strong> Workers make incompatible choices because they cannot see each
+  other's context.</li>
+<li><strong>Protocol-driven roadmaps.</strong> The plan depends on a speculative "agent internet" instead
+  of what is adopted today.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>A brief is a small, fixed structure. Write it once as a template, and have the lead fill
+it in. This makes briefs reviewable and testable.</p>
+<pre><code class="language-python">BRIEF = &quot;&quot;&quot;
+GOAL: {goal}
+SCOPE: {scope}
+OUTPUT FORMAT: {output_format}
+SOURCES TO USE: {sources}
+BOUNDARIES: {boundaries}
+STOP WHEN: {stop_rule}
+&quot;&quot;&quot;
+
+def spawn_worker(lead_ctx, task):
+    brief = BRIEF.format(**task.brief_fields)      # the brief IS the spec
+    result = run_agent(brief, tools=task.tools,    # scoped tools, scoped permissions
+                       max_steps=task.max_steps,   # each worker has its own budget
+                       max_cost=task.max_cost)
+    validate(result, task.output_schema)           # reject results that break the format
+    return result                                  # the lead gets a short summary only
+</code></pre>
+<p>Three habits matter to an engineer.</p>
+<ul>
+<li><strong>Give each worker its own budget.</strong> Cap steps and cost per worker and per run. See
+  <a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a>.</li>
+<li><strong>Validate worker output against a schema.</strong> A lead that merges free-form text will
+  merge mistakes.</li>
+<li><strong>Trace across agents.</strong> Log the brief, the tool calls and the result for every worker
+  under one run id. Otherwise debugging spans several unconnected transcripts.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">For every agent in this design, which named bottleneck — context, parallelism, or
-      specialization — justifies its existence?</li>
-<li class="task todo">Are handoffs defined artifacts with an explicit brief and expected output, or are
-      they informal instructions?</li>
-<li class="task todo">Is there one clear owner — agent or human — accountable for the integrated result?</li>
-<li class="task todo">Has a single, better-built agent actually been tried before reaching for a second
-      one?</li>
+<li class="task todo">For each agent in the design, which named bottleneck justifies it?</li>
+<li class="task todo">Did we try one better-built agent first, and record the result?</li>
+<li class="task todo">Do we have a cost estimate against the single-agent version, using measured runs?</li>
+<li class="task todo">Are handoffs written briefs with a goal, scope, format, boundaries and stop rule?</li>
+<li class="task todo">Is worker output checked against a schema before the lead uses it?</li>
+<li class="task todo">Is one agent or one person accountable for the combined result?</li>
+<li class="task todo">Is each worker budgeted, and are all workers traced under one run id?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
+<li><a href="choosing-a-workflow-pattern.html">Choosing a workflow pattern</a> — where
+  orchestrator-workers sits among the five patterns.</li>
 <li><a href="making-a-workflow-durable-and-worth-owning.html">Making a workflow durable, and worth owning</a>
-  — what has to be true once this orchestration shape needs to run reliably over real
-  time.</li>
+  — what has to hold once this runs over real time.</li>
 <li><a href="../ai-agents/what-an-agent-is-and-how-much-autonomy-it-needs.html">What an agent is, and how much autonomy it needs</a>
-  — the single-agent decision this lesson's multi-agent case builds on.</li>
+  — the single-agent decision this builds on.</li>
+<li><a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a> —
+  budgets, gates and the kill switch.</li>
 <li><a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a> — the
-  full depth on topologies, the protocol landscape, and the decision rule for going
-  multi-agent.</li>
+  topologies and the protocol landscape in depth.</li>
 </ul>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="making-a-workflow-durable-and-worth-owning.html"><span class="lbl">→ Next</span><span class="ttl">Making a workflow durable, and worth owning</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-shapes-one-shared-cost">The mental model: three shapes, one shared cost</a><a class="h2" href="#the-discipline-that-keeps-any-shape-from-collapsing">The discipline that keeps any shape from collapsing</a><a class="h2" href="#a-decision-rule-that-survives-contact-with-a-vendor-pitch">A decision rule that survives contact with a vendor pitch</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://www.anthropic.com/engineering/multi-agent-research-system">How we built our multi-agent research system</a>
+  (Jun 13, 2025): the 90.2% internal result, the 4x and 15x token figures, the conditions
+  where multi-agent fits and does not, and the vague-delegation failures. Checked 2026-09.</li>
+<li>Cognition, "Don't Build Multi-Agents" (Jun 2025) and the follow-up "Multi-Agents:
+  What's Actually Working" (Apr 2026): the view that parallel agents without shared
+  context make conflicting decisions, and the later narrow class that works. Both pages
+  were blocked when this lesson was written. They are summarised from search-result
+  excerpts.</li>
+<li>The payments research scenario and the brief template are invented and illustrative.</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="choosing-a-workflow-pattern.html"><span class="lbl">← Previous</span><span class="ttl">Choosing a workflow pattern</span></a><a class="navcard next" href="making-a-workflow-durable-and-worth-owning.html"><span class="lbl">→ Next</span><span class="ttl">Making a workflow durable, and worth owning</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-shapes-one-shared-cost">The mental model: three shapes, one shared cost</a><a class="h2" href="#the-evidence-it-helps-in-some-work-and-costs-a-lot">The evidence: it helps in some work and costs a lot</a><a class="h2" href="#the-discipline-that-keeps-any-shape-from-collapsing">The discipline that keeps any shape from collapsing</a><a class="h2" href="#worked-example-a-vague-brief-and-a-good-one">Worked example: a vague brief and a good one</a><a class="h2" href="#a-decision-rule-that-survives-a-vendor-pitch">A decision rule that survives a vendor pitch</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

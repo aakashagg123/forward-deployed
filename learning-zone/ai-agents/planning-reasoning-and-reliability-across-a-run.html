@@ -371,36 +371,35 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI agents</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-an-agent-is-and-how-much-autonomy-it-needs.html">1 · What an agent is, and how much autonomy it needs</a><a class="modlink active" href="planning-reasoning-and-reliability-across-a-run.html">2 · Planning, reasoning &amp; reliability across a run</a><a class="modlink" href="when-not-to-build-an-agent.html">3 · When not to build an agent</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-an-agent-is-and-how-much-autonomy-it-needs.html">1 · What an agent is, and how much autonomy it needs</a><a class="modlink active" href="planning-reasoning-and-reliability-across-a-run.html">2 · Planning, reasoning &amp; reliability across a run</a><a class="modlink" href="when-not-to-build-an-agent.html">3 · When not to build an agent</a><a class="modlink" href="running-an-agent-in-production.html">4 · Running an agent in production</a><a class="modlink" href="choosing-and-acceptance-testing-an-agent.html">5 · Choosing and acceptance-testing an agent</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 02</span>
     <h1>Planning, reasoning &amp; reliability across a run</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>Once an agent is looping, two things decide whether it actually finishes the job: how it
-reasons about what to do next, and whether small mistakes survive long enough to compound
-into a failed task. Reasoning isn't a separate module bolted onto the model — it's the
-model, prompted into patterns like thinking one step at a time, drafting a full plan
-before acting, or checking and revising its own work. None of those patterns save a task
-from the harder problem underneath them: a step that succeeds 95% of the time sounds
-reliable, until a twenty-step task drags that down toward a coin flip end to end. This is
-why agents that look brilliant on a three-step demo routinely disappoint on the thirty-step
-version of the same task, and why recovering from an error well matters more than never
-making one.</p>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Once an agent is looping, two things decide whether it finishes the job. The first is how
+it reasons about the next step. The second is whether small mistakes survive long enough to
+add up to a failed task.</p>
+<p>Reasoning is not a separate module. It is the model, prompted or configured to think one
+step at a time, to draft a plan before acting, or to check and revise its own work. None of
+these patterns removes the harder problem underneath. A step that succeeds 95% of the time
+sounds reliable. Chain twenty of them and the task succeeds about a third of the time.</p>
+<p>This is why agents that shine on a three-step demo often disappoint on the thirty-step
+version of the same job. It is also why recovering well from an error matters more than
+never making one.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
 <p><strong>Why it matters</strong> — This is the gap between "worked in the demo" and "works for
-customers." It determines the two numbers that make or break an agent's economics: how
-often it finishes the task, and how often a human has to step in.</p>
-<p><strong>What it changes in your decisions</strong> — Spec reliability the way you'd spec a feature —
-a target completion rate per task type, and an explicit answer for what happens when a
-step fails, not a hope that it won't.</p>
-<p><strong>Ask yourself</strong> — <em>"How many things have to go right in a row for this task to
-succeed, and what's our actual measured success rate per step — not the one we're
-hoping for?"</em></p>
-<p><strong>Risk if ignored</strong> — A team promises an agent will handle a thirty-step task
-autonomously, ships something that behaves like a coin flip, and finds out from
-customer complaints instead of from a dashboard.</p>
+customers." It sets the two numbers that make or break an agent's economics: how often
+it finishes, and how often a human must step in.</p>
+<p><strong>What it changes in your decisions</strong> — Spec reliability like any feature. Set a target
+completion rate per task type. Write down what happens when a step fails.</p>
+<p><strong>Ask yourself</strong> — <em>"How many things must go right in a row for this task to succeed?
+What is our measured success rate per step, not the one we hope for?"</em></p>
+<p><strong>Risk if ignored</strong> — A team promises an agent will handle a thirty-step task alone,
+ships something that behaves like a coin flip, and learns it from customer complaints
+instead of a dashboard.</p>
 </blockquote>
 <h2 id="the-mental-model-errors-compound-faster-than-intuition-expects">The mental model: errors compound faster than intuition expects</h2>
 <!-- Reliability lesson — the compound-error math visualized as a chain that degrades.
@@ -508,72 +507,176 @@ customer complaints instead of from a dashboard.</p>
   </div>
 </div>
 
-<p>A step that's right nineteen times out of twenty feels safe. Chain twenty of them together
-and the task succeeds roughly a third of the time, because the per-step rates multiply,
-not average. This single fact explains most of the gap between an agent's demo and its
-production behavior, and it's why the reliability toolkit is built around shortening the
-chain, catching errors mid-flight, and recovering well — not around chasing a slightly
-smarter model. The full math, the recovery ladder (retry, revise, restart, escalate), and
-the eval and tracing discipline that makes an agent's failures knowable instead of
-mysterious are developed in depth in
+<p>A step that is right nineteen times in twenty feels safe. Chain twenty of them and the task
+succeeds about 36% of the time. The per-step rates multiply. They do not average.</p>
+<p>This one fact explains most of the gap between demo and production. It also shapes the
+toolkit: shorten the chain, catch errors mid-flight, and recover well. The toolkit does not
+depend on a slightly smarter model. The full maths, the recovery ladder (retry, revise,
+restart, escalate), and the eval and tracing habits are in
 <a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a>.</p>
+<h2 id="worked-example-how-length-and-reliability-interact">Worked example: how length and reliability interact</h2>
+<p>This is arithmetic, not a measurement. It multiplies the same per-step success rate across
+the steps of a task.</p>
+<table>
+<thead>
+<tr>
+<th>Steps in the task</th>
+<th>95% per step</th>
+<th>99% per step</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>86%</td>
+<td>97%</td>
+</tr>
+<tr>
+<td>10</td>
+<td>60%</td>
+<td>90%</td>
+</tr>
+<tr>
+<td>20</td>
+<td>36%</td>
+<td>82%</td>
+</tr>
+<tr>
+<td>30</td>
+<td>21%</td>
+<td>74%</td>
+</tr>
+</tbody>
+</table>
+<p>Read across the rows. A three-step demo looks fine at either rate. At thirty steps, a 95%
+agent finishes about one task in five. Now read down the columns. Moving from 95% to 99%
+per step turns a 36% task into an 82% task at twenty steps. Small gains in per-step
+reliability matter more than they look.</p>
+<p>Two design moves follow.</p>
+<ul>
+<li><strong>Shorten the chain.</strong> Fewer steps means fewer chances to fail. Merge steps, or move
+  routine steps into plain code.</li>
+<li><strong>Add checkpoints.</strong> After a risky step, verify the result. If the check fails, retry
+  that step, not the whole task. This turns one long chain into several short ones.</li>
+</ul>
+<h2 id="evidence-that-length-is-the-problem">Evidence that length is the problem</h2>
+<p>The pattern shows up in research on real agents. The research group METR (Model Evaluation
+&amp; Threat Research) measures agents by the length of task they can finish, where length is
+the time a skilled human needs. In a March 2025 study, the task length an agent completed
+with 50% success had doubled about every seven months since 2019. METR has since reported a
+faster recent pace. Check its latest page before you quote a rate.</p>
+<p>Read this as progress, and as a reminder that success falls as tasks get longer. The work
+measured software tasks. Do not assume the same numbers hold for your domain. Measure your
+own.</p>
 <h2 id="how-an-agent-reasons-at-a-glance">How an agent reasons, at a glance</h2>
-<p>An agent's "thinking" is the model working through one of a small number of patterns, not
-a separate cognitive layer. Interleaving a thought with each action lets the agent adjust
-one step at a time, which suits tasks where each result should shape the next, like
-debugging. Drafting the whole plan before acting suits longer or multi-part work, and it
-creates a natural place for a human to see and approve the plan before anything expensive
-or risky runs. Generating a draft and then checking it against something external — a
-test, a validator, a checklist — before delivering it is the pattern behind most
-meaningful quality gains, precisely because models are far better at responding to a real
-check than at grading their own unverifiable claims. Which pattern fits, and how much of
-the model's newer "extended thinking" budget a given task deserves, is a cost and latency
-decision as much as a quality one — developed in full in
-<a href="../agentic-ai/planning-and-reasoning.html">Planning &amp; reasoning</a>.</p>
+<p>An agent's thinking is the model working through a small set of patterns.</p>
+<ul>
+<li><strong>Think, act, observe.</strong> Add a thought before each action. The agent adjusts one step at
+  a time. This suits tasks where each result should shape the next, such as debugging.</li>
+<li><strong>Plan first.</strong> Draft the whole plan before acting. This suits long or multi-part work.
+  It also gives a human a place to approve the plan before anything costly or risky runs.</li>
+<li><strong>Draft, then check against something outside the model.</strong> Test the draft with a test, a
+  validator, or a checklist before delivering it. This pattern drives most real quality
+  gains. Models respond well to a real check. They grade their own unverifiable claims
+  poorly.</li>
+</ul>
+<p>How much the model should think is now a setting, not a prompt trick. On Claude 4.6 and
+later models, adaptive thinking lets the model decide when and how much to think. An <code>effort</code>
+setting controls the depth. Lower effort is faster and cheaper. Higher effort helps on hard
+steps. This is a cost and latency decision as much as a quality one. Pattern choice is
+covered in <a href="../agentic-ai/planning-and-reasoning.html">Planning &amp; reasoning</a>.</p>
 <h2 id="why-the-environment-matters-more-than-the-model">Why the environment matters more than the model</h2>
-<p>The single strongest lever on how well an agent performs isn't which pattern it follows or
-how long it's allowed to think — it's the quality of the feedback it gets back from
-whatever it's acting on. An agent that can see a failing test, a clear error message, or a
-validator's verdict corrects itself. An agent acting into a void — where nothing tells it
-whether the last step actually worked — drifts confidently in the wrong direction no
-matter how capable the underlying model is. Before reaching for a smarter model or a more
-elaborate reasoning pattern, the higher-leverage question is almost always what the agent
-would actually see if it got something wrong.</p>
+<p>The strongest lever on an agent's performance is the feedback it gets from what it acts on.</p>
+<p>An agent that can see a failing test, a clear error message, or a validator's verdict
+corrects itself. An agent that acts into a void drifts in the wrong direction, however
+capable the model is. Anthropic's guidance says the same: at each step the agent should gain "ground truth" from
+the environment, such as tool results or code execution, and there should be stopping
+conditions, such as a maximum number of iterations.</p>
+<p>Before you reach for a smarter model, ask a simpler question. What would the agent see if
+it got something wrong?</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Short chains vs. flexibility.</strong> Fewer steps are more reliable. They also give the agent
+  less room to adapt.</li>
+<li><strong>Checkpoint cost.</strong> Each check adds time and cost. Put checks after risky steps, not
+  after every step.</li>
+<li><strong>Plan approval vs. speed.</strong> A human plan gate catches expensive mistakes early. It also
+  slows every run.</li>
+<li><strong>Thinking effort vs. cost.</strong> High effort on every step is slow and expensive. Reserve it
+  for the steps that need it.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Demo-horizon thinking</strong> — judging an agent's reliability on a hand-picked three-step
-  task, then deploying it on the thirty-step version of the same job the compounding math
-  was always going to punish.</li>
-<li><strong>Self-grading inflation</strong> — trusting a model's own "I checked my work" claim with
-  nothing external verifying it, which is confidence, not verification.</li>
-<li><strong>No recovery ladder</strong> — every failure treated the same way (usually: silently retried
-  or silently ignored), instead of a deliberate escalation from retry to revise to restart
-  to a human handoff.</li>
-<li><strong>Deliberation as decoration</strong> — maximum reasoning effort spent on every request because
-  it made a demo look smarter, regardless of whether the task needed it.</li>
+<li><strong>Demo-horizon thinking.</strong> An agent is judged on a hand-picked three-step task, then
+  deployed on the thirty-step version of the same job.</li>
+<li><strong>Self-grading inflation.</strong> The model says "I checked my work," and nothing outside the
+  model verifies it. That is confidence, not verification.</li>
+<li><strong>No recovery ladder.</strong> Every failure is handled the same way, usually a silent retry or
+  a silent ignore. There is no planned path from retry to revise to restart to a human.</li>
+<li><strong>Deliberation as decoration.</strong> Maximum thinking effort is spent on every request because
+  it made a demo look smart.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Two mechanisms make a long run survivable: saved state, and a log of every step.</p>
+<p><strong>Checkpointing.</strong> Save enough state after each step to resume from it. Then a failure at
+step 14 restarts at step 14, not step 1.</p>
+<pre><code class="language-python">def run_with_checkpoints(task, steps, store):
+    state = store.load(task.id) or {&quot;done&quot;: 0, &quot;outputs&quot;: []}
+    for i in range(state[&quot;done&quot;], len(steps)):
+        out = steps[i](state[&quot;outputs&quot;])          # one step
+        if not verify(out):                        # an external check, not the model's word
+            out = retry_once_or_escalate(steps[i], state, task)
+        state[&quot;outputs&quot;].append(out)
+        state[&quot;done&quot;] = i + 1
+        store.save(task.id, state)                 # resume point
+    return state[&quot;outputs&quot;]
+</code></pre>
+<p><strong>Trajectory logging.</strong> Log the full sequence: each model decision, each tool call, each
+result, and the cost. Judge an agent by the path, not only the final answer. An answer can
+be right for the wrong reasons, and a wrong answer often traces to one bad step. See
+<a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a> for grading trajectories.</p>
+<p><strong>Measure your own per-step rate.</strong> Run the task many times. Count completed steps over
+attempted steps. Then use the table above to predict end-to-end success at the real task
+length.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">For this task's typical length: what does the compounding math predict end to end,
-      given our actual measured per-step success rate?</li>
-<li class="task todo">Where does a human see the plan before expensive or risky execution begins?</li>
-<li class="task todo">What does the agent actually observe when a step goes wrong — and would it notice?</li>
-<li class="task todo">Is there a real recovery ladder (retry, revise, restart, escalate), or does every
-      failure get handled the same way?</li>
+<li class="task todo">For this task's typical length, what does the compounding maths predict, given our
+      measured per-step success rate?</li>
+<li class="task todo">Where does a human see the plan before costly or risky execution begins?</li>
+<li class="task todo">What does the agent observe when a step goes wrong? Would it notice?</li>
+<li class="task todo">Is there a recovery ladder (retry, revise, restart, escalate), or is every failure
+      handled the same way?</li>
+<li class="task todo">Can a failed run resume from a checkpoint instead of starting over?</li>
+<li class="task todo">Do we log the full trajectory, not only the final answer?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
 <li><a href="what-an-agent-is-and-how-much-autonomy-it-needs.html">What an agent is, and how much autonomy it needs</a>
-  — the loop this lesson's reasoning and reliability concerns run inside.</li>
+  — the loop these concerns run inside.</li>
 <li><a href="when-not-to-build-an-agent.html">When not to build an agent</a> — what compounding error
-  and unreliable feedback do to an agent's economics.</li>
-<li><a href="../agentic-ai/planning-and-reasoning.html">Planning &amp; reasoning</a> — the full depth on
-  reasoning patterns and test-time compute.</li>
-<li><a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a> — the full depth on the
-  compounding math, recovery, and the eval and tracing discipline behind it.</li>
+  does to an agent's economics.</li>
+<li><a href="running-an-agent-in-production.html">Running an agent in production</a> — budgets, gates,
+  and stopping a run that goes wrong.</li>
+<li><a href="../agentic-ai/planning-and-reasoning.html">Planning &amp; reasoning</a> — reasoning patterns and
+  thinking effort in depth.</li>
+<li><a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a> — the compounding maths,
+  recovery, and trajectory evals in depth.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://www.anthropic.com/engineering/building-effective-agents">Building effective agents</a>
+  (Dec 2024): ground truth from the environment each step, and stopping conditions.
+  Checked 2026-09.</li>
+<li>Anthropic, <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">Prompting best practices</a>:
+  adaptive thinking and the <code>effort</code> setting on Claude 4.6 and later models. Checked 2026-09.</li>
+<li>METR, <a href="https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/">Measuring AI Ability to Complete Long Software Tasks</a>
+  (Mar 2025): the 50% time horizon and the roughly seven-month doubling over 2019-2025,
+  measured on software tasks. Later METR updates report a faster recent pace. Not verified
+  here: the page could not be opened, so this rests on search-result excerpts.</li>
+<li>The table is arithmetic: each cell is the per-step rate raised to the number of steps.</li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="what-an-agent-is-and-how-much-autonomy-it-needs.html"><span class="lbl">← Previous</span><span class="ttl">What an agent is, and how much autonomy it needs</span></a><a class="navcard next" href="when-not-to-build-an-agent.html"><span class="lbl">→ Next</span><span class="ttl">When not to build an agent</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-errors-compound-faster-than-intuition-expects">The mental model: errors compound faster than intuition expects</a><a class="h2" href="#how-an-agent-reasons-at-a-glance">How an agent reasons, at a glance</a><a class="h2" href="#why-the-environment-matters-more-than-the-model">Why the environment matters more than the model</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-errors-compound-faster-than-intuition-expects">The mental model: errors compound faster than intuition expects</a><a class="h2" href="#worked-example-how-length-and-reliability-interact">Worked example: how length and reliability interact</a><a class="h2" href="#evidence-that-length-is-the-problem">Evidence that length is the problem</a><a class="h2" href="#how-an-agent-reasons-at-a-glance">How an agent reasons, at a glance</a><a class="h2" href="#why-the-environment-matters-more-than-the-model">Why the environment matters more than the model</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

@@ -477,6 +477,31 @@ and change the PRD, not get silently absorbed.</p>
 <p>What a PRD should <em>not</em> contain: database schemas, API designs, technology choices, or a
 solution disguised as a requirement. ("Build a Redis cache" is a design. "Repeat visits
 must load in under a second" is the requirement behind it.)</p>
+<h2 id="reading-an-ai-drafted-prd">Reading an AI-drafted PRD</h2>
+<p>A model can produce a structurally perfect PRD from a two-line prompt — problem statement,
+goals and non-goals, requirements, success metrics, all present, all readable. That speed
+changes the job. Writing the first draft used to be the hard part; now catching what the
+draft got wrong is. Read an AI draft the way the next section teaches you to read an RFC —
+as a skeptic, not a proofreader:</p>
+<ul>
+<li><strong>Invented specificity</strong> — a fabricated latency number, a "success metric" nobody agreed
+  on, an edge case named with total confidence and zero evidence behind it. Numbers with no
+  source are the tell.</li>
+<li><strong>Missing non-goals</strong> — models default to comprehensive-sounding scope, because "no"
+  isn't in the training signal the way "yes, and" is. The highest-leverage sentence in a
+  PRD is usually the one the draft never wrote.</li>
+<li><strong>Silently dropped edge cases and cross-team dependencies</strong> — the draft answers the
+  question you asked, not the ones you forgot to ask. A model has no way to know which
+  other team's roadmap this touches; you do.</li>
+<li><strong>A plausible tone standing in for a real decision</strong> — confident, well-formatted prose is
+  easy to mistake for a decision that was actually made. If you can't trace a requirement
+  back to real evidence — a user quote, a support-ticket count, a spike result — cut it or
+  mark it an open question.</li>
+</ul>
+<p>The upside is real: a model can turn "here's what I roughly mean" into a structured draft
+in minutes, freeing your time for the part that was always the actual job — deciding
+what's true and what's missing. Use it to draft faster. Don't use it to skip the review
+that makes the document yours.</p>
 <h2 id="reading-an-rfc-like-a-pm">Reading an RFC like a PM</h2>
 <p>The RFC (design doc) is where engineering proposes <em>how</em>. You won't judge the
 architecture — but you're the only reader checking it against product intent. Read for:</p>
@@ -521,6 +546,8 @@ capstone builds on exactly this section.</p>
   inherits whatever the implementation happened to produce.</li>
 <li><strong>Consensus-by-silence</strong> — circulating a doc, hearing nothing, calling it alignment.
   Silence means <em>unread</em>. Review meetings exist for a reason.</li>
+<li><strong>Rubber-stamped AI draft</strong> — a fluent, structurally complete PRD shipped without
+  checking its specifics against real evidence. The format made it look reviewed.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
@@ -531,6 +558,8 @@ capstone builds on exactly this section.</p>
 <li class="task todo">Have I read the RFC for my current build and traced each requirement into it?</li>
 <li class="task todo">For AI features: does the spec include graded examples and a "how good is good
       enough" threshold?</li>
+<li class="task todo">For any AI-drafted section of this PRD: have I traced its specific claims (metrics,
+      edge cases, non-goals) back to real evidence, not just fluent prose?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -539,7 +568,7 @@ capstone builds on exactly this section.</p>
 <li><a href="tpm-for-ai-products.html">Technical product management for AI</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="discovery-to-delivery.html"><span class="lbl">← Previous</span><span class="ttl">Discovery to delivery</span></a><a class="navcard next" href="prioritization-and-roadmaps.html"><span class="lbl">→ Next</span><span class="ttl">Prioritization &amp; roadmaps</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-document-stack">The document stack</a><a class="h2" href="#anatomy-of-a-prd-engineers-respect">Anatomy of a PRD engineers respect</a><a class="h2" href="#reading-an-rfc-like-a-pm">Reading an RFC like a PM</a><a class="h2" href="#acceptance-criteria-for-probabilistic-features">Acceptance criteria for probabilistic features</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-document-stack">The document stack</a><a class="h2" href="#anatomy-of-a-prd-engineers-respect">Anatomy of a PRD engineers respect</a><a class="h2" href="#reading-an-ai-drafted-prd">Reading an AI-drafted PRD</a><a class="h2" href="#reading-an-rfc-like-a-pm">Reading an RFC like a PM</a><a class="h2" href="#acceptance-criteria-for-probabilistic-features">Acceptance criteria for probabilistic features</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

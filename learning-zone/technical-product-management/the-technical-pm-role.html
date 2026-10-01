@@ -502,6 +502,16 @@ program manager</em> — an execution and dependency-management role, not a prod
 role. Ask what the letters mean before you interview. Second, platform and API products
 invert the empathy problem: your "user" is another engineer, so <em>developer experience</em> —
 docs, error messages, versioning, time-to-first-call — becomes your UX surface.</p>
+<p>A third thing worth noticing, newer than the other two: the "PM" title is fragmenting
+further under AI's push. Growth PM, Platform PM, and AI PM were already splitting off
+distinct scopes; 2025–2026 added two roles worth knowing the name of even if your own
+title doesn't say them. An <strong>AI Product Owner</strong> defines an AI feature's behaviour, eval
+bar, and human-in-the-loop boundaries — closer to the deployment pipeline than to
+strategy. A <strong>Data-Informed PM</strong> uses AI tooling to keep a continuous read on product
+health — behaviour, experiments, drift — feeding the roadmap in near-real-time instead of
+a quarterly metrics review. Titles will keep splitting faster than job descriptions catch
+up. What matters is knowing which of these scopes you actually hold today, and saying so
+plainly instead of letting "PM" cover work that's really three different jobs.</p>
 <h2 id="where-the-leverage-comes-from">Where the leverage comes from</h2>
 <p>You have no direct authority over the people who build the product. Your leverage is:</p>
 <ul>
@@ -539,6 +549,30 @@ what question the recipient will ask next, and answer it in the same artifact.</
 </ul>
 <p>If "now" eats the whole week for more than a sprint or two, the next build starts without
 definition and the cycle worsens. Guarding the discovery time <em>is</em> the job.</p>
+<h2 id="navigating-the-technical-pm-interview">Navigating the technical PM interview</h2>
+<p>Technical PM interviews increasingly include a round product-sense interviews don't have:
+system design or API design, done from a PM's altitude rather than an engineer's. (See
+<a href="../product-sense/communication.html">product sense: navigating interviews</a> for the
+general-PM interview craft this one specializes.) The format shows up at platform and
+developer-tool companies — Stripe, GitHub, Datadog, and similar — because it tests exactly
+what the role needs: can you reason about a system without needing to design it.</p>
+<p><strong>What's actually being evaluated.</strong> Not architecture. An interviewer isn't grading
+whether you'd pick REST or gRPC — they're watching whether you ask what the data looks
+like, what scale you're operating at, and what you're optimizing for before you draw
+anything. The candidate who opens with clarifying questions (<em>"who calls this API, how
+often, and what happens if it's down?"</em>) is doing the job. The one who jumps straight to a
+diagram is auditioning to be an engineer, which isn't the seat available.</p>
+<p><strong>A frame that holds up:</strong> state the goal and the users of the system → name the
+non-functional requirements that actually matter here (latency, consistency, who owns
+what data) → sketch the contract, not the implementation → name the trade-offs out loud,
+the same way you'd <a href="specs-prds-and-rfcs.html">read an RFC</a> — and connect every technical
+choice back to a product or business consequence. <em>"We'd need eventual consistency here,
+which means a user could briefly see a stale balance — is that acceptable for this
+product?"</em> is the sentence that separates a technical PM answer from an engineering one.</p>
+<p><strong>For AI-flavoured versions of this round</strong>, the same frame applies to eval design,
+retrieval architecture, or model-serving trade-offs: reasoning about hallucination risk,
+latency-vs-quality budgets, and what happens when the model is wrong is now a standard
+layer on top of classic system design, at any company shipping an AI feature.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>The backseat architect</strong> — overruling technical designs you half-understand. Engineers
@@ -560,6 +594,8 @@ definition and the cycle worsens. Guarding the discovery time <em>is</em> the jo
       roadmap (a latency budget, a data boundary, a dependency)?</li>
 <li class="task todo">Am I spending real weekly time on <em>next</em> and <em>later</em>, or is <em>now</em> consuming me?</li>
 <li class="task todo">When did I last change my mind because an engineer showed me a better option?</li>
+<li class="task todo">In a technical-PM interview, do I default to clarifying questions and trade-offs, or
+      do I reach for a diagram before I know what I'm optimizing for?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -568,7 +604,7 @@ definition and the cycle worsens. Guarding the discovery time <em>is</em> the jo
 <li><a href="specs-prds-and-rfcs.html">Specs, PRDs &amp; RFCs</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="discovery-to-delivery.html"><span class="lbl">→ Next</span><span class="ttl">Discovery to delivery</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#what-the-role-actually-is">What the role actually is</a><a class="h2" href="#the-pm-tpm-em-spectrum">The PM ↔ TPM ↔ EM spectrum</a><a class="h2" href="#where-the-leverage-comes-from">Where the leverage comes from</a><a class="h2" href="#the-buck-stops-with-you">The buck stops with you</a><a class="h2" href="#a-week-in-the-role">A week in the role</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#what-the-role-actually-is">What the role actually is</a><a class="h2" href="#the-pm-tpm-em-spectrum">The PM ↔ TPM ↔ EM spectrum</a><a class="h2" href="#where-the-leverage-comes-from">Where the leverage comes from</a><a class="h2" href="#the-buck-stops-with-you">The buck stops with you</a><a class="h2" href="#a-week-in-the-role">A week in the role</a><a class="h2" href="#navigating-the-technical-pm-interview">Navigating the technical PM interview</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

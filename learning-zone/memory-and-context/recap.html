@@ -371,50 +371,44 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="retrieval-as-memory.html">3 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">4 · When memory goes wrong</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Recap</span>
     <h1>Memory &amp; context — recap &amp; real-world examples</h1>
   </div>
   <h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
-<p><strong>ChatGPT's memory feature rollout (2024).</strong> OpenAI introduced a persistent memory feature
-that let ChatGPT remember facts across separate conversations, shipped with a visible
-settings page showing exactly what was stored, an option to turn it off, and a way to
-delete individual memories. 🎯 <em>Takeaway:</em> <a href="memory-as-a-product-decision.html">treating memory as a product decision</a>
-means shipping the visibility and control alongside the capability, not as a follow-up
-feature — users trusted the capability faster because they could see and edit what it
-stored from day one.</p>
-<p><strong>Personalization that followed you to the wrong screen.</strong> A recurring pattern across
-recommendation and assistant products: a preference or a browsing detail from one context
-— often assumed private or session-specific — resurfaces somewhere the user didn't expect,
-like a shared or family-visible screen, prompting public complaints about a product
-"knowing too much." 🎯 <em>Takeaway:</em> this is exactly the <a href="session-user-and-organizational-memory.html">boundary confusion</a>
-between what should be session memory and what became visible more broadly — the shape of
-the memory, not its existence, was the mistake.</p>
-<p><strong>Enterprise AI assistants and the shared-knowledge boundary.</strong> As companies rolled out AI
-assistants trained or grounded on internal documents, a recurring incident type emerged:
-an assistant surfaced information from one team's restricted documents to an employee in a
-different team, because the retrieval or memory boundary followed the technical
-architecture rather than the company's actual access-control policy. 🎯 <em>Takeaway:</em>
-<a href="session-user-and-organizational-memory.html">organizational memory's entire risk</a>
-concentrates in the boundary of who's "inside" it — and that boundary has to be enforced
-by the system, mirroring real permissions, not assumed from how the data happened to be
-indexed.</p>
-<p><strong>"Right to be forgotten" meeting AI memory.</strong> As privacy regulation matured, companies
-operating AI features with persistent memory faced a genuinely hard question their
-architecture hadn't anticipated: a user's deletion request needs to reach not just the
-raw stored record, but anything derived or summarized from it — the same problem
-<a href="../knowledge-graphs/governance-quality-and-trust.html">Knowledge graphs</a> names for
-inferred facts, now applied to AI memory. 🎯 <em>Takeaway:</em> <a href="when-memory-goes-wrong.html">deletion has to be designed in
-from the start</a> — retrofitting it onto a memory system built
-without provenance is a much harder project than building it in from day one.</p>
-<p><strong>Assistants confidently repeating outdated company information.</strong> A common support-tool
-failure: an AI assistant grounded in a company's own documentation or an evolving customer
-relationship confidently states a policy or a fact that changed months earlier, because
-nothing in the memory or retrieval system tracked freshness. 🎯 <em>Takeaway:</em>
-<a href="when-memory-goes-wrong.html">staleness is a design problem</a>, not a rare edge case — any
-memory or retrieval system needs an explicit freshness signal, or it will eventually state
-something outdated with full confidence.</p>
+<p><strong>ChatGPT memory shipped with controls (2024).</strong> In February 2024 OpenAI began testing a
+memory feature for ChatGPT with a small share of users. Users could tell it to remember or
+forget something, view what it remembered, and turn memory off. 🎯 <em>Takeaway:</em> ship
+visibility and control with the capability, not after it. See
+<a href="memory-as-a-product-decision.html">memory as a product decision</a>. The date and controls
+come from press coverage in search results. OpenAI's own page could not be opened.</p>
+<p><strong>A caching bug showed one user's data to another (2023).</strong> On March 20, 2023, a bug in an
+open-source library used by ChatGPT let some users see other users' chat titles. OpenAI
+said a small share of ChatGPT Plus subscribers could also see some billing details. It
+took the service offline to fix it. 🎯 <em>Takeaway:</em> a leak needs no attacker. Any shared
+store can cross a boundary under load. Enforce the boundary in the system, and
+<a href="when-memory-goes-wrong.html">test it directly</a>. This was a race-condition bug in a caching library, not a
+memory feature. Details come from press coverage in search results.</p>
+<p><strong>A planted memory that kept working (2024).</strong> Security researcher Johann Rehberger showed
+that a crafted web page or document could get the ChatGPT macOS app to save a hostile instruction in its
+long-term memory. The instruction sent later conversations to an outside server. OpenAI
+released a partial fix that closed the data-sending route, and the work was published in September 2024. 🎯 <em>Takeaway:</em> if a
+model can write to memory, an injection can outlive the session. Hold writes from
+untrusted content for confirmation. See
+<a href="when-memory-goes-wrong.html#poisoning-a-planted-memory-that-keeps-working">poisoning</a> and
+<a href="writing-and-maintaining-memory.html">the write path</a>. Details come from press coverage
+in search results.</p>
+<p><strong>Who owns the store (Claude API).</strong> The Claude memory tool runs on the developer's side.
+Claude asks for a file operation, and the application performs it. Anthropic's docs say
+memory "lives entirely in your application," and put path checks, size caps and expiry on
+the developer. 🎯 <em>Takeaway:</em> you own the store, and so you own its boundary and its
+deletion duty. See <a href="session-user-and-organizational-memory.html">session, user &amp; organizational memory</a>.</p>
+<p><strong>The stale preference (an illustration).</strong> A shopping assistant learns "vegetarian" in
+January. In June the customer starts eating fish and says so, but the store only appends.
+Retrieval returns the January note first, and the assistant keeps offering vegetarian
+options. Nothing crashed. 🎯 <em>Takeaway:</em> staleness is a write-path problem. Give facts a
+replace rule and a review date. See <a href="writing-and-maintaining-memory.html">writing and maintaining memory</a>.</p>
 <h2 id="module-recap">Module recap</h2>
 <table>
 <thead>
@@ -427,48 +421,106 @@ something outdated with full confidence.</p>
 <tbody>
 <tr>
 <td><a href="memory-as-a-product-decision.html">Memory as a product decision</a></td>
-<td>Memory is a feature you choose to build, with a cost and a promise attached</td>
-<td>What do we actually promise to remember, for whom, and for how long?</td>
+<td>Memory is a set of promises you choose to make, not a free default.</td>
+<td>What do we remember, for whom, for how long, and who can edit it?</td>
 </tr>
 <tr>
 <td><a href="session-user-and-organizational-memory.html">Session, user &amp; organizational memory</a></td>
-<td>Three shapes, three different stakes — name which one before building</td>
-<td>Which of the three shapes is this feature, and is the boundary enforced?</td>
+<td>Three shapes carry three different stakes. Name the shape first.</td>
+<td>Which shape is this, and is the boundary enforced by the system?</td>
+</tr>
+<tr>
+<td><a href="writing-and-maintaining-memory.html">Writing and maintaining memory</a></td>
+<td>Memory quality is set when a memory is written.</td>
+<td>What happens to the old fact when a new one contradicts it?</td>
 </tr>
 <tr>
 <td><a href="retrieval-as-memory.html">Retrieval as memory</a></td>
-<td>Retrieval and memory are often the same investment, aimed at different content</td>
-<td>Is this memory feature really a retrieval problem in disguise?</td>
+<td>Load, retrieve, or keep notes. Pick by size and kind of data.</td>
+<td>Is this small enough to load, large enough to search, or task progress?</td>
 </tr>
 <tr>
 <td><a href="when-memory-goes-wrong.html">When memory goes wrong</a></td>
-<td>Staleness, leakage, and no correction path — three specific, testable failures</td>
-<td>Would we find a memory failure from monitoring, or from a user telling us?</td>
+<td>Stale, leaked, uncorrectable and poisoned memory each need a test.</td>
+<td>Would monitoring find a memory failure, or would a user?</td>
 </tr>
 </tbody>
 </table>
-<p><strong>The through-line:</strong> memory is never something a model gives you — it's something your
-product builds, on purpose, as a set of specific promises. This module deliberately
-stayed at that altitude rather than re-deriving the engineering already developed in
-<a href="../ai/00-foundations.html#context-engineering">Context engineering</a> and
-<a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>, because the mistakes that
-actually sink memory features are rarely engineering mistakes. They're decisions nobody
-made on purpose: a shape left unnamed, a boundary assumed instead of tested, a correction
-path that was never built. The products that get memory right aren't the ones with the
-cleverest retrieval pipeline — they're the ones that decided, specifically and in writing,
-what they were promising to remember, and built the visibility and control to back that
-promise up.</p>
+<p><strong>The through-line:</strong> memory is never something a model gives you. Your product builds it
+as a set of promises. The mistakes that sink memory features are rarely engineering
+mistakes. They are decisions nobody made: a shape left unnamed, a boundary assumed instead
+of tested, a write path with no rule, a deletion path never built. The engineering depth
+lives in <a href="../ai/00-foundations.html#context-engineering">Context engineering</a> and
+<a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>. This module stays at the decision
+altitude.</p>
 <blockquote>
 <p><strong>Walk-away question:</strong> <em>"For our AI feature's memory: could we tell a user exactly what
-we remember about them, could they see and correct it, is the boundary around it tested
-rather than assumed, and did anyone actually decide this on purpose?"</em></p>
+we remember, could they see and correct it, do we have a rule for how memories are
+written and expire, and have we tested the boundary against the store, not just the
+chat?"</em></p>
 </blockquote>
-<p>If yes, memory is a feature your product can stand behind. If no, you now know exactly
-which lesson in this module to reread — and where the deeper engineering lives, one module
-away in <a href="../ai/00-foundations.html#context-engineering">Context engineering</a> and
-<a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>.</p>
+<p>If yes, this is a memory feature your product can stand behind. If no, you know which
+lesson to reread.</p>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>Why is memory a product decision and not a default?</strong>
+ <br />
+<details><summary>Answer</summary>The model keeps nothing between calls. Your team builds every bit of memory, and it makes promises about what is kept and for how long. It has a cost and a risk that someone must own. (<a href="memory-as-a-product-decision.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>What are the four parts of the question that scopes a memory feature?</strong>
+ <br />
+<details><summary>Answer</summary>What is remembered, for whom, for how long, and who can see or edit it. If any part is "we will decide later", the feature is not ready to build. (<a href="memory-as-a-product-decision.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>Name the three memory shapes and the main risk of each.</strong>
+ <br />
+<details><summary>Answer</summary>Session memory (low risk, may be dropped when a long chat is summarised). User memory (a personal data store with duties to show, correct and delete). Organizational memory (the boundary of who is inside). (<a href="session-user-and-organizational-memory.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Why must the identity used to filter memories come from the session and not from the model?</strong>
+ <br />
+<details><summary>Answer</summary>A model can be tricked into asking for another user's data. The store must filter by the authenticated caller before anything reaches the model. (<a href="session-user-and-organizational-memory.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>A user says "I moved to Pune." The store says "lives in Delhi." What should the write policy do?</strong>
+ <br />
+<details><summary>Answer</summary>Replace the old value, because the newer fact wins, and keep the old one in history for audit. If the change is ambiguous or sensitive, ask the user. (<a href="writing-and-maintaining-memory.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>A user has forty stable preferences and three years of chat history. How do you serve each?</strong>
+ <br />
+<details><summary>Answer</summary>Load the forty preferences directly on every request. Search the history and add only the few relevant pieces. Filter to the user's own records before ranking. (<a href="retrieval-as-memory.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>How is memory poisoning different from an ordinary prompt injection?</strong>
+ <br />
+<details><summary>Answer</summary>An ordinary injection ends when the session ends. If it writes itself into memory, it persists and acts in later sessions. Defend by holding writes from untrusted content for confirmation. (<a href="when-memory-goes-wrong.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>Why is asking the chatbot "do you know other users' data?" a weak leakage test?</strong>
+ <br />
+<details><summary>Answer</summary>The model may refuse while the store still returns the data. Test the store directly, as an attacker would. (<a href="when-memory-goes-wrong.html">Lesson 5</a>)</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>OpenAI, <a href="https://openai.com/index/memory-and-new-controls-for-chatgpt/">Memory and new controls for ChatGPT</a>
+  (Feb 2024). Confirmed through press coverage in search results; the page could not be
+  opened when this recap was written.</li>
+<li>OpenAI, <a href="https://openai.com/index/march-20-chatgpt-outage/">March 20 ChatGPT outage: here's what happened</a>
+  (Mar 2023). Same status: search results only.</li>
+<li>Johann Rehberger, <a href="https://embracethered.com/blog/posts/2024/chatgpt-macos-app-persistent-data-exfiltration/">ChatGPT macOS app persistent data exfiltration</a>
+  (Sep 2024). Press coverage in search results only; the page could not be opened.</li>
+<li>Anthropic, <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Memory tool</a>
+  (Claude API docs). Checked 2026-09.</li>
+<li>The stale-preference story is an invented illustration.</li>
+</ul>
+<hr />
   <div class="pagenav"><a class="navcard prev" href="when-memory-goes-wrong.html"><span class="lbl">← Previous</span><span class="ttl">When memory goes wrong</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

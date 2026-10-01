@@ -375,8 +375,8 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
   <div class="index-hero">
     <span class="chip">A standalone module</span>
     <h1>AI agents for the product leader</h1>
-    <p class="lede">The loop behind every agent, how much autonomy a task actually needs, what keeps it reliable across many steps, and the economics that decide whether it&#x27;s worth building at all.</p>
-    <div class="index-meta"><span>3 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
+    <p class="lede">The loop behind every agent, how much autonomy a task actually needs, what keeps it reliable across many steps, the economics that decide whether it&#x27;s worth building, how to run it safely, and how to choose one.</p>
+    <div class="index-meta"><span>5 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
   </div>
   <div class="intro"><p>An agent is what you get when you give a model a goal, a set of tools, and permission to
 loop: gather context, decide an action, take it, look at what happened, and repeat until
@@ -384,22 +384,60 @@ the goal is met or the budget runs out. That loop is the single idea behind ever
 does things" pitch, and it is also where an AI feature's economics and its failure modes
 both actually live — not in the model's raw intelligence, but in how the loop is scoped,
 watched, and stopped.</p>
-<p><strong>A note on scope.</strong> This topic has the deepest existing coverage of anything in this
-family. <a href="../agentic-ai/index.html">Agentic AI for the AI PM</a> already develops the loop, the
-autonomy spectrum, planning and reasoning patterns, reliability and the compounding-error
-math, and the economics of when an agent actually pays for itself, in full depth and in
-the same product-leader voice this family uses. Two of the planned lessons for this module
-— tools, and memory across a run — are also already the dedicated subject of two sibling
-modules in this family, <a href="../tool-calling/index.html">Tool calling</a> and
-<a href="../memory-and-context/index.html">Memory &amp; context</a>. Re-deriving any of that here would
-only restate it three times over. This module exists to be the compact front door under
-the name people actually search for — <strong>AI agents</strong> — and to send every reader past it
-into the depth that already exists. That is why it is three lessons, not seven: the
-honest amount of genuinely new ground, once the sibling modules and the deeper agentic-ai
-track are accounted for, is three lessons' worth.</p>
+<p><strong>A note on scope.</strong> This topic has deep coverage elsewhere. <a href="../agentic-ai/index.html">Agentic AI for the AI PM</a>
+develops the loop, planning and reasoning, reliability, protocols, safety, and unit
+economics in full. <a href="../tool-calling/index.html">Tool calling</a> and
+<a href="../memory-and-context/index.html">Memory &amp; context</a> cover tools and memory. This module is
+the compact front door under the name people search for: <strong>AI agents</strong>. It does not repeat
+those lessons. It answers the decisions a product leader faces in order: what an agent is,
+how it runs, whether to build one, how to run it safely, and how to choose one.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarises an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The agent loop, anatomy, and vocabulary</td>
+<td><a href="../agentic-ai/what-is-an-agent.html">What is an agent?</a></td>
+</tr>
+<tr>
+<td>Tools and how an agent acts</td>
+<td><a href="../tool-calling/index.html">Tool calling</a></td>
+</tr>
+<tr>
+<td>Context windows, compaction, and memory</td>
+<td><a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a></td>
+</tr>
+<tr>
+<td>Planning and reasoning patterns</td>
+<td><a href="../agentic-ai/planning-and-reasoning.html">Planning &amp; reasoning</a></td>
+</tr>
+<tr>
+<td>The compounding maths, evals, and tracing</td>
+<td><a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a></td>
+</tr>
+<tr>
+<td>MCP, A2A, and multi-agent systems</td>
+<td><a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent &amp; protocols</a></td>
+</tr>
+<tr>
+<td>Prompt injection, defences, and governance</td>
+<td><a href="../agentic-ai/safety-security-and-governance.html">Safety, security &amp; governance</a></td>
+</tr>
+<tr>
+<td>Unit economics, agent UX, and business models</td>
+<td><a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="the-knowledge-graph">The knowledge graph</h2>
 <!-- AI agents — knowledge graph as decision funnel.
-     Three lessons in sequence, terminating in the "often the answer" workflow escape hatch. -->
+     Five lessons in sequence, terminating in the "often the answer" workflow escape hatch. -->
 <style>
 .dgm-ag{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #5a4fcf;
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),
@@ -444,7 +482,7 @@ track are accounted for, is three lessons' worth.</p>
   <span class="dgm-ag-chip">AI agents</span>
 
   <h4>A decision funnel · not a feature list</h4>
-  <p class="dgm-ag-sub">Three questions to ask before writing a single line of agent code.</p>
+  <p class="dgm-ag-sub">Five lessons: what it is, how it runs, whether to build it, how to run it, and how to buy it.</p>
 
   <div class="dgm-ag-stage">
     <span class="dgm-ag-badge">Lesson 1 · What it is</span>
@@ -506,6 +544,42 @@ track are accounted for, is three lessons' worth.</p>
     </div>
   </div>
 
+<div class="dgm-ag-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-ag-stage">
+    <span class="dgm-ag-badge">Lesson 4 · Running it</span>
+    <h5>A control layer around the loop</h5>
+    <p class="dgm-ag-lead">Limits live in code, not in the prompt. Decide them before launch.</p>
+    <div class="dgm-ag-cards">
+      <div class="dgm-ag-card">
+        <svg class="dgm-ag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div><h6>Budgets &amp; gates</h6><p>Steps, time, cost · review by risk tier</p></div>
+      </div>
+      <div class="dgm-ag-card">
+        <svg class="dgm-ag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>
+        <div><h6>Kill switch &amp; rollback</h6><p>Fast, owned, and tested</p></div>
+      </div>
+    </div>
+  </div>
+
+<div class="dgm-ag-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-ag-stage">
+    <span class="dgm-ag-badge">Lesson 5 · Choosing it</span>
+    <h5>Claim · test · threshold</h5>
+    <p class="dgm-ag-lead">Agree the pass bar first, then run your own cases several times.</p>
+    <div class="dgm-ag-cards">
+      <div class="dgm-ag-card">
+        <svg class="dgm-ag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9"/></svg>
+        <div><h6>Due diligence</h6><p>Spot agent-washing</p></div>
+      </div>
+      <div class="dgm-ag-card">
+        <svg class="dgm-ag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+        <div><h6>Acceptance test</h6><p>Outcome · path · cost</p></div>
+      </div>
+    </div>
+  </div>
+
   <div class="dgm-ag-escape">
     <span class="dgm-ag-honest">Often the answer</span>
     <svg class="dgm-ag-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v16H6z"/><path d="M10 8h4M10 12h4M10 16h4"/></svg>
@@ -514,32 +588,29 @@ track are accounted for, is three lessons' worth.</p>
 </div>
 
 <p>Read it as a decision funnel, not a feature list. <strong>What it is</strong>: the loop is simple, and
-the first real design choice is how much autonomy the task actually needs. <strong>How it
-runs</strong>: once it's looping, the two things that determine whether it works are how it
-reasons and how well it survives many steps in a row without its errors compounding.
-<strong>Whether to build it</strong>: the loop above is often the wrong answer, and knowing that before
-you build it is the highest-leverage call in this module.</p>
+the first design choice is how much autonomy the task needs. <strong>How it runs</strong>: how it reasons,
+and whether errors compound over many steps. <strong>Whether to build it</strong>: the loop is often the
+wrong answer, and knowing that first is the highest-leverage call. <strong>How to run it</strong>: the
+controls you set before launch. <strong>How to choose it</strong>: how to test a claim before you buy.</p>
 <h2 id="the-lessons">The lessons</h2>
 <ul>
 <li><a href="what-an-agent-is-and-how-much-autonomy-it-needs.html"><strong>What an agent is, and how much autonomy it needs</strong></a>
-  — the loop stripped to its essence, and the spectrum from a fixed workflow to a fully
-  autonomous agent that the first design decision actually turns on.</li>
+  — the loop, and the dial from fixed workflow to full autonomy.</li>
 <li><a href="planning-reasoning-and-reliability-across-a-run.html"><strong>Planning, reasoning &amp; reliability across a run</strong></a>
-  — how an agent thinks step to step, and why small per-step error rates quietly become
-  large end-to-end failures.</li>
+  — how an agent thinks, and why small per-step errors become large end-to-end failures.</li>
 <li><a href="when-not-to-build-an-agent.html"><strong>When not to build an agent</strong></a> — the stakes,
-  verifiability, and volume questions that decide whether an agent pays for itself, or
-  whether a workflow would have done the job for less.</li>
+  verifiability, and volume questions, and the supervised cost.</li>
+<li><a href="running-an-agent-in-production.html"><strong>Running an agent in production</strong></a> — budgets,
+  risk-tiered approval gates, audit trail, rollback, kill switch, and an incident runbook.</li>
+<li><a href="choosing-and-acceptance-testing-an-agent.html"><strong>Choosing and acceptance-testing an agent</strong></a>
+  — due diligence, agent-washing, and an acceptance test you agree before you sign.</li>
 </ul>
-<p>Each lesson pairs the product framing with a <strong>🎯 For the product leader</strong> briefing —
-why it matters, the decision it changes, the question to ask your team, and the risk if
-ignored — plus a diagram. For the engineering depth behind every mechanic mentioned here,
-follow the spokes into <a href="../agentic-ai/index.html">Agentic AI for the AI PM</a>, and for tools
-and memory specifically, into <a href="../tool-calling/index.html">Tool calling</a> and
-<a href="../memory-and-context/index.html">Memory &amp; context</a>.</p>
+<p>Each lesson pairs the product framing with a <strong>🎯 For the product leader</strong> briefing, a
+worked example, a diagram, and an <strong>Under the hood</strong> section for engineers. Sources and a
+review date close each lesson.</p>
 <p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>.</p></div>
   <h2 class="sec">The lessons</h2>
-  <div class="cards"><a class="card" href="what-an-agent-is-and-how-much-autonomy-it-needs.html"><span class="card-num">01</span><h3>What an agent is, and how much autonomy it needs</h3><span class="card-go">Read lesson →</span></a><a class="card" href="planning-reasoning-and-reliability-across-a-run.html"><span class="card-num">02</span><h3>Planning, reasoning &amp; reliability across a run</h3><span class="card-go">Read lesson →</span></a><a class="card" href="when-not-to-build-an-agent.html"><span class="card-num">03</span><h3>When not to build an agent</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <div class="cards"><a class="card" href="what-an-agent-is-and-how-much-autonomy-it-needs.html"><span class="card-num">01</span><h3>What an agent is, and how much autonomy it needs</h3><span class="card-go">Read lesson →</span></a><a class="card" href="planning-reasoning-and-reliability-across-a-run.html"><span class="card-num">02</span><h3>Planning, reasoning &amp; reliability across a run</h3><span class="card-go">Read lesson →</span></a><a class="card" href="when-not-to-build-an-agent.html"><span class="card-num">03</span><h3>When not to build an agent</h3><span class="card-go">Read lesson →</span></a><a class="card" href="running-an-agent-in-production.html"><span class="card-num">04</span><h3>Running an agent in production</h3><span class="card-go">Read lesson →</span></a><a class="card" href="choosing-and-acceptance-testing-an-agent.html"><span class="card-num">05</span><h3>Choosing and acceptance-testing an agent</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
   </main>
 <style id="reader-css">

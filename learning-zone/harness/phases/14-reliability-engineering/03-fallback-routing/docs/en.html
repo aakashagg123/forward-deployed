@@ -194,6 +194,10 @@ el.querySelectorAll('a[href]').forEach(a=>{
   if(!h || /^https?:|^#/.test(h)) return;
   h = h.replace(/(^|\/)content\/(\d\d-[\w-]+)\/README\.md/,'$1ai/$2.html')
        .replace(/(^|\/)content\/(\d\d-[\w-]+)\/([\w-]+)\.md/,'$1ai/$2.html#$3')
+       .replace(/(^|\/)harness-engineering\/README\.md/,'$1harness/index.html')
+       .replace(/(^|\/)flowable\/README\.md/,'$1flowable/index.html')
+       .replace(/(^|\/)harness-engineering\//,'$1harness/')
+       .replace(/(^|\/)(agentic-ai|first-principles|product-sense|technical-product-sense|technical-product-management|knowledge-graphs|generative-ai|llms|api-integrations|rag-vector-databases|memory-and-context|tool-calling|ai-agents|agentic-workflows|evaluation-and-observability|ai-security-and-guardrails|cost-optimization|system-design|access-control|context-engineering|prompt-engineering)\/README\.md/,'$1$2/index.html')
        .replace(/\.md(#|$)/,'.html$1');
   a.setAttribute('href', h);
 });

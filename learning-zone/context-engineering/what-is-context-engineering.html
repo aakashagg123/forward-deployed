@@ -499,6 +499,26 @@ different things they mean:</p>
 <p>Naming which of the four is missing turns a vague "the AI seems dumb" complaint into a
 specific, buildable fix. Most quality escalations are exactly one of these four things,
 mislabeled as a model problem.</p>
+<h2 id="more-context-is-not-better-context">More context is not better context</h2>
+<p>The four sources tempt a team to add more of each. Resist it. Anthropic's engineering
+guidance on context treats context as a <strong>finite resource with diminishing returns</strong>.
+As the amount of text in a request grows, model performance can degrade, an effect
+they call <em>context rot</em>. Every extra token also costs money and time on every call.</p>
+<p>Their guiding principle is a good rule for a product leader: <strong>find the smallest set of
+high-signal information that gives the model what it needs for this decision.</strong></p>
+<p>So context engineering has two jobs, not one:</p>
+<ul>
+<li><strong>Add</strong> what is missing: the fact, the rule, the history, the live state.</li>
+<li><strong>Remove</strong> what does not help: stale documents, contradictory sources, and the "just
+  in case" pages that bury the one paragraph that matters.</li>
+</ul>
+<p>This is a product decision because it trades quality against cost and latency. A
+pipeline that passes the whole handbook to the model on every request is not
+"well-grounded." It is expensive, slow, and often less accurate than one that passes
+three good paragraphs. The mechanics of budgeting a window are in
+<a href="../ai/00-foundations.html#context-engineering">Context engineering (engineering depth)</a>
+and <a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>. Your job is to ask the
+question: <em>what is the smallest context that still makes this decision right?</em></p>
 <h2 id="why-this-needed-a-name-at-all">Why this needed a name at all</h2>
 <p>Before this discipline had a name, teams reached for <strong>prompt engineering</strong>: write a
 clever instruction, ship it, move on. It's fast, and it's the right first move for a
@@ -515,6 +535,8 @@ for exactly how and where it breaks.</p>
   "giving the model context."</li>
 <li><strong>The unnamed input</strong> — a team that can't say which of the four context types a
   feature depends on, so nobody notices when one of them silently breaks.</li>
+<li><strong>The kitchen-sink context</strong> — sending everything that might be relevant, so the
+  useful fact is buried, cost and latency rise, and answers get worse, not better.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
@@ -524,6 +546,8 @@ for exactly how and where it breaks.</p>
       before assuming the model was at fault?</li>
 <li class="task todo">Have I asked "what does this decision need to see?" instead of "what data do we
       have?" in the last planning conversation about this feature?</li>
+<li class="task todo">For each context source, can I say what we would remove if the window got tight —
+      and do we send only what the decision needs?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -533,7 +557,7 @@ for exactly how and where it breaks.</p>
 <li><a href="../technical-product-management/tpm-for-ai-products.html">TPM for AI products</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="why-prompt-engineering-doesnt-scale.html"><span class="lbl">→ Next</span><span class="ttl">Why prompt engineering doesn&#x27;t scale</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#a-note-on-scope">A note on scope</a><a class="h2" href="#the-mental-model-data-first-vs-context-first">The mental model: data-first vs. context-first</a><a class="h2" href="#the-four-things-context-actually-means">The four things &quot;context&quot; actually means</a><a class="h2" href="#why-this-needed-a-name-at-all">Why this needed a name at all</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#a-note-on-scope">A note on scope</a><a class="h2" href="#the-mental-model-data-first-vs-context-first">The mental model: data-first vs. context-first</a><a class="h2" href="#the-four-things-context-actually-means">The four things &quot;context&quot; actually means</a><a class="h2" href="#more-context-is-not-better-context">More context is not better context</a><a class="h2" href="#why-this-needed-a-name-at-all">Why this needed a name at all</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

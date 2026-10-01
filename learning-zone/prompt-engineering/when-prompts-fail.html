@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink active" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink active" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 09</span>
     <h1>When prompts fail: the diagnostic playbook</h1>
@@ -504,9 +504,10 @@ different shape — extra fields, missing keys, prose wrapping a JSON block, an
 opening "Sure! Here is the JSON:" line that breaks parsers.</p>
 <p><strong>Diagnosis:</strong> Format specified in words but not enforced; no examples of the
 exact output shape.</p>
-<p><strong>Fix:</strong> Provide one or two few-shot examples in the exact format. Use structured
-output APIs (JSON mode, structured outputs) if available. On Claude, prefill the
-opening character of the expected shape to force it.</p>
+<p><strong>Fix:</strong> Provide one or two few-shot examples in the exact format. Use a structured
+output API or a tool with a schema if one is available. Add "Respond directly without
+preamble." to remove lead-in lines. Do not rely on prefilled replies: Claude 4.6 and
+later models do not support them.</p>
 <h2 id="diagnosing-before-rewriting-the-two-minute-pass">Diagnosing before rewriting — the two-minute pass</h2>
 <p>When an output fails, before touching the prompt:</p>
 <ol>
@@ -518,11 +519,19 @@ opening character of the expected shape to force it.</p>
 <li><strong>Re-run against the same input.</strong> Confirm the specific failure is gone.</li>
 <li><strong>Re-run against different inputs.</strong> Confirm the fix didn't create a new one.</li>
 </ol>
-<p>If step 2 doesn't match any of the seven, the failure is a rarer case — often
-either the model is genuinely wrong on the task (a capability limit, not a prompt
-problem), or the <em>context</em> the prompt operates on is bad, and you're in the
-territory of <a href="../context-engineering/index.html">context engineering</a> rather than
-prompt engineering.</p>
+<p>If step 2 doesn't match any of the seven, the failure is a rarer case. Three causes
+are common:</p>
+<ul>
+<li>The model is genuinely wrong on the task. That is a capability limit, not a prompt
+  problem.</li>
+<li>The <em>context</em> the prompt operates on is bad. That is
+  <a href="../context-engineering/index.html">context engineering</a>, not prompt engineering.</li>
+<li>The model changed. The prompt is unchanged and worked last quarter, but a new model
+  version reads it differently. Newer Claude models follow instructions more
+  literally and react more strongly to emphatic wording, so a prompt tuned for an
+  older model can over-trigger or under-deliver. The fix is a re-test against your
+  saved examples, covered in <a href="prompts-in-production.html">Prompts in production</a>.</li>
+</ul>
 <h2 id="what-the-module-has-been-building-toward">What the module has been building toward</h2>
 <p>Look back at the seven failures and the lessons that fix them:</p>
 <ul>
@@ -561,8 +570,8 @@ which technique to reach for.</p>
       rewritten)?</li>
 <li class="task todo">Do I re-run the failing input first, then run different inputs to check
       for regression?</li>
-<li class="task todo">Have I ruled out that the failure is a context or capability problem, not
-      a prompt problem?</li>
+<li class="task todo">Have I ruled out that the failure is a context, capability, or model-version
+      problem, not a prompt problem?</li>
 <li class="task todo">Do I keep a log of failures and their fixes, so the seven-mode vocabulary
       becomes the team's shared debugging language?</li>
 </ul>
@@ -574,7 +583,7 @@ which technique to reach for.</p>
 <li><a href="../context-engineering/index.html">Context engineering</a> — for the failures that
   turn out not to be prompt failures.</li>
 </ul>
-  <div class="pagenav"><a class="navcard prev" href="prompting-inside-coding-agents.html"><span class="lbl">← Previous</span><span class="ttl">Prompting inside coding agents</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="prompting-inside-coding-agents.html"><span class="lbl">← Previous</span><span class="ttl">Prompting inside coding agents</span></a><a class="navcard next" href="prompts-in-production.html"><span class="lbl">→ Next</span><span class="ttl">Prompts in production: versioning, testing, and model upgrades</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#f1-instruction-conflict">F1 — Instruction conflict</a><a class="h2" href="#f2-length-miscalibration">F2 — Length miscalibration</a><a class="h2" href="#f3-role-collapse">F3 — Role collapse</a><a class="h2" href="#f4-scope-creep">F4 — Scope creep</a><a class="h2" href="#f5-context-bleed">F5 — Context bleed</a><a class="h2" href="#f6-hallucination-in-a-well-defined-slot">F6 — Hallucination in a well-defined slot</a><a class="h2" href="#f7-format-drift">F7 — Format drift</a><a class="h2" href="#diagnosing-before-rewriting-the-two-minute-pass">Diagnosing before rewriting — the two-minute pass</a><a class="h2" href="#what-the-module-has-been-building-toward">What the module has been building toward</a><a class="h2" href="#failure-modes-about-the-diagnostic-itself">Failure modes (about the diagnostic itself)</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

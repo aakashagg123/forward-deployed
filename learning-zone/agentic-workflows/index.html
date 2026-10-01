@@ -375,8 +375,8 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
   <div class="index-hero">
     <span class="chip">A standalone module</span>
     <h1>Agentic workflows for the product leader</h1>
-    <p class="lede">Orchestrating more than one agent when a single loop isn&#x27;t enough, and what it takes to make a workflow durable enough — and valuable enough — to be worth owning end to end.</p>
-    <div class="index-meta"><span>2 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
+    <p class="lede">Choosing a workflow pattern, knowing when more than one agent earns its cost, and what it takes to make a workflow durable enough to be worth owning end to end.</p>
+    <div class="index-meta"><span>3 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
   </div>
   <div class="intro"><p>A single agent's loop only gets you so far. Some jobs are too big for one context window,
 too parallel for one worker, or too long-running to fit inside one continuous run — they
@@ -385,25 +385,54 @@ they left off. "Agentic workflow" is the name for what happens once a task needs
 one loop, or needs the loop to keep its place across real time. Getting this right is
 mostly a small number of orchestration and durability decisions, made deliberately instead
 of by whichever framework happened to be closest to hand.</p>
-<p><strong>A note on scope.</strong> This is the most heavily covered topic in this family so far.
-<a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a> already
-develops orchestration topologies and the MCP/A2A protocol landscape in full depth. The
-workflow-versus-agent distinction itself is already the subject of
-<a href="../ai-agents/index.html">AI agents</a>'s first lesson in this same family. Human-in-the-loop
-design is already developed as part of
-<a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a>'s agent-UX section, and
-belongs more fully to this family's upcoming AI security &amp; guardrails module. Durable,
-long-running execution is the entire subject of a dedicated twelve-phase track,
-<a href="../flowable/index.html">Flowable</a>, which builds a real process engine from scratch.
-Workflow capture as a business strategy is already a full section — and an existing
-glossary term — inside <em>Agentic AI as a product</em>. Re-deriving any of it here would only
-restate it a fourth or fifth time. This module compresses to the two lessons that are
-genuinely new once all of that is accounted for: how to decide on an orchestration shape
-once one agent isn't enough, and what it takes to make a workflow durable enough, and
-valuable enough, to be worth owning end to end.</p>
+<p><strong>A note on scope.</strong> Several neighbouring lessons already cover parts of this topic.
+<a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a> develops the
+orchestration topologies and the MCP and A2A landscape. <a href="../ai-agents/index.html">AI agents</a>
+covers the workflow-versus-agent line, and the run-level controls: budgets, approval gates
+and the kill switch. <a href="../flowable/index.html">Flowable</a> builds a real process engine from
+scratch. <a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a> covers
+workflow capture as a business strategy. This module does not repeat them. It adds the
+decisions that sit between them: which workflow pattern to use, when more than one agent
+earns its cost, and what makes a workflow survive real time.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarises an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orchestration topologies and the MCP and A2A landscape</td>
+<td><a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a></td>
+</tr>
+<tr>
+<td>The autonomy dial, and workflow versus agent</td>
+<td><a href="../ai-agents/what-an-agent-is-and-how-much-autonomy-it-needs.html">What an agent is</a></td>
+</tr>
+<tr>
+<td>Run limits, approval gates and the kill switch</td>
+<td><a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a></td>
+</tr>
+<tr>
+<td>Writing the prompts inside a chain</td>
+<td><a href="../prompt-engineering/prompt-chaining-and-workflows.html">Prompt chaining and multi-step workflows</a></td>
+</tr>
+<tr>
+<td>Wait states, retries, compensation and process engines</td>
+<td><a href="../flowable/index.html">Flowable</a></td>
+</tr>
+<tr>
+<td>Workflow capture and agent economics</td>
+<td><a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="the-knowledge-graph">The knowledge graph</h2>
-<!-- Agentic workflows — knowledge graph: two questions in sequence.
-     Orchestrating shape → Making it durable → Ownership as strategy. -->
+<!-- Agentic workflows — knowledge graph: three questions in sequence.
+     Pattern → Orchestrating → Making it durable → Ownership as strategy. -->
 <style>
 .dgm-aw{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #2f8f7a;
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),
@@ -453,25 +482,35 @@ valuable enough, to be worth owning end to end.</p>
 <div class="dgm-aw">
   <span class="dgm-aw-chip">Agentic workflows</span>
 
-  <h4>Two questions asked in sequence</h4>
-  <p class="dgm-aw-sub">Once a single agent's loop isn't enough — what shape, and how does it survive real time?</p>
+  <h4>Three questions asked in sequence</h4>
+  <p class="dgm-aw-sub">Which shape, how many agents, and will it survive real time?</p>
 
   <div class="dgm-aw-half">
-    <h5><span class="dgm-aw-tag">Lesson 1</span>Orchestrating more than one agent</h5>
+    <h5><span class="dgm-aw-tag">Lesson 1</span>Choosing a workflow pattern</h5>
+    <div class="dgm-aw-shape">
+      <svg class="dgm-aw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h6v4H4zM14 6h6v4h-6zM9 16h6v4H9z"/><path d="M7 10v2h10v-2M12 12v4"/></svg>
+      <div><h6>Chain · route · parallelize · orchestrate · evaluate</h6><p>Five patterns. Pick the first one that does the job.</p></div>
+    </div>
+  </div>
+
+  <div class="dgm-aw-link"><span class="dgm-aw-note">↓ when one agent isn't enough</span></div>
+
+  <div class="dgm-aw-half">
+    <h5><span class="dgm-aw-tag">Lesson 2</span>Orchestrating more than one agent</h5>
     <div class="dgm-aw-shape">
       <svg class="dgm-aw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 11l7-4M8.5 13l7 4"/></svg>
-      <div><h6>Chains, routers, multi-agent topologies</h6><p>The three recurring shapes work takes when one agent isn't the right unit.</p></div>
+      <div><h6>Orchestrator and subagents</h6><p>When a subagent earns its cost, and how to brief one.</p></div>
     </div>
   </div>
 
   <div class="dgm-aw-link"><span class="dgm-aw-note">↓ once it works, it has to keep working</span></div>
 
   <div class="dgm-aw-half dur">
-    <h5><span class="dgm-aw-tag">Lesson 2</span>Making it last</h5>
+    <h5><span class="dgm-aw-tag">Lesson 3</span>Making it last</h5>
     <div class="dgm-aw-rows">
       <div class="dgm-aw-row">
         <svg class="dgm-aw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        <div><h6>Surviving pauses &amp; restarts</h6><p>Wait states · persistence · job executor</p></div>
+        <div><h6>Surviving pauses &amp; restarts</h6><p>Saved state · waits · retries · undo</p></div>
       </div>
       <div class="dgm-aw-arr">→</div>
       <div class="dgm-aw-row">
@@ -487,30 +526,26 @@ valuable enough, to be worth owning end to end.</p>
   </div>
 </div>
 
-<p>Read it as two questions asked in sequence. <strong>Orchestrating</strong>: once a single agent's loop
-isn't enough, what shape should the work take — a fixed pipeline, a router, several
-agents coordinating? <strong>Making it last</strong>: once that shape exists, does it survive being
-paused for three days waiting on a human, and is owning the whole thing — not just a step
-inside it — actually the better business bet?</p>
+<p>Read it as three questions in order. <strong>Which shape?</strong> Pick the simplest of five patterns
+that does the job. <strong>How many agents?</strong> Add one only when it clears a named bottleneck.
+<strong>Will it last?</strong> Once the shape exists, it must survive a three-day wait and a restart.
+Only then is owning the whole workflow worth asking.</p>
 <h2 id="the-lessons">The lessons</h2>
 <ul>
-<li><a href="orchestrating-more-than-one-agent.html"><strong>Orchestrating more than one agent</strong></a> — the
-  recurring shapes multi-agent work takes, and the discipline that keeps a
-  multi-agent system from costing more than the single agent it replaced.</li>
+<li><a href="choosing-a-workflow-pattern.html"><strong>Choosing a workflow pattern</strong></a> — the five patterns,
+  what each costs, and how to choose the simplest that works.</li>
+<li><a href="orchestrating-more-than-one-agent.html"><strong>Orchestrating more than one agent</strong></a> — when
+  subagents are worth their cost, what the evidence says, and how to write a brief.</li>
 <li><a href="making-a-workflow-durable-and-worth-owning.html"><strong>Making a workflow durable, and worth owning</strong></a>
-  — why a workflow has to survive real time to be worth anything, and why owning it
-  end to end is the strategic move underneath the mechanics.</li>
+  — saved state, waits, retries, safe repeats and undo, then the case for owning the whole
+  workflow.</li>
 </ul>
-<p>Each lesson pairs the product framing with a <strong>🎯 For the product leader</strong> briefing —
-why it matters, the decision it changes, the question to ask your team, and the risk if
-ignored — plus a diagram. For the engineering depth behind every mechanic mentioned here,
-follow the spokes into
-<a href="../agentic-ai/multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a>,
-<a href="../flowable/index.html">Flowable</a>, and
-<a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a>.</p>
-<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>.</p></div>
+<p>Each lesson has a <strong>🎯 For the product leader</strong> briefing, a labelled worked example, an
+"Under the hood" section for engineers, and a Sources list.</p>
+<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>, which ends with a
+self-test.</p></div>
   <h2 class="sec">The lessons</h2>
-  <div class="cards"><a class="card" href="orchestrating-more-than-one-agent.html"><span class="card-num">01</span><h3>Orchestrating more than one agent</h3><span class="card-go">Read lesson →</span></a><a class="card" href="making-a-workflow-durable-and-worth-owning.html"><span class="card-num">02</span><h3>Making a workflow durable, and worth owning</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <div class="cards"><a class="card" href="choosing-a-workflow-pattern.html"><span class="card-num">01</span><h3>Choosing a workflow pattern</h3><span class="card-go">Read lesson →</span></a><a class="card" href="orchestrating-more-than-one-agent.html"><span class="card-num">02</span><h3>Orchestrating more than one agent</h3><span class="card-go">Read lesson →</span></a><a class="card" href="making-a-workflow-durable-and-worth-owning.html"><span class="card-num">03</span><h3>Making a workflow durable, and worth owning</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
   </main>
 <style id="reader-css">

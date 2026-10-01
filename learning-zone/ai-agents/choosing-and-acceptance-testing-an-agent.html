@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Choosing and acceptance-testing an agent — AI agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
+  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
+  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
+  --red-soft:#FFEBE9; --radius:6px;
+  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
+  font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"cv11","ss01","ss03";
+  overflow-x:hidden}
+img,svg,canvas{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+  padding:14px 26px;background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
+.brand:hover{text-decoration:none}
+.brand span{font-size:16px;letter-spacing:.2px}
+.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
+  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
+.spark{flex:0 0 auto}
+.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
+  padding:5px 10px;border-radius:8px}
+.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
+.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
+.menu-btn:hover{border-color:var(--accent)}
+#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
+  transition:opacity .2s;z-index:34}
+#sb-scrim.open{opacity:1;visibility:visible}
+
+/* layout */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
+  max-width:1240px;margin:0 auto}
+.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
+.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
+.sticky{position:sticky;top:74px}
+.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
+  color:var(--ink2);font-size:14.5px;font-weight:500}
+.modlink:hover{background:var(--bg2);text-decoration:none}
+.modlink.active{background:var(--accent-soft);color:var(--accent)}
+.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
+  border-left:1px solid var(--line);padding-left:12px}
+.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
+.sub a:hover{color:var(--accent);text-decoration:none}
+
+/* "on this page" outline — right rail, wide screens only */
+.outline{display:none}
+@media (min-width:1280px){
+  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
+  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
+}
+.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
+  color:var(--mut);margin:0 0 10px 13px}
+.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
+  border-left:2px solid transparent}
+.outline a:hover{color:var(--ink);text-decoration:none}
+.outline a.h3{padding-left:25px;font-size:12px}
+.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+
+/* content column */
+.content{padding:46px 56px 90px;max-width:880px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
+  color:var(--accent);background:var(--accent-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
+  color:var(--ink);margin:.1em 0 .25em}
+.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
+.hero-meta{font-size:14px;color:var(--mut)}
+.hero-meta strong{color:var(--accent);font-weight:600}
+
+.intro{color:var(--ink2)}
+.intro blockquote{margin:18px 0}
+
+/* table of contents */
+.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px}
+.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
+  color:var(--mut);margin-bottom:10px}
+.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
+  border-bottom:1px solid var(--line2)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--accent);text-decoration:none}
+.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
+
+/* lessons */
+.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+.lesson:first-of-type{border-top:none}
+.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
+  padding:3px 9px;border-radius:var(--radius);font-weight:600}
+.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
+  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
+  margin:1.8em 0 .5em}
+.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
+  letter-spacing:.2px}
+.lesson p{margin:.85em 0}
+.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
+.lesson li{margin:.32em 0}
+.lesson strong{color:var(--ink);font-weight:600}
+.lesson em{color:var(--ink2)}
+hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+
+/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
+.pm-callout{position:relative;background:var(--panel);
+  border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
+.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
+  font-size:14px;margin:0 0 .5em}
+.pm-callout p{margin:.5em 0;font-size:15.5px}
+.pm-callout strong{color:var(--ink)}
+
+/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
+blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
+  color:var(--mut);background:none;border-radius:0}
+blockquote p{margin:.5em 0}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden}
+th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
+  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(2n) td{background:var(--bg2)}
+td code,th code{font-size:12.5px}
+
+/* code — GitHub markdown code blocks: light grey, no syntax colour */
+code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
+  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
+  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
+pre code{background:none;color:inherit;padding:0;font-size:13px}
+
+/* task lists */
+.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
+.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
+.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
+.lesson li.done:before{content:"☑";color:var(--green)}
+
+.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
+  font-family:var(--mono)}
+.totop:hover{color:var(--accent);text-decoration:none}
+
+/* page nav + footer */
+.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
+  flex-wrap:wrap}
+.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.navcard:hover{border-color:var(--accent);text-decoration:none}
+.navcard.next{text-align:right;align-items:flex-end}
+.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
+.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
+.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--mut);font-size:13.5px}
+
+/* ---- index page ---- */
+.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
+.index-hero{text-align:center;padding:20px 0 30px}
+.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
+  color:var(--ink);margin:.15em 0 .3em}
+.index-hero h1 em{font-style:normal;color:var(--accent)}
+.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
+.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
+  font-family:var(--mono)}
+.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
+.pm-band .pm-ic{font-size:24px;line-height:1.2}
+.pm-band strong{color:var(--ink)}
+.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
+  text-align:center;margin:60px 0 26px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
+.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
+.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
+  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
+.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
+.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
+.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
+.card li{margin:.2em 0}
+.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
+.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.4px;color:var(--accent);opacity:.9}
+.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
+.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+  max-width:920px;margin:0 auto}
+.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
+.thread p{margin:0;font-size:14px;color:var(--mut)}
+
+/* tablet: collapse to a single column */
+@media (max-width:880px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
+     plain .layout rule above (1 class) on specificity regardless of this
+     media query, so it needs its own same-specificity override here to
+     actually collapse on mobile */
+  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
+  .content{min-width:0;padding:32px 22px 70px}
+  .menu-btn{display:inline-flex}
+  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
+    width:280px;max-width:86vw;background:var(--bg);border-right:none;
+    box-shadow:12px 0 40px rgba(31,35,40,.16);
+    transform:translateX(-100%);transition:transform .22s ease;
+    max-height:100%;overflow-y:auto;padding:0}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .sticky{position:static;padding:20px 14px 40px}
+  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
+  .topnav{display:none}
+  .iw-field input[type=range]{width:160px}
+}
+
+/* phone-first: high readability on iPhone-class widths */
+@media (max-width:560px){
+  body{font-size:17px;line-height:1.7}
+  .topbar{padding:12px 16px;gap:12px}
+  .brand span{font-size:15px}
+  .brand em{display:none}
+  .content{padding:24px 16px 64px}
+  .index{padding:36px 16px 64px}
+  .chip{font-size:11px}
+  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
+  .hero .lede,.hero-meta{font-size:15px}
+  .hero-meta{line-height:1.6}
+  .index-hero h1{font-size:30px;line-height:1.12}
+  .index-hero .lede{font-size:16.5px}
+  .lesson{padding:34px 0 8px;margin-top:22px}
+  .lesson-head{gap:10px}
+  .lesson h2{font-size:22px;line-height:1.22}
+  .lesson h3{font-size:18.5px}
+  .lesson p,.lesson li{font-size:16.5px}
+  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
+  pre code{font-size:12.8px}
+  code{font-size:12.8px;word-break:break-word}
+  /* wide tables scroll instead of breaking the page */
+  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    white-space:nowrap;font-size:13.5px}
+  .cards,.threads{grid-template-columns:1fr}
+  .pagenav{flex-direction:column;gap:12px}
+  .navcard{flex:1 1 auto}
+  .navcard.next{text-align:left;align-items:flex-start}
+  .pm-band,.recap{padding:18px 18px}
+  .recap{margin-top:30px}
+  /* comfortable tap targets */
+  a,.iw-btn,summary{touch-action:manipulation}
+}
+
+/* ---- recap section ---- */
+.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--bg2)}
+.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.recap-ic{font-size:22px}
+.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
+  border-bottom:none;padding-bottom:0}
+.recap h2:not(.recap-head h2){margin-top:1.4em}
+.recap h2{}
+.recap .recap-head + p{margin-top:.6em}
+.recap table{background:#fff}
+.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
+
+/* ---- interactive widgets ---- */
+.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);overflow:hidden}
+.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:11px}
+.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
+.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
+.iw-body{padding:22px 24px}
+.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
+.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
+.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
+.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
+.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
+.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
+.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
+.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
+.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
+  cursor:pointer;user-select:none}
+.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
+.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
+.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
+.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
+.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
+.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
+.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
+.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
+  transition:width .45s ease,background-color .3s}
+/* pipeline stages (mod 00) */
+.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
+  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
+.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.iw-arrow{color:var(--mut);font-size:14px}
+/* chunk grid (mod 03) */
+.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
+.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
+/* trace spans (mod 04) */
+.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
+.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
+.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
+.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
+.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
+.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
+.iw-stack span{display:block;height:100%}
+.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
+.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
+/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
+   layouts with a min-width label that get cramped once the label, bar,
+   and value have to share ~250-300px of actual content width — stack
+   label+value above the bar instead of squeezing everything into one row.
+   Placed after the base rules above so it wins the cascade (equal
+   specificity, later source order) rather than needing !important. */
+@media (max-width:560px){
+  .iw-metric{flex-wrap:wrap;row-gap:4px}
+  .iw-metric .ml{min-width:0;flex:1 1 auto}
+  .iw-metric .mv{flex:0 0 auto}
+  .iw-track{flex:1 1 100%;order:3}
+  .iw-span{flex-wrap:wrap;row-gap:4px}
+  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
+  .iw-spanbar-wrap{flex:1 1 100%;order:2}
+}
+pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
+</head>
+<body>
+<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
+    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
+    <span>Forward-deployed</span>
+  </a>
+  <span style="color:#B0B0B0;">/</span>
+  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
+</div>
+<header class="topbar">
+  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI agents</span><em>a Generative AI module</em></a>
+  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-an-agent-is-and-how-much-autonomy-it-needs.html">1 · What an agent is, and how much autonomy it needs</a><a class="modlink" href="planning-reasoning-and-reliability-across-a-run.html">2 · Planning, reasoning &amp; reliability across a run</a><a class="modlink" href="when-not-to-build-an-agent.html">3 · When not to build an agent</a><a class="modlink" href="running-an-agent-in-production.html">4 · Running an agent in production</a><a class="modlink active" href="choosing-and-acceptance-testing-an-agent.html">5 · Choosing and acceptance-testing an agent</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="chip">Lesson 05</span>
+    <h1>Choosing and acceptance-testing an agent</h1>
+  </div>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Sooner or later you will be asked to buy an agent, or to sign off on one your team built.
+Two problems make this hard. The label "agent" is used loosely, so a product may not be what
+it says. And a demo cannot show how the agent behaves across many real cases.</p>
+<p>This lesson gives you two tools. The first is a short <strong>due-diligence checklist</strong> that
+separates a real agent from a rebranded one and surfaces the questions a vendor would
+rather skip. The second is an <strong>acceptance test</strong>: a fixed set of real cases, run many
+times, scored on outcome, path, and cost, against thresholds you agree before you sign.</p>
+<p>You own the result either way. In February 2024 a Canadian tribunal held an airline liable
+for wrong information its chatbot gave a customer. The airline had effectively suggested
+the chatbot was a separate entity. The tribunal disagreed. It was a decision of a small-claims
+tribunal, but the point holds: if your agent says it, you said it.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Gartner predicted in June 2025 that over 40% of agentic AI projects
+will be cancelled by the end of 2027, because of rising costs, unclear value, or weak
+risk controls. Most of those problems can be seen before purchase, if you test for them.</p>
+<p><strong>What it changes in your decisions</strong> — You sign only against a written acceptance test.
+You run it on your own cases, not the vendor's demo cases.</p>
+<p><strong>Ask yourself</strong> — <em>"If we ran this agent on 200 of our own past cases tomorrow, what
+pass rate, cost, and failure behaviour would we accept, and have we written that down?"</em></p>
+<p><strong>Risk if ignored</strong> — You buy a demo. The agent works on the happy path and fails on your
+real inputs. The contract has no measure of "works," so you have no remedy.</p>
+</blockquote>
+<h2 id="the-mental-model-claim-test-threshold">The mental model: claim, test, threshold</h2>
+<style>
+.dgm-ai{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #5a4fcf;
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
+.dgm-ai-chip{position:absolute;top:-11px;left:24px;background:#5a4fcf;color:#ffffff;
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(90,79,207,.28)}
+.dgm-ai h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
+.dgm-ai-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+.dgm-ai-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#8c959f;
+  display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dgm-ai-lbl::after{content:"";flex:1;height:1px;background:#e2e8ee}
+.dgm-ai-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.dgm-ai-n{background:#efedfa;border:1.5px solid #cec8f0;border-radius:10px;padding:9px 8px;text-align:center;
+  font-size:10px;font-weight:700;color:#3d3a95;line-height:1.3}
+.dgm-ai-row.up .dgm-ai-n{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
+.dgm-ai-arr{display:flex;justify-content:center;color:#8c959f;padding:2px 0}
+.dgm-ai-arr svg{width:16px;height:16px}
+.dgm-ai-ok{background:#dafbe1;border:1.5px solid #aceebb;border-radius:11px;padding:9px 16px;text-align:center;
+  color:#1a614f;font-weight:700;font-size:11.5px;margin:0 auto;max-width:300px}
+@media (max-width:640px){.dgm-ai{padding:20px 16px 18px}.dgm-ai-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+<div class="dgm-ai">
+  <span class="dgm-ai-chip">Choosing an agent</span>
+  <h4>Claim · test · threshold</h4>
+  <p class="dgm-ai-sub">Agree the pass bar before you see results.</p>
+
+  <div class="dgm-ai-lbl">Due diligence</div>
+  <div class="dgm-ai-row">
+    <div class="dgm-ai-n">Where on the autonomy dial?</div>
+    <div class="dgm-ai-n">Success rate at real task length</div>
+    <div class="dgm-ai-n">Limits and human gates</div>
+    <div class="dgm-ai-n">Trace export and exit path</div>
+  </div>
+  <div class="dgm-ai-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-ai-lbl">Acceptance test</div>
+  <div class="dgm-ai-row up">
+    <div class="dgm-ai-n">Your real cases<br>+ hostile cases</div>
+    <div class="dgm-ai-n">Run each 5 times</div>
+    <div class="dgm-ai-n">Score outcome · path · cost</div>
+    <div class="dgm-ai-n">Compare to agreed bar</div>
+  </div>
+  <div class="dgm-ai-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+  <div class="dgm-ai-ok">Sign in stages, and re-test after every model update</div>
+</div>
+
+<p>The thresholds come first. Agree them before you see results. Otherwise the results set the
+bar, and the bar moves to meet them.</p>
+<h2 id="due-diligence-is-it-really-an-agent-and-can-you-rely-on-it">Due diligence: is it really an agent, and can you rely on it?</h2>
+<p><strong>Agent-washing</strong> is Gartner's term for rebranding existing products, such as AI
+assistants, robotic process automation, and chatbots, as agents without substantial agentic
+capability. Gartner estimated that only about 130 of the thousands of vendors claiming
+agentic products were real. Treat the label as a claim to check.</p>
+<p>Ask these questions. A good answer is specific and shows evidence.</p>
+<ol>
+<li><strong>Where does it sit on the autonomy dial?</strong> Ask which steps the model chooses and which
+   your code fixes. See <a href="what-an-agent-is-and-how-much-autonomy-it-needs.html">What an agent is</a>.</li>
+<li><strong>What is the per-step and end-to-end success rate, on what tasks, measured how?</strong> Ask for
+   the task length. A three-step rate says little about a thirty-step task.</li>
+<li><strong>What does a run cost, at the 90th percentile and not only the average?</strong></li>
+<li><strong>What are the limits?</strong> Ask for step, time, cost, and repeat caps, and where they are
+   enforced. See <a href="running-an-agent-in-production.html">Running an agent in production</a>.</li>
+<li><strong>Which actions need a human, and who decides that?</strong></li>
+<li><strong>What happens when a tool fails or returns nothing?</strong> Ask them to show it.</li>
+<li><strong>Can we see a full trace of a run, and export it?</strong></li>
+<li><strong>How is it updated, and how do we know when behaviour changes?</strong> Model updates can change
+   behaviour without a code change.</li>
+<li><strong>Which of our data does it see, where does it go, and what is retained?</strong></li>
+<li><strong>What is the exit path?</strong> Ask how you get your data, traces, and configuration out.</li>
+</ol>
+<p>Two answers should worry you. One is "it just works" with no numbers. The other is a demo
+on cases the vendor chose.</p>
+<h2 id="acceptance-testing-design-the-test-before-the-deal">Acceptance testing: design the test before the deal</h2>
+<p>An acceptance test is a fixed, written procedure with pass thresholds. Build it in four
+parts.</p>
+<p><strong>1. The case set.</strong> Collect 100 to 300 real past cases. Include the routine ones, the
+messy ones, and the ones your people find hard. Add hostile cases: inputs that try to
+redirect the agent, and inputs that are missing or contradictory. Keep a hidden slice the
+vendor never sees.</p>
+<p><strong>2. Repeat runs.</strong> Agents are not deterministic. Run each case several times, at least
+five. A case that passes three times out of five is a finding, not a pass.</p>
+<p><strong>3. Three scores.</strong> Score every run on:</p>
+<ul>
+<li><strong>Outcome.</strong> Did it reach the right result? Use exact checks where you can, and a
+  rubric plus a human spot-check where you cannot.</li>
+<li><strong>Path.</strong> Did it take a sensible route? Check steps used, tools called, and whether it
+  stayed within its limits. A right answer reached by a risky path is a failure.</li>
+<li><strong>Cost.</strong> Tokens, tool spend, and time per run.</li>
+</ul>
+<p><strong>4. Thresholds and stop behaviour.</strong> Write the pass bar in advance. Include behaviour under
+failure: it must stop at its caps, escalate when unsure, and never invent a result after a
+tool error.</p>
+<h2 id="worked-example-an-acceptance-test-for-a-claim">Worked example: an acceptance test for a claim</h2>
+<p><em>This example is invented, to show the method. The vendor, numbers, and thresholds are
+illustrative.</em></p>
+<p>A vendor claims: "Our agent resolves 90% of tier-1 support tickets on its own."</p>
+<p>You turn the claim into a test.</p>
+<table>
+<thead>
+<tr>
+<th>Measure</th>
+<th>How you test it</th>
+<th>Agreed threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Outcome on routine cases</td>
+<td>150 real tickets, 5 runs each, exact-match on resolution code</td>
+<td>At least 90% of cases pass on at least 4 of 5 runs</td>
+</tr>
+<tr>
+<td>Outcome on hard cases</td>
+<td>50 tickets your staff marked difficult</td>
+<td>At least 60%, and the rest escalate, not guess</td>
+</tr>
+<tr>
+<td>Hostile inputs</td>
+<td>20 tickets with embedded instructions or missing data</td>
+<td>0 unsafe actions. At least 95% escalate or refuse correctly</td>
+</tr>
+<tr>
+<td>Path</td>
+<td>Trace review of 40 runs</td>
+<td>0 runs exceed step or cost caps. 0 tool calls outside the allowed set</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Cost per run across all runs</td>
+<td>Median under the agreed figure. 90th percentile under twice the median</td>
+</tr>
+<tr>
+<td>Failure behaviour</td>
+<td>Force 10 tool failures</td>
+<td>100% stop, retry once, or escalate. 0 invented results</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose results come back. Routine cases: 82% pass on at least 4 of 5 runs. Hard cases: 41%,
+with 30% invented answers. The vendor's 90% claim held only on their chosen demo set. The
+test found this before the contract, and the numbers give you a basis to renegotiate,
+narrow the scope, or walk away.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Test size vs. cost.</strong> More cases and more runs give firmer numbers and cost more. Start
+  with 100 cases and five runs, and grow where results are close to the threshold.</li>
+<li><strong>Automated vs. human scoring.</strong> Automated scoring is cheap and can miss subtle errors.
+  Spot-check a sample by hand.</li>
+<li><strong>Vendor's data vs. yours.</strong> A vendor's benchmark shows what they optimised. Your cases
+  show what you need.</li>
+<li><strong>Contract flexibility vs. safety.</strong> Tie payment or scope to the acceptance result, and
+  keep the right to re-test after model updates.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Testing the demo.</strong> The acceptance set is the vendor's showcase cases.</li>
+<li><strong>A moving bar.</strong> Thresholds are set after seeing results, so they match what the agent
+  already does.</li>
+<li><strong>One run per case.</strong> A lucky pass counts as a pass.</li>
+<li><strong>Outcome-only scoring.</strong> The agent reaches right answers by risky or costly paths, and
+  nobody looks at the trace.</li>
+<li><strong>Test once, trust forever.</strong> A model update changes behaviour, and no one re-runs the
+  test.</li>
+<li><strong>Agent-washed purchase.</strong> You buy a chatbot with an agent label, and pay agent prices.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>An acceptance harness is a loop over cases and runs that records outcome, path, and cost.</p>
+<pre><code class="language-python">import statistics
+
+def acceptance(cases, agent, runs=5):
+    report = []
+    for case in cases:
+        results = []
+        for _ in range(runs):
+            trace = agent.run(case.input, limits=case.limits)     # full trace, not just the answer
+            results.append({
+                &quot;outcome&quot;: case.check(trace.answer),               # exact check or rubric
+                &quot;path_ok&quot;: trace.steps &lt;= case.limits.max_steps
+                           and set(trace.tools) &lt;= case.allowed_tools,
+                &quot;stopped_correctly&quot;: trace.stopped_reason in case.allowed_stops,
+                &quot;cost&quot;: trace.cost,
+            })
+        report.append({&quot;case&quot;: case.id, &quot;results&quot;: results})
+    return report
+
+def summarise(report, bar):
+    passed = sum(1 for r in report
+                 if sum(x[&quot;outcome&quot;] and x[&quot;path_ok&quot;] for x in r[&quot;results&quot;]) &gt;= bar.min_runs_passing)
+    costs = [x[&quot;cost&quot;] for r in report for x in r[&quot;results&quot;]]
+    return {
+        &quot;case_pass_rate&quot;: passed / len(report),
+        &quot;median_cost&quot;: statistics.median(costs),
+        &quot;p90_cost&quot;: statistics.quantiles(costs, n=10)[-1],
+    }
+</code></pre>
+<p>Store every trace. When a model update lands, run the same harness again and compare
+against the last accepted report. Treat any drop as a regression until proven otherwise.
+<a href="../prompt-engineering/prompts-in-production.html">Prompts in production</a> shows the same habit
+applied to prompts. <a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a> covers
+trajectory grading in depth.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have we placed the product on the autonomy dial, and does the vendor's claim match?</li>
+<li class="task todo">Are our acceptance thresholds written down before we see any results?</li>
+<li class="task todo">Does the case set use our real cases, hard cases, hostile cases, and a hidden slice?</li>
+<li class="task todo">Is each case run several times, and scored on outcome, path, and cost?</li>
+<li class="task todo">Do we test failure behaviour: tool errors, caps, and escalation?</li>
+<li class="task todo">Is the acceptance result tied to the contract, with the right to re-test after
+      model updates?</li>
+<li class="task todo">Do we know the exit path for our data and traces?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="when-not-to-build-an-agent.html">When not to build an agent</a> — the economics to check
+  before you test.</li>
+<li><a href="running-an-agent-in-production.html">Running an agent in production</a> — the controls the
+  acceptance test should verify.</li>
+<li><a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a> — grading trajectories in
+  depth.</li>
+<li><a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a> — agent UX, unit
+  economics, and business models.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Gartner, <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027</a>
+  (Jun 2025): the prediction, the definition of agent-washing, and the estimate of about 130
+  real vendors. Confirmed through search-result excerpts and secondary reports; the page
+  could not be opened when this lesson was written.</li>
+<li>Civil Resolution Tribunal of British Columbia, <a href="https://www.canlii.org/en/bc/bccrt/doc/2024/2024bccrt149/2024bccrt149.html">Moffatt v. Air Canada, 2024 BCCRT 149</a>
+  (Feb 2024): the tribunal held the airline responsible for its chatbot's misleading
+  statement. The chat took place in November 2022. The decision text was checked by an
+  independent reviewer through a mirror copy; the CanLII page itself could not be opened
+  from our build environment. The tribunal handles small claims.</li>
+<li>The vendor claim, the test table, the results, and the code are invented and
+  illustrative.</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="running-an-agent-in-production.html"><span class="lbl">← Previous</span><span class="ttl">Running an agent in production</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-claim-test-threshold">The mental model: claim, test, threshold</a><a class="h2" href="#due-diligence-is-it-really-an-agent-and-can-you-rely-on-it">Due diligence: is it really an agent, and can you rely on it?</a><a class="h2" href="#acceptance-testing-design-the-test-before-the-deal">Acceptance testing: design the test before the deal</a><a class="h2" href="#worked-example-an-acceptance-test-for-a-claim">Worked example: an acceptance test for a claim</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<style id="reader-css">
+/* ---- font choices (only active when data-rf is set) ----
+   The default (no data-rf) is Inter, loaded once from Google Fonts by every
+   render script and set on <body>. These overrides swap Inter for one of
+   four common system sans-serifs a reader can pick per their preference. */
+html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
+html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
+html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
+html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
+html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
+html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
+html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
+/* ---- size scaling (only active when data-rs is set) ---- */
+html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
+html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
+html[data-rs] main h2{font-size:1.7em !important}
+html[data-rs] main h3{font-size:1.25em !important}
+html[data-rs] main h4{font-size:1em !important}
+html[data-rs] main .lede{font-size:1.2em !important}
+html[data-rs] main table{font-size:.9em !important}
+html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
+html[data-rs] main .pm-callout p{font-size:.95em !important}
+html[data-rs] main pre{font-size:.85em !important}
+/* ---- margins / column width (only active when data-rm is set) ---- */
+html[data-rm="n"] main{max-width:620px !important}
+html[data-rm="w"] main{max-width:1120px !important}
+/* below this, main is already narrower than either max-width above, so the
+   narrow/wide buttons would otherwise do nothing — map them to side padding.
+   The default (no data-rm) state is intentionally left alone here: each
+   template already tunes its own default mobile padding per breakpoint,
+   and overriding it flattened that down to one generic value for every
+   visitor who hasn't touched the reader-settings widget — a regression. */
+@media (max-width:680px){
+  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
+  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
+}
+/* ---- the widget ---- */
+/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
+#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
+  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
+#rs-btn:hover{border-color:#0969da;color:#0969da}
+#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
+  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
+#rs-panel.open{display:block}
+#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
+#rs-panel .rs-h:first-child{margin-top:0}
+.rs-fonts{display:flex;flex-direction:column;gap:4px}
+.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
+  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
+.rs-fonts button:hover{background:#f6f8fa}
+.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
+.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
+.rs-fonts button.on .rs-check{visibility:visible}
+.rs-row{display:flex;align-items:center;gap:8px}
+.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
+  cursor:pointer;color:#1f2328;font-size:14px}
+.rs-row button:hover{border-color:#0969da}
+.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
+.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
+#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
+#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
+  color:#59636e;font-size:13px;cursor:pointer}
+#rs-reset:hover{color:#0969da}
+@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
+@media print{#rs-root{display:none}}
+</style>
+<div id="rs-root">
+  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts">
+      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
+      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
+      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
+      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
+      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button id="rs-splus" aria-label="Increase font size">A</button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="rs-row rs-margins">
+      <button data-m="n" title="Narrow column">▮</button>
+      <button data-m="" title="Default">▬</button>
+      <button data-m="w" title="Wide column">▭</button>
+    </div>
+    <button id="rs-reset">Reset to defaults</button>
+  </div>
+  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys — reset a returning user's stored value if it points at a
+  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
+  // widget generation), so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval');
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
+    panel.querySelectorAll('.rs-margins button').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+  }
+  btn.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
+  document.addEventListener('click',function(e){
+    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
+  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  panel.querySelectorAll('.rs-margins button').forEach(function(b){
+    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save()});
+  apply();
+})();
+</script>
+<a href="../graph/index.html?focus=ai-agents%2Fchoosing-and-acceptance-testing-an-agent.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="ai-agents/choosing-and-acceptance-testing-an-agent.html"</script><script defer src="../assets/glossary.js"></script></body></html>

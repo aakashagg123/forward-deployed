@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink active" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink active" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 02</span>
     <h1>The anatomy of a prompt</h1>
@@ -448,6 +448,12 @@ next, so the model knows what to do before it hears what to avoid. Context after
 that, so the material sits in the model's working memory when it starts. Constraints
 before format, so the format spec is scoped by what's allowed. Examples last —
 because examples are the strongest signal, and they anchor everything above them.</p>
+<p>One rule bends this order. When the context is long, put it first. Anthropic's
+guidance says to place long documents (roughly 20,000 tokens or more) at the top of
+the prompt, above the instructions, and to put the question at the end. Their tests
+show the closing question can improve response quality by up to 30 percent on
+complex, multi-document inputs. The six parts stay the same. Only the position of a
+large context block changes.</p>
 <h2 id="the-six-parts-one-line-each">The six parts, one line each</h2>
 <ul>
 <li><strong>Role</strong> — "You are a copy editor for a financial newsletter." Sets the register,
@@ -490,6 +496,20 @@ claims.</p>
 <p>The upgraded prompt is longer. It's also <em>repeatable</em>. The one-liner gets a good
 output on a good day. The upgraded prompt gets the same shape of output every day,
 by every user, until the shape itself needs to change.</p>
+<h2 id="what-current-models-change">What current models change</h2>
+<p>Two behaviours of recent Claude models change how you write these parts.</p>
+<ul>
+<li><strong>Models do what you wrote, not what you meant.</strong> Earlier models often added extra
+  work on their own. Current models follow instructions more literally. If you want
+  extra depth, extra features, or "go beyond the basics," ask for it in the prompt.
+  If you leave it out, you will not get it.</li>
+<li><strong>A reason works better than a rule.</strong> Compare "Never use ellipses" with "Your reply
+  will be read aloud by a text-to-speech engine, so do not use ellipses, because the
+  engine cannot pronounce them." The second version gives the model the goal. The
+  model then applies the rule correctly in cases you did not list.</li>
+</ul>
+<p>A useful test for the whole prompt: give it to a colleague who has no context and ask
+them to follow it. If they would be confused, the model will be too.</p>
 <h2 id="tradeoffs">Tradeoffs</h2>
 <ul>
 <li><strong>Length vs. rigidity.</strong> Longer prompts constrain more, and also cost more tokens
@@ -524,7 +544,9 @@ by every user, until the shape itself needs to change.</p>
 <li class="task todo">Can I point to the role, task, context, constraints, format, and examples in
       my current prompt — or is at least one missing?</li>
 <li class="task todo">Is the task one verb, or has it quietly become two?</li>
-<li class="task todo">Are my constraints stated as things to avoid, not as things to prefer?</li>
+<li class="task todo">For each constraint: have I said what to do instead, and why, and not only what
+      to avoid?</li>
+<li class="task todo">If my input is long, is the document at the top and the question at the end?</li>
 <li class="task todo">Does my format spec use numbers and structure, not adjectives?</li>
 <li class="task todo">If the task has a "house style" a description can't capture, do I have at
       least one worked example?</li>
@@ -537,7 +559,7 @@ by every user, until the shape itself needs to change.</p>
 <li><a href="few-shot-cot-self-consistency.html">Few-shot, chain-of-thought, and self-consistency</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="what-prompt-engineering-actually-is.html"><span class="lbl">← Previous</span><span class="ttl">What prompt engineering actually is</span></a><a class="navcard next" href="everyday-productivity-patterns.html"><span class="lbl">→ Next</span><span class="ttl">Everyday productivity patterns</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#the-six-parts-one-line-each">The six parts, one line each</a><a class="h2" href="#a-worked-pass-from-one-liner-to-production-prompt">A worked pass: from one-liner to production prompt</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#the-six-parts-one-line-each">The six parts, one line each</a><a class="h2" href="#a-worked-pass-from-one-liner-to-production-prompt">A worked pass: from one-liner to production prompt</a><a class="h2" href="#what-current-models-change">What current models change</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

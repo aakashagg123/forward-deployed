@@ -371,44 +371,42 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="retrieval-as-memory.html">3 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">4 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 01</span>
     <h1>Memory as a product decision</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>A model has no memory of its own. Every time it seems to remember something — what you
-said five minutes ago, a preference from your last visit — your product engineered that
-by putting the relevant information back in front of it. Memory, in an AI product, is
-never free infrastructure that comes with the model. It is a feature your team builds,
-with a real engineering cost, a real ongoing storage and privacy cost, and a real promise
-made to the user about what will and won't be carried forward. Framing it this way changes
-the first question a product leader should ask about any AI feature: not "does it have
-memory?" but "have we decided, on purpose, what this feature should remember, for whom,
-and for how long — and does our product actually deliver on that decision?"</p>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A model does not remember anything between calls. When a product seems to remember, your
+team built that. It saved something, then put it back in front of the model later.</p>
+<p>So memory is a feature, not a default. It costs engineering time and storage. It also
+makes a promise to the user about what the product will keep and for how long.</p>
+<p>This changes the first question to ask about any AI feature. Do not ask "does it have
+memory?" Ask "have we decided what it remembers, for whom, and for how long?"</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — Memory is one of the few AI capabilities that reads as "magic" to
-users when it works and as a genuine trust violation when it works in a way nobody
-intended. Both outcomes come from the same underlying mechanism; only the product
-decision around it differs.</p>
-<p><strong>What it changes in your decisions</strong> — You treat "should this feature remember
-anything, and what" as an explicit product spec, with an owner and a written answer —
-not an emergent property of whatever the engineering team happened to wire up.</p>
-<p><strong>Ask yourself</strong> — <em>"If a user asked us, in plain language, 'what do you remember about
-me, and for how long,' could we give them a true, specific answer today?"</em></p>
-<p><strong>Risk if ignored</strong> — A feature either frustrates users by forgetting things they
-reasonably expected it to keep, or unsettles them by remembering things they assumed
-were forgotten — and nobody on the team can say which behavior was actually intended.</p>
+<p><strong>Why it matters</strong> — When memory works, users call it magic. When it works in a way no
+one intended, users call it a breach of trust. The same mechanism causes both. Only the
+product decision around it differs.</p>
+<p><strong>What it changes in your decisions</strong> — You write memory down as a spec, with an owner.
+It is not a side effect of whatever engineering wired up.</p>
+<p><strong>Ask yourself</strong> — <em>"If a user asked 'what do you remember about me, and for how long?',
+could we give a true, specific answer today?"</em></p>
+<p><strong>Risk if ignored</strong> — The feature forgets things users expect it to keep. Or it
+remembers things users thought were gone. Nobody on the team can say which behaviour
+was intended.</p>
 </blockquote>
 <h2 id="the-mental-model-a-promise-not-a-switch">The mental model: a promise, not a switch</h2>
-<p>"Memory" is not a single feature you turn on. It's closer to a set of specific promises:
-<em>this</em> detail will carry forward within a conversation, <em>that</em> detail will carry forward
-across visits, <em>this other</em> detail never leaves the current session. Each promise has a
-cost (engineering to build it, storage to hold it, a burden to keep it accurate) and a
-risk (privacy exposure, staleness, the discomfort of being remembered too well). Treating
-memory as a bundle of specific promises, rather than one on/off capability, is what turns
-a vague feature request into something a team can actually design and test.</p>
+<p>Memory is not one setting. It is a set of small promises.</p>
+<ul>
+<li>This detail carries on within a conversation.</li>
+<li>That detail carries on across visits.</li>
+<li>This other detail never leaves the current session.</li>
+</ul>
+<p>Each promise has a cost to build and keep accurate. Each has a risk: privacy exposure,
+stale facts, or the unease of being remembered too well. Thinking in promises turns a
+vague request into something a team can design and test.</p>
 <!-- Memory as decision — info → decision fork → gone/stored → user controls loop. -->
 <style>
 .dgm-md{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #5d8aa8;
@@ -510,68 +508,157 @@ a vague feature request into something a team can actually design and test.</p>
   </div>
 </div>
 
-<h2 id="why-this-needs-a-deliberate-answer-not-a-default">Why this needs a deliberate answer, not a default</h2>
-<p>Two default failure patterns show up constantly, and both trace back to memory being
-treated as an afterthought rather than a spec. <strong>The goldfish product</strong> — nothing is ever
-remembered, so a user re-explains their situation every single time, and a feature that
-could feel personal instead feels indifferent. <strong>The oversharing product</strong> — everything a
-user ever said gets stored and resurfaced indiscriminately, including things the user
-would never have expected to persist, and the first time that surfaces at the wrong
-moment, the trust cost is far larger than the convenience the memory ever bought. Neither
-extreme is a technical failure. Both are the predictable result of nobody deciding, on
-purpose, what should be remembered.</p>
-<h2 id="the-question-that-actually-scopes-the-feature">The question that actually scopes the feature</h2>
-<p>Before any engineering work starts, a memory feature needs an honest answer to four parts
-of one question: <strong>what</strong> specifically gets remembered (a preference, a fact, a whole
-transcript), <strong>for whom</strong> (this user only, everyone on their team, no one — session only),
-<strong>for how long</strong> (forever, until explicitly cleared, on a rolling expiry), and <strong>who can
-see or edit it</strong> (only the user, an admin, nobody but the system). A feature that can
-answer all four specifically is ready to build. A feature where the answer to any of them
-is "we'll figure that out later" is not — and "we'll figure it out later" is exactly how
-oversharing and goldfish products both get built.</p>
-<h2 id="why-users-notice-this-more-than-most-ai-behavior">Why users notice this more than most AI behavior</h2>
-<p>Most AI quality problems are graded on a curve — a slightly awkward summary or an
-imperfect answer is forgiven as "the AI being the AI." Memory failures are graded
-differently, because they read as personal. Being remembered correctly feels like being
-understood; being remembered incorrectly, or having something resurface that felt private,
-feels like a violation, not a bug. This asymmetry is why memory deserves more product
-rigor per feature than most AI capabilities get, even though the underlying engineering —
-covered in full in <a href="../ai/00-foundations.html#context-engineering">Context engineering</a>
-and <a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> — is the same discipline
-behind any AI feature's context management.</p>
+<h2 id="two-defaults-to-avoid">Two defaults to avoid</h2>
+<p>Both defaults come from nobody making the decision.</p>
+<ul>
+<li><strong>The goldfish product.</strong> It remembers nothing. Users explain their situation again
+  every time. A feature that could feel personal feels indifferent.</li>
+<li><strong>The oversharing product.</strong> It stores everything and brings it back without
+  judgement. One surprise at the wrong moment costs more trust than the memory ever won.</li>
+</ul>
+<p>Neither is a technical failure. Both are the result of skipping the decision.</p>
+<h2 id="the-four-part-question">The four-part question</h2>
+<p>Before any build starts, answer four things in writing.</p>
+<ol>
+<li><strong>What</strong> is remembered? A preference, a fact, or a whole transcript.</li>
+<li><strong>For whom?</strong> This user only, their whole team, or no one (session only).</li>
+<li><strong>For how long?</strong> Forever, until cleared, or on a rolling expiry.</li>
+<li><strong>Who can see or edit it?</strong> Only the user, an admin, or only the system.</li>
+</ol>
+<p>A feature that answers all four is ready to build. "We will decide later" on any one of
+them is how both bad defaults get shipped.</p>
+<h2 id="worked-example-scoping-a-support-assistant">Worked example: scoping a support assistant</h2>
+<p><em>This example is invented, to show the method.</em></p>
+<p>A team adds memory to a customer support assistant. The first draft says only "it
+remembers the customer." That is not a spec. The team fills in the four parts.</p>
+<table>
+<thead>
+<tr>
+<th>Detail</th>
+<th>What</th>
+<th>For whom</th>
+<th>How long</th>
+<th>Who can see or edit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Preferred language</td>
+<td>A setting</td>
+<td>This customer</td>
+<td>Until changed</td>
+<td>Customer, in account settings</td>
+</tr>
+<tr>
+<td>Product owned and plan</td>
+<td>A fact from the account system</td>
+<td>This customer</td>
+<td>Always current, read live</td>
+<td>Customer and support staff</td>
+</tr>
+<tr>
+<td>"Prefers short answers"</td>
+<td>A style preference</td>
+<td>This customer</td>
+<td>12 months since last use</td>
+<td>Customer, in a memory list</td>
+</tr>
+<tr>
+<td>Details of a past complaint</td>
+<td>A case summary</td>
+<td>Support team only</td>
+<td>24 months</td>
+<td>Support staff, not the assistant</td>
+</tr>
+<tr>
+<td>Health details mentioned in chat</td>
+<td>Do not store</td>
+<td>n/a</td>
+<td>Session only</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<p>Two decisions matter most. The plan is not stored as a memory at all, because the account
+system already holds the true value. And health details are session-only, because storing
+them adds risk and no value. The last row is the most useful row in the table.</p>
+<h2 id="why-users-notice-memory-more-than-other-ai-behaviour">Why users notice memory more than other AI behaviour</h2>
+<p>Most AI flaws are forgiven as "the AI being the AI". A clumsy summary is just a poor
+summary. Memory flaws feel personal. Being remembered correctly feels like being
+understood. Being remembered wrongly, or having something private resurface, feels like a
+violation.</p>
+<p>That is why memory needs more product care per feature than most AI capabilities. The
+engineering behind it is the same discipline as any context management. See
+<a href="../ai/00-foundations.html#context-engineering">Context engineering</a> and
+<a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>No decision, by default</strong> — shipping a feature where memory behavior emerged from
-  implementation details, with no one able to state what was actually promised to users.</li>
-<li><strong>The goldfish product</strong> — remembering nothing, forcing users to repeat themselves every
-  session, when a specific, scoped memory would have removed real friction.</li>
-<li><strong>The oversharing product</strong> — storing and resurfacing everything indiscriminately, with
-  no visible boundary a user could anticipate.</li>
-<li><strong>A promise with no owner</strong> — a memory feature that exists in the product but has no one
-  accountable for what it stores, how long, or whether it's still accurate.</li>
+<li><strong>No decision, by default.</strong> Memory behaviour comes from implementation details. No one
+  can state what users were promised.</li>
+<li><strong>The goldfish product.</strong> Nothing is remembered, and users repeat themselves.</li>
+<li><strong>The oversharing product.</strong> Everything is stored and resurfaced, with no boundary a
+  user could predict.</li>
+<li><strong>A promise with no owner.</strong> The feature exists, but no one answers for what it stores,
+  how long, or whether it is still accurate.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The model is stateless. Each call sends the full input again. "Memory" is code that
+decides what to add to that input. The Claude API makes this explicit. Its memory tool
+runs on your side. Claude asks for a file operation and your application carries it out.
+In the docs' words, "Memory lives entirely in your application."</p>
+<p>That has two consequences for a product leader.</p>
+<ul>
+<li><strong>You own the store.</strong> Where it lives, who can read it, and when it is deleted are your
+  decisions, and your legal exposure.</li>
+<li><strong>The spec becomes code.</strong> The four-part question maps onto a small record per memory:</li>
+</ul>
+<pre><code class="language-python">from dataclasses import dataclass
+from datetime import datetime, timedelta
+
+@dataclass
+class Memory:
+    text: str                  # WHAT is remembered
+    subject_id: str            # FOR WHOM: one user, or an org id
+    scope: str                 # &quot;user&quot; | &quot;org&quot;  (session memory is never stored)
+    expires_at: datetime       # FOR HOW LONG
+    visible_to: tuple          # WHO can see or edit: (&quot;user&quot;,), (&quot;user&quot;, &quot;admin&quot;)
+    source: str                # where it came from, for audit and deletion
+    created_at: datetime
+
+def is_live(m: Memory, now: datetime) -&gt; bool:
+    return now &lt; m.expires_at
+</code></pre>
+<p>If a field on this record has no answer in your spec, the spec is not finished.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">For each AI feature: can we state specifically what it remembers, for whom, for how
-      long, and who can see or edit it?</li>
-<li class="task todo">Is there a named owner for the memory feature's behavior, not just its
-      implementation?</li>
-<li class="task todo">Have we tested what a user would actually experience if they asked "what do you
-      remember about me"?</li>
-<li class="task todo">Have we deliberately chosen where on the spectrum — nothing remembered, everything
-      remembered — each feature sits, rather than inheriting a default?</li>
+<li class="task todo">For each AI feature, can we say what it remembers, for whom, for how long, and who
+      can see or edit it?</li>
+<li class="task todo">Does the memory feature have a named owner, not only an implementer?</li>
+<li class="task todo">Have we tested what a user sees when they ask "what do you remember about me?"</li>
+<li class="task todo">Did we choose where the feature sits between "nothing" and "everything", instead of
+      inheriting a default?</li>
+<li class="task todo">Do we avoid copying facts that another system already holds as the source of truth?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
-<li><a href="session-user-and-organizational-memory.html">Session, user &amp; organizational memory</a> —
-  the three shapes this decision actually takes.</li>
-<li><a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> — the engineering-depth spoke
-  on memory hierarchy and context engineering.</li>
+<li><a href="session-user-and-organizational-memory.html">Session, user &amp; organizational memory</a>
+  — the three shapes this decision takes.</li>
+<li><a href="writing-and-maintaining-memory.html">Writing and maintaining memory</a> — how a memory
+  is created, updated and expired.</li>
 <li><a href="when-memory-goes-wrong.html">When memory goes wrong</a> — what happens when this decision
   is skipped.</li>
+<li><a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> — the engineering depth on the
+  memory hierarchy.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Memory tool</a>
+  (Claude API docs): the memory tool is client-side, and "memory lives entirely in your
+  application." Checked 2026-09.</li>
+<li>The support-assistant scenario and its table are invented and illustrative.</li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="session-user-and-organizational-memory.html"><span class="lbl">→ Next</span><span class="ttl">Session, user &amp; organizational memory</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-promise-not-a-switch">The mental model: a promise, not a switch</a><a class="h2" href="#why-this-needs-a-deliberate-answer-not-a-default">Why this needs a deliberate answer, not a default</a><a class="h2" href="#the-question-that-actually-scopes-the-feature">The question that actually scopes the feature</a><a class="h2" href="#why-users-notice-this-more-than-most-ai-behavior">Why users notice this more than most AI behavior</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-promise-not-a-switch">The mental model: a promise, not a switch</a><a class="h2" href="#two-defaults-to-avoid">Two defaults to avoid</a><a class="h2" href="#the-four-part-question">The four-part question</a><a class="h2" href="#worked-example-scoping-a-support-assistant">Worked example: scoping a support assistant</a><a class="h2" href="#why-users-notice-memory-more-than-other-ai-behaviour">Why users notice memory more than other AI behaviour</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink active" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink active" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 08</span>
     <h1>Prompting inside coding agents</h1>
@@ -380,13 +380,12 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <p>Coding agents — Claude Code, Cursor, Aider, Windsurf, Continue — are agents whose
 tools are <code>read_file</code>, <code>edit_file</code>, <code>run_command</code>, <code>search_code</code>. Their prompts
 carry more weight than any other kind of prompt in daily use today, because the
-output isn't a chat reply — it's real code that ships. The prompt-engineering craft
-here has its own idioms: the <strong>prompt is the spec</strong> for the change; a project-level
-context file (Claude Code's <code>CLAUDE.md</code>, Cursor's <code>.cursorrules</code>, Aider's
-<code>CONVENTIONS.md</code>) supplies house rules to every session; <strong>plan mode</strong> or
-"propose-then-apply" separates thinking from acting on high-risk changes; and
-<strong>sub-agents</strong> or delegated tasks parallelize work while protecting the main
-context window. This lesson names the patterns, so a developer new to coding agents
+output isn't a chat reply — it's real code that ships. The craft here has four idioms.
+The <strong>prompt is the spec</strong> for the change. A project-level context file supplies house
+rules to every session: Claude Code's <code>CLAUDE.md</code>, Cursor's <code>.cursor/rules/</code> files or a
+shared <code>AGENTS.md</code>, or Aider's <code>CONVENTIONS.md</code>. <strong>Plan mode</strong>, or "propose-then-apply,"
+separates thinking from acting on high-risk changes. <strong>Sub-agents</strong> run delegated
+tasks in parallel and protect the main context window. This lesson names the patterns, so a developer new to coding agents
 gets the leverage on day one instead of stumbling into it over a month.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the AI PM (or coding-agent user)</strong></p>
@@ -477,13 +476,20 @@ scoped the prompt.</p>
 </ul>
 </blockquote>
 <p>Every line in the strong prompt is a constraint the agent will honor. The
-"do not touch any other file" line alone prevents 30% of accidental sprawl.</p>
+"do not touch any other file" line does the most work. It stops the agent from
+"improving" code you did not ask about.</p>
 <p>The rule: prompt as if the agent will do exactly what you wrote and nothing you
 didn't. Because it will.</p>
 <h2 id="pattern-2-the-project-context-file-is-the-always-on-system-prompt">Pattern 2 — the project context file is the always-on system prompt</h2>
-<p>Claude Code reads <code>CLAUDE.md</code>. Cursor reads <code>.cursorrules</code>. Aider reads
-<code>CONVENTIONS.md</code>. All of them play the same role: a project-scoped file, checked
-into git, that ships to every session as part of the system prompt.</p>
+<p>Claude Code reads <code>CLAUDE.md</code>. Cursor reads Project Rules in <code>.cursor/rules/</code> and
+also reads <code>AGENTS.md</code>. Cursor's older single <code>.cursorrules</code> file is deprecated. Aider
+reads <code>CONVENTIONS.md</code>. All of them play the same role: a project-scoped file, checked
+into git, that ships to every session as part of the system prompt. Tool file names
+change often, so check your tool's current documentation before you copy a layout.</p>
+<p>Keep one limit in mind. These files are <strong>guidance, not enforcement</strong>. The agent
+usually follows them, but nothing forces it to. When a rule must never break, such as
+"never run a command that deletes data," enforce it with permissions or hooks, and use
+the context file to explain why.</p>
 <p>What to put in it:</p>
 <ul>
 <li><strong>What the codebase is.</strong> One paragraph. What ships, what stack.</li>
@@ -505,9 +511,9 @@ review like code. A bad <code>CLAUDE.md</code> invisibly degrades every session 
 project.</p>
 <h2 id="pattern-3-plan-mode-and-propose-then-apply">Pattern 3 — plan mode and propose-then-apply</h2>
 <p>For any change touching more than one file, or any change to unfamiliar code,
-run the agent in <strong>plan mode</strong> (Claude Code's <code>/plan</code>; Cursor's "Ask" mode before
-"Compose"; Aider's <code>/architect</code>). The agent proposes the change without applying
-it. You review the plan, redirect if needed, then approve.</p>
+run the agent in <strong>plan mode</strong> (Claude Code's plan mode; Cursor's read-only Ask mode
+before its Agent mode; Aider's <code>/architect</code>). The agent proposes the change without
+applying it. Mode names change between versions, so check what your tool calls it. You review the plan, redirect if needed, then approve.</p>
 <p>The idiom:</p>
 <ul>
 <li>Small, obvious changes: apply mode.</li>
@@ -539,6 +545,24 @@ typecheck</code>." "Then show me the diff." The agent runs the check itself and 
 declares success with evidence or reports the failure. This is the coding-agent
 equivalent of the acceptance criteria in a <a href="../technical-product-management/specs-prds-and-rfcs.html">PRD</a>.</p>
 <p>Without a verification clause, the agent judges its own work on vibes.</p>
+<h2 id="pattern-6-rule-out-the-two-habits-of-capable-agents">Pattern 6 — rule out the two habits of capable agents</h2>
+<p>Strong coding models have two habits that a short prompt can prevent.</p>
+<ul>
+<li><strong>Over-engineering.</strong> The agent adds extra files, helper functions, and options you
+  did not ask for. Add a scope rule to the prompt or the context file: "Only make
+  changes that are directly requested. Do not refactor surrounding code, add
+  comments to code you did not change, or build in flexibility for hypothetical
+  future needs."</li>
+<li><strong>Writing to the test.</strong> The agent makes the tests pass by hard-coding the expected
+  values, or by writing a special case for the test inputs. Add: "Write a general
+  solution that works for all valid inputs, not only the test cases. If a test looks
+  wrong, or the task cannot be done, tell me instead of working around it."</li>
+</ul>
+<p>Both rules are fixes for behaviour seen on recent models. Re-test them when you change
+model, since a later model may need less of this.</p>
+<p>A third habit is a plus, not a problem. Agents often write small scratch files to test
+an idea. If you do not want leftovers, add: "Delete any temporary files you create
+before you finish."</p>
 <h2 id="tradeoffs">Tradeoffs</h2>
 <ul>
 <li><strong>Speed vs. safety.</strong> Apply mode is fastest. Plan mode is safest. Match to
@@ -559,6 +583,11 @@ equivalent of the acceptance criteria in a <a href="../technical-product-managem
   fixing the guess as you would have fixing the bug.</li>
 <li><strong>Missing <code>CLAUDE.md</code>.</strong> Every session re-learns the project from scratch.
   Every session makes the same mistakes.</li>
+<li><strong>A hard rule left as guidance.</strong> "Never touch the production config" sits in the
+  context file, and one session ignores it. Enforce must-not rules with permissions or
+  hooks.</li>
+<li><strong>Green tests, wrong code.</strong> The agent hard-codes values so the suite passes. The
+  verification clause reports success. Read the diff, not only the test output.</li>
 <li><strong>Skipping plan mode on a large change.</strong> Agent commits to a wrong structure
   by the third file; unwinding costs more than proposing would have.</li>
 <li><strong>No verification clause.</strong> Agent reports "done"; you find the tests were never
@@ -582,6 +611,10 @@ equivalent of the acceptance criteria in a <a href="../technical-product-managem
       to sub-agents?</li>
 <li class="task todo">Does my prompt end with a verification clause — a test, a typecheck, a
       diff review — so "done" has evidence, not vibes?</li>
+<li class="task todo">Have I told the agent to keep changes minimal and to write general solutions,
+      not code that only passes the tests?</li>
+<li class="task todo">Is every "must never" rule enforced by permissions or hooks, not only written in
+      the context file?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -593,7 +626,7 @@ equivalent of the acceptance criteria in a <a href="../technical-product-managem
 <li><a href="../ai-agents/index.html">AI agents</a> — the scaffolding underneath these tools.</li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="prompting-for-tools-and-agents.html"><span class="lbl">← Previous</span><span class="ttl">Prompting for tools and agents</span></a><a class="navcard next" href="when-prompts-fail.html"><span class="lbl">→ Next</span><span class="ttl">When prompts fail: the diagnostic playbook</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#pattern-1-the-prompt-is-the-spec">Pattern 1 — the prompt is the spec</a><a class="h2" href="#pattern-2-the-project-context-file-is-the-always-on-system-prompt">Pattern 2 — the project context file is the always-on system prompt</a><a class="h2" href="#pattern-3-plan-mode-and-propose-then-apply">Pattern 3 — plan mode and propose-then-apply</a><a class="h2" href="#pattern-4-sub-agents-for-parallel-investigation">Pattern 4 — sub-agents for parallel investigation</a><a class="h2" href="#pattern-5-verification-is-part-of-the-prompt">Pattern 5 — verification is part of the prompt</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#pattern-1-the-prompt-is-the-spec">Pattern 1 — the prompt is the spec</a><a class="h2" href="#pattern-2-the-project-context-file-is-the-always-on-system-prompt">Pattern 2 — the project context file is the always-on system prompt</a><a class="h2" href="#pattern-3-plan-mode-and-propose-then-apply">Pattern 3 — plan mode and propose-then-apply</a><a class="h2" href="#pattern-4-sub-agents-for-parallel-investigation">Pattern 4 — sub-agents for parallel investigation</a><a class="h2" href="#pattern-5-verification-is-part-of-the-prompt">Pattern 5 — verification is part of the prompt</a><a class="h2" href="#pattern-6-rule-out-the-two-habits-of-capable-agents">Pattern 6 — rule out the two habits of capable agents</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

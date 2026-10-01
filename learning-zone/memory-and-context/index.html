@@ -375,8 +375,8 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
   <div class="index-hero">
     <span class="chip">A standalone module</span>
     <h1>Memory &amp; context for the product leader</h1>
-    <p class="lede">Memory as a product decision, the three shapes it takes, retrieval as its most common implementation, and the trust failures it has to be designed against.</p>
-    <div class="index-meta"><span>4 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
+    <p class="lede">Memory as a product decision, the three shapes it takes, how memories are written and kept, the designs for reading them back, and the trust failures it has to be designed against.</p>
+    <div class="index-meta"><span>5 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
   </div>
   <div class="intro"><p>A model remembers nothing between calls. Anything it appears to "remember" — the earlier
 turns of a chat, a preference from last week, a company's house style — was put back in
@@ -385,24 +385,58 @@ highest-leverage product decisions in any AI feature, and it is easy to get back
 teams either build no memory at all, forcing users to repeat themselves forever, or build
 memory carelessly, and end up with a feature that resurfaces something a user assumed was
 forgotten, in front of the wrong audience.</p>
-<p><strong>A note on scope.</strong> The engineering mechanics of context and memory — the context window
-as a scarce resource, compaction, offloading, tool-result hygiene, the full memory
-hierarchy — are already developed in real depth in two places in this curriculum:
-<a href="../ai/00-foundations.html#context-engineering">Context engineering</a> and
-<a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>. Rebuilding that ground here
-would only restate it. This module exists instead to answer the question those two
-lessons don't lead with: <strong>memory as a product decision</strong> — what to promise a user, what
-it costs in trust, and where it fails as a business risk, not just an engineering one.
-It's shorter than most modules in this family for exactly that reason: four lessons, not
-six, because the honest amount of genuinely new ground is four lessons' worth. For the
-broader strategic argument — context engineering as an operating discipline beyond
-memory specifically, including specs, governance, and evals — see
+<p><strong>A note on scope.</strong> The engineering mechanics of context and memory are already covered
+in depth in two places: <a href="../ai/00-foundations.html#context-engineering">Context engineering</a>
+and <a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>. They cover the context window
+as a scarce resource, compaction, offloading, and the memory hierarchy. This module does
+not repeat them. It answers what those lessons do not lead with: <strong>memory as a product
+decision</strong>. What do you promise a user? How is a memory written and kept? What does it cost
+in trust? Where does it fail as a business risk?</p>
+<p>It has five lessons. Four cover the decision and its risks. One, on the write path, covers
+ground that no other lesson in this curriculum does. For the wider argument about context
+as an operating discipline, including specs, governance and evals, see
 <a href="../context-engineering/index.html">Context engineering for the product leader</a>.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarises an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The context window, compaction, offloading</td>
+<td><a href="../ai/00-foundations.html#context-engineering">Context engineering</a></td>
+</tr>
+<tr>
+<td>The memory hierarchy for agents</td>
+<td><a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a></td>
+</tr>
+<tr>
+<td>Chunking, embeddings, retrieval quality</td>
+<td><a href="../rag-vector-databases/index.html">RAG &amp; vector databases</a></td>
+</tr>
+<tr>
+<td>Isolating tenants and users</td>
+<td><a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a></td>
+</tr>
+<tr>
+<td>Prompt injection and defences</td>
+<td><a href="../agentic-ai/safety-security-and-governance.html">Safety, security &amp; governance</a></td>
+</tr>
+<tr>
+<td>Owning shared context across features</td>
+<td><a href="../context-engineering/context-governance-at-scale.html">Context governance at scale</a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="the-knowledge-graph">The knowledge graph</h2>
-<p>Memory is a set of promises your product makes about what it will and won't carry
-forward. Every lesson in this module hangs off this picture:</p>
-<!-- Memory & context — knowledge graph across 4 lessons.
-     Promise (decide) → Scope (3 tiers) → Source (retrieval) → Risk (3 failures). -->
+<p>Memory is a set of promises your product makes about what it will and will not carry
+forward. Every lesson hangs off this picture:</p>
+<!-- Memory & context — knowledge graph across 5 lessons.
+     Promise (decide) → Scope (3 tiers) → Write path → Source (3 designs) → Risk (4 failures). -->
 <style>
 .dgm-mc{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #5d8aa8;
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),
@@ -432,7 +466,7 @@ forward. Every lesson in this module hangs off this picture:</p>
 .dgm-mc-tier p{margin:0;font-size:10.5px;color:#59636e;line-height:1.3}
 .dgm-mc-arr{display:flex;justify-content:center;color:#8c959f;padding:2px 0}
 .dgm-mc-arr svg{width:16px;height:16px}
-.dgm-mc-risks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dgm-mc-risks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .dgm-mc-risk{background:#ffebe9;border:1px solid #ffcecb;border-radius:9px;padding:9px 11px}
 .dgm-mc-risk .dgm-mc-ico{color:#d1242f;width:18px;height:18px;margin-bottom:4px}
 .dgm-mc-risk h6{margin:0 0 2px;font-size:11px;font-weight:700;color:#82061e;letter-spacing:.02em;
@@ -446,7 +480,7 @@ forward. Every lesson in this module hangs off this picture:</p>
 <div class="dgm-mc">
   <span class="dgm-mc-chip">Memory &amp; context</span>
 
-  <h4>Four lessons · promise → scope → source → risk</h4>
+  <h4>Five lessons · promise → scope → write → read → risk</h4>
   <p class="dgm-mc-sub">Memory isn't free infrastructure — every step of it is a decision someone should make on purpose.</p>
 
   <div class="dgm-mc-section">
@@ -482,19 +516,30 @@ forward. Every lesson in this module hangs off this picture:</p>
   <div class="dgm-mc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
 
   <div class="dgm-mc-section">
-    <span class="dgm-mc-badge">Lesson 3 · Where it comes from</span>
-    <h5>Retrieval is one implementation</h5>
+    <span class="dgm-mc-badge">Lesson 3 · The write path</span>
+    <h5>What is saved, when, and how it changes</h5>
+    <div class="dgm-mc-lead">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>
+      Worth saving? New or a conflict? When does it expire? Decide before the first write.
+    </div>
+  </div>
+
+  <div class="dgm-mc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+  <div class="dgm-mc-section">
+    <span class="dgm-mc-badge">Lesson 4 · Where it comes from</span>
+    <h5>Three designs · load · retrieve · agent notes</h5>
     <div class="dgm-mc-lead">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M4 10h16M9 6v12"/></svg>
-      Same retrieval system, two drawers: company knowledge · user history.
+      Small and stable: load it. Large: search it. Long task: let the agent keep notes.
     </div>
   </div>
 
   <div class="dgm-mc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
 
   <div class="dgm-mc-section" style="background:#ffebe9;border-color:#ffcecb">
-    <span class="dgm-mc-badge" style="background:#a13d63">Lesson 4 · When it breaks</span>
-    <h5 style="color:#82061e">Three failure modes to check for by default</h5>
+    <span class="dgm-mc-badge" style="background:#a13d63">Lesson 5 · When it breaks</span>
+    <h5 style="color:#82061e">Four failure modes to test for by default</h5>
     <div class="dgm-mc-risks">
       <div class="dgm-mc-risk">
         <svg class="dgm-mc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -508,38 +553,39 @@ forward. Every lesson in this module hangs off this picture:</p>
         <svg class="dgm-mc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="10" width="12" height="10" rx="2"/><path d="M9 10V7a3 3 0 016 0v3"/></svg>
         <h6>Stuck</h6><p>User can't see, correct, or delete it</p>
       </div>
+      <div class="dgm-mc-risk">
+        <svg class="dgm-mc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>
+        <h6>Poisoned</h6><p>Planted instruction acts in later sessions</p>
+      </div>
     </div>
   </div>
 </div>
 
-<p>Read it in three passes. <strong>The promise</strong>: memory is something your product decides to
-offer, with a cost and a risk attached, not a default a model gives you for free. <strong>The
-scope</strong>: memory comes in different shapes — one conversation, one person, one whole
-organization — and each shape carries a different product and privacy contract.
-<strong>The risk</strong>: every one of those shapes fails in a specific, predictable way, and the
-failure is almost always a trust problem before it's a technical one.</p>
+<p>Read it in four passes. <strong>The promise</strong>: memory is something your product decides to
+offer, with a cost and a risk. <strong>The scope</strong>: one conversation, one person, or a whole
+organization, each with a different contract. <strong>The write and read paths</strong>: how memory
+gets in, and how it comes back. <strong>The risk</strong>: every shape fails in a predictable way, and
+the failure is usually a trust problem before it is a technical one.</p>
 <h2 id="the-lessons">The lessons</h2>
 <ul>
 <li><a href="memory-as-a-product-decision.html"><strong>Memory as a product decision</strong></a> — why offering
-  memory at all is a choice with a cost and a promise attached, not free infrastructure.</li>
+  memory is a choice with a cost and a promise, and the four-part question that scopes it.</li>
 <li><a href="session-user-and-organizational-memory.html"><strong>Session, user &amp; organizational memory</strong></a>
-  — the three shapes memory takes, and why each one needs its own answer to "who can see
-  this, and for how long."</li>
-<li><a href="retrieval-as-memory.html"><strong>Retrieval as memory</strong></a> — the bridge between this module and
-  <a href="../rag-vector-databases/index.html">RAG &amp; vector databases</a>: fetching relevant knowledge
-  at the moment it's needed is one of the most common ways memory actually gets built.</li>
-<li><a href="when-memory-goes-wrong.html"><strong>When memory goes wrong</strong></a> — staleness, leakage, and the
-  right to be forgotten: the trust failures a memory feature has to be designed against
-  from day one.</li>
+  — the three shapes, and why each needs its own answer to "who sees this, and for how
+  long?"</li>
+<li><a href="writing-and-maintaining-memory.html"><strong>Writing and maintaining memory</strong></a> — what is
+  worth saving, when to save it, how new facts replace old ones, and when memories expire.</li>
+<li><a href="retrieval-as-memory.html"><strong>Retrieval as memory</strong></a> — the three designs (load, retrieve,
+  keep notes) and how to choose. Bridges to <a href="../rag-vector-databases/index.html">RAG</a>.</li>
+<li><a href="when-memory-goes-wrong.html"><strong>When memory goes wrong</strong></a> — staleness, leakage, the
+  right to be forgotten, and poisoning, with a test for each.</li>
 </ul>
-<p>Each lesson pairs the product framing with a <strong>🎯 For the product leader</strong> briefing —
-why it matters, the decision it changes, the question to ask your team, and the risk if
-ignored — plus a diagram. For the engineering depth behind every mechanic mentioned here,
-follow the spokes into <a href="../ai/00-foundations.html#context-engineering">Context engineering</a>
-and <a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>.</p>
-<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>.</p></div>
+<p>Each lesson has a <strong>🎯 For the product leader</strong> briefing, a labelled worked example, an
+"Under the hood" section for engineers, and a Sources list.</p>
+<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>, which ends with a
+self-test.</p></div>
   <h2 class="sec">The lessons</h2>
-  <div class="cards"><a class="card" href="memory-as-a-product-decision.html"><span class="card-num">01</span><h3>Memory as a product decision</h3><span class="card-go">Read lesson →</span></a><a class="card" href="session-user-and-organizational-memory.html"><span class="card-num">02</span><h3>Session, user &amp; organizational memory</h3><span class="card-go">Read lesson →</span></a><a class="card" href="retrieval-as-memory.html"><span class="card-num">03</span><h3>Retrieval as memory</h3><span class="card-go">Read lesson →</span></a><a class="card" href="when-memory-goes-wrong.html"><span class="card-num">04</span><h3>When memory goes wrong</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <div class="cards"><a class="card" href="memory-as-a-product-decision.html"><span class="card-num">01</span><h3>Memory as a product decision</h3><span class="card-go">Read lesson →</span></a><a class="card" href="session-user-and-organizational-memory.html"><span class="card-num">02</span><h3>Session, user &amp; organizational memory</h3><span class="card-go">Read lesson →</span></a><a class="card" href="writing-and-maintaining-memory.html"><span class="card-num">03</span><h3>Writing and maintaining memory</h3><span class="card-go">Read lesson →</span></a><a class="card" href="retrieval-as-memory.html"><span class="card-num">04</span><h3>Retrieval as memory</h3><span class="card-go">Read lesson →</span></a><a class="card" href="when-memory-goes-wrong.html"><span class="card-num">05</span><h3>When memory goes wrong</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
   </main>
 <style id="reader-css">

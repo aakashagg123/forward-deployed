@@ -480,15 +480,20 @@ rather than just what it does.</p>
 <h2 id="the-lessons">The lessons</h2>
 <ul>
 <li><a href="what-is-context-engineering.html"><strong>What is context engineering, for a product leader?</strong></a>
-  — the data-first-to-context-first shift, and the four things "context" actually means.</li>
+  — the data-first-to-context-first shift, the four things "context" actually means, and
+  why the goal is the smallest useful context, not the largest.</li>
 <li><a href="why-prompt-engineering-doesnt-scale.html"><strong>Why prompt engineering doesn't scale</strong></a> —
-  fragility, no reuse across use cases, and no memory, as a diagnostic, not a lecture.</li>
+  fragility, no reuse across use cases, and no memory, as a diagnostic, not a lecture.
+  Also what the prompt still owns.</li>
 <li><a href="the-anatomy-of-a-context-pipeline.html"><strong>The anatomy of a context pipeline</strong></a> —
-  auditing who owns each stage, and the unowned seams where quality actually leaks.</li>
+  auditing who owns each stage, the unowned seams where quality actually leaks, and what
+  changes when an agent assembles its own context.</li>
 <li><a href="context-as-a-spec-able-requirement.html"><strong>Context as a spec-able requirement</strong></a> — the
-  context contract: what a PRD should name before an engineer has to guess.</li>
+  context contract: what a PRD should name before an engineer has to guess, including a
+  size budget.</li>
 <li><a href="context-governance-at-scale.html"><strong>Context governance at scale</strong></a> — keeping shared
-  policy, corpora, and org memory consistent across many features and teams.</li>
+  policy, corpora, and org memory consistent across many features and teams, and deciding
+  which content is trusted and who may retrieve it.</li>
 <li><a href="evaluating-context-quality.html"><strong>Evaluating context quality</strong></a> — grading whether the
   context was right, separately and faster than grading whether the answer was good.</li>
 <li><a href="context-across-the-product-lifecycle.html"><strong>Context engineering across the product lifecycle</strong></a>
@@ -502,7 +507,8 @@ mechanic it names.</p>
 <ul>
 <li><a href="../prompt-engineering/index.html">Prompt engineering</a> — the craft layer inside
   context engineering. The prompt is one component of the context; that module covers
-  how to write it, from ChatGPT productivity through Claude Code agentic patterns.</li>
+  how to write it, from ChatGPT productivity through Claude Code agentic patterns, and
+  how to version and test it in production.</li>
 <li><a href="../ai/00-foundations.html#context-engineering">Context engineering (engineering depth)</a>
   and <a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> — the mechanics behind
   every context source this module names.</li>
