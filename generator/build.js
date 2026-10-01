@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import matter from 'gray-matter';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
@@ -126,6 +127,22 @@ function copyDir(src, dest) {
     if (entry.isDirectory()) copyDir(s, d);
     else fs.copyFileSync(s, d);
   }
+}
+
+// Renames a just-copied static file to a content-hashed name (theme.js ->
+// theme.a1b2c3d4.js) and returns the new root-relative href. Without this,
+// every deploy reuses the exact same /theme.js URL, so a browser or CDN
+// that cached the previous version's response keeps serving it past that
+// deploy — stale JS/CSS silently shipped indefinitely, not just until the
+// cache's TTL happens to expire.
+function hashAndRename(distDir, filename) {
+  const filePath = path.join(distDir, filename);
+  const hash = createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 8);
+  const ext = path.extname(filename);
+  const base = filename.slice(0, -ext.length);
+  const hashedName = `${base}.${hash}${ext}`;
+  fs.renameSync(filePath, path.join(distDir, hashedName));
+  return `/${hashedName}`;
 }
 
 // Recursively finds every "assets" or "covers" folder under a space
@@ -348,6 +365,12 @@ async function build() {
   rmrf(DIST_DIR);
   fs.mkdirSync(DIST_DIR, { recursive: true });
 
+  // Copied and hashed up front so every page render below can reference
+  // the correct cache-busted URLs via SITE.cssHref/SITE.jsHref.
+  copyDir(THEME_STATIC_DIR, DIST_DIR);
+  SITE.cssHref = hashAndRename(DIST_DIR, 'theme.css');
+  SITE.jsHref = hashAndRename(DIST_DIR, 'theme.js');
+
   const highlighter = await createHighlighter({
     themes: ['github-dark'],
     langs: ['javascript', 'typescript', 'python', 'bash', 'json', 'html', 'css', 'markdown'],
@@ -505,8 +528,6 @@ Sitemap: ${SITE.baseUrl}/sitemap.xml
   fs.writeFileSync(path.join(DIST_DIR, 'robots.txt'), robots);
 
   writeLlmsTxt({ spaces, spaceData });
-
-  copyDir(THEME_STATIC_DIR, DIST_DIR);
 
   const cnamePath = path.join(ROOT, 'CNAME');
   if (fs.existsSync(cnamePath)) {

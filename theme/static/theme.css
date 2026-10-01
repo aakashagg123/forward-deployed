@@ -339,6 +339,7 @@ img { max-width: 100%; }
 .fd-gh-head h4 { font-size: 15px; font-weight: 700; margin: 0; }
 .fd-gh-profile { font-size: 12.5px; color: #9A9A9E; }
 :root[data-theme='light'] .fd-gh-profile { color: #4A4A4A; }
+.fd-gh-cta { padding: 5px 12px; font-size: 12px; }
 .fd-gh-sync {
   margin-left: auto; border: 1px solid #2A2A2E; background: transparent; color: inherit;
   padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;

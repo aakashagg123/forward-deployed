@@ -144,7 +144,7 @@ function renderHead({ site, title, description, canonicalUrl, image, jsonLd, mar
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="${escapeAttr(CSP)}">
 <link rel="preconnect" href="https://www.googletagmanager.com">
-<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="${escapeAttr(site.cssHref || '/theme.css')}">
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeAttr(description)}">
 <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
@@ -227,7 +227,7 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
   </main>
   ${renderOutline(outline)}
 </div>
-<script src="/theme.js" defer></script>
+<script src="${escapeAttr(site.jsHref || '/theme.js')}" defer></script>
 </body>
 </html>`;
 }
@@ -244,7 +244,8 @@ export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, 
   <div class="fd-gh" id="fdGh" data-username="${escapeAttr(githubUsername)}">
     <div class="fd-gh-head">
       <h4>GitHub activity</h4>
-      <a class="fd-gh-profile" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">@${escapeHtml(githubUsername)}</a>
+      <span class="fd-gh-profile">@${escapeHtml(githubUsername)}</span>
+      <a class="fd-cta fd-gh-cta" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">View GitHub →</a>
       <button class="fd-gh-sync" id="fdGhSync" type="button" aria-label="Re-sync GitHub activity">${GH_SYNC_ICON}</button>
     </div>
     <div class="fd-gh-grid-wrap" id="fdGhWrap">
@@ -327,7 +328,7 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
   <div class="fd-spaces-row" id="spaces">${spaceRows}</div>
   ${githubWidget}
 </div>
-<script src="/theme.js" defer></script>
+<script src="${escapeAttr(site.jsHref || '/theme.js')}" defer></script>
 </body>
 </html>`;
 }
