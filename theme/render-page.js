@@ -120,7 +120,7 @@ const CSP = [
   `script-src 'self' https://www.googletagmanager.com '${GA_INLINE_SCRIPT_HASH}'`,
   "style-src 'self'",
   "img-src 'self' https://ghchart.rshah.org",
-  'connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com',
+  'connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de',
   "font-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -247,9 +247,10 @@ export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, 
       <a class="fd-gh-profile" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">@${escapeHtml(githubUsername)}</a>
       <button class="fd-gh-sync" id="fdGhSync" type="button" aria-label="Re-sync GitHub activity">${GH_SYNC_ICON}</button>
     </div>
-    <div class="fd-gh-grid-wrap">
-      <img class="fd-gh-img fd-gh-img-dark" id="fdGhImgDark" alt="${escapeAttr(githubUsername)}'s GitHub contribution graph" width="722" height="112" loading="lazy">
-      <img class="fd-gh-img fd-gh-img-light" id="fdGhImgLight" alt="${escapeAttr(githubUsername)}'s GitHub contribution graph" width="722" height="112" loading="lazy">
+    <div class="fd-gh-grid-wrap" id="fdGhWrap">
+      <div class="fd-gh-grid" id="fdGhGrid" hidden></div>
+      <img class="fd-gh-img fd-gh-img-dark" id="fdGhImgDark" alt="${escapeAttr(githubUsername)}'s GitHub contribution graph" width="722" height="112">
+      <img class="fd-gh-img fd-gh-img-light" id="fdGhImgLight" alt="${escapeAttr(githubUsername)}'s GitHub contribution graph" width="722" height="112">
     </div>
     <p class="fd-gh-status" id="fdGhStatus">Loading GitHub activity…</p>
   </div>`
