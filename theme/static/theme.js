@@ -74,7 +74,16 @@
       }
       outlineLinks.forEach(function (l, i) { l.classList.toggle('active', i === cur); });
     };
-    addEventListener('scroll', onScroll, { passive: true });
+    // Coalesce to one layout read per frame — on iOS Safari an unthrottled
+    // scroll listener runs a getBoundingClientRect() per outline target on
+    // every tick, which forces a synchronous layout mid-scroll and is the
+    // single biggest source of visible jank on long pages.
+    var ticking = false;
+    addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { onScroll(); ticking = false; });
+    }, { passive: true });
     onScroll();
   }
 
