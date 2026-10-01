@@ -244,7 +244,8 @@ export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, 
   <div class="fd-gh" id="fdGh" data-username="${escapeAttr(githubUsername)}">
     <div class="fd-gh-head">
       <h4>GitHub activity</h4>
-      <a class="fd-gh-profile" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">@${escapeHtml(githubUsername)}</a>
+      <span class="fd-gh-profile">@${escapeHtml(githubUsername)}</span>
+      <a class="fd-cta fd-gh-cta" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">View GitHub →</a>
       <button class="fd-gh-sync" id="fdGhSync" type="button" aria-label="Re-sync GitHub activity">${GH_SYNC_ICON}</button>
     </div>
     <div class="fd-gh-grid-wrap" id="fdGhWrap">
