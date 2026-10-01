@@ -1,0 +1,255 @@
+/* Learning zone — restyles the embedded gatsby build to match the rest of
+   the site (see theme.css): monochrome, 1px rules, square corners, Inter,
+   black/white themes that follow the site's theme toggle.
+
+   Every Learning Zone page ships its own inline <style> (a GitHub-Primer
+   look: blue accent, rounded cards, soft shadows). The build links this file
+   AFTER those styles, so equal-specificity rules here win by source order.
+   The pages are variable-driven, so most of the work is remapping their
+   custom properties; the rest is structural (header, nav, cards, callouts,
+   code) where the originals use literal colours or a different shape. */
+
+:root {
+  --lz-bg: #FFFFFF;
+  --lz-ink: #000000;
+  --lz-ink2: #4A4A4A;
+  --lz-ink3: #8A8A8A;
+  --lz-rule: #000000;
+  --lz-soft: #D8D8D8;
+  --lz-fill: #F4F4F2;
+
+  /* The three page templates name the same ideas differently — map all. */
+  --bg: var(--lz-bg); --surface: var(--lz-bg); --panel: var(--lz-bg);
+  --bg2: var(--lz-fill); --soft: var(--lz-fill); --code-bg: var(--lz-fill);
+  --line: var(--lz-soft); --line2: var(--lz-soft);
+  --ink: var(--lz-ink); --ink2: var(--lz-ink);
+  --mut: var(--lz-ink2); --muted: var(--lz-ink2);
+  --accent: var(--lz-ink); --accent-d: var(--lz-ink); --accent-deep: var(--lz-ink);
+  --accent-soft: var(--lz-fill); --accent-border: var(--lz-ink);
+  --radius: 0;
+}
+:root[data-theme='dark'] {
+  --lz-bg: #000000; --lz-ink: #FFFFFF; --lz-ink2: #B8B8B8; --lz-ink3: #7A7A7A;
+  --lz-rule: #FFFFFF; --lz-soft: #2A2A2A; --lz-fill: #141414;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --lz-bg: #000000; --lz-ink: #FFFFFF; --lz-ink2: #B8B8B8; --lz-ink3: #7A7A7A;
+    --lz-rule: #FFFFFF; --lz-soft: #2A2A2A; --lz-fill: #141414;
+    color-scheme: dark;
+  }
+}
+
+/* ---- global shape: no rounding, no shadows, no gradients ---- */
+*, *::before, *::after { border-radius: 0 !important; box-shadow: none !important; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--lz-bg) !important; background-image: none !important;
+  color: var(--lz-ink); -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--lz-ink); color: var(--lz-bg); }
+a { color: var(--lz-ink); }
+input[type=range] { accent-color: var(--lz-ink); }
+
+/* ---- site bar (injected by the build; mirrors .fd-header) ---- */
+.fd-lz-bar {
+  display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 22px;
+  background: var(--lz-bg); border-bottom: 1px solid var(--lz-rule);
+  font: 400 15px/1 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  letter-spacing: -.01em; box-sizing: border-box; position: relative; z-index: 40;
+}
+.fd-lz-bar a { color: var(--lz-ink); text-decoration: none; }
+.fd-lz-bar a:hover { text-decoration: underline; }
+.fd-lz-brand { display: flex; align-items: center; gap: 10px; }
+.fd-lz-brand img { width: 22px; height: 22px; display: block; }
+.fd-lz-sep { color: var(--lz-ink3); }
+.fd-lz-crumb { color: var(--lz-ink2) !important; font-size: 14px; }
+.fd-lz-theme {
+  margin-left: auto; border: 1px solid var(--lz-rule); background: var(--lz-bg); color: var(--lz-ink2);
+  padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.fd-lz-theme:hover { background: var(--lz-ink); color: var(--lz-bg); }
+.fd-lz-theme .icon-sun { display: none; }
+.fd-lz-theme .icon-moon { display: block; }
+:root[data-theme='dark'] .fd-lz-theme .icon-sun { display: block; }
+:root[data-theme='dark'] .fd-lz-theme .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .fd-lz-theme .icon-sun { display: block; }
+  :root:not([data-theme='light']) .fd-lz-theme .icon-moon { display: none; }
+}
+/* the graph page is a fixed-viewport app: its bar stays pinned and its own
+   fixed layers are pushed below it */
+html[data-lz='graph'] .fd-lz-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+html[data-lz='graph'] .bar { top: 50px !important; }
+html[data-lz='graph'] #cv, html[data-lz='graph'] #cv3d, html[data-lz='graph'] #panel { top: 50px !important; }
+
+/* ---- the page's own track header (lesson/index: .topbar, viewer: .top) ---- */
+.topbar, .top {
+  background: var(--lz-bg) !important; backdrop-filter: none;
+  border-bottom: 1px solid var(--lz-soft) !important;
+}
+.topbar .brand, .top .brand, .top a { color: var(--lz-ink); }
+.brand em { color: var(--lz-ink3); border-left-color: var(--lz-soft); }
+.spark path { fill: var(--lz-ink); }
+.topnav a, .top a { color: var(--lz-ink2); font-weight: 500; }
+.topnav a:hover, .top a:hover { background: transparent; color: var(--lz-ink); text-decoration: underline; }
+.top .brand { color: var(--lz-ink); font-weight: 700; }
+.menu-btn { border: 1px solid var(--lz-rule); background: var(--lz-bg); color: var(--lz-ink); }
+.menu-btn:hover { border-color: var(--lz-rule); background: var(--lz-ink); color: var(--lz-bg); }
+#sb-scrim { background: rgba(0,0,0,.5); }
+
+/* ---- sidebar navigation (matches .fd-sidebar / .fd-nav) ---- */
+.sidebar { border-right: 1px solid var(--lz-rule); background: var(--lz-bg); }
+.modlink, .sb-phase-title, .sb-lesson {
+  border-radius: 0; color: var(--lz-ink2); font-weight: 400;
+}
+.modlink:hover, .sb-phase-title:hover, .sb-lesson:hover { background: var(--lz-soft); color: var(--lz-ink); text-decoration: none; }
+.modlink.active, .sb-phase.active > .sb-phase-title, .sb-lesson.current {
+  background: var(--lz-ink); color: var(--lz-bg); font-weight: 600;
+}
+.modlink .num { color: var(--lz-ink3); }
+.modlink.active .num { color: var(--lz-bg); }
+.sub, .sb-lessons { border-left-color: var(--lz-soft); }
+.sub a, .sidebar .sb-top { color: var(--lz-ink3); }
+.sub a:hover { color: var(--lz-ink); }
+@media (max-width: 880px) {
+  .sidebar { border-right: 1px solid var(--lz-rule) !important; }
+}
+
+/* ---- "on this page" outline (matches .fd-outline) ---- */
+.outline-h { color: var(--lz-ink3); font-family: inherit; text-transform: none; letter-spacing: 0; font-weight: 700; font-size: 11px; }
+.outline a { color: var(--lz-ink2); }
+.outline a:hover { color: var(--lz-ink); }
+.outline a.active { color: var(--lz-ink); border-left-color: var(--lz-ink); font-weight: 600; background: transparent; }
+
+/* ---- lesson header & headings (matches .fd-content) ---- */
+.chip, .lesson-num, .card-num {
+  background: transparent !important; color: var(--lz-ink3) !important; border: 0 !important; padding: 0 !important;
+  font-family: inherit !important; font-size: 11px !important; font-weight: 700 !important;
+  text-transform: uppercase; letter-spacing: .07em;
+}
+.card-num { margin-bottom: 8px; }
+.hero h1, .index-hero h1, .content h1, main h1 {
+  font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; color: var(--lz-ink);
+}
+.index-hero h1 em { font-style: normal; color: var(--lz-ink2); }
+.lede, .index-hero .lede, p.sub { color: var(--lz-ink2); }
+.hero-meta, .index-meta span { color: var(--lz-ink3); }
+.hero-meta strong { color: var(--lz-ink); }
+.intro blockquote { border-left: 3px solid var(--lz-ink); color: var(--lz-ink2); background: transparent; }
+.lesson h2, main h2, .content h2 {
+  font-weight: 700; letter-spacing: -.01em; color: var(--lz-ink);
+  border-top: 1px solid var(--lz-rule); border-bottom: 0; padding-top: 24px; padding-bottom: 0;
+}
+.lesson:first-of-type h2:first-child { border-top: 0; padding-top: 0; }
+.lesson h3, .lesson h4, main h3, main h4 { font-weight: 700; letter-spacing: -.01em; color: var(--lz-ink); }
+.lesson p, .lesson li, main p, main li { color: var(--lz-ink); }
+.lesson strong, main strong { color: var(--lz-ink); font-weight: 700; }
+.lesson-head { border-bottom-color: var(--lz-rule); }
+hr { border-top: 1px solid var(--lz-rule) !important; }
+/* inline links inside prose keep an underline: with no accent colour it is
+   the only affordance left, and these are long cross-linked lessons */
+.lesson p a, .lesson li a, .lesson td a, .lesson blockquote a, main p a, main li a, main td a, main blockquote a {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+}
+
+/* the lesson hero's own soft rule would sit right above the first h2's
+   black one — keep just the site-style rule */
+.hero { border-bottom: 0 !important; }
+
+/* floating "open the knowledge graph" button: inline-styled round blue FAB */
+a[href*="graph/index.html"][style*="position:fixed"] {
+  background: var(--lz-bg) !important; color: var(--lz-ink) !important; border: 1px solid var(--lz-rule) !important;
+}
+a[href*="graph/index.html"][style*="position:fixed"]:hover { background: var(--lz-ink) !important; color: var(--lz-bg) !important; }
+a[href*="graph/index.html"][style*="position:fixed"] svg, a[href*="graph/index.html"][style*="position:fixed"] svg * { stroke: currentColor !important; }
+a[href*="graph/index.html"][style*="position:fixed"] svg [fill]:not([fill="none"]) { fill: currentColor !important; }
+
+/* ---- callouts, quotes, code, tables ---- */
+.pm-callout, blockquote, .recap blockquote {
+  background: transparent !important; border: 0 !important; border-left: 3px solid var(--lz-ink) !important;
+  color: var(--lz-ink2);
+}
+.pm-callout { padding: 14px 18px; }
+.pm-callout p, .pm-callout strong { color: var(--lz-ink); }
+.pm-callout > p:first-child { color: var(--lz-ink); }
+code { background: var(--lz-soft) !important; color: var(--lz-ink) !important; }
+pre:not(.mermaid) {
+  background: #0A0A0B !important; color: #F4F4F2 !important; border: 1px solid var(--lz-soft) !important;
+}
+pre:not(.mermaid) code { background: none !important; color: inherit !important; }
+table { border-color: var(--lz-rule); }
+th { background: var(--lz-fill) !important; color: var(--lz-ink); font-weight: 700; border-color: var(--lz-soft); border-bottom: 1px solid var(--lz-rule); }
+td { border-color: var(--lz-soft); }
+tr:nth-child(2n) td, tr:nth-child(even) td { background: transparent !important; }
+.recap table, .recap blockquote { background: transparent !important; }
+details { border: 1px solid var(--lz-soft); background: transparent; }
+summary { color: var(--lz-ink); }
+/* diagrams stay on a white card in both themes: their strokes/fills are
+   authored for a light ground */
+pre.mermaid { background: #FFFFFF !important; border: 1px solid var(--lz-soft) !important; }
+.mm-hint { background: var(--lz-fill); color: var(--lz-ink3); border-color: var(--lz-soft); }
+
+/* ---- task lists ---- */
+.lesson li.task:before { color: var(--lz-ink); border-color: var(--lz-ink); }
+.lesson li.done:before { background: var(--lz-ink); color: var(--lz-bg); }
+.totop { background: var(--lz-bg); border: 1px solid var(--lz-rule); color: var(--lz-ink); }
+.totop:hover { background: var(--lz-ink); color: var(--lz-bg); }
+
+/* ---- prev / next (matches .fd-pagenav) ---- */
+.pagenav, .lessonnav { border-top: 1px solid var(--lz-rule); }
+.navcard, .lessonnav a {
+  border: 1px solid var(--lz-rule) !important; background: var(--lz-bg); color: var(--lz-ink);
+}
+.navcard:hover, .lessonnav a:hover { background: var(--lz-ink); color: var(--lz-bg); border-color: var(--lz-rule); text-decoration: none; }
+.navcard .lbl, .lessonnav .lbl { color: var(--lz-ink3); font-weight: 600; }
+.navcard:hover .lbl, .lessonnav a:hover .lbl { color: var(--lz-ink3); }
+.navcard .ttl { color: inherit; }
+.foot, footer { color: var(--lz-ink3); border-top-color: var(--lz-soft); }
+
+/* ---- index & track pages: module cards, bands, TOC ---- */
+.wrap { padding-top: 56px; }
+.eyebrow, a.card .tag { color: var(--lz-ink3); text-transform: uppercase; letter-spacing: .07em; font-size: 11px; font-weight: 700; }
+.card, a.card, .thread, .toc, .pm-band, .recap {
+  background: var(--lz-bg) !important; border: 1px solid var(--lz-rule) !important; color: var(--lz-ink);
+}
+.card:hover, a.card:hover { background: var(--lz-fill) !important; border-color: var(--lz-rule) !important; }
+.card h2, .card h3, a.card h2 { font-weight: 700; letter-spacing: -.01em; font-size: 18px; }
+.card p, a.card p, .card li, .thread p { color: var(--lz-ink2); }
+.card-go, .card-iw { color: var(--lz-ink); }
+.pm-band { background: var(--lz-fill) !important; border: 0 !important; border-left: 3px solid var(--lz-ink) !important; }
+.pm-band .pm-ic, .recap-ic { background: transparent !important; color: var(--lz-ink) !important; }
+.toc a { color: var(--lz-ink); }
+.toc a span { color: var(--lz-ink3); }
+.toc a:hover { background: var(--lz-fill); }
+.toc, .toc a { border-color: var(--lz-soft) !important; }
+
+/* ---- interactive widgets ---- */
+.interactive { background: var(--lz-bg) !important; border: 1px solid var(--lz-rule) !important; }
+.iw-head { background: var(--lz-fill) !important; border-bottom: 1px solid var(--lz-soft) !important; }
+.iw-head .tag { color: var(--lz-ink3) !important; background: transparent !important; border: 0 !important; }
+.iw-btn { background: var(--lz-bg) !important; color: var(--lz-ink) !important; border: 1px solid var(--lz-rule) !important; }
+.iw-btn:hover { background: var(--lz-fill) !important; }
+.iw-btn.primary, .iw-btn.active { background: var(--lz-ink) !important; color: var(--lz-bg) !important; border-color: var(--lz-ink) !important; }
+.iw-track { background: var(--lz-soft) !important; }
+.iw-fill, .iw-spanbar, .iw-stage.on { background: var(--lz-ink) !important; }
+.iw-out, .iw-note { background: var(--lz-fill) !important; border-color: var(--lz-soft) !important; color: var(--lz-ink) !important; }
+
+/* ---- reader preferences widget + glossary drawer ---- */
+#rs-btn, #rs-panel, .rs-fonts button, .rs-row button {
+  background: var(--lz-bg) !important; color: var(--lz-ink) !important; border: 1px solid var(--lz-rule) !important;
+}
+#rs-btn:hover, .rs-fonts button:hover, .rs-row button:hover { background: var(--lz-fill) !important; }
+.rs-fonts button.on, .rs-row button.on { background: var(--lz-ink) !important; color: var(--lz-bg) !important; }
+#rs-panel .rs-h, .rs-row .rs-val { color: var(--lz-ink3) !important; }
+.gloss-term { text-decoration-color: var(--lz-ink3); }
+.gloss-term:hover { color: var(--lz-ink); background: var(--lz-fill); text-decoration-color: var(--lz-ink); }
+.gloss-term:focus-visible { outline: 2px solid var(--lz-ink); }
+#gl-scrim { background: rgba(0,0,0,.5); }
+#gl-panel { background: var(--lz-bg) !important; color: var(--lz-ink) !important; border-left: 1px solid var(--lz-rule) !important; }
+#gl-close { background: var(--lz-bg); color: var(--lz-ink); border: 1px solid var(--lz-rule); }
+#gl-close:hover { background: var(--lz-ink); color: var(--lz-bg); }
+#gl-panel .gl-cat { color: var(--lz-ink3); background: transparent; border: 0; padding: 0; text-transform: uppercase; letter-spacing: .07em; font-size: .66rem; font-weight: 700; }
+#gl-panel a { color: var(--lz-ink); }
+#gl-panel * { border-color: var(--lz-soft); }
