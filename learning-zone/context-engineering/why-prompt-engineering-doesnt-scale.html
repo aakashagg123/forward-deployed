@@ -492,6 +492,24 @@ closes.</p>
 </ol>
 <p>Most "prompt is broken" tickets are actually 1, 2, or 3, mislabeled — which is exactly
 why rewording the prompt one more time so rarely holds.</p>
+<h2 id="what-prompt-engineering-still-owns">What prompt engineering still owns</h2>
+<p>This lesson is not an argument against writing good prompts. The prompt is the part of
+the context you control most directly, and it still needs care. Anthropic's guidance
+puts it this way: the instructions should sit at the "right altitude." They should be
+specific enough to guide behaviour and flexible enough to give the model a strong rule
+of thumb. Two extremes fail. Hard-coded, brittle logic breaks on the first new case.
+Vague, high-level advice gives the model nothing to work with.</p>
+<p>The split is simple:</p>
+<ul>
+<li><strong>The prompt owns wording, structure, and examples.</strong> How to write it is in the
+  <a href="../prompt-engineering/index.html">prompt engineering module</a>.</li>
+<li><strong>The pipeline owns what fills the prompt.</strong> Retrieved facts, memory, and live state
+  are supplied by systems, not typed by a person.</li>
+</ul>
+<p>Current models also follow instructions more literally than older ones. That makes
+the prompt more predictable and can make missing context more visible. A model told to
+answer only from the documents can say that the answer is not there. Treat that reply as
+a signal that retrieval may have failed, not that the wording did.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Prompt spaghetti</strong> — a growing, undocumented library of one-off prompts, each
@@ -510,16 +528,19 @@ why rewording the prompt one more time so rarely holds.</p>
 <li class="task todo">Do we have an inventory of every prompt in production, or does "how many prompts do
       we have" require asking an engineer to go look?</li>
 <li class="task todo">Is there a test suite that catches a prompt change breaking a previously-passing
-      case, or does regression get caught by users first?</li>
+      case, or does regression get caught by users first? (Setup:
+      <a href="../prompt-engineering/prompts-in-production.html">Prompts in production</a>.)</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
 <li><a href="what-is-context-engineering.html">What is context engineering, for a product leader?</a></li>
 <li><a href="the-anatomy-of-a-context-pipeline.html">The anatomy of a context pipeline</a></li>
 <li><a href="../memory-and-context/index.html">Memory &amp; context for the product leader</a></li>
+<li><a href="../prompt-engineering/index.html">Prompt engineering</a> — the craft this lesson does
+  not replace.</li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="what-is-context-engineering.html"><span class="lbl">← Previous</span><span class="ttl">What is context engineering, for a product leader?</span></a><a class="navcard next" href="the-anatomy-of-a-context-pipeline.html"><span class="lbl">→ Next</span><span class="ttl">The anatomy of a context pipeline</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-ways-a-prompt-only-system-breaks">The mental model: three ways a prompt-only system breaks</a><a class="h2" href="#the-three-failure-patterns-in-practice">The three failure patterns, in practice</a><a class="h2" href="#the-diagnostic-is-this-a-prompt-problem-or-a-context-problem">The diagnostic: is this a prompt problem or a context problem?</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-ways-a-prompt-only-system-breaks">The mental model: three ways a prompt-only system breaks</a><a class="h2" href="#the-three-failure-patterns-in-practice">The three failure patterns, in practice</a><a class="h2" href="#the-diagnostic-is-this-a-prompt-problem-or-a-context-problem">The diagnostic: is this a prompt problem or a context problem?</a><a class="h2" href="#what-prompt-engineering-still-owns">What prompt engineering still owns</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

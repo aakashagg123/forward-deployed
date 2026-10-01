@@ -409,6 +409,14 @@ nobody had built yet, because context infrastructure was sequenced after the mod
 instead of alongside it. 🎯 <em>Takeaway:</em>
 <a href="context-across-the-product-lifecycle.html">context work has a different job at each project phase</a>,
 and skipping the discovery-phase audit is how this happens.</p>
+<p><strong>The assistant that got worse when we gave it everything (an illustration).</strong> Picture a
+team that fixes a wrong answer by adding the whole policy handbook to every request.
+Anthropic's engineering guidance warns that model quality can degrade as context grows,
+and that context has diminishing returns. So answers can get worse while cost and
+latency rise. The better fix is smaller: retrieve the relevant paragraphs and drop the
+rest. 🎯 <em>Takeaway:</em>
+<a href="what-is-context-engineering.html">the goal is the smallest useful context</a>, not the
+largest one you can fit.</p>
 <h2 id="module-recap">Module recap</h2>
 <table>
 <thead>
@@ -421,32 +429,32 @@ and skipping the discovery-phase audit is how this happens.</p>
 <tbody>
 <tr>
 <td><a href="what-is-context-engineering.html">What is context engineering, for a product leader?</a></td>
-<td>The right question is "what does this decision need to see," not "what data do we have"</td>
-<td>Could I name what our riskiest AI feature is shown before it answers?</td>
+<td>The right question is "what does this decision need to see," not "what data do we have" — and the answer is the smallest useful context</td>
+<td>Could I name what our riskiest AI feature is shown before it answers, and what we could remove?</td>
 </tr>
 <tr>
 <td><a href="why-prompt-engineering-doesnt-scale.html">Why prompt engineering doesn't scale</a></td>
-<td>Fragility, no reuse, no memory are structural, not wording problems</td>
+<td>Fragility, no reuse, no memory are structural, not wording problems. The prompt still owns wording</td>
 <td>Is our last "prompt fix" actually a retrieval, memory, or tool-state gap?</td>
 </tr>
 <tr>
 <td><a href="the-anatomy-of-a-context-pipeline.html">The anatomy of a context pipeline</a></td>
-<td>Every stage has an owner; the seams between stages usually don't</td>
-<td>Do I know which named stage to check first when this feature is wrong?</td>
+<td>Every stage has an owner; the seams between stages usually don't. Agents rebuild their context at every step</td>
+<td>Do I know which named stage to check first, and what compaction must keep?</td>
 </tr>
 <tr>
 <td><a href="context-as-a-spec-able-requirement.html">Context as a spec-able requirement</a></td>
-<td>Context needs its own section in the spec, next to the eval bar</td>
-<td>Does our spec name what the model must know, remember, and retrieve?</td>
+<td>Context needs its own section in the spec, next to the eval bar, with a size budget</td>
+<td>Does our spec name what the model must know, remember, and retrieve, and how much?</td>
 </tr>
 <tr>
 <td><a href="context-governance-at-scale.html">Context governance at scale</a></td>
-<td>Shared context sources need one version and a registry of consumers</td>
-<td>Could two of our features contradict each other today, and would we know why?</td>
+<td>Shared sources need one version, a registry of consumers, a trust label, and access rules</td>
+<td>Could two of our features contradict each other today, and could untrusted text reach one of them?</td>
 </tr>
 <tr>
 <td><a href="evaluating-context-quality.html">Evaluating context quality</a></td>
-<td>Grade whether the context was right, separately from whether the answer was good</td>
+<td>Grade whether the context was right, clean, and conflict-free, separately from whether the answer was good</td>
 <td>Did we check the context before we started rewriting the prompt?</td>
 </tr>
 <tr>
@@ -463,7 +471,9 @@ the model, it was in what got assembled in front of it. Product leaders who inte
 this stop funding bigger models and cleverer prompts to solve problems that were never
 either one's to solve, and start funding the unglamorous, high-leverage work — retrieval
 quality, memory scoping, governance, and a spec that names context requirements out
-loud — that actually moves the number.</p>
+loud — that actually moves the number. The same leaders also learn to remove context:
+more is not better, and the best context is the smallest set that makes the decision
+right.</p>
 <blockquote>
 <p><strong>Walk-away question:</strong> <em>"The next time an AI feature gives a wrong answer, will the
 first question in the room be 'what did the model see?' — or will it be 'let's rewrite

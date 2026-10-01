@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Recap</span>
     <h1>Prompt engineering — recap &amp; real-world examples</h1>
@@ -420,6 +420,22 @@ producing an answer, because nothing in the prompt said when to stop. The fix:
 <em>"After 10 searches, stop and summarize what you found, even if incomplete."</em> 🎯
 <em>Takeaway:</em> termination is a prompt-engineering decision, not just a runtime cap.
 The runtime cap is the safety net; the prompt is the intent.</p>
+<p><strong>The upgrade that makes every tool fire (an illustration).</strong> Picture an agent prompt
+that says "CRITICAL: you MUST call the search tool before answering." On an older
+model that ignored the tool, the line was needed. Anthropic's guidance warns that
+newer Claude models respond more strongly to the system prompt, so the same wording
+can make a model call the tool on every turn, greetings included. Nobody edited the
+prompt, yet behaviour changed. A saved test set shows the change on the first run. The
+fix is a calmer line: "Use search when the answer depends on current information."
+🎯 <em>Takeaway:</em> a prompt is written for one model. Re-test it on every model change,
+and remove emphasis you added for an older one.</p>
+<p><strong>The prefill that stops working (an illustration).</strong> Picture an extraction service
+that forced JSON by starting the model's reply with <code>{</code>. Anthropic's documentation
+says prefilled replies are not supported from Claude 4.6 onward, so the same request
+fails on a newer model. The fix is a schema-constrained output, and a test that
+catches the break before launch. 🎯 <em>Takeaway:</em> format tricks belong to a model
+version. Prefer schema-enforced outputs, and treat any trick as something to re-test on
+upgrade.</p>
 <h2 id="module-recap">Module recap</h2>
 <table>
 <thead>
@@ -475,11 +491,17 @@ The runtime cap is the safety net; the prompt is the intent.</p>
 <td>Seven named failure modes with seven specific fixes</td>
 <td>Which of the seven did this output fail into?</td>
 </tr>
+<tr>
+<td><a href="prompts-in-production.html">Prompts in production</a></td>
+<td>A prompt is code written for one model: version it, test it, and re-test it on every upgrade</td>
+<td>If the model changed tomorrow, could we say by tonight whether our prompts still work?</td>
+</tr>
 </tbody>
 </table>
 <p><strong>The through-line:</strong> prompt engineering is not a set of clever tricks. It's a
 craft with a small vocabulary — six prompt parts, six everyday patterns, three
-reasoning techniques, one loop, seven failure modes — and the leverage comes from
+reasoning techniques, one loop, seven failure modes, four production habits — and the
+leverage comes from
 knowing the vocabulary well enough to reach for the right piece under pressure. The
 beginner uses one part unconsciously and gets a lucky output. The intermediate uses
 all six on purpose. The advanced practitioner adds tools, chains, and coding agents,
@@ -492,8 +514,9 @@ the middle: the writing itself.</p>
 <blockquote>
 <p><strong>Walk-away question:</strong> <em>"For the most important prompt in my current work — is
 it a versioned artifact I could hand a colleague cold, structured with named
-boundaries, matched to the right technique for its task, and diagnosable against
-the seven failure modes when it drifts?"</em></p>
+boundaries, matched to the right technique for its task, diagnosable against
+the seven failure modes when it drifts, and backed by a saved test set so I can
+re-check it when the model changes?"</em></p>
 </blockquote>
 <hr />
 <h2 id="test-yourself">Test yourself</h2>
@@ -521,11 +544,21 @@ the seven failure modes when it drifts?"</em></p>
 <li>
 <p><strong>When a prompt underperforms, what should you do before rewriting it?</strong>
  <br />
-<details><summary>Answer</summary>Diagnose which of the seven failure modes it hit. A targeted fix at the specific sentence that failed clears the failure without introducing a variant of the same problem in a rewrite. (<a href="when-prompts-fail.html">When prompts fail</a>)</details>
+<details><summary>Answer</summary>Diagnose which of the seven failure modes it hit. A targeted fix at the specific sentence that failed clears the failure without introducing a variant of the same problem in a rewrite. (<a href="when-prompts-fail.html">When prompts fail</a>)</details></p>
+</li>
+<li>
+<p><strong>Why can a prompt fail after a model upgrade when nobody edited it?</strong>
+ <br />
+<details><summary>Answer</summary>A prompt is tuned for one model. Newer models follow instructions more literally, react more strongly to emphatic wording, and may reject old format tricks such as prefilled replies. Re-run your saved test set on the old and new model, read the differences, and re-tune. (<a href="prompts-in-production.html">Prompts in production</a>)</details></p>
+</li>
+<li>
+<p><strong>How do you force a specific output shape on current Claude models?</strong>
+ <br />
+<details><summary>Answer</summary>Use structured outputs or a tool with a schema. Add a direct instruction such as "Respond directly without preamble", or ask for the answer inside a tag. Prefilled replies are not supported from Claude 4.6 onward. (<a href="structured-prompting.html">Structured prompting</a>)</details>
 </p>
 </li>
 </ol>
-  <div class="pagenav"><a class="navcard prev" href="when-prompts-fail.html"><span class="lbl">← Previous</span><span class="ttl">When prompts fail: the diagnostic playbook</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="prompts-in-production.html"><span class="lbl">← Previous</span><span class="ttl">Prompts in production: versioning, testing, and model upgrades</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

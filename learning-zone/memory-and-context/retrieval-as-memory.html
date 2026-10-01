@@ -371,47 +371,43 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink active" href="retrieval-as-memory.html">3 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">4 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink active" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="chip">Lesson 03</span>
+    <span class="chip">Lesson 04</span>
     <h1>Retrieval as memory</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>One of the most common ways an AI product actually implements memory is a technique
-covered in full elsewhere in this curriculum: retrieval. Instead of trying to hold
-everything a user or an organization has ever said inside the model's limited context
-window, a product stores that information externally — in a searchable index — and fetches
-only the relevant pieces at the moment they're needed. This is the same mechanism behind
-<a href="../rag-vector-databases/index.html">RAG</a>, applied to a different kind of content: not just
-your company's documents, but a user's own history, preferences, and past interactions.
-Seen this way, "memory" and "retrieval" are not two separate capabilities a product team
-builds — user and organizational memory are very often just RAG, pointed at a different
-corpus. This lesson is the bridge: it doesn't re-teach retrieval mechanics, which the RAG
-module already covers in depth, but it makes explicit why retrieval is memory's most
-practical, most common implementation, and what changes when the "documents" being
-retrieved are a person's own history instead of a company's knowledge base.</p>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A model can only use what is in its context window right now. A user's full history will
+not fit, and would cost more with every visit. So products store memories outside the
+model and bring back the relevant few. That is retrieval, the same technique behind
+<a href="../rag-vector-databases/index.html">RAG</a>. Point it at a person's history instead of a
+company's documents, and you have memory.</p>
+<p>Retrieval is not the only way to build memory. There are three common designs.</p>
+<ol>
+<li><strong>Load it directly.</strong> A small, stable set of facts goes into every request.</li>
+<li><strong>Retrieve on demand.</strong> A large history is searched, and the best matches are added.</li>
+<li><strong>Let the agent keep notes.</strong> The agent reads and writes its own files as it works.</li>
+</ol>
+<p>This lesson helps you pick between them. It does not re-teach retrieval mechanics. The RAG
+module covers those.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — Teams often plan "add memory" and "add retrieval" as two separate
-roadmap items with two separate budgets, when in practice they're frequently the same
-underlying investment, aimed at different content.</p>
-<p><strong>What it changes in your decisions</strong> — You ask whether a proposed memory feature is
-really a retrieval problem in disguise — and if so, you build it with the same
-discipline (chunking, indexing, retrieval quality) the RAG module already covers, rather
-than reinventing a lighter, less reliable version from scratch.</p>
-<p><strong>Ask yourself</strong> — <em>"Is this memory feature something we should retrieve on demand, or
-does it genuinely need to be loaded into every request regardless of relevance?"</em></p>
-<p><strong>Risk if ignored</strong> — A team builds two separate, redundant systems — one for
-"knowledge" and one for "memory" — that could have been one retrieval pipeline serving
-two different corpora, doubling the engineering and operational cost for no real benefit.</p>
+<p><strong>Why it matters</strong> — Teams plan "add memory" and "add retrieval" as separate projects
+with separate budgets. Often they are one investment aimed at different content. Other
+times a much simpler design would do.</p>
+<p><strong>What it changes in your decisions</strong> — Before approving a memory build, you ask which
+of the three designs fits the amount and kind of data. Then you reuse the retrieval
+stack you already have.</p>
+<p><strong>Ask yourself</strong> — <em>"Is this memory small enough to load every time, large enough to
+need search, or task progress an agent should note for itself?"</em></p>
+<p><strong>Risk if ignored</strong> — You build a search pipeline for forty facts. Or you paste a huge
+history into every call and pay for it, with worse answers.</p>
 </blockquote>
-<h2 id="the-mental-model-the-same-filing-system-a-different-drawer">The mental model: the same filing system, a different drawer</h2>
-<p>Retrieval, as covered in the <a href="../rag-vector-databases/index.html">RAG module</a>, is a
-general-purpose filing system: index a body of text, and fetch the relevant pieces on
-demand instead of trying to hold everything at once. Company documents go in one drawer.
-A user's own history — their past conversations, stated preferences, prior decisions — can
-go in another drawer of the exact same filing system. The mechanism fetching from either
-drawer is the same; only the contents differ.</p>
+<h2 id="the-mental-model-one-filing-system-different-drawers">The mental model: one filing system, different drawers</h2>
+<p>Retrieval is a general filing system. Index some text, then fetch the relevant pieces on
+demand. Company documents go in one drawer. A user's own history goes in another. The
+mechanism is the same. Only the content differs.</p>
 <!-- Retrieval as memory — 2-drawer cabinet + request → routed to the right drawer → context. -->
 <style>
 .dgm-rm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #5d8aa8;
@@ -520,71 +516,177 @@ drawer is the same; only the contents differ.</p>
   </div>
 </div>
 
-<h2 id="why-retrieval-beats-trying-to-hold-everything-in-the-window">Why retrieval beats trying to hold everything in the window</h2>
-<p>The reasoning is identical to why RAG beats stuffing an entire knowledge base into a
-prompt, covered in <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">RAG vs. long-context vs. fine-tuning</a>:
-a user's full history grows without bound over time, and pasting all of it into every
-request would eventually exceed the context window, cost more with every additional
-interaction, and — per the <a href="../llms/the-context-window.html">lost-in-the-middle effect</a> —
-often produce worse answers than a focused, relevant subset would. Retrieval solves this
-exactly the way it solves the same problem for company knowledge: index everything, fetch
-only what's relevant to the current moment.</p>
-<h2 id="whats-genuinely-different-when-the-corpus-is-a-persons-history">What's genuinely different when the corpus is a person's history</h2>
-<p>Two things change when retrieval is pointed at memory instead of general knowledge, and
-both are worth deliberate attention rather than assuming the RAG playbook transfers
-unchanged. <strong>Freshness matters differently.</strong> A company policy document might be stable
-for months; a user's stated preference might change from one conversation to the next, so
-a memory-retrieval system needs a clearer way to update or override an older stored fact,
-not just add to a growing pile. <strong>Consent and visibility are non-negotiable.</strong> Retrieving
-from a company's knowledge base raises no personal-privacy question; retrieving from a
-person's own history is retrieving personal data, and the <a href="session-user-and-organizational-memory.html">user-memory
-obligations</a> — visibility, correction,
-deletion — apply in full.</p>
-<h2 id="when-memory-should-skip-retrieval-entirely">When memory should skip retrieval entirely</h2>
-<p>Not everything worth remembering benefits from retrieval. A small, stable, always-relevant
-set of facts — a user's name, their subscription tier, a handful of core preferences — is
-often cheaper and more reliable to simply load into every request directly, rather than
-running a retrieval step to fetch something that was always going to be needed anyway.
-Reach for retrieval when the stored history is large and only occasionally relevant;
-load facts directly when they're small and consistently relevant to nearly everything the
-feature does.</p>
+<h2 id="why-not-hold-everything-in-the-window">Why not hold everything in the window</h2>
+<p>The reasoning matches <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">RAG vs. long context vs. fine-tuning</a>.
+A history grows without limit. Pasting it all into each call soon exceeds the window and
+raises cost on every visit. Quality can also fall as the window fills. Anthropic calls
+this context rot: "as the number of tokens in the context window increases, the model's
+ability to accurately recall information from that context decreases." A focused subset
+usually beats the whole pile. See also the
+<a href="../llms/the-context-window.html">lost-in-the-middle effect</a>.</p>
+<h2 id="choosing-among-the-three-designs">Choosing among the three designs</h2>
+<table>
+<thead>
+<tr>
+<th>Design</th>
+<th>Use when</th>
+<th>Cost</th>
+<th>Main risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Load directly</td>
+<td>Facts are few, stable, and relevant to almost every request. A name, a plan, five preferences.</td>
+<td>Small tokens on every call. No search step.</td>
+<td>The set grows quietly and crowds the window.</td>
+</tr>
+<tr>
+<td>Retrieve on demand</td>
+<td>History is large and only sometimes relevant. Past tickets, old chats, notes.</td>
+<td>An index, a search step, and tuning.</td>
+<td>Missed matches, and stale results ranked first.</td>
+</tr>
+<tr>
+<td>Agent-kept notes</td>
+<td>A long task spans many contexts or sessions. The agent records progress and reads it back.</td>
+<td>File storage, and a handler you must secure.</td>
+<td>Clutter, wrong notes, and saved untrusted text.</td>
+</tr>
+</tbody>
+</table>
+<p>Agent-kept notes suit work in progress. Anthropic's docs describe the memory tool as
+letting an agent record "what it learns in memory files" and read them "back on demand".
+It gives "just-in-time context retrieval" without a search index.</p>
+<h2 id="worked-example-sizing-the-choice">Worked example: sizing the choice</h2>
+<p><em>This example is invented. The numbers are illustrative.</em></p>
+<p>A tax-help assistant serves returning customers. The team lists what it might remember.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Size</th>
+<th>How often needed</th>
+<th>Design</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name, filing status, country</td>
+<td>About 40 words</td>
+<td>Almost every request</td>
+<td>Load directly</td>
+</tr>
+<tr>
+<td>Ten stated preferences</td>
+<td>About 150 words</td>
+<td>Most requests</td>
+<td>Load directly</td>
+</tr>
+<tr>
+<td>Last three years of Q&amp;A threads</td>
+<td>About 60,000 words</td>
+<td>Occasionally ("what did I do last year?")</td>
+<td>Retrieve on demand</td>
+</tr>
+<tr>
+<td>Progress on a half-finished return</td>
+<td>A few hundred words, changing</td>
+<td>Only during that task</td>
+<td>Agent-kept notes</td>
+</tr>
+</tbody>
+</table>
+<p>Loading the first two rows costs a few hundred tokens per call, so no search step is
+needed. Loading the third row on every call would cost about 80,000 tokens each time. It
+would also bury the answer. Retrieval fetches the two threads that matter. The fourth row
+is a task record. The agent writes it and reads it back later.</p>
+<h2 id="what-changes-when-the-corpus-is-a-persons-history">What changes when the corpus is a person's history</h2>
+<p>Two things differ from company knowledge. Both need deliberate attention.</p>
+<ul>
+<li><strong>Freshness matters more.</strong> A policy may hold for months. A preference can change
+  between chats. The store needs a way to replace an old fact, not only add to a pile.
+  See <a href="writing-and-maintaining-memory.html">Writing and maintaining memory</a>.</li>
+<li><strong>Consent and visibility are required.</strong> Searching a company knowledge base raises no
+  personal privacy question. Searching a person's history retrieves personal data. The
+  duties from <a href="session-user-and-organizational-memory.html">Session, user &amp; organizational memory</a>
+  apply in full.</li>
+</ul>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<ul>
+<li><strong>Two systems are sometimes right.</strong> Company knowledge and personal history have
+  different owners, different freshness and different privacy rules. They can share
+  tooling and still live in separate indexes. Do not merge them just to save effort.</li>
+<li><strong>Simple beats clever.</strong> Loading five facts directly is more reliable than searching for
+  them. Add search when the data outgrows the window.</li>
+<li><strong>Retrieval ranks by relevance, not truth.</strong> A stale memory can match the query better
+  than the current one. Use dates as a signal.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Building two systems instead of one</strong> — a separate, bespoke "memory" pipeline built
-  alongside a RAG pipeline, duplicating engineering effort that one well-designed
-  retrieval system could have served.</li>
-<li><strong>Treating a user's history like a static document</strong> — applying company-knowledge
-  freshness assumptions to memory that actually needs to be correctable and overridable in
-  real time.</li>
-<li><strong>Skipping consent because it's "just retrieval"</strong> — forgetting that retrieving personal
-  history is retrieving personal data, with the same obligations as any other user-memory
-  feature.</li>
-<li><strong>Retrieving what should have been loaded directly</strong> — running an unnecessary retrieval
-  step for a handful of small, always-relevant facts that would have been simpler to
-  include in every request outright.</li>
+<li><strong>Building a search pipeline for a handful of facts.</strong> Extra moving parts and missed
+  matches, for no gain.</li>
+<li><strong>Treating history like a static document.</strong> Old and new facts both retrieved, with no
+  way to tell which is current.</li>
+<li><strong>Skipping consent because it is "just retrieval".</strong> It is still personal data.</li>
+<li><strong>One shared index with no filter.</strong> A query from one user returns another user's
+  memories. See <a href="when-memory-goes-wrong.html">When memory goes wrong</a>.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>A common pattern combines the first two designs. Load the small profile every time. Search
+the large history, but only inside the caller's own records.</p>
+<pre><code class="language-python">def build_memory_context(store, caller, user_message, k=4):
+    profile = store.get_profile(caller.user_id)             # small, always loaded
+    hits = store.search(
+        query=user_message,
+        filter={&quot;subject_id&quot;: caller.user_id},              # scope BEFORE ranking
+        top_k=k * 3,
+    )
+    # Prefer newer memories when relevance is close.
+    hits.sort(key=lambda m: (m.score + 0.1 * m.recency_boost), reverse=True)
+    return {&quot;profile&quot;: profile, &quot;recalled&quot;: hits[:k]}       # placed in the prompt
+</code></pre>
+<p>Three engineering habits matter here.</p>
+<ul>
+<li><strong>Filter first, then rank.</strong> The user filter is part of the query, not a post-step.</li>
+<li><strong>Show freshness to the ranker.</strong> Store <code>last_confirmed</code>. Use it in scoring.</li>
+<li><strong>Cap what you add.</strong> Fix a token budget for recalled memories. More is not better.</li>
+</ul>
+<p>For chunking, embeddings and retrieval quality, use the RAG track:
+<a href="../rag-vector-databases/chunking-and-ingestion.html">Chunking &amp; ingestion</a> and
+<a href="../rag-vector-databases/retrieval-quality.html">Retrieval quality</a>.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">Have we recognized when a proposed "memory" feature is really a retrieval problem,
-      and built it with the RAG module's discipline instead of a lighter, separate system?</li>
-<li class="task todo">Does our memory-retrieval system support correcting or overriding a stale stored
-      fact, not just appending to history indefinitely?</li>
-<li class="task todo">Do consent, visibility, and deletion apply to retrieved personal history the same
-      way they apply to any other user memory?</li>
-<li class="task todo">For small, stable, always-relevant facts, are we loading them directly instead of
-      running an unneeded retrieval step?</li>
+<li class="task todo">For each kind of memory, did we choose load directly, retrieve, or agent notes, and
+      write down why?</li>
+<li class="task todo">Are small, always-relevant facts loaded directly, not searched?</li>
+<li class="task todo">Can the store replace or expire an old fact, not only append?</li>
+<li class="task todo">Is the per-user filter part of the query, applied before ranking?</li>
+<li class="task todo">Do consent, visibility and deletion cover retrieved personal history?</li>
+<li class="task todo">Is there a token budget for recalled memories?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
-<li><a href="../rag-vector-databases/index.html">RAG &amp; vector databases</a> — the full mechanics this
-  lesson bridges to.</li>
+<li><a href="../rag-vector-databases/index.html">RAG &amp; vector databases</a> — the full retrieval
+  mechanics.</li>
+<li><a href="writing-and-maintaining-memory.html">Writing and maintaining memory</a> — how memories
+  get into the store.</li>
 <li><a href="session-user-and-organizational-memory.html">Session, user &amp; organizational memory</a> —
-  the obligations that apply once retrieval is pointed at personal history.</li>
-<li><a href="../rag-vector-databases/chunking-and-ingestion.html">Chunking &amp; ingestion</a> — the same
-  pipeline discipline, applied to a memory corpus instead of a knowledge base.</li>
+  the duties that come with personal history.</li>
+<li><a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> — compaction and the memory
+  hierarchy in agents.</li>
 </ul>
-  <div class="pagenav"><a class="navcard prev" href="session-user-and-organizational-memory.html"><span class="lbl">← Previous</span><span class="ttl">Session, user &amp; organizational memory</span></a><a class="navcard next" href="when-memory-goes-wrong.html"><span class="lbl">→ Next</span><span class="ttl">When memory goes wrong</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-same-filing-system-a-different-drawer">The mental model: the same filing system, a different drawer</a><a class="h2" href="#why-retrieval-beats-trying-to-hold-everything-in-the-window">Why retrieval beats trying to hold everything in the window</a><a class="h2" href="#whats-genuinely-different-when-the-corpus-is-a-persons-history">What&#x27;s genuinely different when the corpus is a person&#x27;s history</a><a class="h2" href="#when-memory-should-skip-retrieval-entirely">When memory should skip retrieval entirely</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a>
+  (Sep 29, 2025): the context rot quotation, and just-in-time retrieval. Checked 2026-09.</li>
+<li>Anthropic, <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Memory tool</a>
+  (Claude API docs): agent-kept memory files and just-in-time context retrieval. Checked
+  2026-09.</li>
+<li>The tax-assistant scenario, its sizes and the code sketch are invented and illustrative.</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="writing-and-maintaining-memory.html"><span class="lbl">← Previous</span><span class="ttl">Writing and maintaining memory</span></a><a class="navcard next" href="when-memory-goes-wrong.html"><span class="lbl">→ Next</span><span class="ttl">When memory goes wrong</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-one-filing-system-different-drawers">The mental model: one filing system, different drawers</a><a class="h2" href="#why-not-hold-everything-in-the-window">Why not hold everything in the window</a><a class="h2" href="#choosing-among-the-three-designs">Choosing among the three designs</a><a class="h2" href="#worked-example-sizing-the-choice">Worked example: sizing the choice</a><a class="h2" href="#what-changes-when-the-corpus-is-a-persons-history">What changes when the corpus is a person&#x27;s history</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

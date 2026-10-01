@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 01</span>
     <h1>What prompt engineering actually is</h1>
@@ -471,11 +471,17 @@ you can lose quality, and every one is a place you can steer it back.</p>
   <a href="../technical-product-management/tpm-for-ai-products.html">eval-driven development</a>
   discipline the AI PM track builds on.</li>
 </ul>
+<p>One more fact belongs in the mental model: <strong>a prompt is written for a specific
+model.</strong> Models change how literally they follow instructions, how eagerly they call
+tools, and how much they think. A prompt tuned on one version can misbehave on the next
+without a single word changing. This is why versioning and evaluation are not optional,
+and why lesson 10 exists.</p>
 <p>The rest of this module is the specific craft. Lesson 2 breaks a prompt into its six
 named parts. Lessons 3 through 6 climb the ladder from everyday productivity into
 techniques power users depend on. Lessons 7 and 8 cover what changes when the model
 can act — call tools, run code, edit files. Lesson 9 is the diagnostic playbook when
-something goes wrong.</p>
+something goes wrong. Lesson 10 covers how to run prompts as production assets:
+versioning, testing, and surviving model upgrades.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>The one-shot fallacy.</strong> You write a prompt, judge the model on its first output,
@@ -504,6 +510,7 @@ something goes wrong.</p>
 <ul>
 <li><a href="the-anatomy-of-a-prompt.html">The anatomy of a prompt</a></li>
 <li><a href="when-prompts-fail.html">When prompts fail: the diagnostic playbook</a></li>
+<li><a href="prompts-in-production.html">Prompts in production</a></li>
 <li><a href="../context-engineering/why-prompt-engineering-doesnt-scale.html">Context engineering — why prompt engineering doesn't scale alone</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="the-anatomy-of-a-prompt.html"><span class="lbl">→ Next</span><span class="ttl">The anatomy of a prompt</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>

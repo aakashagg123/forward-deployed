@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink active" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink active" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 05</span>
     <h1>Few-shot, chain-of-thought, and self-consistency</h1>
@@ -469,6 +469,10 @@ input, each labeled clearly:</p>
 <li><strong>Match the format exactly.</strong> If the output should be JSON, the example outputs
   are JSON. If it should be a paragraph, they're paragraphs. Format drift in
   examples produces format drift in outputs.</li>
+<li><strong>Vary the examples on purpose.</strong> If every example ends the same way or has the same
+  length, the model copies that accident. Change the length, the topic, and the
+  difficulty from one example to the next. Wrap each one in <code>&lt;example&gt;</code> tags so the
+  model can tell examples from instructions.</li>
 <li><strong>More is not always better.</strong> Beyond ~5 examples, most tasks stop improving, and
   you're spending tokens. Some tasks improve up to ~20; test to find the knee.</li>
 </ul>
@@ -476,19 +480,22 @@ input, each labeled clearly:</p>
 write. The model interpolates between the examples. The right examples define the
 right interpolation.</p>
 <h2 id="chain-of-thought-reason-step-by-step">Chain-of-thought: reason step by step</h2>
-<p>Wei et al. showed in 2022 that appending "let's think step by step" to a prompt
-lifted the model's performance on math word problems by tens of percentage points.
-The mechanism, roughly: the model is a next-token predictor. When it commits to an
+<p>Two 2022 papers set up this technique. Wei et al. showed that worked examples with
+visible reasoning steps lift accuracy on math and logic problems. Kojima et al. then
+showed that no examples are needed: appending "let's think step by step" to a prompt
+gave a large gain on the same kind of task.</p>
+<p>The mechanism, roughly: the model is a next-token predictor. When it commits to an
 answer first, it has no way to backtrack. When it commits to reasoning first, each
 step in the reasoning constrains the next, and the final answer inherits the
 constraint.</p>
 <p>Two flavours:</p>
 <ul>
-<li><strong>Zero-shot CoT.</strong> Add "think step by step before answering" to the prompt. No
-  examples needed. Works on many tasks; often not enough on the hardest ones.</li>
-<li><strong>Few-shot CoT.</strong> Provide examples where the <em>output</em> itself shows step-by-step
-  reasoning ending in the answer. Stronger; requires the effort of writing worked
-  reasoning traces.</li>
+<li><strong>Zero-shot CoT</strong> (Kojima et al.). Add "think step by step before answering" to the
+  prompt. No examples needed. Works on many tasks; often not enough on the hardest
+  ones.</li>
+<li><strong>Few-shot CoT</strong> (Wei et al.). Provide examples where the <em>output</em> itself shows
+  step-by-step reasoning ending in the answer. Stronger; requires the effort of
+  writing worked reasoning traces.</li>
 </ul>
 <p>A concrete shape:</p>
 <blockquote>
@@ -497,12 +504,24 @@ constraint.</p>
 </blockquote>
 <p>The <code>&lt;answer&gt;</code> tag lets the calling code parse just the answer while the reasoning
 trace is available for debugging and evaluation.</p>
-<p><strong>A note on reasoning models.</strong> Modern reasoning-tuned models (the OpenAI o-series,
-Claude's extended-thinking mode, DeepSeek-R1-class open models) do chain-of-thought
-internally by default. Explicit CoT prompts are less necessary — sometimes
-counterproductive, since the model has already been trained to reason. The
-technique still applies to non-reasoning models and to cases where you need the
-reasoning trace visible.</p>
+<p><strong>A note on reasoning models.</strong> Modern reasoning-tuned models do chain-of-thought
+internally. That includes OpenAI's o-series, DeepSeek-R1-class open models, and
+Claude with thinking turned on. Explicit "think step by step" prompts are less
+necessary on these models, and sometimes counterproductive, since the model has
+already been trained to reason.</p>
+<p>On current Claude models, you steer thinking with settings, not with prompt phrases:</p>
+<ul>
+<li><strong>Adaptive thinking.</strong> The model decides when and how much to think. This replaces
+  the older manual thinking budget. On Claude 4.7 and later, setting <code>budget_tokens</code>
+  returns an error.</li>
+<li><strong>The <code>effort</code> setting.</strong> It controls how deep the model thinks. Lower it if
+  responses are slow or costly. Raise it for hard tasks.</li>
+<li><strong>Prompt guidance for triggering.</strong> If the model thinks more often than you want,
+  which can happen with large system prompts, you can add a sentence that tells it
+  to think only when a task needs multi-step reasoning.</li>
+</ul>
+<p>The technique still applies to non-reasoning models, and to cases where you need the
+reasoning trace visible in the output.</p>
 <h2 id="self-consistency-sample-and-vote">Self-consistency: sample and vote</h2>
 <p>Wang et al. (2022) showed that on reasoning tasks, running the same prompt N times
 with a nonzero temperature, then taking the majority answer, beats a single call —
@@ -529,7 +548,8 @@ majority to vote on.</p>
 <li><strong>Self-consistency vs. cost.</strong> N× the calls is N× the token bill. Fine for a batch
   overnight; painful for a real-time feature at scale.</li>
 <li><strong>Explicit CoT vs. reasoning models.</strong> With a reasoning-tuned model, extra
-  "think step by step" prompting sometimes hurts. Test both.</li>
+  "think step by step" prompting sometimes hurts. Test both. Then tune the effort
+  setting before you add more prompt text.</li>
 </ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>

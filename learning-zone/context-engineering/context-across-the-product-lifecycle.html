@@ -479,6 +479,14 @@ or the <em>next</em> iteration, distinct from the eval-and-model flywheel in
 <a href="../technical-product-management/tpm-for-ai-products.html">TPM for AI products</a>: that
 flywheel improves the model's behavior over time; this one improves what the model gets
 shown.</p>
+<h2 id="after-launch-re-audit-when-the-model-or-the-sources-change">After launch: re-audit when the model or the sources change</h2>
+<p>Context assumptions expire. A retrieval corpus ages. A policy changes. A model upgrade
+changes how the model uses long context, and a new context window may tempt the team
+to send more than the feature needs. Put a re-audit on the calendar for each of these
+events: a model change, a major source change, and a new feature that shares a source.
+Rerun the context checks from
+<a href="evaluating-context-quality.html">Evaluating context quality</a> each time. A larger
+window is a reason to check your budget again, not a reason to fill it.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Context as an afterthought</strong> — scoping behavior and the eval bar, then discovering
@@ -497,6 +505,8 @@ shown.</p>
       work"?</li>
 <li class="task todo">Are we capturing which questions had no good context available, as a distinct
       signal from "did the user like the answer"?</li>
+<li class="task todo">Is there a scheduled context re-audit for a model change, a source change, or a new
+      feature that shares a source?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -505,7 +515,7 @@ shown.</p>
 <li><a href="../technical-product-management/discovery-to-delivery.html">Discovery to delivery</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="evaluating-context-quality.html"><span class="lbl">← Previous</span><span class="ttl">Evaluating context quality</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-different-job-at-each-stage">The mental model: a different job at each stage</a><a class="h2" href="#discovery-the-context-audit">Discovery: the context audit</a><a class="h2" href="#delivery-build-the-contract-dont-discover-it-in-code-review">Delivery: build the contract, don&#x27;t discover it in code review</a><a class="h2" href="#launch-capture-becomes-the-next-features-context">Launch: capture becomes the next feature&#x27;s context</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-different-job-at-each-stage">The mental model: a different job at each stage</a><a class="h2" href="#discovery-the-context-audit">Discovery: the context audit</a><a class="h2" href="#delivery-build-the-contract-dont-discover-it-in-code-review">Delivery: build the contract, don&#x27;t discover it in code review</a><a class="h2" href="#launch-capture-becomes-the-next-features-context">Launch: capture becomes the next feature&#x27;s context</a><a class="h2" href="#after-launch-re-audit-when-the-model-or-the-sources-change">After launch: re-audit when the model or the sources change</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

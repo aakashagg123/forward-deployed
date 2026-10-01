@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink active" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink active" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 06</span>
     <h1>Prompt chaining and multi-step workflows</h1>
@@ -381,8 +381,8 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 task into a sequence of smaller prompts, each doing one thing, with the output of
 one feeding the input of the next. A chain that does "find the top three concerns in
 this document, draft an email addressing each, then rewrite in the CEO's voice" runs
-three prompts, not one — and each prompt does its one job better than any single
-prompt would do all three. Chaining trades one call for several, and one prompt to
+three prompts, not one. Each prompt does its one job better than a single prompt
+would do all three. Chaining trades one call for several, and one prompt to
 debug for several to debug, in exchange for higher-quality outputs and clearer
 failure modes. It's the last technique inside a single-user, single-thread workflow
 before you cross into the <em>agentic</em> territory of the next two lessons, where the
@@ -442,6 +442,15 @@ on complex inputs, when a two-step chain would have failed 3% of the time.</p>
 underappreciated part: a chain can <em>check</em> an intermediate output and fail early
 rather than passing garbage forward. A one-prompt version has to succeed at all
 three steps in one shot, with no place to stop and check.</p>
+<h2 id="chain-for-control-not-for-capability">Chain for control, not for capability</h2>
+<p>Recent models handle more multi-step reasoning inside a single call. With adaptive
+thinking and sub-agents, the model often plans and checks its own work. So the reason
+to chain has shifted. You no longer chain because the model cannot think through five
+steps. You chain because you need to <strong>inspect an intermediate result</strong>, <strong>enforce a
+fixed pipeline</strong>, <strong>branch on a check</strong>, or <strong>use a different model per step</strong>.</p>
+<p>The most common chain is <strong>self-correction</strong>: generate a draft, ask the model to
+review it against stated criteria, then ask it to revise. Each step is its own call,
+so you can log it, score it, or stop it at any point.</p>
 <h2 id="when-to-chain">When to chain</h2>
 <p>Not every task benefits. Chain when:</p>
 <ul>
@@ -543,7 +552,7 @@ side.</p>
   around chains and agents.</li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="few-shot-cot-self-consistency.html"><span class="lbl">← Previous</span><span class="ttl">Few-shot, chain-of-thought, and self-consistency</span></a><a class="navcard next" href="prompting-for-tools-and-agents.html"><span class="lbl">→ Next</span><span class="ttl">Prompting for tools and agents</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#when-to-chain">When to chain</a><a class="h2" href="#patterns-that-come-up-over-and-over">Patterns that come up over and over</a><a class="h2" href="#what-changes-when-the-chain-runs-itself">What changes when the chain runs itself</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model">The mental model</a><a class="h2" href="#chain-for-control-not-for-capability">Chain for control, not for capability</a><a class="h2" href="#when-to-chain">When to chain</a><a class="h2" href="#patterns-that-come-up-over-and-over">Patterns that come up over and over</a><a class="h2" href="#what-changes-when-the-chain-runs-itself">What changes when the chain runs itself</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

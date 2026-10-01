@@ -371,33 +371,32 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI agents</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-an-agent-is-and-how-much-autonomy-it-needs.html">1 · What an agent is, and how much autonomy it needs</a><a class="modlink" href="planning-reasoning-and-reliability-across-a-run.html">2 · Planning, reasoning &amp; reliability across a run</a><a class="modlink active" href="when-not-to-build-an-agent.html">3 · When not to build an agent</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-an-agent-is-and-how-much-autonomy-it-needs.html">1 · What an agent is, and how much autonomy it needs</a><a class="modlink" href="planning-reasoning-and-reliability-across-a-run.html">2 · Planning, reasoning &amp; reliability across a run</a><a class="modlink active" href="when-not-to-build-an-agent.html">3 · When not to build an agent</a><a class="modlink" href="running-an-agent-in-production.html">4 · Running an agent in production</a><a class="modlink" href="choosing-and-acceptance-testing-an-agent.html">5 · Choosing and acceptance-testing an agent</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 03</span>
     <h1>When not to build an agent</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>An agent is a real economic bet, not a free upgrade to an existing feature: it costs money
-per run, it needs supervision proportional to how often it's wrong, and building it
-properly — evals, tooling, security review — costs real money before it ever ships. That
-bet only pays off in a specific place: work that happens often enough to amortize the
-setup cost, that's cheap to check when it's done, and where being wrong sometimes is
-survivable. Outside that zone — low-volume work, work that's expensive or slow to verify,
-or work where a single mistake is costly or irreversible — an agent is usually a more
-expensive, less predictable way to do something a fixed workflow, or a human, was already
-doing well enough.</p>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>An agent is an economic bet, not a free upgrade. It costs money on every run. It needs
+supervision in proportion to how often it is wrong. Building it properly, with evals,
+tooling, and security review, costs real money before it ships.</p>
+<p>The bet pays off in one place: work that happens often enough to repay the setup cost,
+that is cheap to check when it is done, and where an occasional mistake is survivable.
+Outside that zone, an agent is a costlier, less predictable way to do something that a
+fixed workflow, or a person, already did well enough. The zone is: low-volume work,
+work that is slow or costly to verify, and work where one mistake is costly or cannot be
+undone.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — This is the highest-leverage call in the whole module. Getting it
-right before the build starts is far cheaper than discovering it after the invoice or
-the incident.</p>
-<p><strong>What it changes in your decisions</strong> — An agent proposal gets evaluated on stakes,
-verifiability, and volume before it gets evaluated on how impressive the demo looked.</p>
-<p><strong>Ask yourself</strong> — <em>"For this task: what does the agent cost, what does checking its
-work cost, and what did doing it the old way cost — all in?"</em></p>
-<p><strong>Risk if ignored</strong> — An agent ships on low-volume, high-stakes, hard-to-verify work,
-looks fine in testing, and one bad run erases a year of the savings it was supposed to
-deliver.</p>
+<p><strong>Why it matters</strong> — This is the highest-leverage call in the module. Getting it right
+before the build is far cheaper than finding out from the invoice or the incident.</p>
+<p><strong>What it changes in your decisions</strong> — Judge an agent proposal on stakes,
+verifiability, and volume before you judge how good the demo looked.</p>
+<p><strong>Ask yourself</strong> — <em>"For this task, what does the agent cost, what does checking its
+work cost, and what did the old way cost, all in?"</em></p>
+<p><strong>Risk if ignored</strong> — An agent ships on low-volume, high-stakes, hard-to-check work. It
+looks fine in testing. One bad run erases a year of the savings it was meant to deliver.</p>
 </blockquote>
 <h2 id="the-mental-model-three-questions-one-lane">The mental model: three questions, one lane</h2>
 <!-- When not to build — 3-question decision funnel with 4 terminal outcomes.
@@ -502,71 +501,154 @@ deliver.</p>
   </div>
 </div>
 
-<p>Three questions, asked in this order, catch most of the bad agent bets before they're
-built. <strong>Can you check the work cheaply?</strong> If not, autonomy caps out at "drafts for a
-human to approve" — the checking cost never goes away, it just moves earlier or later.
-<strong>Is a mistake reversible and low-cost?</strong> If not, a human gate belongs in the loop
-regardless of how well the agent tests, because one bad irreversible action can erase far
-more value than the automation ever produced. <strong>Does this happen often enough?</strong> Building
-an agent properly has real fixed costs, and a task done rarely never earns them back. The
-full unit-economics model — cost per task, the honest <em>supervised</em> cost that includes the
-human checking it, and how these numbers should shift as model prices keep falling — is
-developed in depth in <a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a>.</p>
-<h2 id="the-honest-number-is-the-supervised-cost-not-the-per-run-cost">The honest number is the supervised cost, not the per-run cost</h2>
-<p>The number that actually decides whether an agent is worth it isn't what one run costs —
-it's that cost plus what it costs to catch the runs that go wrong, compared honestly to
-what the task cost before the agent existed. An agent that's cheap per run but wrong often
-enough to need full review on every output can end up costing <em>more</em> than the old way did.
-It hasn't reduced the work — it's just moved it from doing the task to checking the
-agent's version of it. This is the single most common way an agent proposal looks
-economical on a slide and isn't in production, and it's why the supervised-cost question
-belongs in the pitch, not discovered after launch.</p>
+<p>Ask the three questions in this order. They catch most bad agent bets before they are
+built.</p>
+<p><strong>Can you check the work cheaply?</strong> If not, autonomy stops at "drafts for a human to
+approve." The checking cost never goes away. It only moves earlier or later.</p>
+<p><strong>Is a mistake reversible and low-cost?</strong> If not, a human gate belongs in the loop, however
+well the agent tests. One bad, irreversible action can erase more value than the
+automation ever made.</p>
+<p><strong>Does this happen often enough?</strong> Building an agent properly has fixed costs. A task done
+rarely never earns them back.</p>
+<p>The full unit-economics model is in
+<a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a>.</p>
+<h2 id="the-honest-number-is-the-supervised-cost">The honest number is the supervised cost</h2>
+<p>The number that decides whether an agent is worth it is not the cost of one run. It is
+that cost, plus the cost of catching the runs that go wrong, compared honestly with what the
+task cost before.</p>
+<p>An agent that is cheap per run but wrong often enough to need full review on every output
+can cost more than the old way. It did not reduce the work. It moved the work from doing
+the task to checking the agent's version of it. This is the most common way a proposal
+looks economical on a slide and is not in production.</p>
+<p>Real cost data points the same way. Anthropic reported, from building its own multi-agent
+research system, that agents use about four times the tokens of a chat, and multi-agent
+systems about fifteen times. Token use is not the whole cost, but it shows how fast the
+per-run price rises as autonomy rises.</p>
+<h2 id="worked-example-a-supervised-cost-break-even">Worked example: a supervised-cost break-even</h2>
+<p><em>This example is invented, to show the method. Every number is illustrative. Replace them
+with your own.</em></p>
+<p>A team spends 2,000 hours a month on a research task. A person costs 50 an hour, so the
+task costs 100,000 a month.</p>
+<p>They propose an agent.</p>
+<table>
+<thead>
+<tr>
+<th>Cost line</th>
+<th>Per month</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model and tool cost for 4,000 runs at 5 each</td>
+<td>20,000</td>
+</tr>
+<tr>
+<td>Human review of every run, at 6 minutes each (400 hours at 50)</td>
+<td>20,000</td>
+</tr>
+<tr>
+<td>Rework on runs the reviewer rejects (10% of runs, 30 minutes each: 200 hours at 50)</td>
+<td>10,000</td>
+</tr>
+<tr>
+<td>Platform, monitoring, and upkeep</td>
+<td>10,000</td>
+</tr>
+<tr>
+<td><strong>Supervised total</strong></td>
+<td><strong>60,000</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The agent saves 40,000 a month against the 100,000 baseline. The setup cost was 300,000.
+Break-even arrives after 7.5 months.</p>
+<p>Now change one number. If reviewers must check every output for 20 minutes instead of 6,
+review cost rises to 66,700 and the supervised total to 106,700. The agent now costs more
+than the old way. The whole case rests on how cheap the checking is. That is why
+"cheap to check" comes first in the three questions.</p>
 <h2 id="the-trap-of-demo-appeal">The trap of demo appeal</h2>
-<p>An agent that free-roams through an open-ended task tends to demo better than a boring
-fixed workflow, and that demo appeal is exactly the wrong basis for the build-or-not
-decision. The task that looks most impressive as an autonomous agent is not necessarily
-the task where autonomy actually pays for itself — it's frequently the opposite, since the
-most impressive-looking demos tend to involve exactly the open-ended, hard-to-verify work
-where checking the result costs the most. Evaluating a proposal on stakes, verifiability,
-and volume, before anyone in the room has seen it run, is the practical way to keep the
-demo from making the decision for you.</p>
+<p>A free-roaming agent tends to demo better than a fixed workflow. That appeal is the wrong
+basis for the decision.</p>
+<p>The task that looks most impressive as an autonomous agent is often not the task where
+autonomy pays. It is often the opposite. The most impressive demos tend to use open-ended,
+hard-to-check work, where checking the result costs the most. Judge a proposal on stakes,
+verifiability, and volume before anyone sees it run.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Autonomy vs. checking cost.</strong> More autonomy saves doing and adds checking. The saving
+  depends on how cheap the check is.</li>
+<li><strong>Build now vs. wait.</strong> Prices, models, and tools change. A task ruled out once may pass
+  later. Set a date to re-run the numbers.</li>
+<li><strong>Agent vs. workflow.</strong> A workflow gives up flexibility for predictable cost. Choose it
+  wherever an expert can write the steps.</li>
+<li><strong>Human gate vs. throughput.</strong> A gate is slow and costs staff time. It is the price of
+  making a mistake reversible.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Wrong-lane deployment</strong> — full autonomy shipped on low-volume, high-stakes,
-  hard-to-verify work because the demo went smoothly, with no plan for what one bad run
+<li><strong>Wrong-lane deployment.</strong> Full autonomy is shipped on low-volume, high-stakes,
+  hard-to-check work because the demo went well. There is no plan for what one bad run
   costs.</li>
-<li><strong>The checking treadmill</strong> — an agent that technically automated a task but converted
-  the team that used to do it into full-time reviewers of its output, with none of the
-  promised savings showing up anywhere.</li>
-<li><strong>Sunk-cost autonomy</strong> — a workflow that should have replaced a struggling agent doesn't,
-  because the agent was already built and nobody wants to admit the build-or-not call was
-  wrong the first time.</li>
-<li><strong>Static economics on falling costs</strong> — a task ruled uneconomical once, never
-  revisited, while the model prices that made it uneconomical keep dropping underneath it.</li>
+<li><strong>The checking treadmill.</strong> The agent automates the task, and the team that did it becomes
+  a full-time review desk. The promised saving never appears.</li>
+<li><strong>Sunk-cost autonomy.</strong> A workflow should replace a struggling agent. It does not,
+  because the agent is already built and nobody wants to admit the first call was wrong.</li>
+<li><strong>Static economics.</strong> A task is ruled out once and never revisited, while the prices and
+  capabilities that ruled it out have moved.</li>
+<li><strong>Agent-washing on the buy side.</strong> A vendor sells a rebranded chatbot or script as an
+  agent. See <a href="choosing-and-acceptance-testing-an-agent.html">Choosing and acceptance-testing an agent</a>.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The break-even above is a small model. Keep it in code, so a change in any input updates the
+answer.</p>
+<pre><code class="language-python">def supervised_cost(runs, run_cost, review_min, reject_rate, rework_min, hourly, fixed):
+    review = runs * (review_min / 60) * hourly
+    rework = runs * reject_rate * (rework_min / 60) * hourly
+    return runs * run_cost + review + rework + fixed
+
+baseline = 2000 * 50                      # hours x hourly rate, per month
+agent    = supervised_cost(runs=4000, run_cost=5, review_min=6,
+                           reject_rate=0.10, rework_min=30, hourly=50, fixed=10_000)
+saving   = baseline - agent               # 40,000 per month in the example
+months_to_break_even = 300_000 / saving   # 7.5 months
+</code></pre>
+<p>Sweep <code>review_min</code>, <code>reject_rate</code>, and <code>run_cost</code> to find which one breaks the case.
+Usually it is review time. Two engineering inputs feed <code>run_cost</code>: the number of steps per
+run and the context carried at each step. Long runs re-send a growing history on every
+step. See <a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> and
+<a href="../cost-optimization/index.html">Cost optimization</a>.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
 <li class="task todo">Can this task's output be checked cheaply, or does every output still need a human
-      review that the agent didn't remove?</li>
-<li class="task todo">If a mistake happens, is it reversible and low-cost — and if not, is there an
-      actual human approval gate, not just good-looking test results?</li>
-<li class="task todo">Does this task happen often enough to repay the real fixed cost of building an
-      agent properly?</li>
-<li class="task todo">Have we calculated the <em>supervised</em> cost — including catching the agent's
-      mistakes — against the honest cost of the old way, not against the agent's cost
-      alone?</li>
+      review the agent did not remove?</li>
+<li class="task todo">If a mistake happens, is it reversible and low-cost? If not, is there a real human
+      approval gate, not just good test results?</li>
+<li class="task todo">Does the task happen often enough to repay the fixed cost of building properly?</li>
+<li class="task todo">Have we calculated the <em>supervised</em> cost against the honest cost of the old way?</li>
+<li class="task todo">Have we sensitivity-tested review time, since it usually decides the case?</li>
+<li class="task todo">Is there a date to revisit the numbers as model prices fall?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
 <li><a href="what-an-agent-is-and-how-much-autonomy-it-needs.html">What an agent is, and how much autonomy it needs</a>
   — the workflow-versus-agent call this lesson's economics often settle.</li>
 <li><a href="planning-reasoning-and-reliability-across-a-run.html">Planning, reasoning &amp; reliability across a run</a>
-  — why verifiability is also what makes an agent's work checkable at all.</li>
+  — why cheap-to-check work is the work agents do well.</li>
+<li><a href="choosing-and-acceptance-testing-an-agent.html">Choosing and acceptance-testing an agent</a>
+  — how to test the bet before you make it.</li>
 <li><a href="../agentic-ai/agentic-ai-as-a-product.html">Agentic AI as a product</a> — the full unit
-  economics, agent UX, and business-model depth behind this lesson.</li>
+  economics, agent UX, and business-model depth.</li>
 </ul>
-  <div class="pagenav"><a class="navcard prev" href="planning-reasoning-and-reliability-across-a-run.html"><span class="lbl">← Previous</span><span class="ttl">Planning, reasoning &amp; reliability across a run</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-questions-one-lane">The mental model: three questions, one lane</a><a class="h2" href="#the-honest-number-is-the-supervised-cost-not-the-per-run-cost">The honest number is the supervised cost, not the per-run cost</a><a class="h2" href="#the-trap-of-demo-appeal">The trap of demo appeal</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://www.anthropic.com/engineering/multi-agent-research-system">How we built our multi-agent research system</a>
+  (Jun 2025): agents use about 4x the tokens of chat, and multi-agent systems about 15x.
+  Checked 2026-09.</li>
+<li>The worked example and the code are invented and illustrative, not data from a real
+  company.</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="planning-reasoning-and-reliability-across-a-run.html"><span class="lbl">← Previous</span><span class="ttl">Planning, reasoning &amp; reliability across a run</span></a><a class="navcard next" href="running-an-agent-in-production.html"><span class="lbl">→ Next</span><span class="ttl">Running an agent in production</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-questions-one-lane">The mental model: three questions, one lane</a><a class="h2" href="#the-honest-number-is-the-supervised-cost">The honest number is the supervised cost</a><a class="h2" href="#worked-example-a-supervised-cost-break-even">Worked example: a supervised-cost break-even</a><a class="h2" href="#the-trap-of-demo-appeal">The trap of demo appeal</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

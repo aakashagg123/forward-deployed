@@ -371,46 +371,46 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink active" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="retrieval-as-memory.html">3 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">4 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink active" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 02</span>
     <h1>Session, user &amp; organizational memory</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>"The product remembers me" is really three different features wearing one name, and
-conflating them is where most memory-feature mistakes start. <strong>Session memory</strong> carries
-information within one active conversation, and disappears when the session ends — the
-lowest-risk, most universally expected form. <strong>User memory</strong> carries information about one
-specific person across separate visits, days or months apart — a real, ongoing store that
-needs consent and a way to see and edit it. <strong>Organizational memory</strong> carries shared
-knowledge across an entire team or company — a style guide, a set of standard procedures,
-a shared history — where the boundary of who's inside the "organization" is itself a
-security-critical decision. Each shape answers "who is this for, and for how long" with a
-different answer, and each needs its own design, its own storage, and its own risk review.
-Treating all three as one undifferentiated "memory" feature is how a team accidentally
-gives organizational visibility to something that was only ever meant to be personal, or
-vice versa.</p>
+  <p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>"The product remembers me" is three different features with one name. Mixing them up is
+where most memory mistakes start.</p>
+<ul>
+<li><strong>Session memory</strong> lasts for one conversation. It is gone when the session ends. It is
+  the lowest-risk shape, and users expect it.</li>
+<li><strong>User memory</strong> lasts across visits, for one person. It is a real data store. It needs
+  consent, and a way for the user to see and change it.</li>
+<li><strong>Organizational memory</strong> is shared across a team or company. Think of a style guide or
+  standard procedures. Who counts as "inside" the organization is a security decision.</li>
+</ul>
+<p>Each shape needs its own storage, its own review, and its own answer to "who sees this,
+and for how long?"</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — The three shapes carry very different stakes. A session forgetting
-something is a minor annoyance. A user's private preference leaking into a shared,
-organizational context is a real privacy incident.</p>
-<p><strong>What it changes in your decisions</strong> — Every memory feature gets explicitly scoped to
-one of the three shapes at design time, with the boundary between them treated as a
-security boundary, not an implementation detail.</p>
-<p><strong>Ask yourself</strong> — <em>"For this specific memory feature, which of the three shapes is it —
-and have we actually enforced that boundary, or just assumed it?"</em></p>
-<p><strong>Risk if ignored</strong> — A feature designed as "user memory" accidentally becomes visible
-across an entire organization, because nobody treated the boundary between the two as
-something that needed active enforcement.</p>
+<p><strong>Why it matters</strong> — The stakes differ a lot. A session that forgets is a small
+annoyance. A private preference that leaks into shared, organizational memory is a
+privacy incident.</p>
+<p><strong>What it changes in your decisions</strong> — Every memory feature is scoped to one of the
+three shapes at design time. The line between shapes is a security boundary, not an
+implementation detail.</p>
+<p><strong>Ask yourself</strong> — <em>"Which of the three shapes is this feature? Did we enforce that
+boundary, or only assume it?"</em></p>
+<p><strong>Risk if ignored</strong> — A feature built as user memory becomes visible across the whole
+organization. No one treated the boundary as something to enforce.</p>
 </blockquote>
 <h2 id="the-mental-model-a-note-a-file-and-a-shared-handbook">The mental model: a note, a file, and a shared handbook</h2>
-<p>Session memory is a <strong>sticky note</strong> — useful for the length of one task, thrown away when
-it's done. User memory is a <strong>personal file</strong> — it persists, it's about one specific
-person, and that person has a reasonable expectation of control over what's in it.
-Organizational memory is a <strong>shared handbook</strong> — everyone on the team can read from it,
-someone has to own keeping it accurate, and the question of who counts as "the team" is
-exactly the access-control question that matters most.</p>
+<ul>
+<li><strong>Session memory is a sticky note.</strong> It helps for one task, then you throw it away.</li>
+<li><strong>User memory is a personal file.</strong> It lasts, it is about one person, and that person
+  expects some control over it.</li>
+<li><strong>Organizational memory is a shared handbook.</strong> Everyone on the team reads it. Someone
+  must keep it accurate. The key question is who counts as "the team".</li>
+</ul>
 <!-- Session/user/org memory — 3 side-by-side scope panels with their properties. -->
 <style>
 .dgm-so{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #5d8aa8;
@@ -509,74 +509,140 @@ exactly the access-control question that matters most.</p>
   </div>
 </div>
 
-<h2 id="session-memory-the-lowest-risk-shape-still-worth-naming-explicitly">Session memory: the lowest-risk shape, still worth naming explicitly</h2>
-<p>Within one active conversation, carrying forward what was already said is close to a
-baseline user expectation — a chat assistant that forgets your name three messages after
-you gave it feels obviously broken. The risk here is low because the information never
-outlives the session, but it's still worth naming explicitly in a spec, because "session
-memory" has a real engineering cost (the <a href="../ai/00-foundations.html#context-engineering">context engineering</a>
-discipline of managing what stays in the window as a conversation grows long) and a real
-edge: what happens when the session is long enough that early information has to be
-compacted or dropped.</p>
-<h2 id="user-memory-a-real-ongoing-store-with-real-obligations">User memory: a real, ongoing store with real obligations</h2>
-<p>Once information is meant to survive past the current session — "remembers my size,"
-"knows I prefer short answers," "recalls what we discussed last month" — you've built a
-genuine, persistent data store about a real person, and it inherits every obligation any
-other personal data store carries. It needs the user's informed awareness that it exists,
-a way for them to see what's actually stored, a way to correct it when it's wrong, and a
-way to delete it entirely. A memory feature that delights a user with "it knows me" but
-gives them no visibility into what "knows me" actually means is accumulating a trust debt
-that surfaces the first time the memory is wrong, or resurfaces something unexpectedly.</p>
-<h2 id="organizational-memory-the-boundary-is-the-whole-feature">Organizational memory: the boundary is the whole feature</h2>
-<p>Shared knowledge — a company's style guide, standard operating procedures, "how we've
-always handled this type of request" — is genuinely valuable to encode as memory an AI
-feature can draw on. The entire risk of this shape concentrates in one question: exactly
-who is inside the boundary that can read and write it? Get this boundary wrong and the
-consequence isn't a minor inconvenience, it's the exact failure mode covered in the next
-lesson — information crossing from one team, tenant, or customer into another's view. This
-is the same <a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a>
-discipline that applies to any shared system, applied here to a memory store instead of a
-database.</p>
-<h2 id="why-naming-the-shape-first-prevents-the-worst-mistakes">Why naming the shape first prevents the worst mistakes</h2>
-<p>Most damaging memory failures trace back to a feature quietly sliding from one shape into
-another without anyone deciding it should. A note meant to be session-only gets
-accidentally persisted. A preference meant to be personal gets folded into a shared
-knowledge base "to make the assistant smarter for everyone." Naming the shape explicitly,
-at design time, and treating a shift between shapes as a decision that needs its own
-review — not something that happens as a side effect of a different change — is the single
-cheapest safeguard available.</p>
+<h2 id="session-memory-low-risk-still-worth-naming">Session memory: low risk, still worth naming</h2>
+<p>Inside one conversation, carrying earlier turns forward is a basic expectation. An
+assistant that forgets your name three messages later feels broken.</p>
+<p>The risk is low because nothing outlives the session. Still, name it in the spec. It has
+a real cost: the context must be managed as the conversation grows. It also has a real
+edge case. In a long session, early details get summarised or dropped. Decide which
+details must survive that step. The mechanics are in
+<a href="../ai/00-foundations.html#context-engineering">Context engineering</a>.</p>
+<h2 id="user-memory-a-real-store-with-real-duties">User memory: a real store with real duties</h2>
+<p>Once information outlives the session, you have built a data store about a real person.
+It inherits the duties of any personal data store.</p>
+<ul>
+<li>The user knows it exists.</li>
+<li>The user can see what is stored.</li>
+<li>The user can correct it.</li>
+<li>The user can delete it.</li>
+</ul>
+<p>A feature that delights users with "it knows me" but hides what "knows me" means builds
+trust debt. The debt comes due the first time the memory is wrong.</p>
+<h2 id="organizational-memory-the-boundary-is-the-feature">Organizational memory: the boundary is the feature</h2>
+<p>Shared knowledge is valuable. Examples are a style guide, a support playbook, or "how we
+handled this last time". The whole risk sits in one question: exactly who can read and
+write it?</p>
+<p>If you get the boundary wrong, one team's, tenant's or customer's information appears in
+another's view. That is the failure covered in
+<a href="when-memory-goes-wrong.html">When memory goes wrong</a>. The defence is the same
+<a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a> you
+would apply to any shared system.</p>
+<h2 id="worked-example-three-notes-three-shapes">Worked example: three notes, three shapes</h2>
+<p><em>This example is invented, to show the method.</em></p>
+<p>A sales assistant has three things it might remember. The team places each one.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Shape</th>
+<th>Why</th>
+<th>Boundary to enforce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Use the Q3 price list, not Q2"</td>
+<td>Session</td>
+<td>True for this task only</td>
+<td>Cleared when the chat ends</td>
+</tr>
+<tr>
+<td>"Priya likes bullet points and a two-line summary first"</td>
+<td>User</td>
+<td>About one person</td>
+<td>Only Priya's requests can read it</td>
+</tr>
+<tr>
+<td>"Our discount policy: max 15% without approval"</td>
+<td>Organization</td>
+<td>Everyone on the team needs it</td>
+<td>Only members of this account can read it. Only the sales-ops owner can edit it.</td>
+</tr>
+</tbody>
+</table>
+<p>Now the tempting mistake. The assistant notices that Priya's summaries score well and
+proposes to fold her style into the shared handbook "to help everyone". That moves a fact
+from user to organization. It is a shape change, so it needs its own review and Priya's
+consent. It must not happen as a side effect of a tuning change.</p>
+<h2 id="why-name-the-shape-first">Why name the shape first</h2>
+<p>Most serious memory failures start when a feature drifts from one shape to another, and
+no one decided it should. A session note gets saved by accident. A personal preference
+gets merged into shared knowledge. Name the shape at design time. Treat any move between
+shapes as a decision with its own review. This is the cheapest safeguard you have.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Unnamed shape</strong> — building a memory feature without deciding which of the three shapes
-  it is, so its actual behavior is whatever the implementation happened to produce.</li>
-<li><strong>Session memory that outlives the session</strong> — information meant to be temporary
-  persisting by accident, because nothing explicitly cleared it.</li>
-<li><strong>User memory with no visibility or control</strong> — a persistent personal store the user
-  can't see, correct, or delete, discovered only when it surfaces something wrong.</li>
-<li><strong>Organizational memory with an unenforced boundary</strong> — shared knowledge accessible to
-  more people, teams, or tenants than the feature was ever meant to serve.</li>
+<li><strong>Unnamed shape.</strong> The feature acts however the implementation happens to make it act.</li>
+<li><strong>Session memory that outlives the session.</strong> Temporary data is saved by accident
+  because nothing cleared it.</li>
+<li><strong>User memory with no visibility.</strong> A personal store the user cannot see, correct or
+  delete. They find it when it says something wrong.</li>
+<li><strong>Organizational memory with an unenforced boundary.</strong> Shared data reaches more people
+  or tenants than intended.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The boundary must be enforced in the store, not in the prompt. Scope every read and write
+by the caller's identity, and filter before anything reaches the model.</p>
+<pre><code class="language-python">def read_memories(store, caller, query):
+    # The scope comes from the authenticated caller, never from model output.
+    allowed = [
+        m for m in store.search(query)
+        if (m.scope == &quot;user&quot; and m.subject_id == caller.user_id)
+        or (m.scope == &quot;org&quot; and m.subject_id == caller.org_id)
+    ]
+    return allowed   # only these are placed in the model's context
+</code></pre>
+<p>Three rules keep this honest.</p>
+<ul>
+<li><strong>Take the identity from the session, not from the model.</strong> A model can be tricked into
+  asking for another user's id.</li>
+<li><strong>Filter before ranking or summarising.</strong> A summary of data the caller may not see is
+  still a leak.</li>
+<li><strong>Log every read across a shape boundary.</strong> You cannot audit what you did not record.</li>
+</ul>
+<p>The Claude memory tool works this way by design. Its <code>/memories</code> path is only a prefix.
+In the docs' words, your handler maps it "onto real storage, such as a per-user directory
+or keys in a database." Choosing that mapping is the boundary decision.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">Is every memory feature explicitly labeled as session, user, or organizational — not
-      left implicit?</li>
-<li class="task todo">For user memory: can the person it's about see, correct, and delete it?</li>
-<li class="task todo">For organizational memory: is the "who's inside the boundary" question enforced by
-      the system, not just assumed?</li>
-<li class="task todo">Do we review it as a real decision whenever information looks like it's shifting
-      from one shape to another?</li>
+<li class="task todo">Is every memory feature labelled session, user or organizational?</li>
+<li class="task todo">For user memory: can the person see, correct and delete it?</li>
+<li class="task todo">For organizational memory: does the system enforce who is inside the boundary?</li>
+<li class="task todo">Do we review it as a real decision when data seems to move from one shape to
+      another?</li>
+<li class="task todo">Do scope checks use the caller's authenticated identity, not text the model wrote?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
 <li><a href="memory-as-a-product-decision.html">Memory as a product decision</a> — the four-part
-  question this lesson's three shapes each need answered.</li>
+  question each shape must answer.</li>
+<li><a href="writing-and-maintaining-memory.html">Writing and maintaining memory</a> — how items enter
+  and leave each shape.</li>
 <li><a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a> —
-  the boundary-enforcement discipline organizational memory depends on.</li>
-<li><a href="when-memory-goes-wrong.html">When memory goes wrong</a> — what happens when a shape's
-  boundary fails.</li>
+  the boundary discipline organizational memory depends on.</li>
+<li><a href="when-memory-goes-wrong.html">When memory goes wrong</a> — what happens when a boundary
+  fails.</li>
+<li><a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a> — the same three shapes in the
+  agent hierarchy.</li>
 </ul>
-  <div class="pagenav"><a class="navcard prev" href="memory-as-a-product-decision.html"><span class="lbl">← Previous</span><span class="ttl">Memory as a product decision</span></a><a class="navcard next" href="retrieval-as-memory.html"><span class="lbl">→ Next</span><span class="ttl">Retrieval as memory</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-note-a-file-and-a-shared-handbook">The mental model: a note, a file, and a shared handbook</a><a class="h2" href="#session-memory-the-lowest-risk-shape-still-worth-naming-explicitly">Session memory: the lowest-risk shape, still worth naming explicitly</a><a class="h2" href="#user-memory-a-real-ongoing-store-with-real-obligations">User memory: a real, ongoing store with real obligations</a><a class="h2" href="#organizational-memory-the-boundary-is-the-whole-feature">Organizational memory: the boundary is the whole feature</a><a class="h2" href="#why-naming-the-shape-first-prevents-the-worst-mistakes">Why naming the shape first prevents the worst mistakes</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Memory tool</a>
+  (Claude API docs): <code>/memories</code> is a prefix your handler maps to real storage, such as a
+  per-user directory or database keys. Checked 2026-09.</li>
+<li>The sales-assistant scenario is invented and illustrative.</li>
+</ul>
+  <div class="pagenav"><a class="navcard prev" href="memory-as-a-product-decision.html"><span class="lbl">← Previous</span><span class="ttl">Memory as a product decision</span></a><a class="navcard next" href="writing-and-maintaining-memory.html"><span class="lbl">→ Next</span><span class="ttl">Writing and maintaining memory</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-note-a-file-and-a-shared-handbook">The mental model: a note, a file, and a shared handbook</a><a class="h2" href="#session-memory-low-risk-still-worth-naming">Session memory: low risk, still worth naming</a><a class="h2" href="#user-memory-a-real-store-with-real-duties">User memory: a real store with real duties</a><a class="h2" href="#organizational-memory-the-boundary-is-the-feature">Organizational memory: the boundary is the feature</a><a class="h2" href="#worked-example-three-notes-three-shapes">Worked example: three notes, three shapes</a><a class="h2" href="#why-name-the-shape-first">Why name the shape first</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

@@ -472,6 +472,31 @@ with every individual component's dashboard reporting green.</p>
   silently — the model answers fluently about a system state that stopped being true an
   hour ago.</li>
 </ul>
+<h2 id="when-the-agent-assembles-its-own-context">When the agent assembles its own context</h2>
+<p>The assembly line above fits a feature that builds one request and gets one answer.
+An <strong>agent</strong> works differently. It runs many steps, and at each step it decides what to
+fetch, what to keep, and what to drop. The pipeline is no longer fixed. It is a loop.</p>
+<p>Three choices in that loop are product decisions, not only engineering ones. Anthropic's
+guidance on agent context names the techniques. The mechanics are in
+<a href="../agentic-ai/context-and-memory.html">Context &amp; memory</a>. Your questions are these:</p>
+<ul>
+<li><strong>Load up front, or fetch on demand?</strong> Loading everything at the start is simple and
+  fast, but it fills the window. Keeping short references (a file path, a record ID)
+  and fetching the content only when needed keeps the window clean, but adds steps and
+  latency. <em>Which documents must always be present, and which can wait?</em></li>
+<li><strong>What survives compaction?</strong> On long tasks, the system summarizes old turns to make
+  room. A summary can drop the user's stated constraint. <em>Who decided what the summary
+  must keep, and is it written down?</em></li>
+<li><strong>What goes in notes, and what goes to a sub-agent?</strong> Notes give an agent a memory
+  that outlives one window. A sub-agent handles a messy side task in its own window and
+  returns a short result. <em>Which tasks should never run in the main window?</em></li>
+</ul>
+<p>Tool definitions and tool results are context too. A long tool list, or two tools that
+overlap, adds noise on every step. See
+<a href="../prompt-engineering/prompting-for-tools-and-agents.html">Prompting for tools and agents</a>
+for how to write tool descriptions that stay clear.</p>
+<p>For an agent, the audit questions below change slightly. "What did the model see?"
+becomes "What did it see at <em>step 14</em>, after two compactions?"</p>
 <h2 id="auditing-a-pipeline-you-didnt-build">Auditing a pipeline you didn't build</h2>
 <p>You don't need to read the code to audit the pipeline. Three questions expose most gaps
 in a working session with the engineering lead:</p>
@@ -495,6 +520,8 @@ in a working session with the engineering lead:</p>
 <li><strong>Debugging the model first</strong> — escalating to "is the model getting worse?" before
   checking what the model was actually shown, because the pipeline was never treated as
   auditable.</li>
+<li><strong>The lossy summary</strong> (agents) — compaction quietly drops a rule or a user
+  constraint, and the agent later acts as if it never existed.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
@@ -504,6 +531,8 @@ in a working session with the engineering lead:</p>
       final output?</li>
 <li class="task todo">Is there an alert for staleness on each context source, or would we only find out
       from a user complaint?</li>
+<li class="task todo">For an agent feature: do we know what is loaded up front, what is fetched on
+      demand, and what the compaction step is required to keep?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -513,7 +542,7 @@ in a working session with the engineering lead:</p>
 <li><a href="context-as-a-spec-able-requirement.html">Context as a spec-able requirement</a></li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="why-prompt-engineering-doesnt-scale.html"><span class="lbl">← Previous</span><span class="ttl">Why prompt engineering doesn&#x27;t scale</span></a><a class="navcard next" href="context-as-a-spec-able-requirement.html"><span class="lbl">→ Next</span><span class="ttl">Context as a spec-able requirement</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-assembly-line-not-a-black-box">The mental model: an assembly line, not a black box</a><a class="h2" href="#the-four-sources-and-where-each-one-silently-breaks">The four sources, and where each one silently breaks</a><a class="h2" href="#auditing-a-pipeline-you-didnt-build">Auditing a pipeline you didn&#x27;t build</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-assembly-line-not-a-black-box">The mental model: an assembly line, not a black box</a><a class="h2" href="#the-four-sources-and-where-each-one-silently-breaks">The four sources, and where each one silently breaks</a><a class="h2" href="#when-the-agent-assembles-its-own-context">When the agent assembles its own context</a><a class="h2" href="#auditing-a-pipeline-you-didnt-build">Auditing a pipeline you didn&#x27;t build</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

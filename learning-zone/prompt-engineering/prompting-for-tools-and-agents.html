@@ -371,7 +371,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
 <header class="topbar">
   <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>Prompt engineering</span><em>a standalone module</em></a>
   <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink active" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-prompt-engineering-actually-is.html">1 · What prompt engineering actually is</a><a class="modlink" href="the-anatomy-of-a-prompt.html">2 · The anatomy of a prompt</a><a class="modlink" href="everyday-productivity-patterns.html">3 · Everyday productivity patterns</a><a class="modlink" href="structured-prompting.html">4 · Structured prompting: XML, delimiters, scaffolds</a><a class="modlink" href="few-shot-cot-self-consistency.html">5 · Few-shot, chain-of-thought, and self-consistency</a><a class="modlink" href="prompt-chaining-and-workflows.html">6 · Prompt chaining and multi-step workflows</a><a class="modlink active" href="prompting-for-tools-and-agents.html">7 · Prompting for tools and agents</a><a class="modlink" href="prompting-inside-coding-agents.html">8 · Prompting inside coding agents</a><a class="modlink" href="when-prompts-fail.html">9 · When prompts fail: the diagnostic playbook</a><a class="modlink" href="prompts-in-production.html">10 · Prompts in production: versioning, testing, and model upgrades</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="chip">Lesson 07</span>
     <h1>Prompting for tools and agents</h1>
@@ -383,10 +383,11 @@ steering a loop: the model reasons about what to do, picks a tool from a schema 
 supplied, receives the tool's output, reasons again, and stops when the task is
 done. That loop has a name — <strong>ReAct</strong> (Yao et al., 2022) — and every modern agent
 scaffold is a variant of it. The prompt engineering that runs it is a specialization
-of everything from lessons 1-6, plus three new concerns: how to describe available
-tools so the model picks the right one, how to constrain the loop so it terminates
-cleanly, and how to handle tools that fail without derailing the whole run. This
-lesson is the bridge from "prompting a model" to "prompting an agent."</p>
+of everything from lessons 1-6, plus four new concerns. First, how to describe tools so
+the model picks the right one. Second, how to constrain the loop so it terminates
+cleanly. Third, how to handle tools that fail without derailing the whole run. Fourth,
+how to set the right amount of emphasis. This lesson is the bridge from "prompting a
+model" to "prompting an agent."</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the AI PM (or coding-agent user)</strong></p>
 <p><strong>Why it matters</strong> — Agent-shaped features fail in ways non-agent ones don't:
@@ -447,7 +448,7 @@ because the prompt described the tools instead of specifying them.</p>
 goal, available tools, termination rules. The model executes it. Each turn produces
 either a tool call or a final answer. Each tool output becomes new context for the
 next turn. The whole run is one prompt, extended.</p>
-<h2 id="three-concerns-unique-to-agent-prompts">Three concerns unique to agent prompts</h2>
+<h2 id="four-concerns-unique-to-agent-prompts">Four concerns unique to agent prompts</h2>
 <h3 id="concern-1-describe-tools-like-apis-not-features">Concern 1 — describe tools like APIs, not features</h3>
 <p>A tool description is not marketing copy. It's an API contract the model reads
 to decide when and how to call the tool. Good tool descriptions name:</p>
@@ -499,6 +500,22 @@ failed. The fix is explicit:</p>
 either retry once with a corrected argument, use a fallback tool if one exists,
 or stop and tell the user what failed.</p>
 </blockquote>
+<h3 id="concern-4-calibrate-emphasis-and-ground-the-answer">Concern 4 — calibrate emphasis, and ground the answer</h3>
+<p>Two habits from older models now backfire.</p>
+<ul>
+<li><strong>Loud wording over-triggers.</strong> Teams once wrote "CRITICAL: You MUST use this tool
+  when..." to make a model call a tool it ignored. Current Claude models respond
+  strongly to the system prompt, so the same wording makes them call the tool too
+  often. Write "Use this tool when..." and raise the emphasis only if a test shows
+  the tool is still ignored. The same applies to "If in doubt, use the tool."</li>
+<li><strong>Confident answers about things the agent never opened.</strong> Add a grounding rule:
+  "Never state facts about a file, record, or page you have not read. If the user
+  names one, read it first." This cuts fabricated claims in agents that work over
+  files or documents.</li>
+</ul>
+<p>For independent calls, say so. A line like "If two tool calls do not depend on each
+other, make them at the same time" lets the model run them in parallel. That saves
+round trips, which cost the most latency in a loop.</p>
 <h2 id="the-system-prompt-for-an-agent">The system prompt for an agent</h2>
 <p>Putting it together, a production agent system prompt tends to include:</p>
 <ul>
@@ -542,6 +559,9 @@ scaffold. But the ceiling on agent quality is set by that system prompt.</p>
 <li><strong>Loops that don't stop.</strong> No explicit success or impossibility condition; agent
   keeps trying variants. Named termination criteria fix it.</li>
 <li><strong>Runaway cost from too many tools.</strong> The agent explores. Budget it explicitly.</li>
+<li><strong>Over-triggering after a model upgrade.</strong> Emphatic wording that fixed an ignored
+  tool on an old model now makes the new model call it on every turn. Re-test tool
+  prompts on each model change.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
@@ -555,6 +575,8 @@ scaffold. But the ceiling on agent quality is set by that system prompt.</p>
       empty?</li>
 <li class="task todo">Is there a step budget in the runtime <em>and</em> an intended step count in the
       prompt?</li>
+<li class="task todo">Have I removed emphatic wording (CRITICAL, MUST, "if in doubt") that was added
+      for an older model and may now over-trigger?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -567,7 +589,7 @@ scaffold. But the ceiling on agent quality is set by that system prompt.</p>
   around agents.</li>
 </ul>
   <div class="pagenav"><a class="navcard prev" href="prompt-chaining-and-workflows.html"><span class="lbl">← Previous</span><span class="ttl">Prompt chaining and multi-step workflows</span></a><a class="navcard next" href="prompting-inside-coding-agents.html"><span class="lbl">→ Next</span><span class="ttl">Prompting inside coding agents</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-react-loop">The mental model — the ReAct loop</a><a class="h2" href="#three-concerns-unique-to-agent-prompts">Three concerns unique to agent prompts</a><a class="h3" href="#concern-1-describe-tools-like-apis-not-features">Concern 1 — describe tools like APIs, not features</a><a class="h3" href="#concern-2-constrain-the-loop-so-it-terminates">Concern 2 — constrain the loop so it terminates</a><a class="h3" href="#concern-3-handle-tool-failures-on-purpose">Concern 3 — handle tool failures on purpose</a><a class="h2" href="#the-system-prompt-for-an-agent">The system prompt for an agent</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-react-loop">The mental model — the ReAct loop</a><a class="h2" href="#four-concerns-unique-to-agent-prompts">Four concerns unique to agent prompts</a><a class="h3" href="#concern-1-describe-tools-like-apis-not-features">Concern 1 — describe tools like APIs, not features</a><a class="h3" href="#concern-2-constrain-the-loop-so-it-terminates">Concern 2 — constrain the loop so it terminates</a><a class="h3" href="#concern-3-handle-tool-failures-on-purpose">Concern 3 — handle tool failures on purpose</a><a class="h3" href="#concern-4-calibrate-emphasis-and-ground-the-answer">Concern 4 — calibrate emphasis, and ground the answer</a><a class="h2" href="#the-system-prompt-for-an-agent">The system prompt for an agent</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

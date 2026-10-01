@@ -454,8 +454,8 @@ spec, because it's the layer engineering otherwise has to guess at while buildin
 <h2 id="writing-a-context-contract">Writing a context contract</h2>
 <p>Add this alongside the eval thresholds in
 <a href="../technical-product-management/specs-prds-and-rfcs.html">specs, PRDs &amp; RFCs</a>, answering
-four questions using the four context types from
-<a href="what-is-context-engineering.html">the opening lesson</a>:</p>
+one question for each of the four context types from
+<a href="what-is-context-engineering.html">the opening lesson</a>, plus a fifth about size:</p>
 <ul>
 <li><strong>Instructions &amp; policy</strong> — which rules, tone, and boundaries does this feature need
   encoded, and who owns updating them when policy changes?</li>
@@ -467,8 +467,12 @@ four questions using the four context types from
   framing in <a href="../memory-and-context/index.html">Memory &amp; context</a>.)</li>
 <li><strong>Live state</strong> — what must be true <em>right now</em> for a correct answer, and which tool
   supplies it?</li>
+<li><strong>Budget and survival</strong> — how much context can each request carry before cost or
+  latency becomes a problem, and what has priority when space runs out? For an agent,
+  also name what must survive compaction (for example, "the user's stated constraints
+  and the approval status"), so a summary cannot silently drop it.</li>
 </ul>
-<p>A feature whose spec can answer all four specifically is ready to build. A feature where
+<p>A feature whose spec can answer all five specifically is ready to build. A feature where
 any answer is "we'll figure that out later" is the feature most likely to need a rewrite
 after the first week of real usage.</p>
 <h2 id="worked-example-a-renewal-risk-assistant">Worked example: a renewal-risk assistant</h2>
@@ -499,6 +503,7 @@ launch.</p>
       as its own section, not folded into "acceptance criteria"?</li>
 <li class="task todo">For each of the four context types: is there a named owner, or does the answer
       default to "engineering decided"?</li>
+<li class="task todo">Does the contract state a size budget and, for agents, what compaction must keep?</li>
 <li class="task todo">When policy or data sources change, is there a step that updates the context
       contract, or does it silently go stale?</li>
 </ul>

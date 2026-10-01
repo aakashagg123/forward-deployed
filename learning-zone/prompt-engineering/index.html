@@ -376,7 +376,7 @@ pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;paddin
     <span class="chip">A standalone module</span>
     <h1>Prompt engineering, from productivity to coding agents</h1>
     <p class="lede">The craft of writing input a model will reliably act on — from ChatGPT productivity patterns, through the classical techniques power users depend on, into the prompts that drive Claude Code, Cursor, and other coding agents.</p>
-    <div class="index-meta"><span>9 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
+    <div class="index-meta"><span>10 lessons</span><span>+ recap</span><span>knowledge graph</span><span>diagrams included</span></div>
   </div>
   <div class="intro"><p>Prompt engineering is the craft of writing input a language model will <em>reliably</em> act
 on. At the beginner end, that means turning ChatGPT or Claude from a novelty into a
@@ -387,7 +387,7 @@ prompt chaining. At the far end, it means the patterns developers use to drive c
 agents like Claude Code and Cursor — where the prompt is a spec, and the model is
 writing the code that ships. This module walks the full arc, one lesson per layer, so a
 reader picks up the mental model on lesson 1 and lands with real advanced patterns by
-lesson 9.</p>
+lesson 10.</p>
 <p><strong>A note on scope.</strong> This is the <em>technique</em> module — the how of writing a prompt. Two
 adjacent modules deepen it in different directions. <a href="../context-engineering/index.html">Context engineering</a>
 argues that the <em>inputs to the prompt</em> (instructions, retrieval, memory, tool state)
@@ -449,7 +449,7 @@ production code:</p>
     <div class="dgm-pe-node">Prompting inside coding agents</div>
   </div>
 
-  <div class="dgm-pe-meta">The meta lesson · 9 — When prompts fail: the diagnostic playbook — applies at every layer above</div>
+  <div class="dgm-pe-meta">The meta lessons · 9 — When prompts fail: the diagnostic playbook · 10 — Prompts in production: versioning, testing, model upgrades — both apply at every layer above</div>
 </div>
 
 <p>Read it in three passes. <strong>Beginner:</strong> the mental model, the six parts of a prompt,
@@ -457,7 +457,8 @@ and the everyday patterns that turn an LLM into a productivity tool. <strong>Int
 the techniques power users use to make outputs consistent — structure, worked examples,
 step-by-step reasoning, multi-step chains. <strong>Advanced:</strong> how prompts change shape when
 the model can <em>act</em> — call tools, run code, edit files — and the specific patterns of
-prompting inside coding agents.</p>
+prompting inside coding agents. <strong>The meta lessons:</strong> how to diagnose a failing prompt,
+and how to run prompts in production, where models change under them.</p>
 <h2 id="the-lessons">The lessons</h2>
 <ul>
 <li><a href="what-prompt-engineering-actually-is.html"><strong>What prompt engineering actually is</strong></a> —
@@ -483,6 +484,9 @@ prompting inside coding agents.</p>
   spec" pattern that runs modern agent-assisted development.</li>
 <li><a href="when-prompts-fail.html"><strong>When prompts fail: the diagnostic playbook</strong></a> — the
   short list of things that actually go wrong, and how to tell which one bit you.</li>
+<li><a href="prompts-in-production.html"><strong>Prompts in production</strong></a> — versioning a prompt with its
+  model, testing it against saved real cases, surviving model upgrades, and laying it
+  out so the provider can cache it.</li>
 </ul>
 <p>Each lesson pairs the technique with a <strong>🎯 For the AI PM (or coding-agent user)</strong>
 briefing — why it matters, the decision it changes, the question to ask your team or
@@ -494,7 +498,7 @@ yourself, and the risk if ignored — plus one diagram that makes the mechanic c
   quality lever, with the prompt as one component inside them.</li>
 <li><a href="../technical-product-management/tpm-for-ai-products.html">TPM for AI products</a> —
   eval-driven development, the discipline that decides whether a prompt is good
-  enough to ship.</li>
+  enough to ship. Lesson 10 applies it to prompts.</li>
 <li><a href="../ai-agents/index.html">AI agents</a> — the scaffolds this module's lesson 7 prompts
   drive.</li>
 <li><a href="../agentic-workflows/index.html">Agentic workflows</a> — the multi-step orchestration
@@ -504,7 +508,7 @@ yourself, and the risk if ignored — plus one diagram that makes the mechanic c
 </ul>
 <p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>.</p></div>
   <h2 class="sec">The lessons</h2>
-  <div class="cards"><a class="card" href="what-prompt-engineering-actually-is.html"><span class="card-num">01</span><h3>What prompt engineering actually is</h3><span class="card-go">Read lesson →</span></a><a class="card" href="the-anatomy-of-a-prompt.html"><span class="card-num">02</span><h3>The anatomy of a prompt</h3><span class="card-go">Read lesson →</span></a><a class="card" href="everyday-productivity-patterns.html"><span class="card-num">03</span><h3>Everyday productivity patterns</h3><span class="card-go">Read lesson →</span></a><a class="card" href="structured-prompting.html"><span class="card-num">04</span><h3>Structured prompting: XML, delimiters, scaffolds</h3><span class="card-go">Read lesson →</span></a><a class="card" href="few-shot-cot-self-consistency.html"><span class="card-num">05</span><h3>Few-shot, chain-of-thought, and self-consistency</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompt-chaining-and-workflows.html"><span class="card-num">06</span><h3>Prompt chaining and multi-step workflows</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompting-for-tools-and-agents.html"><span class="card-num">07</span><h3>Prompting for tools and agents</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompting-inside-coding-agents.html"><span class="card-num">08</span><h3>Prompting inside coding agents</h3><span class="card-go">Read lesson →</span></a><a class="card" href="when-prompts-fail.html"><span class="card-num">09</span><h3>When prompts fail: the diagnostic playbook</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <div class="cards"><a class="card" href="what-prompt-engineering-actually-is.html"><span class="card-num">01</span><h3>What prompt engineering actually is</h3><span class="card-go">Read lesson →</span></a><a class="card" href="the-anatomy-of-a-prompt.html"><span class="card-num">02</span><h3>The anatomy of a prompt</h3><span class="card-go">Read lesson →</span></a><a class="card" href="everyday-productivity-patterns.html"><span class="card-num">03</span><h3>Everyday productivity patterns</h3><span class="card-go">Read lesson →</span></a><a class="card" href="structured-prompting.html"><span class="card-num">04</span><h3>Structured prompting: XML, delimiters, scaffolds</h3><span class="card-go">Read lesson →</span></a><a class="card" href="few-shot-cot-self-consistency.html"><span class="card-num">05</span><h3>Few-shot, chain-of-thought, and self-consistency</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompt-chaining-and-workflows.html"><span class="card-num">06</span><h3>Prompt chaining and multi-step workflows</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompting-for-tools-and-agents.html"><span class="card-num">07</span><h3>Prompting for tools and agents</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompting-inside-coding-agents.html"><span class="card-num">08</span><h3>Prompting inside coding agents</h3><span class="card-go">Read lesson →</span></a><a class="card" href="when-prompts-fail.html"><span class="card-num">09</span><h3>When prompts fail: the diagnostic playbook</h3><span class="card-go">Read lesson →</span></a><a class="card" href="prompts-in-production.html"><span class="card-num">10</span><h3>Prompts in production: versioning, testing, and model upgrades</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="card-num">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
   </main>
 <style id="reader-css">
