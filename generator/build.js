@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture, THEME_TOGGLE_ICONS } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -143,6 +143,45 @@ function hashAndRename(distDir, filename) {
   const hashedName = `${base}.${hash}${ext}`;
   fs.renameSync(filePath, path.join(distDir, hashedName));
   return `/${hashedName}`;
+}
+
+// The Learning Zone is a pre-built static site (its own inline styles, a
+// GitHub-Primer look). Rather than hand-editing those ~435 pages — and
+// redoing it on every re-sync from the gatsby repo — the build themes the
+// copy: it links a shared stylesheet that remaps the pages to this site's
+// design language, adds the site bar (with the theme toggle) and a script
+// that applies the saved theme before first paint. Idempotent: any bar a
+// previous sync left in the committed copy is replaced, not doubled.
+function themeLearningZone(dir, { cssHref, jsHref }) {
+  const bar = `<div id="fd-lz-bar" class="fd-lz-bar">
+  <a class="fd-lz-brand" href="/"><img src="/mark-64.png" alt=""><span>Forward-deployed</span></a>
+  <span class="fd-lz-sep">/</span>
+  <a class="fd-lz-crumb" href="/learning-zone/">Learning zone</a>
+  <button class="fd-lz-theme" id="fdLzTheme" type="button" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
+</div>
+`;
+  const headTags = `<script src="${jsHref}"></script>\n<link rel="stylesheet" href="${cssHref}">\n`;
+  let count = 0;
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const full = path.join(d, entry.name);
+      if (entry.isDirectory()) { walk(full); continue; }
+      if (!entry.name.endsWith('.html')) continue;
+      let html = fs.readFileSync(full, 'utf8');
+      html = html.replace(/<div id="fd-lz-bar"[\s\S]*?<\/div>\s*/, '');
+      html = html.replace(/<style>\s*\.bar\{ top:44px !important; \}[\s\S]*?<\/style>\s*/, '');
+      if (!/<\/head>/i.test(html) || !/<body[^>]*>/i.test(html)) continue;
+      html = html.replace(/<\/head>/i, `${headTags}</head>`);
+      html = html.replace(/<body[^>]*>/i, (m) => `${m}\n${bar}`);
+      if (path.relative(dir, full) === path.join('graph', 'index.html')) {
+        html = html.replace(/<html/i, '<html data-lz="graph"');
+      }
+      fs.writeFileSync(full, html);
+      count++;
+    }
+  };
+  walk(dir);
+  return count;
 }
 
 // Recursively finds every "assets" or "covers" folder under a space
@@ -370,6 +409,8 @@ async function build() {
   copyDir(THEME_STATIC_DIR, DIST_DIR);
   SITE.cssHref = hashAndRename(DIST_DIR, 'theme.css');
   SITE.jsHref = hashAndRename(DIST_DIR, 'theme.js');
+  const lzCssHref = hashAndRename(DIST_DIR, 'learning-zone.css');
+  const lzJsHref = hashAndRename(DIST_DIR, 'learning-zone.js');
 
   const highlighter = await createHighlighter({
     themes: ['github-dark'],
@@ -492,6 +533,7 @@ async function build() {
   // through the markdown pipeline) copied wholesale into dist/learning-zone/.
   if (fs.existsSync(LEARNING_ZONE_DIR)) {
     copyDir(LEARNING_ZONE_DIR, path.join(DIST_DIR, 'learning-zone'));
+    themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref });
     sitemapUrls.push({ loc: SITE.baseUrl + '/learning-zone/' });
   }
 
