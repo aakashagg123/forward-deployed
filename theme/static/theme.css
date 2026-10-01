@@ -34,9 +34,23 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+html {
+  scroll-behavior: smooth;
+  /* iOS Safari momentum scrolling for the page itself and any nested
+     scroll container that inherits this — belt-and-braces alongside the
+     per-element rules below. */
+  -webkit-overflow-scrolling: touch;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 body {
   background: var(--bg); color: var(--ink); font-family: var(--sans);
   font-size: 15.5px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
 }
 a { color: var(--ink); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -83,7 +97,9 @@ img { max-width: 100%; }
 .fd-sidebar {
   width: 250px; flex-shrink: 0; padding: 18px 14px;
   border-right: 1px solid var(--rule);
-  height: calc(100vh - 58px); position: sticky; top: 58px; overflow-y: auto;
+  height: calc(100vh - 58px); height: calc(100dvh - 58px);
+  position: sticky; top: 58px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
 }
 .fd-switch { position: relative; margin-bottom: 18px; }
 .fd-switch-btn {
@@ -131,10 +147,10 @@ img { max-width: 100%; }
   border-bottom: 1px dashed var(--ink-3);
 }
 .fd-content .fd-plate { margin: 32px 0; }
-.fd-content .fd-plate-frame { border: 1px solid var(--rule); overflow-x: auto; background: var(--bg); }
+.fd-content .fd-plate-frame { border: 1px solid var(--rule); overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--bg); }
 .fd-content .fd-plate-frame img { display: block; width: 100%; }
 .fd-content .fd-plate figcaption { font-size: 12.5px; color: var(--ink-3); margin-top: 10px; line-height: 1.5; }
-.fd-content pre { background: #0A0A0B; color: #F4F4F2; padding: 16px; overflow-x: auto; font-size: 13.5px; border: 1px solid var(--rule-soft); }
+.fd-content pre { background: #0A0A0B; color: #F4F4F2; padding: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; font-size: 13.5px; border: 1px solid var(--rule-soft); }
 .fd-content code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .fd-content :not(pre) > code { background: var(--rule-soft); padding: 2px 5px; font-size: 0.88em; }
 .fd-content hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
