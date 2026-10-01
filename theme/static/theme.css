@@ -352,13 +352,35 @@ img { max-width: 100%; }
 @keyframes fd-gh-spin { to { transform: rotate(360deg); } }
 
 .fd-gh-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Primary path: a real per-day grid with hover tooltips and a total count,
+   built from JSON fetched client-side. */
+.fd-gh-grid:not([hidden]) {
+  display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 10px);
+  gap: 3px; padding-bottom: 4px;
+}
+.fd-gh-cell { width: 10px; height: 10px; background: #1A1A1D; flex: none; }
+:root[data-theme='light'] .fd-gh-cell { background: #EBEBEB; }
+.fd-gh-cell[data-level="1"] { background: rgba(244,244,242,.25); }
+.fd-gh-cell[data-level="2"] { background: rgba(244,244,242,.45); }
+.fd-gh-cell[data-level="3"] { background: rgba(244,244,242,.7); }
+.fd-gh-cell[data-level="4"] { background: #F4F4F2; }
+:root[data-theme='light'] .fd-gh-cell[data-level="1"] { background: rgba(0,0,0,.25); }
+:root[data-theme='light'] .fd-gh-cell[data-level="2"] { background: rgba(0,0,0,.45); }
+:root[data-theme='light'] .fd-gh-cell[data-level="3"] { background: rgba(0,0,0,.7); }
+:root[data-theme='light'] .fd-gh-cell[data-level="4"] { background: #000000; }
+
+/* Fallback path, shown only if the JSON fetch fails: a static heatmap
+   image. No hover/total, but still a real, correct picture of the data.
+   The landing hero defaults to dark regardless of the viewer's theme
+   preference (same pattern as .fd-cta/.fd-release above), so which image
+   is visible is keyed off data-theme alone, not prefers-color-scheme. */
 .fd-gh-img { display: block; width: 100%; max-width: 722px; height: auto; }
-/* The landing hero defaults to dark regardless of the viewer's theme
-   preference (same pattern as .fd-cta/.fd-release above) — swap which
-   chart image is visible off data-theme alone, not prefers-color-scheme. */
 .fd-gh-img-light { display: none; }
 :root[data-theme='light'] .fd-gh-img-dark { display: none; }
 :root[data-theme='light'] .fd-gh-img-light { display: block; }
+.fd-gh-grid-wrap.fd-gh-has-grid .fd-gh-img { display: none !important; }
+
 .fd-gh-status { font-size: 12.5px; color: #9A9A9E; margin: 10px 0 0; }
 :root[data-theme='light'] .fd-gh-status { color: #4A4A4A; }
 
