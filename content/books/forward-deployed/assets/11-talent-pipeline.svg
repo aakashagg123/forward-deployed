@@ -1,73 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 740" width="1200" height="740" role="img" aria-label="Five talent sources for the operator pipeline">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 878" width="1200" height="878" role="img" aria-label="Five talent sources for the operator pipeline">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.lbl{font-size:15px;fill:#1C1D20}
-.gap{font-size:12.5px;fill:#C8553D;letter-spacing:1px}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="740" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 11.2 — THE FIVE TALENT SOURCES</text>
-<text class="t h" x="64" y="112">Each source has a different gap to close.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="878" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 11.2 — THE FIVE TALENT SOURCES</text>
+<text class="h" x="64" y="122">Each source has a different gap to close.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">SOURCE</text><text class="cap" x="420" y="206">STRENGTH</text><text class="cap" x="810" y="206">GAP</text>
+<line x1="64" y1="222" x2="1136" y2="222" stroke="#8A8B92" stroke-width="2"/>
+<rect x="64" y="238" width="1072" height="110" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="280" style="font-size:22px">Startup founders</text>
+<text class="mut" x="84" y="310">and early employees</text>
+<text class="body" x="420" y="280" style="font-size:20px">Built, shipped, dealt with</text>
+<text class="body" x="420" y="306" style="font-size:20px">customers directly. Full-cycle</text>
+<text class="body" x="420" y="332" style="font-size:20px">experience.</text>
+<text class="cap red" x="810" y="276">GAP: PACE</text>
+<text class="mut" x="810" y="306">Too fast, too impatient</text>
+<text class="mut" x="810" y="332">with enterprise tempo</text>
+<rect x="64" y="360" width="1072" height="110" fill="#F7F6F3" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="402" style="font-size:22px">Product engineers</text>
+<text class="mut" x="84" y="432">with customer rotations</text>
+<text class="body" x="420" y="402" style="font-size:20px">Taste of the room from</text>
+<text class="body" x="420" y="428" style="font-size:20px">implementation stints at clients</text>
+<text class="cap red" x="810" y="398">GAP: DEPTH</text>
+<text class="mut" x="810" y="428">Not enough organisational</text>
+<text class="mut" x="810" y="454">exposure to navigate alone</text>
+<rect x="64" y="482" width="1072" height="110" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="524" style="font-size:22px">Services firm engineers</text>
+<text class="mut" x="84" y="554">who exceeded their role</text>
+<text class="body" x="420" y="524" style="font-size:20px">Built client relationships</text>
+<text class="body" x="420" y="550" style="font-size:20px">against the structure</text>
+<text class="cap red" x="810" y="520">GAP: AGENCY</text>
+<text class="mut" x="810" y="550">Trained to deliver specs,</text>
+<text class="mut" x="810" y="576">not question them</text>
+<rect x="64" y="604" width="1072" height="110" fill="#F7F6F3" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="646" style="font-size:22px">Consultants who code</text>
+<text class="mut" x="84" y="676">Big Four / strategy associates</text>
+<text class="body" x="420" y="646" style="font-size:20px">Room-reading already trained</text>
+<text class="body" x="420" y="672" style="font-size:20px">at high level</text>
+<text class="cap red" x="810" y="642">GAP: BUILD</text>
+<text class="mut" x="810" y="672">Self-taught code, not</text>
+<text class="mut" x="810" y="698">production-grade</text>
+<rect x="64" y="726" width="1072" height="110" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="768" style="font-size:22px">Domain experts</text>
+<text class="mut" x="84" y="798">who learned technology</text>
+<text class="body" x="420" y="768" style="font-size:20px">Already trusted by their own</text>
+<text class="body" x="420" y="794" style="font-size:20px">organisation</text>
+<text class="cap red" x="810" y="764">GAP: PERSPECTIVE</text>
+<text class="mut" x="810" y="794">Cannot see own org</text>
+<text class="mut" x="810" y="820">from the outside yet</text>
 
-<!-- Column headers -->
-<text class="t col" x="64" y="196">SOURCE</text>
-<text class="t col" x="530" y="196">STRENGTH</text>
-<text class="t col" x="860" y="196">GAP</text>
-<line x1="64" y1="212" x2="1136" y2="212" stroke="#D2D1CD"/>
-
-<!-- Source 1 -->
-<rect x="64" y="228" width="1072" height="82" rx="4" fill="#EBEAE6"/>
-<text class="t lbl" x="84" y="258">Startup founders</text>
-<text class="t note" x="84" y="278">and early employees</text>
-<text class="t note" x="530" y="258">Built, shipped, dealt with customers</text>
-<text class="t note" x="530" y="278">directly. Full-cycle experience.</text>
-<text class="t gap" x="860" y="254">GAP: PACE</text>
-<text class="t note" x="860" y="278">Too fast, too impatient</text>
-<text class="t note" x="860" y="296">with enterprise tempo</text>
-
-<!-- Source 2 -->
-<rect x="64" y="326" width="1072" height="82" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
-<text class="t lbl" x="84" y="356">Product engineers</text>
-<text class="t note" x="84" y="376">with customer rotations</text>
-<text class="t note" x="530" y="356">Taste of the room from</text>
-<text class="t note" x="530" y="376">implementation stints at clients</text>
-<text class="t gap" x="860" y="352">GAP: DEPTH</text>
-<text class="t note" x="860" y="376">Not enough organisational</text>
-<text class="t note" x="860" y="394">exposure to navigate alone</text>
-
-<!-- Source 3 -->
-<rect x="64" y="424" width="1072" height="82" rx="4" fill="#EBEAE6"/>
-<text class="t lbl" x="84" y="454">Services firm engineers</text>
-<text class="t note" x="84" y="474">who exceeded their role</text>
-<text class="t note" x="530" y="454">Built client relationships</text>
-<text class="t note" x="530" y="474">against the structure</text>
-<text class="t gap" x="860" y="450">GAP: AGENCY</text>
-<text class="t note" x="860" y="474">Trained to deliver specs,</text>
-<text class="t note" x="860" y="492">not question them</text>
-
-<!-- Source 4 -->
-<rect x="64" y="522" width="1072" height="82" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
-<text class="t lbl" x="84" y="552">Consultants who code</text>
-<text class="t note" x="84" y="572">Big Four / strategy associates</text>
-<text class="t note" x="530" y="552">Room-reading already trained</text>
-<text class="t note" x="530" y="572">at high level</text>
-<text class="t gap" x="860" y="548">GAP: BUILD</text>
-<text class="t note" x="860" y="572">Self-taught code, not</text>
-<text class="t note" x="860" y="590">production-grade</text>
-
-<!-- Source 5 -->
-<rect x="64" y="620" width="1072" height="82" rx="4" fill="#EBEAE6"/>
-<text class="t lbl" x="84" y="650">Domain experts</text>
-<text class="t note" x="84" y="670">who learned technology</text>
-<text class="t note" x="530" y="650">Already trusted by their own</text>
-<text class="t note" x="530" y="670">organisation</text>
-<text class="t gap" x="860" y="646">GAP: PERSPECTIVE</text>
-<text class="t note" x="860" y="670">Cannot see own org</text>
-<text class="t note" x="860" y="688">from the outside yet</text>
-
-<line x1="64" y1="718" x2="1136" y2="718" stroke="#D2D1CD"/>
+</g>
 </svg>

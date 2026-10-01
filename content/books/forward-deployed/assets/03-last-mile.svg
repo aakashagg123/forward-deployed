@@ -1,51 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="The demo versus what production requires">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 840" width="1200" height="840" role="img" aria-label="The demo versus what production requires">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.note{font-size:12.5px;fill:#7A7B82}
-.seg{font-size:12.5px;letter-spacing:1.4px;fill:#1C1D20}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="620" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 3.3 — THE LAST TWENTY PERCENT</text>
-<text class="t h" x="64" y="112">Eighty percent of the functionality. Twenty percent of the work.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="840" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 3.3 — THE LAST TWENTY PERCENT</text>
+<text class="h" x="64" y="122">Eighty percent of the functionality. Twenty percent of the work.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">THE DEMO</text>
+<text class="mut" x="226" y="206">built in a fortnight · shown at a review · applauded</text>
+<rect x="64" y="232" width="340" height="76" fill="#1C1D20"/>
+<text class="cap inv mid" x="234" y="278" style="letter-spacing:1.2px">VISIBLE FUNCTIONALITY</text>
+<text class="cap" x="64" y="392">WHAT PRODUCTION REQUIRES</text>
+<text class="mut" x="448" y="392">not engineering polish: organisational reality</text>
+<rect x="64" y="418" width="205" height="112" fill="#B0432D" fill-opacity=".12" stroke="#1C1D20" stroke-width="2"/>
+<text class="cap mid" x="166" y="468" style="letter-spacing:1px">IDENTITY &amp;</text>
+<text class="cap mid" x="166" y="494" style="letter-spacing:1px">PERMISSIONS</text>
+<text class="mut" x="72" y="574">varies by region,</text>
+<text class="mut" x="72" y="602">role, customer and</text>
+<text class="mut" x="72" y="630">three historical</text>
+<text class="mut" x="72" y="658">exceptions</text>
+<rect x="279" y="418" width="205" height="112" fill="#B0432D" fill-opacity=".12" stroke="#1C1D20" stroke-width="2"/>
+<text class="cap mid" x="381" y="468" style="letter-spacing:1px">THE REAL</text>
+<text class="cap mid" x="381" y="494" style="letter-spacing:1px">DATA</text>
+<text class="mut" x="287" y="574">duplicate customers</text>
+<text class="mut" x="287" y="602">with three spellings;</text>
+<text class="mut" x="287" y="630">dates as text;</text>
+<text class="mut" x="287" y="658">eleven status values</text>
+<rect x="494" y="418" width="205" height="112" fill="#B0432D" fill-opacity=".12" stroke="#1C1D20" stroke-width="2"/>
+<text class="cap mid" x="596" y="468" style="letter-spacing:1px">EXCEPTION</text>
+<text class="cap mid" x="596" y="494" style="letter-spacing:1px">CASES</text>
+<text class="mut" x="502" y="574">the documented</text>
+<text class="mut" x="502" y="602">process covers ~70%;</text>
+<text class="mut" x="502" y="630">the rest lives in one</text>
+<text class="mut" x="502" y="658">person’s recognition</text>
+<rect x="709" y="418" width="205" height="112" fill="#B0432D" fill-opacity=".12" stroke="#1C1D20" stroke-width="2"/>
+<text class="cap mid" x="811" y="456" style="letter-spacing:1px">SYSTEM-OF-</text>
+<text class="cap mid" x="811" y="482" style="letter-spacing:1px">RECORD</text>
+<text class="cap mid" x="811" y="508" style="letter-spacing:1px">INTEGRATION</text>
+<text class="mut" x="717" y="574">until the output</text>
+<text class="mut" x="717" y="602">lands here, you have</text>
+<text class="mut" x="717" y="630">built a parallel</text>
+<text class="mut" x="717" y="658">process, and it</text>
+<text class="mut" x="717" y="686">will lose</text>
+<rect x="924" y="418" width="205" height="112" fill="#B0432D" fill-opacity=".12" stroke="#1C1D20" stroke-width="2"/>
+<text class="cap mid" x="1026" y="456" style="letter-spacing:1px">TRAINING &amp;</text>
+<text class="cap mid" x="1026" y="482" style="letter-spacing:1px">CLOSING THE</text>
+<text class="cap mid" x="1026" y="508" style="letter-spacing:1px">OLD PATH</text>
+<text class="mut" x="932" y="574">someone must be</text>
+<text class="mut" x="932" y="602">told to stop;</text>
+<text class="mut" x="932" y="630">someone’s report</text>
+<text class="mut" x="932" y="658">must change</text>
+<line x1="64" y1="740" x2="1136" y2="740" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="784">“AI can build it in a weekend” is true, and buys you the top bar.</text>
+<text class="lab" x="64" y="816">Nobody has ever been paid for the top bar.</text>
 
-<text class="t col" x="64" y="204">THE DEMO</text>
-<text class="t note" x="330" y="204" fill="#7A7B82">built in a fortnight · shown at a review · applauded</text>
-<rect x="64" y="222" width="260" height="72" fill="#1C1D20"/>
-<text class="t" x="194" y="266" text-anchor="middle" font-size="14" letter-spacing="1.6" fill="#F7F6F3">VISIBLE FUNCTIONALITY</text>
-
-<text class="t col" x="64" y="368">WHAT PRODUCTION REQUIRES</text>
-<text class="t note" x="430" y="368" fill="#7A7B82">not engineering polish — organisational reality</text>
-<g fill="none" stroke="#1C1D20" stroke-width="1.4">
-<rect x="64" y="386" width="200" height="72"/>
-<rect x="264" y="386" width="240" height="72"/>
-<rect x="504" y="386" width="240" height="72"/>
-<rect x="744" y="386" width="200" height="72"/>
-<rect x="944" y="386" width="192" height="72"/>
 </g>
-<g fill="#C8553D" opacity="0.13">
-<rect x="64" y="386" width="200" height="72"/><rect x="264" y="386" width="240" height="72"/>
-<rect x="504" y="386" width="240" height="72"/><rect x="744" y="386" width="200" height="72"/>
-<rect x="944" y="386" width="192" height="72"/>
-</g>
-<g class="t seg" text-anchor="middle">
-<text x="164" y="418">IDENTITY &amp;</text><text x="164" y="436">PERMISSIONS</text>
-<text x="384" y="418">THE REAL</text><text x="384" y="436">DATA</text>
-<text x="624" y="418">EXCEPTION</text><text x="624" y="436">CASES</text>
-<text x="844" y="418">SYSTEM-OF-RECORD</text><text x="844" y="436">INTEGRATION</text>
-<text x="1040" y="418">TRAINING &amp; CLOSING</text><text x="1040" y="436">THE OLD PATH</text>
-</g>
-<g class="t note" text-anchor="middle" font-size="11.5" fill="#6A6B72">
-<text x="164" y="486">varies by region, role,</text><text x="164" y="504">customer and three</text><text x="164" y="522">historical exceptions</text>
-<text x="384" y="486">duplicate customers with</text><text x="384" y="504">three spellings; dates as</text><text x="384" y="522">text; eleven status values</text>
-<text x="624" y="486">the documented process</text><text x="624" y="504">covers ~70%; the rest lives</text><text x="624" y="522">in one person's recognition</text>
-<text x="844" y="486">until the output lands here,</text><text x="844" y="504">you have built a parallel</text><text x="844" y="522">process — and it will lose</text>
-<text x="1040" y="486">someone must be told to</text><text x="1040" y="504">stop; someone's report</text><text x="1040" y="522">must change</text>
-</g>
-
-<line x1="64" y1="560" x2="1136" y2="560" stroke="#D2D1CD"/>
-<text class="t" x="64" y="594" font-size="16" fill="#4A4B50">“AI can build it in a weekend” is true, and buys you the top bar. Nobody has ever been paid for the top bar.</text>
 </svg>

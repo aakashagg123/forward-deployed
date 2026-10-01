@@ -1,47 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" width="1200" height="860" role="img" aria-label="The deployment card">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200" role="img" aria-label="The deployment card">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.fld{font-size:12.5px;letter-spacing:2.6px;fill:#B8952B}
-.ans{font-size:16px;fill:#1C1D20}
-.hint{font-size:12.5px;fill:#6A6B72}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="860" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 5.3 — THE DEPLOYMENT CARD</text>
-<text class="t h" x="64" y="112">One page. Six fields. No roadmap.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1200" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 5.3 — THE DEPLOYMENT CARD</text>
+<text class="h" x="64" y="122">One page. Six fields. No roadmap.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<rect x="64" y="186" width="1072" height="948" fill="none" stroke="#8A8B92" stroke-width="2"/><line x1="64" y1="288" x2="1136" y2="288" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap" x="92" y="228">DEPLOYMENT · ONE WOUND, ONE OWNER, ONE DATE</text>
+<text class="mut" x="92" y="262">If a field cannot be filled with a name or a number, the deployment is not ready.</text>
+<text class="cap" x="92" y="338" style="fill:#8A6D12">01 · THE WOUND</text>
+<text class="lab" x="92" y="372" style="font-size:23px">One sentence, in the team’s own words, with a number in it.</text>
+<text class="mut" x="92" y="404">“Credit ops re-keys four documents per file. Two hours each, sixty a week,</text>
+<text class="mut" x="92" y="432">thirty percent come back wrong.”</text>
+<line x1="92" y1="450" x2="1108" y2="450" stroke="#D2D1CD"/>
+<text class="cap" x="92" y="474" style="fill:#8A6D12">02 · THE OWNER AFTER ME</text>
+<text class="lab" x="92" y="508" style="font-size:23px">A named person who has said out loud that they will run it.</text>
+<text class="mut" x="92" y="540">Not a steering committee. Someone whose own numbers improve, and who will</text>
+<text class="mut" x="92" y="568">answer a message on a Saturday.</text>
+<line x1="92" y1="586" x2="1108" y2="586" stroke="#D2D1CD"/>
+<text class="cap" x="92" y="610" style="fill:#8A6D12">03 · THE TUESDAY TEST</text>
+<text class="lab" x="92" y="644" style="font-size:23px">What runs differently, and for whom.</text>
+<text class="mut" x="92" y="676">Stated as a before and an after. If it cannot be stated this way, you are</text>
+<text class="mut" x="92" y="704">building a capability, not a change.</text>
+<line x1="92" y1="722" x2="1108" y2="722" stroke="#D2D1CD"/>
+<text class="cap" x="92" y="746" style="fill:#8A6D12">04 · AUTHORITY GRANTED</text>
+<text class="lab" x="92" y="780" style="font-size:23px">Exactly what I may change without asking again.</text>
+<text class="mut" x="92" y="812">Which fields, which forms, which rule, which report, and who has agreed to</text>
+<text class="mut" x="92" y="840">close the old path, by name.</text>
+<line x1="92" y1="858" x2="1108" y2="858" stroke="#D2D1CD"/>
+<text class="cap" x="92" y="882" style="fill:#8A6D12">05 · THE METRIC</text>
+<text class="lab" x="92" y="916" style="font-size:23px">One number. Measured before I start.</text>
+<text class="mut" x="92" y="948">Measured before, or it will be argued about after.</text>
+<rect x="64" y="1010" width="1072" height="124" fill="#B0432D" fill-opacity=".12"/>
+<text class="cap red" x="92" y="1050">06 · KILL DATE</text>
+<text class="lab" x="92" y="1084" style="font-size:23px">The day this stops unless the metric moved.</text>
+<text class="mut" x="92" y="1116">Non-negotiable, and the reason a sceptical director can afford to say yes.</text>
 
-<rect x="64" y="180" width="1072" height="600" fill="none" stroke="#C5C4C0" stroke-width="1.6"/>
-<line x1="64" y1="232" x2="1136" y2="232" stroke="#C5C4C0"/>
-<text class="t" x="88" y="214" font-size="12.5" letter-spacing="3" fill="#1C1D20">DEPLOYMENT — ONE WOUND, ONE OWNER, ONE DATE</text>
-<text class="t hint" x="1112" y="214" text-anchor="end">if a field cannot be filled with a name or a number, the deployment is not ready</text>
-
-<text class="t fld" x="88" y="278">01 · THE WOUND</text>
-<text class="t ans" x="88" y="308">One sentence, in the team’s own words, with a number in it.</text>
-<text class="t hint" x="88" y="330">“Credit ops re-keys four documents per file. Two hours each, sixty a week, thirty percent come back wrong.”</text>
-<line x1="88" y1="350" x2="1112" y2="350" stroke="#E0DFDB"/>
-
-<text class="t fld" x="88" y="386">02 · THE OWNER AFTER ME</text>
-<text class="t ans" x="88" y="416">A named person who has said out loud that they will run it.</text>
-<text class="t hint" x="88" y="438">Not a steering committee. Someone whose own numbers improve, and who will answer a message on a Saturday.</text>
-<line x1="88" y1="458" x2="1112" y2="458" stroke="#E0DFDB"/>
-
-<text class="t fld" x="88" y="494">03 · THE TUESDAY TEST</text>
-<text class="t ans" x="88" y="524">What runs differently, and for whom.</text>
-<text class="t hint" x="88" y="546">Stated as a before and an after. If it cannot be stated this way, you are building a capability, not a change.</text>
-<line x1="88" y1="566" x2="1112" y2="566" stroke="#E0DFDB"/>
-
-<text class="t fld" x="88" y="602">04 · AUTHORITY GRANTED</text>
-<text class="t ans" x="88" y="632">Exactly what I may change without asking again.</text>
-<text class="t hint" x="88" y="654">Which fields, which forms, which rule, which report — and who has agreed to close the old path, by name.</text>
-<line x1="88" y1="674" x2="1112" y2="674" stroke="#E0DFDB"/>
-
-<text class="t fld" x="88" y="710">05 · THE METRIC</text>
-<text class="t ans" x="88" y="740">One number. Measured before I start.</text>
-<text class="t hint" x="88" y="762">Measured before, or it will be argued about after.</text>
-
-<rect x="64" y="796" width="1072" height="46" fill="#C8553D" opacity="0.12"/>
-<text class="t fld" x="88" y="826" fill="#C8553D">06 · KILL DATE</text>
-<text class="t ans" x="290" y="826" font-size="15">The day this stops unless the metric moved. Non-negotiable, and the reason a sceptical director can afford to say yes.</text>
+</g>
 </svg>

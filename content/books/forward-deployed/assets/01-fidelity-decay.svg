@@ -1,51 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="Fidelity decay across organisational layers">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1006" width="1200" height="1006" role="img" aria-label="Fidelity decay across organisational layers">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.lbl{font-size:14px;letter-spacing:1.8px;fill:#1C1D20}
-.mut{font-size:14.5px;fill:#7A7B82}
-.red{fill:#C8553D}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="720" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 1.2 — FIDELITY DECAY</text>
-<text class="t h" x="64" y="112">What survives each translation</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD" stroke-width="1"/>
+<rect width="1200" height="1006" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 1.2 — FIDELITY DECAY</text>
+<text class="h" x="64" y="122">What survives each translation</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="218">BOARD</text>
+<rect x="440" y="196" width="696" height="30" fill="#1C1D20" opacity="1"/>
+<text class="body" x="440" y="262">“We are behind on AI and it is a threat to the business.”</text>
+<text class="cap" x="64" y="342">EXEC COMMITTEE</text>
+<rect x="440" y="320" width="564" height="30" fill="#1C1D20" opacity="0.85"/>
+<text class="body" x="440" y="386">“Become an AI-first organisation by 2027.”</text>
+<text class="mut" x="440" y="416">a threat became a destination</text>
+<text class="cap" x="64" y="466">TRANSFORMATION OFFICE</text>
+<rect x="440" y="444" width="426" height="30" fill="#1C1D20" opacity="0.66"/>
+<text class="body" x="440" y="510">“Six workstreams. Forty-one initiatives. A baseline.”</text>
+<text class="mut" x="440" y="540">a destination became a portfolio</text>
+<text class="cap" x="64" y="590">FUNCTION HEAD</text>
+<rect x="440" y="568" width="279" height="30" fill="#1C1D20" opacity="0.5"/>
+<text class="body" x="440" y="634">“Three demonstrable use cases per function.”</text>
+<text class="mut" x="440" y="664">the hardest workflow is dropped — it cannot be demoed by March</text>
+<text class="cap" x="64" y="714">TEAM LEAD</text>
+<rect x="440" y="692" width="153" height="30" fill="#1C1D20" opacity="0.36"/>
+<text class="body" x="440" y="758">“Evaluate vendor. Run pilot. Document findings.”</text>
+<text class="mut" x="440" y="788">the only three items that need nobody’s permission</text>
+<line x1="64" y1="808" x2="1136" y2="808" stroke="#D2D1CD"/>
+<text class="cap red" x="64" y="854">TUESDAY, 9:14 AM</text>
+<rect x="440" y="832" width="8" height="30" fill="#B0432D"/>
+<text class="body red" x="440" y="898" style="font-weight:700">Opens the same spreadsheet.</text>
 
-<!-- row 1 -->
-<text class="t lbl" x="64" y="212">BOARD</text>
-<rect x="280" y="196" width="420" height="22" fill="#1C1D20"/>
-<text class="t mut" x="722" y="212" fill="#4A4B50">“We are behind on AI and it is a threat to the business.”</text>
-
-<!-- row 2 -->
-<text class="t lbl" x="64" y="294">EXEC COMMITTEE</text>
-<rect x="280" y="278" width="340" height="22" fill="#1C1D20" opacity="0.85"/>
-<text class="t mut" x="722" y="294">“Become an AI-first organisation by 2027.”</text>
-<text class="t mut" x="722" y="314" font-size="12.5" fill="#7A7B82">a threat became a destination</text>
-
-<!-- row 3 -->
-<text class="t lbl" x="64" y="386">TRANSFORMATION OFFICE</text>
-<rect x="280" y="370" width="250" height="22" fill="#1C1D20" opacity="0.66"/>
-<text class="t mut" x="722" y="386">“Six workstreams. Forty-one initiatives. A baseline.”</text>
-<text class="t mut" x="722" y="406" font-size="12.5" fill="#7A7B82">a destination became a portfolio</text>
-
-<!-- row 4 -->
-<text class="t lbl" x="64" y="478">FUNCTION HEAD</text>
-<rect x="280" y="462" width="165" height="22" fill="#1C1D20" opacity="0.5"/>
-<text class="t mut" x="722" y="478">“Three demonstrable use cases per function.”</text>
-<text class="t mut" x="722" y="498" font-size="12.5" fill="#7A7B82">the hardest workflow is dropped — it cannot be demoed by March</text>
-
-<!-- row 5 -->
-<text class="t lbl" x="64" y="570">TEAM LEAD</text>
-<rect x="280" y="554" width="90" height="22" fill="#1C1D20" opacity="0.36"/>
-<text class="t mut" x="722" y="570">“Evaluate vendor. Run pilot. Document findings.”</text>
-<text class="t mut" x="722" y="590" font-size="12.5" fill="#7A7B82">the only three items that need nobody's permission</text>
-
-<!-- row 6 -->
-<text class="t lbl red" x="64" y="662">TUESDAY, 9:14 AM</text>
-<rect x="280" y="646" width="6" height="22" fill="#C8553D"/>
-<text class="t mut red" x="722" y="662">Opens the same spreadsheet.</text>
-
-<line x1="64" y1="614" x2="1136" y2="614" stroke="#D2D1CD" stroke-width="1"/>
-<text class="t mut" x="64" y="700" font-size="13" fill="#7A7B82">Every translation performed competently. The loss is structural, not personal.</text>
+</g>
+<line x1="64" y1="930" x2="1136" y2="930" stroke="#D2D1CD"/>
+<text class="note" x="64" y="970">Every translation performed competently. The loss is structural, not personal.</text>
 </svg>

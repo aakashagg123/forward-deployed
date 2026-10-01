@@ -1,48 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="What the AI does versus what the operator does inside a deployment">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1020" width="1200" height="1020" role="img" aria-label="What the AI does versus what the operator does inside a deployment">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.item{font-size:15px;fill:#1C1D20}
-.dim{font-size:13px;fill:#7A7B82}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="700" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 14.1 — THE DIVISION OF LABOUR</text>
-<text class="t h" x="64" y="112">One column compresses. The other never has.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1020" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 14.1 — THE DIVISION OF LABOUR</text>
+<text class="h" x="64" y="122">One column compresses. The other never has.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<line x1="600" y1="186" x2="600" y2="822" stroke="#D2D1CD"/>
+<text class="cap" x="64" y="206">THE MACHINE</text><text class="mut" x="64" y="236">minutes to hours</text><line x1="64" y1="254" x2="540" y2="254" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap gold" x="660" y="206">THE OPERATOR</text><text class="mut" x="660" y="236">days to weeks, does not compress</text><line x1="660" y1="254" x2="1136" y2="254" stroke="#B8952B" stroke-width="3"/>
+<text class="body" x="64" y="306" style="fill:#55565D">First-draft matching / reconciliation logic</text>
+<text class="lab" x="660" y="306" style="font-size:22px">The domain fact that makes the draft</text>
+<text class="lab" x="660" y="334" style="font-size:22px">correct</text>
+<text class="body" x="64" y="382" style="fill:#55565D">Cleaning and structuring messy data</text>
+<text class="lab" x="660" y="382" style="font-size:22px">Learning why the mess exists in the first</text>
+<text class="lab" x="660" y="410" style="font-size:22px">place</text>
+<text class="body" x="64" y="458" style="fill:#55565D">Testing against historical records</text>
+<text class="lab" x="660" y="458" style="font-size:22px">Judging whether the mismatch count is real</text>
+<text class="body" x="64" y="534" style="fill:#55565D">Drafting the security posture documentation</text>
+<text class="lab" x="660" y="534" style="font-size:22px">Earning the CISO’s trust in the room</text>
+<text class="body" x="64" y="610" style="fill:#55565D">Flagging anomalies in the data</text>
+<text class="lab" x="660" y="610" style="font-size:22px">Deciding which anomaly is worth acting on</text>
+<text class="body" x="64" y="686" style="fill:#55565D">Iterating a fix in minutes, on request</text>
+<text class="lab" x="660" y="686" style="font-size:22px">Deciding when the correction cycle is done</text>
+<text class="body" x="64" y="762" style="fill:#55565D">Producing a technically complete system</text>
+<text class="lab" x="660" y="762" style="font-size:22px">Getting the team to actually trust and use</text>
+<text class="lab" x="660" y="790" style="font-size:22px">it</text>
+<line x1="64" y1="840" x2="1136" y2="840" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="884">The unit did not get replaced. It got smaller, because the part that was pure</text>
+<text class="lab" x="64" y="916">engineering labour compressed, and the part that was trust did not.</text>
 
-<text class="t col" x="64" y="196">THE MACHINE</text>
-<text class="t dim" x="64" y="216">minutes to hours</text>
-<line x1="64" y1="232" x2="540" y2="232" stroke="#C5C4C0"/>
-
-<text class="t col" x="660" y="196">THE OPERATOR</text>
-<text class="t dim" x="660" y="216">days to weeks — does not compress</text>
-<line x1="660" y1="232" x2="1136" y2="232" stroke="#C5C4C0"/>
-
-<line x1="600" y1="176" x2="600" y2="656" stroke="#D2D1CD"/>
-
-<text class="t item" x="64" y="280">First-draft matching / reconciliation logic</text>
-<text class="t item" x="660" y="280">The domain fact that makes the draft correct</text>
-
-<text class="t item" x="64" y="332">Cleaning and structuring messy data</text>
-<text class="t item" x="660" y="332">Learning why the mess exists in the first place</text>
-
-<text class="t item" x="64" y="384">Testing against historical records</text>
-<text class="t item" x="660" y="384">Judging whether the mismatch count is real</text>
-
-<text class="t item" x="64" y="436">Drafting the security posture documentation</text>
-<text class="t item" x="660" y="436">Earning the CISO's trust in the room</text>
-
-<text class="t item" x="64" y="488">Flagging anomalies in the data</text>
-<text class="t item" x="660" y="488">Deciding which anomaly is worth acting on</text>
-
-<text class="t item" x="64" y="540">Iterating a fix in minutes, on request</text>
-<text class="t item" x="660" y="540">Deciding when the correction cycle is done</text>
-
-<text class="t item" x="64" y="592">Producing a technically complete system</text>
-<text class="t item" x="660" y="592">Getting the team to actually trust and use it</text>
-
-<line x1="64" y1="628" x2="1136" y2="628" stroke="#D2D1CD"/>
-<text class="t" x="64" y="660" font-size="16" fill="#4A4B50">The unit did not get replaced. It got smaller — because the part that was pure engineering labour compressed, and the part that was trust did not.</text>
+</g>
 </svg>

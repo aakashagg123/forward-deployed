@@ -1,37 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="The wound inventory versus the operator supply constraint">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 990" width="1200" height="990" role="img" aria-label="The wound inventory versus the operator supply constraint">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.lbl{font-size:15px;fill:#1C1D20}
-.num{font-size:32px;fill:#1C1D20}
-.unit{font-size:13px;fill:#6A6B72;letter-spacing:1.4px}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="660" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 15.2 — THE WOUND INVENTORY VS. THE OPERATOR SUPPLY</text>
-<text class="t h" x="64" y="112">The constraint has never been addressable market.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="990" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 15.2 — THE WOUND INVENTORY VS. THE OPERATOR SUPPLY</text>
+<text class="h" x="64" y="122">The constraint has never been addressable market.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">ADDRESSABLE WOUND INVENTORY</text>
+<rect x="64" y="226" width="1072" height="124" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<text x="92" y="306" style="font-size:60px;font-weight:700">~75,000</text>
+<text class="body" x="380" y="282" style="font-size:22px">deployable wounds: ~1,000 tier-1/2 enterprises ×</text>
+<text class="body" x="380" y="314" style="font-size:22px">~75 addressable workflows each</text>
+<text class="cap" x="64" y="426">ANNUAL DEPLOYMENT CAPACITY, YEAR 10, AGGRESSIVE PIPELINE</text>
+<rect x="64" y="446" width="56" height="124" fill="#B8952B" fill-opacity=".3" stroke="#B8952B" stroke-width="2.5"/>
+<text class="gold" x="150" y="526" style="font-size:60px;font-weight:700">~3,500</text>
+<text class="body gold" x="440" y="502" style="font-size:22px;font-weight:700">deployments/year: ~2,000 trained operators × 1.5–2</text>
+<text class="body gold" x="440" y="534" style="font-size:22px;font-weight:700">deployments each</text>
+<line x1="92" y1="578" x2="92" y2="624" stroke="#8A8B92" stroke-width="2" stroke-dasharray="5 5"/>
+<text class="lab" x="64" y="662" style="font-size:22px">~4.5% of the annual inventory addressed per year, at scale</text>
+<line x1="64" y1="716" x2="1136" y2="716" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="760">Multiple well-run firms could operate for a decade without meaningfully</text>
+<text class="lab" x="64" y="792">depleting the inventory. The strategic question is training speed,</text>
+<text class="lab" x="64" y="824">not client acquisition.</text>
+<text class="mut" x="64" y="864">Figures are conservative, order-of-magnitude estimates built from Chapter 11’s</text>
+<text class="mut" x="64" y="892">scaling curve and Chapter 13’s market tiers, not a precision forecast.</text>
 
-<!-- Large bar: wound inventory -->
-<text class="t unit" x="64" y="200">ADDRESSABLE WOUND INVENTORY</text>
-<rect x="64" y="216" width="1072" height="70" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t num" x="90" y="262">~75,000</text>
-<text class="t note" x="300" y="262">deployable wounds — ~1,000 tier-1/2 enterprises × ~75 addressable workflows each</text>
-
-<!-- Small bar: operator capacity -->
-<text class="t unit" x="64" y="330">ANNUAL DEPLOYMENT CAPACITY, YEAR 10, AGGRESSIVE PIPELINE</text>
-<rect x="64" y="346" width="56" height="70" rx="8" fill="#B8952B" opacity="0.2" stroke="#B8952B"/>
-<text class="t num" x="140" y="392" fill="#B8952B">~3,500</text>
-<text class="t note" x="300" y="392" fill="#B8952B">deployments/year — ~2,000 trained operators × 1.5–2 deployments each</text>
-
-<!-- Ratio annotation -->
-<line x1="120" y1="440" x2="120" y2="470" stroke="#C5C4C0" stroke-dasharray="3 3"/>
-<text class="t note" x="120" y="490">~4.5% of the annual</text>
-<text class="t note" x="120" y="508">inventory addressed</text>
-<text class="t note" x="120" y="526">per year, at scale</text>
-
-<line x1="64" y1="560" x2="1136" y2="560" stroke="#D2D1CD"/>
-<text class="t" x="64" y="592" font-size="16" fill="#4A4B50">Multiple well-run firms could operate for a decade without meaningfully depleting the inventory. The strategic question is training speed, not client acquisition.</text>
-<text class="t note" x="64" y="618">Figures are conservative, order-of-magnitude estimates built from Chapter 11's scaling curve and Chapter 13's market tiers — not a precision forecast.</text>
+</g>
 </svg>

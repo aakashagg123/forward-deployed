@@ -1,49 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="The productivity J-curve">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="The productivity J-curve">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.ax{font-size:12px;letter-spacing:2.2px;fill:#6A6B72}
-.note{font-size:13.5px;fill:#7A7B82}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="660" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 2.3 — THE PRODUCTIVITY J-CURVE</text>
-<text class="t h" x="64" y="112">The trough is not failure. It is unrecognised asset formation.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="900" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 2.3 — THE PRODUCTIVITY J-CURVE</text>
+<text class="h" x="64" y="122">The trough is not failure. It is unrecognised asset formation.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<line x1="130" y1="720" x2="1136" y2="720" stroke="#8A8B92" stroke-width="2"/>
+<line x1="130" y1="210" x2="130" y2="720" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap" x="130" y="192" style="fill:#55565D">MEASURED PRODUCTIVITY</text>
+<text class="cap end" x="1136" y="764" style="fill:#55565D">TIME →</text>
+<line x1="130" y1="480" x2="1136" y2="480" stroke="#8A8B92" stroke-width="1.5" stroke-dasharray="6 8"/>
+<text class="mut end" x="1136" y="508">pre-investment baseline</text>
+<path d="M250 480 C 350 540 410 616 540 620 C 660 624 720 560 780 480 Z" fill="#B0432D" opacity="0.14"/>
+<path d="M130 480 L250 480 C 350 540 410 616 540 620 C 680 624 760 520 850 420 C 930 330 1000 290 1100 270" fill="none" stroke="#1C1D20" stroke-width="4"/>
+<line x1="250" y1="480" x2="250" y2="350" stroke="#8A8B92" stroke-width="1.5"/><circle cx="250" cy="480" r="8" fill="#1C1D20"/>
+<text class="lab" x="262" y="346" style="font-size:22px">Technology installed</text>
+<text class="mut" x="262" y="374">the visible dollar is spent</text>
+<line x1="540" y1="620" x2="540" y2="350" stroke="#B0432D" stroke-width="2" stroke-dasharray="6 7"/><circle cx="540" cy="620" r="8" fill="#B0432D"/>
+<text class="lab red" x="552" y="346" style="font-size:22px">Where programmes get cancelled</text>
+<text class="mut" x="552" y="374">the sceptics are correct on</text>
+<text class="mut" x="552" y="402">the evidence available</text>
+<text class="mut mid" x="560" y="676">intangible capital accumulating: real, expensive, uncounted</text>
+<circle cx="1100" cy="270" r="8" fill="#B8952B"/>
+<text class="lab gold end" x="990" y="226" style="font-size:22px">Output rises steeply</text>
+<text class="mut" x="990" y="254" style="text-anchor:end">the return looks impossibly good;</text>
+<text class="mut" x="990" y="282" style="text-anchor:end">the investment was never counted</text>
 
-<!-- axes -->
-<line x1="150" y1="560" x2="1120" y2="560" stroke="#C5C4C0"/>
-<line x1="150" y1="200" x2="150" y2="560" stroke="#C5C4C0"/>
-<text class="t ax" x="150" y="596">TIME →</text>
-<text class="t ax" x="150" y="186">MEASURED PRODUCTIVITY</text>
-
-<!-- baseline -->
-<line x1="150" y1="400" x2="1120" y2="400" stroke="#C5C4C0" stroke-dasharray="4 6"/>
-<text class="t note" x="1120" y="392" text-anchor="end" font-size="12" fill="#8A8B92">pre-investment baseline</text>
-
-<!-- trough shading -->
-<path d="M240 400 C 340 452 400 486 520 490 C 640 494 700 470 760 400 Z" fill="#C8553D" opacity="0.13"/>
-
-<!-- curve -->
-<path d="M150 400 L240 400 C 340 452 400 486 520 490 C 660 494 740 420 820 330 C 900 244 980 206 1110 190"
-      fill="none" stroke="#1C1D20" stroke-width="2.6"/>
-
-<!-- markers -->
-<circle cx="240" cy="400" r="6" fill="#1C1D20"/>
-<line x1="240" y1="400" x2="240" y2="250" stroke="#C5C4C0"/>
-<text class="t note" x="252" y="244" fill="#4A4B50">Technology installed</text>
-<text class="t note" x="252" y="264" font-size="12" fill="#7A7B82">the visible dollar is spent</text>
-
-<line x1="520" y1="490" x2="520" y2="252" stroke="#C8553D" stroke-dasharray="4 6"/>
-<circle cx="520" cy="490" r="6" fill="#C8553D"/>
-<text class="t note" x="532" y="246" fill="#C8553D">Where programmes get cancelled</text>
-<text class="t note" x="532" y="266" font-size="12" fill="#7A7B82">the sceptics are correct on the evidence available</text>
-
-<text class="t note" x="420" y="540" fill="#7A7B82">intangible capital accumulating — real, expensive, uncounted</text>
-
-<circle cx="1030" cy="216" r="6" fill="#B8952B"/>
-<text class="t note" x="1018" y="196" text-anchor="end" fill="#B8952B">Output rises steeply</text>
-<text class="t note" x="1018" y="216" text-anchor="end" font-size="12" fill="#7A7B82">the return looks impossibly good — the investment was never counted</text>
-
-<text class="t note" x="64" y="636" font-size="13" fill="#7A7B82">Every honest deployment passes through the trough. Plan for it, fund past it, and never promise a number inside it.</text>
+</g>
+<line x1="64" y1="796" x2="1136" y2="796" stroke="#D2D1CD"/>
+<text class="note" x="64" y="836">Every honest deployment passes through the trough. Plan for it, fund past it,</text>
+<text class="note" x="64" y="864">and never promise a number inside it.</text>
 </svg>

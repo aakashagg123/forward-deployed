@@ -1,68 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" role="img" aria-label="What AI collapsed and what it did not">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1330" width="1200" height="1330" role="img" aria-label="What AI collapsed and what it did not">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.role{font-size:14px;letter-spacing:1.2px;fill:#F7F6F3}
-.note{font-size:12.5px;fill:#7A7B82}
-.big{font-size:30px;fill:#1C1D20}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="760" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 5.2 — THE MULTIPLIER</text>
-<text class="t h" x="64" y="112">The build cost collapsed. The trust cost did not.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
-<line x1="600" y1="176" x2="600" y2="600" stroke="#E4E3DF"/>
+<rect width="1200" height="1330" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 5.2 — THE MULTIPLIER</text>
+<text class="h" x="64" y="122">The build cost collapsed. The trust cost did not.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<line x1="600" y1="186" x2="600" y2="828" stroke="#D2D1CD"/>
+<text class="cap" x="64" y="206">2015 · THE UNIT THAT COULD</text>
+<text class="cap" x="64" y="232">CHANGE A WORKFLOW</text>
+<rect x="64" y="262" width="496" height="60" fill="#1C1D20"/><text class="body inv" x="86" y="301">Business analyst</text>
+<rect x="64" y="338" width="496" height="60" fill="#1C1D20"/><text class="body inv" x="86" y="377">Application engineer</text>
+<rect x="64" y="414" width="496" height="60" fill="#1C1D20"/><text class="body inv" x="86" y="453">Data engineer</text>
+<rect x="64" y="490" width="496" height="60" fill="#1C1D20"/><text class="body inv" x="86" y="529">Test / QA</text>
+<rect x="64" y="566" width="496" height="60" fill="#1C1D20"/><text class="body inv" x="86" y="605">Integration engineer</text>
+<rect x="64" y="642" width="496" height="60" fill="#1C1D20"/><text class="body inv" x="86" y="681">Project manager</text>
+<text class="cap" x="640" y="206">2026 · THE UNIT</text>
+<rect x="640" y="262" width="496" height="60" fill="#B8952B"/><text class="body" x="662" y="301" style="font-weight:700">The operator</text>
+<rect x="640" y="338" width="496" height="470" fill="none" stroke="#B8952B" stroke-width="2.5" stroke-dasharray="8 6"/>
+<text class="cap gold" x="662" y="376">THE MACHINE</text>
+<text class="mut" x="662" y="416">writes the code: once the largest line</text>
+<text class="mut" x="662" y="442">item, now the smallest</text>
+<text class="mut" x="662" y="482">reads a decade of schema weirdness</text>
+<text class="mut" x="662" y="508">in an afternoon</text>
+<text class="mut" x="662" y="548">produces the integration scaffolding,</text>
+<text class="mut" x="662" y="574">migrations, retries, tests</text>
+<text class="mut" x="662" y="614">generates a first version fast enough</text>
+<text class="mut" x="662" y="640">to throw away</text>
+<text class="mut" x="662" y="680">writes the handover material operators</text>
+<text class="mut" x="662" y="706">always skipped, which is exactly what</text>
+<text class="mut" x="662" y="732">determines whether the thing survives them</text>
+<text class="mut" x="662" y="772">and the reliable task length keeps</text>
+<text class="mut" x="662" y="798">doubling on a scale of months</text>
+<text class="gold" x="64" y="888" style="font-size:56px;font-weight:700;fill:#1C1D20">6–9 months</text>
+<text class="gold" x="640" y="888" style="font-size:56px;font-weight:700">6–12 weeks</text>
+<text class="mut" x="64" y="928">Needs a business case large enough to</text>
+<text class="mut" x="64" y="956">justify six salaries, so only large</text>
+<text class="mut red" x="64" y="984">problems qualify, and the thousand small</text>
+<text class="mut red" x="64" y="1012">bleeding workflows that make up the</text>
+<text class="mut red" x="64" y="1040">operating model never do.</text>
+<text class="mut gold" x="640" y="928">Small enough that the thousand workflows</text>
+<text class="mut gold" x="640" y="956">now qualify, which is the entire reason</text>
+<text class="mut gold" x="640" y="984">this model is newly viable.</text>
+<rect x="64" y="1094" width="1072" height="170" fill="#B0432D" fill-opacity=".10"/>
+<text class="cap red" x="88" y="1134">WHAT DID NOT COLLAPSE</text>
+<text class="body" x="88" y="1170">Knowing which workflow is bleeding · the relationship that makes someone tell you the truth</text>
+<text class="body" x="88" y="1202">about their own workaround · the authority to close the old path · someone who can be held</text>
+<text class="body" x="88" y="1234">accountable. These were always the hard parts. They still are.</text>
 
-<!-- LEFT -->
-<text class="t col" x="64" y="204">2015 · THE UNIT THAT COULD CHANGE A WORKFLOW</text>
-<g fill="#1C1D20">
-<rect x="64" y="226" width="470" height="40"/>
-<rect x="64" y="274" width="470" height="40"/>
-<rect x="64" y="322" width="470" height="40"/>
-<rect x="64" y="370" width="470" height="40"/>
-<rect x="64" y="418" width="470" height="40"/>
-<rect x="64" y="466" width="470" height="40"/>
-</g>
-<g class="t role">
-<text x="84" y="252">Business analyst</text>
-<text x="84" y="300">Application engineer</text>
-<text x="84" y="348">Data engineer</text>
-<text x="84" y="396">Test / QA</text>
-<text x="84" y="444">Integration engineer</text>
-<text x="84" y="492">Project manager</text>
-</g>
-<text class="t big" x="64" y="556">6–9 months</text>
-<text class="t note" x="64" y="582">Needs a business case large enough to justify six salaries —</text>
-<text class="t note" x="64" y="604" fill="#C8553D">so only large problems qualify, and the thousand small bleeding</text>
-<text class="t note" x="64" y="626" fill="#C8553D">workflows that constitute the operating model never do.</text>
-
-<!-- RIGHT -->
-<text class="t col" x="660" y="204">2026 · THE UNIT</text>
-<rect x="660" y="226" width="470" height="40" fill="#B8952B"/>
-<text class="t role" x="680" y="252">The operator</text>
-
-<rect x="660" y="274" width="470" height="232" fill="none" stroke="#B8952B" stroke-width="1.4" stroke-dasharray="6 5"/>
-<text class="t" x="680" y="302" font-size="13" letter-spacing="2.4" fill="#B8952B">THE MACHINE</text>
-<g class="t note" fill="#4A4B50">
-<text x="680" y="332">writes the code — once the largest line item, now the smallest</text>
-<text x="680" y="356">reads a decade of schema weirdness in an afternoon</text>
-<text x="680" y="380">produces the integration scaffolding, migrations, retries, tests</text>
-<text x="680" y="404">generates a first version fast enough to throw away</text>
-<text x="680" y="428">writes the handover material operators always skipped —</text>
-<text x="680" y="450" fill="#7A7B82">which is exactly what determines whether the thing survives them</text>
-</g>
-<text class="t note" x="680" y="486" fill="#7A7B82">and the reliable task length keeps doubling on a scale of months</text>
-
-<text class="t big" x="660" y="556" fill="#B8952B">6–12 weeks</text>
-<text class="t note" x="660" y="582">Small enough that the thousand workflows now qualify —</text>
-<text class="t note" x="660" y="604" fill="#B8952B">which is the entire reason this model is newly viable.</text>
-
-<!-- bottom band -->
-<rect x="64" y="656" width="1072" height="80" fill="#C8553D" opacity="0.10"/>
-<text class="t" x="84" y="684" font-size="12.5" letter-spacing="2.6" fill="#C8553D">WHAT DID NOT COLLAPSE</text>
-<g class="t note" fill="#4A4B50" font-size="13">
-<text x="84" y="712">Knowing which workflow is bleeding · the relationship that makes someone tell you the truth about their own workaround ·</text>
-<text x="84" y="732">the authority to close the old path · someone who can be held accountable. These were always the hard parts. They still are.</text>
 </g>
 </svg>

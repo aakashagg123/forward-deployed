@@ -1,67 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="The pod as the institutional unit, and how pods compose into a firm">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1080" width="1200" height="1080" role="img" aria-label="The pod as the institutional unit, and how pods compose into a firm">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.note{font-size:13px;fill:#7A7B82}
-.lbl{font-size:14px;fill:#1C1D20}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="660" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 14.3 — THE POD, NOT THE PLATFORM</text>
-<text class="t h" x="64" y="112">One operator, one AI stack, one relationship at a time.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1080" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 14.3 — THE POD, NOT THE PLATFORM</text>
+<text class="h" x="64" y="122">One operator, one AI stack, one relationship at a time.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">ONE POD</text>
+<rect x="64" y="226" width="1072" height="200" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<circle cx="170" cy="326" r="58" fill="#1C1D20"/><text class="cap inv mid" x="170" y="332" style="letter-spacing:.5px">OPERATOR</text>
+<rect x="266" y="296" width="190" height="60" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/><text class="cap gold mid" x="361" y="332">AI STACK</text>
+<text class="lab" x="540" y="308" style="font-size:22px">One relationship, one pace of trust-building</text>
+<text class="mut" x="540" y="340">1–2 deployments per year</text>
+<defs><marker id="pa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#55565D"/></marker></defs><line x1="600" y1="436" x2="600" y2="494" stroke="#55565D" stroke-width="3" marker-end="url(#pa)"/>
+<text class="lab" x="624" y="472" style="font-size:21px">scales by adding pods</text>
+<text class="cap" x="64" y="540">THE FIRM · A PORTFOLIO OF PODS</text>
+<rect x="64" y="560" width="1072" height="330" fill="#F7F6F3" stroke="#8A8B92" stroke-width="2"/>
+<g opacity="1"><circle cx="120" cy="626" r="26" fill="#1C1D20"/><rect x="160" y="608" width="96" height="36" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/></g>
+<g opacity="1"><circle cx="380" cy="626" r="26" fill="#1C1D20"/><rect x="420" y="608" width="96" height="36" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/></g>
+<g opacity="1"><circle cx="640" cy="626" r="26" fill="#1C1D20"/><rect x="680" y="608" width="96" height="36" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/></g>
+<g opacity="1"><circle cx="900" cy="626" r="26" fill="#1C1D20"/><rect x="940" y="608" width="96" height="36" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/></g>
+<g opacity=".45"><circle cx="120" cy="716" r="26" fill="#1C1D20"/><rect x="160" y="698" width="96" height="36" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/></g>
+<g opacity=".45"><circle cx="380" cy="716" r="26" fill="#1C1D20"/><rect x="420" y="698" width="96" height="36" fill="#B8952B" fill-opacity=".25" stroke="#B8952B" stroke-width="2.5"/></g>
+<text class="mut" x="96" y="806">Each pod is independent. No pod speeds up another pod’s trust-building.</text>
+<text class="mut" x="96" y="836">Bounded by Chapter 11’s operator pipeline, not by capital or demand.</text>
+<line x1="64" y1="930" x2="1136" y2="930" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="974">Not a think-tank. Not a project team. A firm scales by adding pods,</text>
+<text class="lab" x="64" y="1006">sized precisely to the part of the work that does not compress.</text>
 
-<!-- Single pod detail, left -->
-<text class="t col" x="64" y="196">ONE POD</text>
-<rect x="64" y="212" width="340" height="200" rx="10" fill="#EBEAE6" stroke="#D2D1CD"/>
-<circle cx="160" cy="280" r="30" fill="#1C1D20"/>
-<text class="t" x="160" y="286" text-anchor="middle" font-size="12" fill="#F7F6F3">OPERATOR</text>
-<rect x="220" y="256" width="150" height="48" rx="6" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
-<text class="t" x="295" y="284" text-anchor="middle" font-size="12" fill="#B8952B">AI STACK</text>
-<text class="t note" x="84" y="352">One relationship, one pace</text>
-<text class="t note" x="84" y="372">of trust-building</text>
-<text class="t note" x="84" y="392">1–2 deployments per year</text>
-
-<!-- Arrow to firm -->
-<defs><marker id="parr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#6A6B72"/></marker></defs>
-<line x1="420" y1="312" x2="470" y2="312" stroke="#6A6B72" stroke-width="1.5" marker-end="url(#parr)"/>
-<text class="t note" x="445" y="298" text-anchor="middle">scales by</text>
-<text class="t note" x="445" y="332" text-anchor="middle">adding</text>
-
-<!-- Firm as portfolio of pods, right -->
-<text class="t col" x="520" y="196">THE FIRM · A PORTFOLIO OF PODS</text>
-<rect x="520" y="212" width="616" height="200" rx="10" fill="#F7F6F3" stroke="#D2D1CD"/>
-
-<g>
-<circle cx="570" cy="260" r="16" fill="#1C1D20"/>
-<rect x="596" y="250" width="60" height="20" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
 </g>
-<g>
-<circle cx="700" cy="260" r="16" fill="#1C1D20"/>
-<rect x="726" y="250" width="60" height="20" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
-</g>
-<g>
-<circle cx="830" cy="260" r="16" fill="#1C1D20"/>
-<rect x="856" y="250" width="60" height="20" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
-</g>
-<g>
-<circle cx="960" cy="260" r="16" fill="#1C1D20"/>
-<rect x="986" y="250" width="60" height="20" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
-</g>
-
-<g opacity="0.5">
-<circle cx="570" cy="320" r="16" fill="#1C1D20"/>
-<rect x="596" y="310" width="60" height="20" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
-</g>
-<g opacity="0.5">
-<circle cx="700" cy="320" r="16" fill="#1C1D20"/>
-<rect x="726" y="310" width="60" height="20" rx="4" fill="#B8952B" opacity="0.15" stroke="#B8952B"/>
-</g>
-
-<text class="t note" x="540" y="380">Each pod is independent. No pod speeds up another pod's trust-building.</text>
-<text class="t note" x="540" y="398">Bounded by Chapter 11's operator pipeline, not by capital or demand.</text>
-
-<line x1="64" y1="460" x2="1136" y2="460" stroke="#D2D1CD"/>
-<text class="t" x="64" y="492" font-size="16" fill="#4A4B50">Not a think-tank. Not a project team. A firm scales by adding pods, sized precisely to the part of the work that does not compress.</text>
 </svg>

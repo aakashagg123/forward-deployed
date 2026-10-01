@@ -1,52 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="What holds and what needs adaptation outside India">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="What holds and what needs adaptation outside India">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.lbl{font-size:15px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="620" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 15.3 — WHAT TRAVELS AND WHAT DOESN'T</text>
-<text class="t h" x="64" y="112">Cost structure travels easily. Density and seams do not.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="900" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 15.3 — WHAT TRAVELS AND WHAT DOESN’T</text>
+<text class="h" x="64" y="122">Cost structure travels easily. Density and seams do not.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">FACTOR</text><text class="cap" x="720" y="206">HARDER TO FIND</text><text class="cap end" x="1136" y="206">TRAVELS EASILY</text>
+<line x1="64" y1="226" x2="1136" y2="226" stroke="#8A8B92" stroke-width="2"/>
+<rect x="64" y="246" width="1072" height="112" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab red" x="88" y="288" style="font-size:23px">Enterprise density</text>
+<text class="mut" x="88" y="318">Korea, SE Asia family groups,</text>
+<text class="mut" x="88" y="344">not US/Europe/China</text>
+<rect x="720" y="286" width="392" height="30" fill="#D2D1CD"/><rect x="720" y="286" width="55" height="30" fill="#B0432D"/>
+<rect x="64" y="372" width="1072" height="112" fill="#F7F6F3" stroke="#D2D1CD"/>
+<text class="lab red" x="88" y="414" style="font-size:23px">Workflow multiplicity</text>
+<text class="mut" x="88" y="444">Compressed-digitisation seams:</text>
+<text class="mut" x="88" y="470">India and some emerging markets</text>
+<rect x="720" y="412" width="392" height="30" fill="#D2D1CD"/><rect x="720" y="412" width="133" height="30" fill="#B0432D"/>
+<rect x="64" y="498" width="1072" height="112" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="88" y="540" style="font-size:23px">Talent supply</text>
+<text class="mut" x="88" y="570">Volume-dependent: smaller pools</text>
+<text class="mut" x="88" y="596">need slower pipelines</text>
+<rect x="720" y="538" width="392" height="30" fill="#D2D1CD"/><rect x="720" y="538" width="243" height="30" fill="#8A8B92"/>
+<rect x="64" y="624" width="1072" height="112" fill="#F7F6F3" stroke="#D2D1CD"/>
+<text class="lab gold" x="88" y="666" style="font-size:23px">Cost structure</text>
+<text class="mut" x="88" y="696">Most emerging markets:</text>
+<text class="mut" x="88" y="722">the most transferable factor</text>
+<rect x="720" y="664" width="392" height="30" fill="#D2D1CD"/><rect x="720" y="664" width="361" height="30" fill="#B8952B"/>
+<line x1="64" y1="774" x2="1136" y2="774" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="818">A firm exporting the model should rebuild the sizing exercise factor</text>
+<text class="lab" x="64" y="850">by factor, not assume the multiplier holds.</text>
 
-<!-- axis: transferability -->
-<line x1="140" y1="500" x2="1080" y2="500" stroke="#1C1D20" stroke-width="1.5"/>
-<text class="t col" x="200" y="524">HARDER TO FIND ELSEWHERE</text>
-<text class="t col" x="1020" y="524" text-anchor="end">TRAVELS EASILY</text>
-<defs><marker id="tarr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#6A6B72"/></marker></defs>
-<line x1="1070" y1="500" x2="1080" y2="500" stroke="#1C1D20" stroke-width="1.5" marker-end="url(#tarr)"/>
-
-<!-- Factor 1: enterprise density - low transfer -->
-<rect x="180" y="220" width="220" height="90" rx="8" fill="#C8553D" opacity="0.12" stroke="#C8553D"/>
-<text class="t lbl" x="290" y="252" text-anchor="middle" fill="#C8553D">Enterprise density</text>
-<text class="t note" x="290" y="274" text-anchor="middle">Korea, SE Asia family groups —</text>
-<text class="t note" x="290" y="290" text-anchor="middle">not US/Europe/China</text>
-<line x1="290" y1="310" x2="290" y2="490" stroke="#C5C4C0" stroke-dasharray="3 3"/>
-
-<!-- Factor 2: workflow multiplicity - low-mid transfer -->
-<rect x="440" y="260" width="220" height="90" rx="8" fill="#C8553D" opacity="0.08" stroke="#C8553D"/>
-<text class="t lbl" x="550" y="292" text-anchor="middle" fill="#C8553D">Workflow multiplicity</text>
-<text class="t note" x="550" y="314" text-anchor="middle">Compressed-digitisation seams —</text>
-<text class="t note" x="550" y="330" text-anchor="middle">India and some emerging markets</text>
-<line x1="550" y1="350" x2="550" y2="490" stroke="#C5C4C0" stroke-dasharray="3 3"/>
-
-<!-- Factor 3: talent supply - mid transfer -->
-<rect x="700" y="300" width="220" height="90" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t lbl" x="810" y="332" text-anchor="middle">Talent supply</text>
-<text class="t note" x="810" y="354" text-anchor="middle">Volume-dependent —</text>
-<text class="t note" x="810" y="370" text-anchor="middle">smaller pools need slower pipelines</text>
-<line x1="810" y1="390" x2="810" y2="490" stroke="#C5C4C0" stroke-dasharray="3 3"/>
-
-<!-- Factor 4: cost structure - high transfer -->
-<rect x="850" y="380" width="220" height="90" rx="8" fill="#B8952B" opacity="0.12" stroke="#B8952B"/>
-<text class="t lbl" x="960" y="412" text-anchor="middle" fill="#B8952B">Cost structure</text>
-<text class="t note" x="960" y="434" text-anchor="middle">Most emerging markets —</text>
-<text class="t note" x="960" y="450" text-anchor="middle">the most transferable factor</text>
-<line x1="960" y1="470" x2="960" y2="490" stroke="#C5C4C0" stroke-dasharray="3 3"/>
-
-<line x1="64" y1="560" x2="1136" y2="560" stroke="#D2D1CD"/>
-<text class="t" x="64" y="592" font-size="16" fill="#4A4B50">A firm exporting the model should rebuild the sizing exercise factor by factor, not assume the multiplier holds.</text>
+</g>
 </svg>
