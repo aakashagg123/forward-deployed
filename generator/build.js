@@ -19,6 +19,8 @@ const SITE = {
   thesis: 'Product leader & builder, working where AI, fintech, and real-world success meet',
 };
 
+const LINKEDIN_URL = 'https://in.linkedin.com/in/aakash-aggarwal-1010';
+
 // Spaces excluded from the build entirely — content stays on disk, just not
 // built/linked/indexed. Remove an id here to bring the space back.
 const HIDDEN_SPACES = new Set();
@@ -214,6 +216,10 @@ function extractOutline(html) {
 
 // Musings posts carry a `date:` frontmatter field (YYYY-MM-DD); rendered as
 // a byline right under the H1, matching how a blog post would show one.
+function injectAfterH1(html, markup) {
+  return html.replace(/(<h1>.*?<\/h1>)/s, `$1\n${markup}`);
+}
+
 function injectPostDate(html, date) {
   // gray-matter parses an unquoted YAML date (2026-09-26) into a Date
   // already; a quoted string arrives as-is, so accept either.
@@ -224,7 +230,11 @@ function injectPostDate(html, date) {
     day: 'numeric',
     timeZone: 'UTC',
   });
-  return html.replace(/(<h1>.*?<\/h1>)/s, `$1\n<p class="fd-post-date">${formatted}</p>`);
+  return injectAfterH1(html, `<p class="fd-post-date">${formatted}</p>`);
+}
+
+function renderLinkedinCta(linkedinUrl) {
+  return `<a class="fd-cta" href="${linkedinUrl}" target="_blank" rel="noopener">Connect on LinkedIn →</a>`;
 }
 
 const MAX_DESCRIPTION = 155;
@@ -271,7 +281,7 @@ function buildExtraJsonLd(spaceId, page) {
         url: SITE.baseUrl + page.href,
         jobTitle: 'Product leader',
         worksFor: { '@type': 'Organization', name: 'JSW One Finance' },
-        // LinkedIn/other profile URLs go in sameAs once confirmed.
+        sameAs: [LINKEDIN_URL],
       },
     ];
   }
@@ -402,6 +412,9 @@ async function build() {
       if (spaceId === 'musings' && frontmatter.date) {
         contentHtml = injectPostDate(contentHtml, frontmatter.date);
       }
+      if (spaceId === 'about' && page.sourcePath === 'README.md') {
+        contentHtml = injectAfterH1(contentHtml, renderLinkedinCta(LINKEDIN_URL));
+      }
       if (spaceId === 'portfolio' && page.sourcePath === 'README.md') {
         contentHtml += renderProductGrid(PRODUCTS);
       }
@@ -445,7 +458,10 @@ async function build() {
     copyNestedAssetDirs(spaceDir, path.join(DIST_DIR, spaceId));
   }
 
-  fs.writeFileSync(path.join(DIST_DIR, 'index.html'), renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0] }));
+  fs.writeFileSync(
+    path.join(DIST_DIR, 'index.html'),
+    renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0], linkedinUrl: LINKEDIN_URL }),
+  );
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
 
   // Learning Zone: a pre-built static site (its own design system, not run

@@ -232,8 +232,11 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 </html>`;
 }
 
-export function renderLanding({ site, spaces, landing, latestBook }) {
+export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl }) {
   const about = spaces.find((s) => s.id === 'about');
+  const linkedinCta = linkedinUrl
+    ? `<a class="fd-cta" href="${escapeAttr(linkedinUrl)}" target="_blank" rel="noopener">Connect on LinkedIn →</a>`
+    : '';
 
   const pillars = landing.pillars
     .map(
@@ -299,6 +302,7 @@ ${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: 
     <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.author)}</p>
     <h1 class="fd-hero-title">${escapeHtml(landing.headline)}</h1>
     <p class="fd-hero-lede">${landing.lede}${about ? ` <a class="fd-lede-link" href="/${about.id}/${about.indexHref}">Read the full story →</a>` : ''}</p>
+    ${linkedinCta ? `<div class="fd-hero-ctas">${linkedinCta}</div>` : ''}
   </div>
   <div class="fd-pillars">${pillars}</div>
   ${release}
