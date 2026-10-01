@@ -351,20 +351,14 @@ img { max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { .fd-gh-sync.syncing svg { animation: none; } }
 @keyframes fd-gh-spin { to { transform: rotate(360deg); } }
 
-.fd-gh-grid {
-  display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 10px);
-  gap: 3px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px;
-}
-.fd-gh-cell { width: 10px; height: 10px; background: #1A1A1D; flex: none; }
-:root[data-theme='light'] .fd-gh-cell { background: #EBEBEB; }
-.fd-gh-cell[data-level="1"] { background: rgba(244,244,242,.25); }
-.fd-gh-cell[data-level="2"] { background: rgba(244,244,242,.45); }
-.fd-gh-cell[data-level="3"] { background: rgba(244,244,242,.7); }
-.fd-gh-cell[data-level="4"] { background: #F4F4F2; }
-:root[data-theme='light'] .fd-gh-cell[data-level="1"] { background: rgba(0,0,0,.25); }
-:root[data-theme='light'] .fd-gh-cell[data-level="2"] { background: rgba(0,0,0,.45); }
-:root[data-theme='light'] .fd-gh-cell[data-level="3"] { background: rgba(0,0,0,.7); }
-:root[data-theme='light'] .fd-gh-cell[data-level="4"] { background: #000000; }
+.fd-gh-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.fd-gh-img { display: block; width: 100%; max-width: 722px; height: auto; }
+/* The landing hero defaults to dark regardless of the viewer's theme
+   preference (same pattern as .fd-cta/.fd-release above) — swap which
+   chart image is visible off data-theme alone, not prefers-color-scheme. */
+.fd-gh-img-light { display: none; }
+:root[data-theme='light'] .fd-gh-img-dark { display: none; }
+:root[data-theme='light'] .fd-gh-img-light { display: block; }
 .fd-gh-status { font-size: 12.5px; color: #9A9A9E; margin: 10px 0 0; }
 :root[data-theme='light'] .fd-gh-status { color: #4A4A4A; }
 
