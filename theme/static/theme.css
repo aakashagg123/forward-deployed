@@ -149,8 +149,8 @@ img { max-width: 100%; }
 /* Figures are dense diagrams drawn on a 1200px canvas, so they get the
    full width of the main column (breaking out of its side padding) rather
    than the narrower text measure. On phones the column is far narrower than
-   the figure can be read at, so the frame scrolls sideways over a minimum
-   width instead of shrinking the type to nothing. */
+   the figure can be read at, so the figure fits the screen and a tap opens it
+   full size (see .fd-lightbox) instead of bleeding off the edge. */
 .fd-content .fd-plate { margin: 36px -44px; }
 .fd-content .fd-plate-frame { border: 1px solid var(--rule); overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--bg); }
 .fd-content .fd-plate-frame img { display: block; width: 100%; }
@@ -160,10 +160,17 @@ img { max-width: 100%; }
   .fd-content .fd-plate figcaption { margin-inline: 20px; }
 }
 @media (max-width: 860px) {
-  .fd-content .fd-plate-frame { border-inline: 0; }
-  .fd-content .fd-plate-frame img { min-width: 820px; }
-  .fd-content .fd-plate figcaption::before { content: "Swipe the figure sideways to see all of it."; display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .fd-content .fd-plate-frame { border-inline: 0; overflow: hidden; }
+  .fd-content .fd-plate-frame img { cursor: zoom-in; }
+  .fd-content .fd-plate figcaption::before { content: "Tap the figure to enlarge it."; display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
 }
+/* Full-size viewer for figures on phones: the figure at near-native size,
+   panned by touch inside a full-screen overlay. */
+.fd-lightbox { position: fixed; inset: 0; z-index: 100000; background: #0A0A0B; display: flex; flex-direction: column; }
+.fd-lightbox-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; color: #F4F4F2; font-size: 13px; }
+.fd-lightbox-close { appearance: none; border: 1px solid rgba(255,255,255,.4); background: transparent; color: #F4F4F2; font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 6px; }
+.fd-lightbox-scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-x pan-y pinch-zoom; }
+.fd-lightbox-scroll img { display: block; width: 1100px; max-width: none; background: #F7F6F3; margin: 0 auto; }
 .fd-content pre { background: #0A0A0B; color: #F4F4F2; padding: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; font-size: 13.5px; border: 1px solid var(--rule-soft); }
 .fd-content code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .fd-content :not(pre) > code { background: var(--rule-soft); padding: 2px 5px; font-size: 0.88em; }

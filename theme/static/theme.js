@@ -207,4 +207,44 @@
     ghLoad();
   }
 
+
+  // Phones: tap a book figure to open it near full size in a pannable overlay.
+  document.addEventListener('click', function (e) {
+    var img = e.target && e.target.closest && e.target.closest('.fd-plate-frame img');
+    if (!img || !window.matchMedia('(max-width: 860px)').matches) return;
+    var box = document.createElement('div');
+    box.className = 'fd-lightbox';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', img.getAttribute('alt') || 'Figure');
+    var bar = document.createElement('div');
+    bar.className = 'fd-lightbox-bar';
+    var hint = document.createElement('span');
+    hint.textContent = 'Drag to pan. Pinch to zoom.';
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'fd-lightbox-close';
+    close.textContent = 'Close';
+    bar.appendChild(hint);
+    bar.appendChild(close);
+    var scroll = document.createElement('div');
+    scroll.className = 'fd-lightbox-scroll';
+    var big = document.createElement('img');
+    big.src = img.currentSrc || img.src;
+    big.alt = img.alt;
+    scroll.appendChild(big);
+    box.appendChild(bar);
+    box.appendChild(scroll);
+    var prev = document.body.style.overflow;
+    function shut() {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+      box.remove();
+    }
+    function onKey(ev) { if (ev.key === 'Escape') shut(); }
+    close.addEventListener('click', shut);
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    document.body.appendChild(box);
+    close.focus();
+  });
 })();
