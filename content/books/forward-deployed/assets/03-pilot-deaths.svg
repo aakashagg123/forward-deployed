@@ -1,60 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="Where pilots die inside an incumbent">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1050" width="1200" height="1050" role="img" aria-label="Where pilots die inside an incumbent">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.node{font-size:12.5px;letter-spacing:2.2px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.dead{font-size:14px;fill:#C8553D}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="700" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 3.2 — WHERE PILOTS DIE</text>
-<text class="t h" x="64" y="112">The dangerous moment is not failure. It is success.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1050" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 3.2 — WHERE PILOTS DIE</text>
+<text class="h" x="64" y="122">The dangerous moment is not failure. It is success.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<line x1="64" y1="236" x2="436" y2="236" stroke="#8A8B92" stroke-width="2"/><line x1="64" y1="236" x2="64" y2="250" stroke="#8A8B92" stroke-width="2"/><line x1="436" y1="236" x2="436" y2="250" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap mid" x="250" y="210" style="fill:#55565D">WHERE GOVERNANCE FILTERS</text>
+<text class="mut mid" x="250" y="396">almost nothing dies here</text>
+<line x1="120" y1="330" x2="900" y2="330" stroke="#1C1D20" stroke-width="3"/>
+<circle cx="120" cy="330" r="10" fill="#1C1D20"/>
+<text class="cap mid" x="120" y="296">IDEA</text>
+<circle cx="380" cy="330" r="10" fill="#1C1D20"/>
+<text class="cap mid" x="380" y="296">DEMO</text>
+<circle cx="640" cy="330" r="10" fill="#1C1D20"/>
+<text class="cap mid" x="640" y="296">IT WORKS</text>
+<circle cx="900" cy="330" r="10" fill="#1C1D20"/>
+<text class="cap mid" x="900" y="296">HANDOVER</text>
+<line x1="900" y1="330" x2="1090" y2="330" stroke="#B8952B" stroke-width="3" stroke-dasharray="8 7"/>
+<circle cx="1090" cy="330" r="10" fill="#B8952B"/>
+<text class="cap gold end" x="1136" y="296">PRODUCTION</text>
+<rect x="640" y="356" width="260" height="66" fill="#B0432D" opacity="0.14"/>
+<text class="cap red mid" x="770" y="382">ORPHANED</text>
+<text class="mut red mid" x="770" y="410">runs, no owner</text>
+<line x1="640" y1="422" x2="640" y2="760" stroke="#B0432D" stroke-width="2.5" stroke-dasharray="6 6"/>
+<circle cx="640" cy="487" r="8" fill="#B0432D"/>
+<text class="lab red end" x="612" y="494" style="font-size:22px">No owner named.</text>
+<text class="mut" x="668" y="494">Every roadmap was set before</text>
+<text class="mut" x="668" y="522">it existed.</text>
+<circle cx="640" cy="579" r="8" fill="#B0432D"/>
+<text class="lab red end" x="612" y="586" style="font-size:22px">Support decays.</text>
+<text class="mut" x="668" y="586">Response slips from hours to weeks;</text>
+<text class="mut" x="668" y="614">usage goes to zero in two quarters.</text>
+<circle cx="640" cy="671" r="8" fill="#B0432D"/>
+<text class="lab red end" x="612" y="678" style="font-size:22px">Rebuild proposed.</text>
+<text class="mut" x="668" y="678">Scoped, estimated, prioritised,</text>
+<text class="mut" x="668" y="706">never started.</text>
+<circle cx="640" cy="763" r="8" fill="#B0432D"/>
+<text class="lab red end" x="612" y="770" style="font-size:22px">The champion moves.</text>
+<text class="mut" x="668" y="770">Nobody kills it; it is un-championed,</text>
+<text class="mut" x="668" y="798">which is slower and more final.</text>
+<line x1="64" y1="850" x2="1136" y2="850" stroke="#D2D1CD"/>
+<text class="lab gold" x="64" y="894">The only version that survives is the one an owner with real standing took before it</text>
+<text class="lab gold" x="64" y="926">was offered, into a budget line and a team with a support rota.</text>
+<text class="mut" x="64" y="966">This never happens by process. Plan the handover before the build.</text>
+<text class="mut" x="64" y="994">If you cannot name the owner, you are building a future orphan.</text>
 
-<!-- governance bracket -->
-<line x1="120" y1="196" x2="380" y2="196" stroke="#C5C4C0"/>
-<line x1="120" y1="196" x2="120" y2="208" stroke="#C5C4C0"/><line x1="380" y1="196" x2="380" y2="208" stroke="#C5C4C0"/>
-<text class="t note" x="250" y="184" text-anchor="middle" font-size="12" letter-spacing="2.2" fill="#6A6B72">WHERE GOVERNANCE FILTERS</text>
-<text class="t note" x="250" y="228" text-anchor="middle" font-size="12" fill="#8A8B92">almost nothing dies here</text>
-
-<!-- main path -->
-<line x1="120" y1="290" x2="900" y2="290" stroke="#1C1D20" stroke-width="2"/>
-<g fill="#1C1D20">
-<circle cx="120" cy="290" r="8"/><circle cx="380" cy="290" r="8"/><circle cx="600" cy="290" r="8"/><circle cx="820" cy="290" r="8"/>
 </g>
-<text class="t node" x="120" y="268" text-anchor="middle">IDEA</text>
-<text class="t node" x="380" y="268" text-anchor="middle">DEMO</text>
-<text class="t node" x="600" y="268" text-anchor="middle">IT WORKS</text>
-<text class="t node" x="820" y="268" text-anchor="middle">HANDOVER</text>
-
-<!-- the orphan state -->
-<rect x="600" y="316" width="220" height="26" fill="#C8553D" opacity="0.16"/>
-<text class="t note" x="710" y="334" text-anchor="middle" font-size="11.5" letter-spacing="1.8" fill="#C8553D">ORPHANED — RUNS, NO OWNER</text>
-
-<!-- four deaths -->
-<defs><marker id="d" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><path d="M0,0 L8,0 L4,8 z" fill="#C8553D"/></marker></defs>
-<g stroke="#C8553D" stroke-width="1.6" fill="none" marker-end="url(#d)">
-<path d="M620 300 C 620 340 600 360 596 388"/>
-<path d="M680 300 C 680 380 660 420 656 456"/>
-<path d="M740 300 C 740 440 720 490 716 524"/>
-<path d="M800 300 C 800 500 780 558 776 592"/>
-</g>
-<text class="t dead" x="618" y="402">No owner named. Every roadmap was set before it existed.</text>
-<text class="t dead" x="678" y="470">Support decays. Response slips from hours to weeks; usage goes to zero in two quarters.</text>
-<text class="t dead" x="738" y="538">Rebuild proposed on the standard stack. Scoped, estimated, prioritised — never started.</text>
-<text class="t dead" x="798" y="606">The champion moves. Nobody kills it; it is un-championed, which is slower and more final.</text>
-
-<!-- survivor -->
-<path d="M820 290 L 1090 290" stroke="#B8952B" stroke-width="2" stroke-dasharray="6 5"/>
-<circle cx="1090" cy="290" r="8" fill="#B8952B"/>
-<text class="t node" x="1090" y="268" text-anchor="middle" fill="#B8952B">PRODUCTION</text>
-<text class="t note" x="1136" y="322" text-anchor="end" fill="#B8952B" font-size="12.5">the only version that survives:</text>
-<text class="t note" x="1136" y="342" text-anchor="end" fill="#7A7B82" font-size="12.5">an owner with real standing took it</text>
-<text class="t note" x="1136" y="362" text-anchor="end" fill="#7A7B82" font-size="12.5">before it was offered, into a budget</text>
-<text class="t note" x="1136" y="382" text-anchor="end" fill="#7A7B82" font-size="12.5">line and a team with a support rota</text>
-<text class="t note" x="1136" y="410" text-anchor="end" fill="#7A7B82" font-size="12">this never happens by process</text>
-
-<line x1="64" y1="646" x2="1136" y2="646" stroke="#D2D1CD"/>
-<text class="t" x="64" y="680" font-size="16" fill="#4A4B50">Plan the handover before the build. If you cannot name the owner, you are building a future orphan.</text>
 </svg>

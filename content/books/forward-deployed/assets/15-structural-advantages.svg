@@ -1,50 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="Four structural factors that make India unusually fertile ground">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 796" width="1200" height="796" role="img" aria-label="Four structural factors that make India unusually fertile ground">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.lbl{font-size:16px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.num{font-size:13px;letter-spacing:1.4px;fill:#B8952B}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="660" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 15.1 — FOUR STRUCTURAL FACTORS</text>
-<text class="t h" x="64" y="112">No single factor explains the fit. The combination does.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="796" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 15.1 — FOUR STRUCTURAL FACTORS</text>
+<text class="h" x="64" y="122">No single factor explains the fit. The combination does.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<rect x="64" y="196" width="516" height="270" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap gold" x="90" y="238">01 · ENTERPRISE DENSITY</text>
+<text class="lab" x="90" y="278" style="font-size:23px">The conglomerate structure</text>
+<text class="mut" x="90" y="320" style="font-size:21px">Dozens of operating companies under one</text>
+<text class="mut" x="90" y="350" style="font-size:21px">family’s trust relationship, expansion</text>
+<text class="mut" x="90" y="380" style="font-size:21px">terrain no single-business Western</text>
+<text class="mut" x="90" y="410" style="font-size:21px">enterprise offers.</text>
+<rect x="620" y="196" width="516" height="270" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap gold" x="646" y="238">02 · WORKFLOW MULTIPLICITY</text>
+<text class="lab" x="646" y="278" style="font-size:23px">Compressed-timeframe digitisation</text>
+<text class="mut" x="646" y="320" style="font-size:21px">Waves of ERP adoption layered fast, not</text>
+<text class="mut" x="646" y="350" style="font-size:21px">rationalised: more unreconciled seams per</text>
+<text class="mut" x="646" y="380" style="font-size:21px">enterprise than economies that</text>
+<text class="mut" x="646" y="410" style="font-size:21px">industrialised more slowly.</text>
+<rect x="64" y="486" width="516" height="270" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap gold" x="90" y="528">03 · TALENT SUPPLY</text>
+<text class="lab" x="90" y="568" style="font-size:23px">Volume near the intersection</text>
+<text class="mut" x="90" y="610" style="font-size:21px">Not more brilliant engineers. More people,</text>
+<text class="mut" x="90" y="640" style="font-size:21px">in absolute numbers, near Chapter 11’s rare</text>
+<text class="mut" x="90" y="670" style="font-size:21px">intersection, across all five talent</text>
+<text class="mut" x="90" y="700" style="font-size:21px">sources.</text>
+<rect x="620" y="486" width="516" height="270" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap gold" x="646" y="528">04 · COST STRUCTURE</text>
+<text class="lab" x="646" y="568" style="font-size:23px">Favourable base-plus-share economics</text>
+<text class="mut" x="646" y="610" style="font-size:21px">Low base cost, proportionally large value</text>
+<text class="mut" x="646" y="640" style="font-size:21px">created. The most transferable factor, and</text>
+<text class="mut" x="646" y="670" style="font-size:21px">the least sufficient on its own.</text>
 
-<!-- Four quadrant cards -->
-<rect x="64" y="180" width="516" height="200" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t num" x="88" y="212">01 · ENTERPRISE DENSITY</text>
-<text class="t lbl" x="88" y="242">The conglomerate structure</text>
-<text class="t note" x="88" y="268">Dozens of operating companies under</text>
-<text class="t note" x="88" y="286">one family's trust relationship —</text>
-<text class="t note" x="88" y="304">expansion terrain no single-business</text>
-<text class="t note" x="88" y="322">Western enterprise offers.</text>
-
-<rect x="620" y="180" width="516" height="200" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t num" x="644" y="212">02 · WORKFLOW MULTIPLICITY</text>
-<text class="t lbl" x="644" y="242">Compressed-timeframe digitisation</text>
-<text class="t note" x="644" y="268">Waves of ERP adoption layered fast,</text>
-<text class="t note" x="644" y="286">not rationalised — more unreconciled</text>
-<text class="t note" x="644" y="304">seams per enterprise than economies</text>
-<text class="t note" x="644" y="322">that industrialised more slowly.</text>
-
-<rect x="64" y="400" width="516" height="200" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t num" x="88" y="432">03 · TALENT SUPPLY</text>
-<text class="t lbl" x="88" y="462">Volume near the intersection</text>
-<text class="t note" x="88" y="488">Not more brilliant engineers —</text>
-<text class="t note" x="88" y="506">more people, in absolute numbers,</text>
-<text class="t note" x="88" y="524">near Chapter 11's rare intersection,</text>
-<text class="t note" x="88" y="542">across all five talent sources.</text>
-
-<rect x="620" y="400" width="516" height="200" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t num" x="644" y="432">04 · COST STRUCTURE</text>
-<text class="t lbl" x="644" y="462">Favourable base-plus-share economics</text>
-<text class="t note" x="644" y="488">Low base cost, proportionally large</text>
-<text class="t note" x="644" y="506">value created — the most transferable</text>
-<text class="t note" x="644" y="524">factor, and the least sufficient</text>
-<text class="t note" x="644" y="542">on its own.</text>
-
-<line x1="64" y1="628" x2="1136" y2="628" stroke="#D2D1CD"/>
+</g>
 </svg>

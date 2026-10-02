@@ -1,90 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620">
-  <style>
-    .bg{fill:#F7F6F3}
-    .label{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase}
-    .body{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:13.5px}
-    .body-dim{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:12px}
-    .amber{fill:#B8952B}
-    .red{fill:#C8553D}
-    .title{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:18px;font-weight:600}
-    .axis{stroke:#D2D1CD;stroke-width:1}
-    .axis-label{fill:#7A7B82;font-family:'Inter',system-ui,sans-serif;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase}
-    .curve{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-    .trough-fill{fill:#C8553D;opacity:0.08}
-    .compound-fill{fill:#B8952B;opacity:0.06}
-    .annot{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:12px;font-weight:500}
-    .annot-dim{fill:#6A6B72;font-family:'Inter',system-ui,sans-serif;font-size:11px}
-    .rule-box{fill:#EBEAE6;rx:6;ry:6}
-    .rule-num{fill:#B8952B;font-family:'Inter',system-ui,sans-serif;font-size:14px;font-weight:700}
-    .rule-text{fill:#1C1D20;font-family:'Inter',system-ui,sans-serif;font-size:12.5px}
-  </style>
-  <rect class="bg" width="1200" height="620"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1042" width="1200" height="1042" role="img" aria-label="Firm margin over eighteen months and four survival rules">
+<style>
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
+</style>
+<rect width="1200" height="1042" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 9.3 — THE J-CURVE AT THE FIRM LEVEL</text>
+<text class="h" x="64" y="122">The J-curve at the firm level</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="110" y="214" style="fill:#55565D">MARGIN ↑</text>
+<line x1="110" y1="230" x2="110" y2="520" stroke="#8A8B92" stroke-width="2"/><line x1="110" y1="520" x2="720" y2="520" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap end" x="720" y="580" style="fill:#55565D">TIME →</text>
+<line x1="160" y1="520" x2="160" y2="530" stroke="#8A8B92" stroke-width="2"/><text class="mut mid" x="160" y="556">Month 1</text>
+<line x1="320" y1="520" x2="320" y2="530" stroke="#8A8B92" stroke-width="2"/><text class="mut mid" x="320" y="556">Month 6</text>
+<line x1="480" y1="520" x2="480" y2="530" stroke="#8A8B92" stroke-width="2"/><text class="mut mid" x="480" y="556">Month 12</text>
+<line x1="640" y1="520" x2="640" y2="530" stroke="#8A8B92" stroke-width="2"/><text class="mut mid" x="640" y="556">Month 18</text>
+<line x1="110" y1="420" x2="720" y2="420" stroke="#8A8B92" stroke-width="1.5" stroke-dasharray="6 8"/><text class="mut end" x="100" y="428">0</text>
+<path d="M130 412 Q 200 480 300 472 Q 380 462 440 420 Z" fill="#B0432D" fill-opacity=".12"/>
+<path d="M440 420 Q 520 360 590 316 Q 660 270 710 250 L710 420 Z" fill="#B8952B" fill-opacity=".10"/>
+<path d="M130 412 Q 200 480 300 472 Q 380 462 440 420 Q 520 360 590 316 Q 660 270 710 250" fill="none" stroke="#B8952B" stroke-width="4" stroke-linecap="round"/>
+<line x1="210" y1="396" x2="262" y2="460" stroke="#B0432D" stroke-width="2" stroke-dasharray="5 5"/>
+<text class="lab red" x="130" y="346" style="font-size:22px">The trough</text>
+<text class="mut" x="130" y="376">Most efforts die here</text>
+<text class="lab gold end" x="640" y="276" style="font-size:22px">Compounding region</text>
+<text class="mut end" x="640" y="304">Return path shortens deployments</text>
+<rect x="760" y="214" width="376" height="100" fill="#ECEBE7"/>
+<text x="782" y="274" style="font-size:34px;font-weight:700;fill:#8A6D12">1</text>
+<text class="body" x="830" y="256" style="font-size:21px">Exhaust adjacent before</text>
+<text class="body" x="830" y="286" style="font-size:21px">pursuing new</text>
+<rect x="760" y="326" width="376" height="100" fill="#ECEBE7"/>
+<text x="782" y="386" style="font-size:34px;font-weight:700;fill:#8A6D12">2</text>
+<text class="body" x="830" y="368" style="font-size:21px">Price at cost: discounts</text>
+<text class="body" x="830" y="398" style="font-size:21px">set permanent expectations</text>
+<rect x="760" y="438" width="376" height="100" fill="#ECEBE7"/>
+<text x="782" y="498" style="font-size:34px;font-weight:700;fill:#8A6D12">3</text>
+<text class="body" x="830" y="480" style="font-size:21px">Every operator deploying:</text>
+<text class="body" x="830" y="510" style="font-size:21px">no bench in the trough</text>
+<rect x="760" y="550" width="376" height="100" fill="#ECEBE7"/>
+<text x="782" y="610" style="font-size:34px;font-weight:700;fill:#8A6D12">4</text>
+<text class="body" x="830" y="592" style="font-size:21px">Count completions,</text>
+<text class="body" x="830" y="622" style="font-size:21px">not pipeline</text>
+<rect x="64" y="692" width="1072" height="300" fill="#ECEBE7"/>
+<text class="cap gold" x="88" y="734">THE ARITHMETIC OF THE TROUGH</text>
+<text class="body" x="88" y="780" style="font-size:21px;font-weight:700">Deployment 1</text><text class="body" x="290" y="780" style="font-size:21px">12 weeks, ~0% margin. Learning is high, tooling is zero.</text>
+<text class="body" x="88" y="816" style="font-size:21px;font-weight:700">Deployment 5</text><text class="body" x="290" y="816" style="font-size:21px">10 weeks, ~10% margin. Patterns emerging, some reuse.</text>
+<text class="body" x="88" y="852" style="font-size:21px;font-weight:700">Deployment 10</text><text class="body" x="290" y="852" style="font-size:21px">8 weeks, ~30% margin. Return path producing real acceleration.</text>
+<text class="body gold" x="88" y="888" style="font-size:21px;font-weight:700">Deployment 20</text><text class="body gold" x="290" y="888" style="font-size:21px">6 weeks, ~50% margin. The model is self-sustaining.</text>
+<text class="mut" x="88" y="952">The trough lasts 6–12 months. Adjacent deployments are what get you through it.</text>
 
-  <text class="label" x="60" y="48">Figure 9.3</text>
-  <text class="title" x="60" y="82">The J-Curve at the Firm Level</text>
-
-  <!-- Axes -->
-  <line class="axis" x1="120" y1="360" x2="760" y2="360"/>
-  <line class="axis" x1="120" y1="120" x2="120" y2="360"/>
-  <text class="axis-label" x="420" y="392">Time</text>
-  <text class="axis-label" x="56" y="240" transform="rotate(-90,56,240)">Margin</text>
-
-  <!-- Time markers -->
-  <text class="annot-dim" x="180" y="382">Month 1</text>
-  <text class="annot-dim" x="320" y="382">Month 6</text>
-  <text class="annot-dim" x="480" y="382">Month 12</text>
-  <text class="annot-dim" x="640" y="382">Month 18</text>
-
-  <!-- Zero line -->
-  <line x1="120" y1="280" x2="760" y2="280" stroke="#7A7B82" stroke-width="0.5" stroke-dasharray="4,4"/>
-  <text class="annot-dim" x="90" y="284" text-anchor="end">0</text>
-
-  <!-- Trough shading -->
-  <path class="trough-fill" d="M120,280 L120,280 Q200,340 340,330 Q400,320 440,280 L440,280 Z"/>
-
-  <!-- Compounding shading -->
-  <path class="compound-fill" d="M440,280 Q520,240 600,200 Q680,150 760,120 L760,280 Z"/>
-
-  <!-- J-curve -->
-  <path class="curve" stroke="#B8952B" d="M140,270 Q200,340 300,330 Q380,316 440,270 Q520,210 600,170 Q680,130 750,110"/>
-
-  <!-- Death zone annotation -->
-  <path d="M200,330 L200,350" stroke="#C8553D" stroke-width="1" stroke-dasharray="3,3"/>
-  <text class="annot" x="210" y="340" style="fill:#C8553D">The trough</text>
-  <text class="annot-dim" x="210" y="356">Most efforts die here</text>
-
-  <!-- Compounding annotation -->
-  <path d="M600,170 L610,155" stroke="#B8952B" stroke-width="1"/>
-  <text class="annot" x="620" y="152">Compounding region</text>
-  <text class="annot-dim" x="620" y="168">Return path shortens deployments</text>
-
-  <!-- Four survival rules -->
-  <rect class="rule-box" x="800" y="110" width="350" height="60"/>
-  <text class="rule-num" x="824" y="140">1</text>
-  <text class="rule-text" x="848" y="136">Exhaust adjacent before</text>
-  <text class="rule-text" x="848" y="156">pursuing new</text>
-
-  <rect class="rule-box" x="800" y="190" width="350" height="60"/>
-  <text class="rule-num" x="824" y="220">2</text>
-  <text class="rule-text" x="848" y="216">Price at cost — discounts</text>
-  <text class="rule-text" x="848" y="236">set permanent expectations</text>
-
-  <rect class="rule-box" x="800" y="270" width="350" height="60"/>
-  <text class="rule-num" x="824" y="300">3</text>
-  <text class="rule-text" x="848" y="296">Every operator deploying —</text>
-  <text class="rule-text" x="848" y="316">no bench in the trough</text>
-
-  <rect class="rule-box" x="800" y="350" width="350" height="60"/>
-  <text class="rule-num" x="824" y="380">4</text>
-  <text class="rule-text" x="848" y="376">Count completions,</text>
-  <text class="rule-text" x="848" y="396">not pipeline</text>
-
-  <!-- Bottom annotation -->
-  <rect class="rule-box" x="60" y="430" width="1090" height="160"/>
-  <text class="label" x="88" y="460" style="fill:#B8952B">The arithmetic of the trough</text>
-  <text class="body" x="88" y="490">Deployment 1: 12 weeks, ~0% margin. Learning is high, tooling is zero.</text>
-  <text class="body" x="88" y="514">Deployment 5: 10 weeks, ~10% margin. Patterns emerging, some reuse.</text>
-  <text class="body" x="88" y="538">Deployment 10: 8 weeks, ~30% margin. Return path producing real acceleration.</text>
-  <text class="body" x="88" y="562" style="fill:#B8952B">Deployment 20: 6 weeks, ~50% margin. The model is self-sustaining.</text>
-  <text class="body-dim" x="88" y="582">The trough lasts 6–12 months. Adjacent deployments are what get you through it.</text>
+</g>
 </svg>

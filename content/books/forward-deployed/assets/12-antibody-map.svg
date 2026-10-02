@@ -1,74 +1,69 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="The five antibodies and their protective functions">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 990" width="1200" height="990" role="img" aria-label="The five antibodies and their protective functions">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.note{font-size:13px;fill:#7A7B82}
-.lbl{font-size:15px;fill:#1C1D20}
-.kill{font-size:12.5px;fill:#C8553D}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="720" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 12.1 — THE FIVE ANTIBODIES</text>
-<text class="t h" x="64" y="112">Each one protects something real. Each one can kill.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="990" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 12.1 — THE FIVE ANTIBODIES</text>
+<text class="h" x="64" y="122">Each one protects something real. Each one can kill.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">ANTIBODY</text><text class="cap" x="340" y="206">PROTECTS AGAINST</text><text class="cap" x="724" y="206">KILL MECHANISM</text>
+<line x1="64" y1="222" x2="1136" y2="222" stroke="#8A8B92" stroke-width="2"/>
+<rect x="64" y="238" width="1072" height="110" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="280" style="font-size:22px">Procurement</text>
+<text class="mut" x="84" y="310">Commercial gate</text>
+<text class="body" x="340" y="280" style="font-size:20px">Unvetted vendors, maverick spend,</text>
+<text class="body" x="340" y="306" style="font-size:20px">unfavourable terms</text>
+<text class="cap red" x="724" y="276">90-DAY CYCLE</text>
+<text class="mut" x="724" y="306">Scope-and-deliverable template cannot</text>
+<text class="mut" x="724" y="332">accommodate iterative model</text>
+<rect x="64" y="360" width="1072" height="110" fill="#F7F6F3" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="402" style="font-size:22px">IT Governance</text>
+<text class="mut" x="84" y="432">Technology gate</text>
+<text class="body" x="340" y="402" style="font-size:20px">Shadow IT, unsanctioned systems,</text>
+<text class="body" x="340" y="428" style="font-size:20px">integration risk</text>
+<text class="cap red" x="724" y="398">MONTHLY COMMITTEE</text>
+<text class="mut" x="724" y="428">Miss the meeting, wait another month;</text>
+<text class="mut" x="724" y="454">default is “request more information”</text>
+<rect x="64" y="482" width="1072" height="110" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="524" style="font-size:22px">Data Security</text>
+<text class="mut" x="84" y="554">Access gate</text>
+<text class="body" x="340" y="524" style="font-size:20px">Breaches, regulatory violations,</text>
+<text class="body" x="340" y="550" style="font-size:20px">IP leakage</text>
+<text class="cap red" x="724" y="520">DEFAULT IS NO</text>
+<text class="mut" x="724" y="550">Saying no has zero downside; saying yes</text>
+<text class="mut" x="724" y="576">has career-ending downside</text>
+<rect x="64" y="604" width="1072" height="110" fill="#F7F6F3" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="646" style="font-size:22px">Compliance</text>
+<text class="mut" x="84" y="676">Regulatory gate</text>
+<text class="body" x="340" y="646" style="font-size:20px">Audit findings, consent order</text>
+<text class="body" x="340" y="672" style="font-size:20px">violations, licence conditions</text>
+<text class="cap red" x="724" y="642">RECURSIVE DELAY</text>
+<text class="mut" x="724" y="672">Review → risk assessment → input from</text>
+<text class="mut" x="724" y="698">three functions → quarterly committee</text>
+<rect x="64" y="726" width="1072" height="110" fill="#ECEBE7" stroke="#D2D1CD"/>
+<text class="lab" x="84" y="768" style="font-size:22px">PMO</text>
+<text class="mut" x="84" y="798">Coordination gate</text>
+<text class="body" x="340" y="768" style="font-size:20px">Initiative proliferation, resource</text>
+<text class="body" x="340" y="794" style="font-size:20px">conflicts, uncoordinated change</text>
+<text class="cap red" x="724" y="764">DILUTION</text>
+<text class="mut" x="724" y="794">Project code + Gantt chart + weekly</text>
+<text class="mut" x="724" y="820">status = 3 days governance, 2 days work</text>
+<line x1="64" y1="870" x2="1136" y2="870" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="914">The operator who fights them loses. The operator who prepares</text>
+<text class="lab" x="64" y="946">for them passes through. There is no third option.</text>
 
-<!-- Column headers -->
-<text class="t col" x="64" y="196">ANTIBODY</text>
-<text class="t col" x="350" y="196">PROTECTS AGAINST</text>
-<text class="t col" x="730" y="196">KILL MECHANISM</text>
-<line x1="64" y1="212" x2="1136" y2="212" stroke="#D2D1CD"/>
-
-<!-- Row 1: Procurement -->
-<rect x="64" y="228" width="1072" height="76" rx="4" fill="#EBEAE6"/>
-<text class="t lbl" x="84" y="256">Procurement</text>
-<text class="t note" x="84" y="276">Commercial gate</text>
-<text class="t note" x="350" y="256">Unvetted vendors, maverick spend,</text>
-<text class="t note" x="350" y="276">unfavourable terms</text>
-<text class="t kill" x="730" y="256">90-DAY CYCLE</text>
-<text class="t note" x="730" y="276">Scope-and-deliverable template cannot</text>
-<text class="t note" x="730" y="293">accommodate iterative model</text>
-
-<!-- Row 2: IT Governance -->
-<rect x="64" y="318" width="1072" height="76" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
-<text class="t lbl" x="84" y="346">IT Governance</text>
-<text class="t note" x="84" y="366">Technology gate</text>
-<text class="t note" x="350" y="346">Shadow IT, unsanctioned systems,</text>
-<text class="t note" x="350" y="366">integration risk</text>
-<text class="t kill" x="730" y="346">MONTHLY COMMITTEE</text>
-<text class="t note" x="730" y="366">Miss the meeting, wait another month;</text>
-<text class="t note" x="730" y="383">default is "request more information"</text>
-
-<!-- Row 3: Data Security -->
-<rect x="64" y="408" width="1072" height="76" rx="4" fill="#EBEAE6"/>
-<text class="t lbl" x="84" y="436">Data Security</text>
-<text class="t note" x="84" y="456">Access gate</text>
-<text class="t note" x="350" y="436">Breaches, regulatory violations,</text>
-<text class="t note" x="350" y="456">IP leakage</text>
-<text class="t kill" x="730" y="436">DEFAULT IS NO</text>
-<text class="t note" x="730" y="456">Saying no has zero downside; saying yes</text>
-<text class="t note" x="730" y="473">has career-ending downside</text>
-
-<!-- Row 4: Compliance -->
-<rect x="64" y="498" width="1072" height="76" rx="4" fill="#F7F6F3" stroke="#EBEAE6"/>
-<text class="t lbl" x="84" y="526">Compliance</text>
-<text class="t note" x="84" y="546">Regulatory gate</text>
-<text class="t note" x="350" y="526">Audit findings, consent order</text>
-<text class="t note" x="350" y="546">violations, licence conditions</text>
-<text class="t kill" x="730" y="526">RECURSIVE DELAY</text>
-<text class="t note" x="730" y="546">Review → risk assessment → input from</text>
-<text class="t note" x="730" y="563">three functions → quarterly committee</text>
-
-<!-- Row 5: PMO -->
-<rect x="64" y="588" width="1072" height="76" rx="4" fill="#EBEAE6"/>
-<text class="t lbl" x="84" y="616">PMO</text>
-<text class="t note" x="84" y="636">Coordination gate</text>
-<text class="t note" x="350" y="616">Initiative proliferation, resource</text>
-<text class="t note" x="350" y="636">conflicts, uncoordinated change</text>
-<text class="t kill" x="730" y="616">DILUTION</text>
-<text class="t note" x="730" y="636">Project code + Gantt chart + weekly</text>
-<text class="t note" x="730" y="653">status = 3 days governance, 2 days work</text>
-
-<line x1="64" y1="684" x2="1136" y2="684" stroke="#D2D1CD"/>
-<text class="t" x="64" y="710" font-size="16" fill="#4A4B50">The operator who fights them loses. The operator who prepares for them passes through. There is no third option.</text>
+</g>
 </svg>

@@ -1,59 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="The three layers of trust in a deployment">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 960" width="1200" height="960" role="img" aria-label="The three layers of trust in a deployment">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.tick{font-size:11.5px;letter-spacing:1.4px;fill:#6A6B72}
-.lbl{font-size:15px;fill:#1C1D20}
-.desc{font-size:13.5px;fill:#7A7B82}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="700" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 10.1 — THE THREE LAYERS OF TRUST</text>
-<text class="t h" x="64" y="112">Competence first. Intention second. Structure last.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="960" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 10.1 — THE THREE LAYERS OF TRUST</text>
+<text class="h" x="64" y="122">Competence first. Intention second. Structure last.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<rect x="64" y="190" width="1072" height="404" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap" x="96" y="232">LAYER 3 · STRUCTURAL TRUST</text>
+<text class="body" x="96" y="264" style="font-style:italic">“This survives failure.”</text>
+<text class="mut end" x="1104" y="232">Earned by surviving</text>
+<text class="mut end" x="1104" y="260">the first thing that goes wrong</text>
+<rect x="120" y="292" width="960" height="262" fill="#E0DFDA" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap" x="152" y="334">LAYER 2 · INTENTION TRUST</text>
+<text class="body" x="152" y="366" style="font-style:italic">“They are here for the right reasons.”</text>
+<text class="mut end" x="1048" y="334">Earned by protecting</text>
+<text class="mut end" x="1048" y="362">information shared in confidence</text>
+<rect x="176" y="394" width="848" height="122" fill="#1C1D20"/>
+<text class="cap inv" x="208" y="438">LAYER 1 · COMPETENCE TRUST</text>
+<text class="body inv" x="208" y="470" style="font-style:italic">“They can actually do the thing.”</text>
+<text class="mut end" x="992" y="438" style="fill:#D2D1CD">Earned by shipping</text>
+<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#55565D"/></marker></defs>
+<line x1="150" y1="650" x2="1050" y2="650" stroke="#55565D" stroke-width="3" marker-end="url(#arr)"/>
+<text class="cap" x="150" y="692">WEEK 1</text><text class="cap mid" x="460" y="692">MONTH 2</text><text class="cap mid" x="740" y="692">MONTH 4</text><text class="cap end" x="1050" y="692">MONTH 6+</text>
+<line x1="150" y1="716" x2="430" y2="716" stroke="#B8952B" stroke-width="3"/>
+<text class="lab gold mid" x="290" y="750" style="font-size:21px">Ship something</text>
+<text class="lab gold mid" x="290" y="776" style="font-size:21px">small</text>
+<line x1="470" y1="716" x2="730" y2="716" stroke="#B8952B" stroke-width="3"/>
+<text class="lab gold mid" x="600" y="750" style="font-size:21px">Protect someone’s</text>
+<text class="lab gold mid" x="600" y="776" style="font-size:21px">truth</text>
+<line x1="770" y1="716" x2="1050" y2="716" stroke="#B8952B" stroke-width="3"/>
+<text class="lab gold mid" x="910" y="750" style="font-size:21px">Survive the first</text>
+<text class="lab gold mid" x="910" y="776" style="font-size:21px">failure together</text>
+<line x1="64" y1="830" x2="1136" y2="830" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="874">Skip a layer and the ones above it do not hold. Most operators try to</text>
+<text class="lab" x="64" y="906">build intention trust before earning competence trust.</text>
 
-<!-- Layer 3: Structural (outermost, tallest) -->
-<rect x="120" y="200" width="960" height="380" rx="10" fill="#EBEAE6" stroke="#C5C4C0"/>
-<text class="t col" x="156" y="240">LAYER 3 · STRUCTURAL TRUST</text>
-<text class="t desc" x="156" y="266">"This survives failure."</text>
-<text class="t note" x="1044" y="240" text-anchor="end">Earned by surviving</text>
-<text class="t note" x="1044" y="260" text-anchor="end">the first thing that goes wrong</text>
-
-<!-- Layer 2: Intention (middle) -->
-<rect x="200" y="296" width="800" height="240" rx="10" fill="#E4E3DF" stroke="#C5C4C0"/>
-<text class="t col" x="236" y="336">LAYER 2 · INTENTION TRUST</text>
-<text class="t desc" x="236" y="362">"They are here for the right reasons."</text>
-<text class="t note" x="964" y="336" text-anchor="end">Earned by protecting</text>
-<text class="t note" x="964" y="356" text-anchor="end">information shared in confidence</text>
-
-<!-- Layer 1: Competence (innermost) -->
-<rect x="300" y="392" width="600" height="100" rx="10" fill="#1C1D20"/>
-<text class="t col" x="336" y="430" fill="#F7F6F3">LAYER 1 · COMPETENCE TRUST</text>
-<text class="t desc" x="336" y="456" fill="#C5C4C0">"They can actually do the thing."</text>
-<text class="t note" x="864" y="444" text-anchor="end" fill="#C5C4C0">Earned by shipping</text>
-
-<!-- Timeline arrow at bottom -->
-<line x1="180" y1="540" x2="1020" y2="540" stroke="#6A6B72" stroke-width="1.5"/>
-<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#6A6B72"/></marker></defs>
-<line x1="1010" y1="540" x2="1020" y2="540" stroke="#6A6B72" stroke-width="1.5" marker-end="url(#arr)"/>
-
-<text class="t tick" x="180" y="566">WEEK 1</text>
-<text class="t tick" x="500" y="566">MONTH 2</text>
-<text class="t tick" x="760" y="566">MONTH 4</text>
-<text class="t tick" x="1020" y="566" text-anchor="end">MONTH 6+</text>
-
-<!-- Bracket labels under timeline -->
-<line x1="180" y1="580" x2="420" y2="580" stroke="#B8952B" stroke-width="2"/>
-<text class="t note" x="300" y="602" text-anchor="middle" fill="#B8952B">Ship something small</text>
-
-<line x1="440" y1="580" x2="700" y2="580" stroke="#B8952B" stroke-width="2"/>
-<text class="t note" x="570" y="602" text-anchor="middle" fill="#B8952B">Protect someone's truth</text>
-
-<line x1="720" y1="580" x2="1020" y2="580" stroke="#B8952B" stroke-width="2"/>
-<text class="t note" x="870" y="602" text-anchor="middle" fill="#B8952B">Survive the first failure together</text>
-
-<line x1="64" y1="640" x2="1136" y2="640" stroke="#D2D1CD"/>
-<text class="t" x="64" y="672" font-size="16" fill="#4A4B50">Skip a layer and the ones above it do not hold. Most operators try to build intention trust before earning competence trust.</text>
+</g>
 </svg>

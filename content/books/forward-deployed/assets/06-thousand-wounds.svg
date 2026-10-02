@@ -1,59 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-label="The long tail of workflow wounds">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1082" width="1200" height="1082" role="img" aria-label="The long tail of workflow wounds">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.ax{font-size:12px;letter-spacing:2.2px;fill:#6A6B72}
-.note{font-size:13.5px;fill:#7A7B82}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="720" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 6.3 — THE LONG TAIL OF WOUNDS</text>
-<text class="t h" x="64" y="112">Below the old line, nobody came. Below the new line, everyone qualifies.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1082" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 6.3 — THE LONG TAIL OF WOUNDS</text>
+<text class="h" x="64" y="122">Below the old line, nobody came.</text>
+<text class="h" x="64" y="164">Below the new line, everyone qualifies.</text>
+<line x1="64" y1="194" x2="1136" y2="194" stroke="#D2D1CD"/>
+<g transform="translate(0,42)">
+<line x1="130" y1="700" x2="1136" y2="700" stroke="#8A8B92" stroke-width="2"/><line x1="130" y1="230" x2="130" y2="700" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap" x="130" y="212">VALUE LOST PER YEAR</text>
+<text class="cap" x="130" y="752">WORKFLOWS, RANKED BY ANNUAL VALUE LOST →</text>
+<path d="M400 420 L404 422 L408 424 L412 427 L416 429 L420 431 L424 433 L428 435 L432 437 L436 439 L440 441 L444 443 L448 445 L452 447 L456 448 L460 450 L464 452 L468 454 L472 456 L476 458 L480 460 L484 462 L488 463 L492 465 L496 467 L500 469 L504 470 L508 472 L512 474 L516 476 L520 477 L524 479 L528 481 L532 482 L536 484 L540 486 L544 487 L548 489 L552 490 L556 492 L560 494 L564 495 L568 497 L572 498 L576 500 L580 501 L584 503 L588 504 L592 506 L596 507 L600 509 L604 510 L608 512 L612 513 L616 514 L620 516 L624 517 L628 519 L632 520 L636 521 L640 523 L644 524 L648 525 L652 527 L656 528 L660 529 L664 531 L668 532 L672 533 L676 534 L680 536 L684 537 L688 538 L692 539 L696 541 L700 542 L704 543 L708 544 L712 545 L716 547 L720 548 L724 549 L728 550 L732 551 L736 552 L740 553 L744 555 L748 556 L752 557 L756 558 L760 559 L764 560 L768 561 L772 562 L776 563 L780 564 L784 565 L788 566 L792 567 L796 568 L800 569 L804 570 L808 571 L812 572 L816 573 L820 574 L824 575 L828 576 L832 577 L836 578 L840 579 L844 580 L848 581 L852 582 L856 582 L860 583 L864 584 L868 585 L872 586 L876 587 L880 588 L884 589 L888 589 L892 590 L892 700 L400 700 Z" fill="#B8952B" fill-opacity=".16"/>
+<path d="M150 250 L154 253 L158 257 L162 260 L166 263 L170 267 L174 270 L178 273 L182 277 L186 280 L190 283 L194 286 L198 289 L202 292 L206 295 L210 299 L214 302 L218 305 L222 308 L226 311 L230 313 L234 316 L238 319 L242 322 L246 325 L250 328 L254 331 L258 334 L262 336 L266 339 L270 342 L274 345 L278 347 L282 350 L286 353 L290 355 L294 358 L298 360 L302 363 L306 365 L310 368 L314 371 L318 373 L322 376 L326 378 L330 380 L334 383 L338 385 L342 388 L346 390 L350 392 L354 395 L358 397 L362 399 L366 402 L370 404 L374 406 L378 408 L382 410 L386 413 L390 415 L394 417 L398 419 L400 700 L150 700 Z" fill="#1C1D20" fill-opacity=".07"/>
+<line x1="130" y1="420" x2="1136" y2="420" stroke="#B0432D" stroke-width="2.5" stroke-dasharray="9 7"/>
+<line x1="130" y1="590" x2="1136" y2="590" stroke="#B8952B" stroke-width="2.5" stroke-dasharray="9 7"/>
+<line x1="400" y1="420" x2="400" y2="700" stroke="#B0432D" stroke-width="2" stroke-dasharray="4 6"/><line x1="892" y1="590" x2="892" y2="700" stroke="#B8952B" stroke-width="2" stroke-dasharray="4 6"/>
+<path d="M150 250 L160 258 L170 267 L180 275 L190 283 L200 291 L210 299 L220 306 L230 313 L240 321 L250 328 L260 335 L270 342 L280 349 L290 355 L300 362 L310 368 L320 374 L330 380 L340 386 L350 392 L360 398 L370 404 L380 409 L390 415 L400 420 L410 426 L420 431 L430 436 L440 441 L450 446 L460 450 L470 455 L480 460 L490 464 L500 469 L510 473 L520 477 L530 481 L540 486 L550 490 L560 494 L570 497 L580 501 L590 505 L600 509 L610 512 L620 516 L630 519 L640 523 L650 526 L660 529 L670 533 L680 536 L690 539 L700 542 L710 545 L720 548 L730 551 L740 553 L750 556 L760 559 L770 562 L780 564 L790 567 L800 569 L810 572 L820 574 L830 576 L840 579 L850 581 L860 583 L870 586 L880 588 L890 590 L900 592 L910 594 L920 596 L930 598 L940 600 L950 602 L960 604 L970 605 L980 607 L990 609 L1000 611 L1010 612 L1020 614 L1030 616 L1040 617 L1050 619 L1060 620 L1070 622 L1080 623 L1090 625 L1100 626 L1110 627 L1120 629 L1130 630" fill="none" stroke="#1C1D20" stroke-width="4"/>
+<circle cx="400" cy="420" r="9" fill="#B0432D"/><circle cx="892" cy="590" r="9" fill="#B8952B"/>
+<text class="lab red end" x="1136" y="386" style="font-size:22px">Old threshold: ~$250k/yr</text>
+<text class="mut end" x="1136" y="414">consulting engagement minimum</text>
+<text class="lab gold" x="150" y="556" style="font-size:22px">New threshold: ~$50k/yr</text>
+<text class="mut" x="150" y="584">one operator, six to twelve weeks</text>
+<text class="lab mid" x="275" y="646" style="font-size:22px">~50 workflows</text>
+<text class="mut mid" x="275" y="676">above the old line</text>
+<text class="lab gold mid" x="646" y="646" style="font-size:22px">~1,000 workflows</text>
+<text class="mut mid" x="646" y="676">between the lines</text>
+<rect x="64" y="800" width="1072" height="130" fill="#B8952B" fill-opacity=".14"/>
+<text class="cap gold" x="88" y="840">THE OPERATING MODEL</text>
+<text class="body" x="88" y="874">The thousand wounds between the lines are the operating model. They are what the</text>
+<text class="body" x="88" y="904">enterprise means when it says “transformation” and could never fund.</text>
 
-<!-- axes -->
-<line x1="150" y1="540" x2="1120" y2="540" stroke="#C5C4C0"/>
-<line x1="150" y1="200" x2="150" y2="540" stroke="#C5C4C0"/>
-<text class="t ax" x="150" y="576">WORKFLOWS, RANKED BY ANNUAL VALUE LOST →</text>
-<text class="t ax" x="150" y="186">VALUE LOST PER YEAR</text>
-
-<!-- long tail curve -->
-<path d="M170 210 C 200 214 230 220 260 232 C 310 252 360 280 420 312 C 500 356 580 396 680 432 C 780 460 880 478 1000 490 C 1060 494 1100 496 1110 498"
-      fill="none" stroke="#1C1D20" stroke-width="2.4"/>
-
-<!-- shade area between old line and new line -->
-<path d="M170 340 L440 340 C 500 356 580 396 680 432 C 780 460 880 478 1000 490 C 1060 494 1100 496 1110 498 L1110 540 L170 540 Z"
-      fill="#B8952B" opacity="0.08"/>
-
-<!-- shade area above old line -->
-<path d="M170 210 C 200 214 230 220 260 232 C 310 252 360 280 420 312 L420 340 L170 340 Z"
-      fill="#1C1D20" opacity="0.06"/>
-
-<!-- old threshold line -->
-<line x1="150" y1="340" x2="1120" y2="340" stroke="#C8553D" stroke-width="1.6" stroke-dasharray="8 6"/>
-<text class="t note" x="1110" y="332" text-anchor="end" fill="#C8553D">Old threshold — ~$250k/yr</text>
-<text class="t note" x="1110" y="352" text-anchor="end" font-size="12" fill="#7A7B82">consulting engagement minimum</text>
-
-<!-- new threshold line -->
-<line x1="150" y1="480" x2="1120" y2="480" stroke="#B8952B" stroke-width="1.6" stroke-dasharray="8 6"/>
-<text class="t note" x="1110" y="472" text-anchor="end" fill="#B8952B">New threshold — ~$50k/yr</text>
-<text class="t note" x="1110" y="492" text-anchor="end" font-size="12" fill="#7A7B82">one operator, six to twelve weeks</text>
-
-<!-- count labels -->
-<text class="t note" x="280" y="300" fill="#1C1D20">~50 workflows</text>
-<text class="t note" x="280" y="318" font-size="12" fill="#7A7B82">above the old line</text>
-
-<text class="t note" x="660" y="424" fill="#B8952B">~1,000 workflows</text>
-<text class="t note" x="660" y="442" font-size="12" fill="#4A4B50">between the lines</text>
-
-<!-- markers on curve -->
-<circle cx="420" cy="312" r="5" fill="#C8553D"/>
-<circle cx="1000" cy="490" r="5" fill="#B8952B"/>
-
-<!-- bottom annotation -->
-<rect x="64" y="600" width="1072" height="60" fill="#B8952B" opacity="0.10"/>
-<text class="t" x="84" y="622" font-size="12.5" letter-spacing="2.6" fill="#B8952B">THE OPERATING MODEL</text>
-<text class="t note" x="84" y="646" fill="#4A4B50">The thousand wounds between the lines are the operating model. They are what the enterprise means when it says "transformation" and could never fund.</text>
-
-<text class="t note" x="64" y="696" font-size="13" fill="#7A7B82">This is the unit-drive moment from Chapter 2. Not a better engine. A motor small enough to put everywhere.</text>
+</g>
+<line x1="64" y1="1006" x2="1136" y2="1006" stroke="#D2D1CD"/>
+<text class="note" x="64" y="1046">This is the unit-drive moment from Chapter 2. Not a better engine. A motor small enough to put everywhere.</text>
 </svg>

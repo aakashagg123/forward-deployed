@@ -1,75 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" role="img" aria-label="Operator pool growth is bounded by the training cycle">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 950" width="1200" height="950" role="img" aria-label="Operator pool growth is bounded by the training cycle">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.tick{font-size:11.5px;letter-spacing:1.4px;fill:#6A6B72}
-.lbl{font-size:14px;fill:#1C1D20}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="680" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 11.3 — THE OPERATOR SCALING CURVE</text>
-<text class="t h" x="64" y="112">A nine-month doubling time. No shortcut exists.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="950" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 11.3 — THE OPERATOR SCALING CURVE</text>
+<text class="h" x="64" y="122">A nine-month doubling time. No shortcut exists.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="160" y="204" style="fill:#55565D">OPERATORS ↑</text>
+<line x1="160" y1="220" x2="160" y2="640" stroke="#8A8B92" stroke-width="2"/><line x1="160" y1="640" x2="1136" y2="640" stroke="#8A8B92" stroke-width="2"/>
+<text class="mut end" x="146" y="647">0</text>
+<text class="mut end" x="146" y="551">8</text>
+<line x1="160" y1="544" x2="1136" y2="544" stroke="#D2D1CD" stroke-width="1.5"/>
+<text class="mut end" x="146" y="455">16</text>
+<line x1="160" y1="448" x2="1136" y2="448" stroke="#D2D1CD" stroke-width="1.5"/>
+<text class="mut end" x="146" y="359">32</text>
+<line x1="160" y1="352" x2="1136" y2="352" stroke="#D2D1CD" stroke-width="1.5"/>
+<text class="mut end" x="146" y="263">64</text>
+<line x1="160" y1="256" x2="1136" y2="256" stroke="#D2D1CD" stroke-width="1.5"/>
+<text class="mut mid" x="260" y="676">START</text>
+<text class="mut mid" x="460" y="676">9 MONTHS</text>
+<text class="mut mid" x="660" y="676">18 MONTHS</text>
+<text class="mut mid" x="860" y="676">27 MONTHS</text>
+<text class="mut mid" x="1060" y="676">36 MONTHS</text>
+<path d="M260 592 L460 592 L460 544 L660 544 L660 448 L860 448 L860 352 L1060 352 L1060 256" fill="none" stroke="#B8952B" stroke-width="5" stroke-linejoin="round"/>
+<path d="M260 592 C 380 560 520 440 660 340 C 760 280 860 250 960 236" fill="none" stroke="#B0432D" stroke-width="3" stroke-dasharray="8 7"/>
+<text class="lab red" x="190" y="262" style="font-size:22px">Hiring ahead of the curve</text>
+<text class="mut" x="190" y="292">Undertrained operators → trust damage</text>
+<circle cx="260" cy="592" r="9" fill="#B8952B"/><text class="lab gold" x="276" y="578" style="font-size:24px">4</text>
+<circle cx="460" cy="544" r="9" fill="#B8952B"/><text class="lab gold" x="476" y="530" style="font-size:24px">8</text>
+<circle cx="660" cy="448" r="9" fill="#B8952B"/><text class="lab gold" x="676" y="434" style="font-size:24px">16</text>
+<circle cx="860" cy="352" r="9" fill="#B8952B"/><text class="lab gold" x="876" y="338" style="font-size:24px">32</text>
+<circle cx="1060" cy="256" r="9" fill="#B8952B"/><text class="lab gold" x="1076" y="242" style="font-size:24px">64</text>
+<line x1="260" y1="614" x2="460" y2="614" stroke="#55565D" stroke-width="2.5"/><line x1="260" y1="604" x2="260" y2="624" stroke="#55565D" stroke-width="2.5"/><line x1="460" y1="604" x2="460" y2="624" stroke="#55565D" stroke-width="2.5"/>
+<rect x="264" y="598" width="192" height="32" fill="#F7F6F3"/><text class="mut mid" x="360" y="621" style="font-size:19px">9-month training cycle</text>
+<line x1="64" y1="730" x2="1136" y2="730" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="774">The model scales like a profession (medicine, law, aviation), not like software.</text>
+<text class="lab" x="64" y="806">The pipeline is long. The consequences of deploying someone before they are</text>
+<text class="lab" x="64" y="838">ready are severe, sometimes irreversible, and always visible to the host organisation.</text>
+<text class="mut" x="64" y="878">One bad deployment damages the model’s reputation in ways that ten good ones cannot repair.</text>
 
-<!-- axes -->
-<line x1="160" y1="500" x2="1080" y2="500" stroke="#1C1D20" stroke-width="1.5"/>
-<line x1="160" y1="500" x2="160" y2="190" stroke="#1C1D20" stroke-width="1.5"/>
-
-<!-- y-axis labels -->
-<text class="t tick" x="148" y="500" text-anchor="end">0</text>
-<text class="t tick" x="148" y="428" text-anchor="end">8</text>
-<text class="t tick" x="148" y="356" text-anchor="end">16</text>
-<text class="t tick" x="148" y="284" text-anchor="end">32</text>
-<text class="t tick" x="148" y="212" text-anchor="end">64</text>
-<text class="t tick" x="80" y="350" transform="rotate(-90,80,350)">OPERATORS</text>
-
-<!-- y gridlines -->
-<line x1="160" y1="428" x2="1080" y2="428" stroke="#EBEAE6" stroke-width="1"/>
-<line x1="160" y1="356" x2="1080" y2="356" stroke="#EBEAE6" stroke-width="1"/>
-<line x1="160" y1="284" x2="1080" y2="284" stroke="#EBEAE6" stroke-width="1"/>
-<line x1="160" y1="212" x2="1080" y2="212" stroke="#EBEAE6" stroke-width="1"/>
-
-<!-- x-axis time labels -->
-<text class="t tick" x="220" y="524">START</text>
-<text class="t tick" x="420" y="524">9 MONTHS</text>
-<text class="t tick" x="620" y="524">18 MONTHS</text>
-<text class="t tick" x="820" y="524">27 MONTHS</text>
-<text class="t tick" x="1020" y="524">36 MONTHS</text>
-
-<!-- sustainable growth curve (step function) -->
-<path d="M 220 464 L 420 464 L 420 428 L 620 428 L 620 356 L 820 356 L 820 284 L 1020 284 L 1020 212" stroke="#B8952B" stroke-width="3" fill="none"/>
-
-<!-- labels on the steps -->
-<circle cx="220" cy="464" r="5" fill="#B8952B"/>
-<text class="t lbl" x="240" y="458" fill="#B8952B">4</text>
-
-<circle cx="420" cy="428" r="5" fill="#B8952B"/>
-<text class="t lbl" x="440" y="422" fill="#B8952B">8</text>
-
-<circle cx="620" cy="356" r="5" fill="#B8952B"/>
-<text class="t lbl" x="640" y="350" fill="#B8952B">16</text>
-
-<circle cx="820" cy="284" r="5" fill="#B8952B"/>
-<text class="t lbl" x="840" y="278" fill="#B8952B">32</text>
-
-<circle cx="1020" cy="212" r="5" fill="#B8952B"/>
-<text class="t lbl" x="1040" y="206" fill="#B8952B">64</text>
-
-<!-- danger zone: hiring ahead of curve -->
-<path d="M 220 464 C 350 440 450 360 600 280 C 700 230 800 200 900 190" stroke="#C8553D" stroke-width="2" fill="none" stroke-dasharray="6 5"/>
-<text class="t note" x="700" y="210" fill="#C8553D">Hiring ahead of the curve</text>
-<text class="t note" x="700" y="228" fill="#C8553D">Undertrained operators → trust damage</text>
-
-<!-- annotation: the training cycle -->
-<rect x="230" y="430" width="180" height="28" rx="4" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t note" x="320" y="450" text-anchor="middle">9-month training cycle</text>
-
-<defs><marker id="darr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#6A6B72"/></marker></defs>
-
-<!-- bottom annotation -->
-<line x1="64" y1="570" x2="1136" y2="570" stroke="#D2D1CD"/>
-<text class="t" x="64" y="602" font-size="16" fill="#4A4B50">The model scales like a profession — medicine, law, aviation — not like software. The pipeline is long. The consequences of</text>
-<text class="t" x="64" y="626" font-size="16" fill="#4A4B50">deploying someone before they are ready are severe, sometimes irreversible, and always visible to the host organisation.</text>
-<text class="t note" x="64" y="658">One bad deployment damages the model's reputation in ways that ten good ones cannot repair.</text>
+</g>
 </svg>

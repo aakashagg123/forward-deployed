@@ -1,64 +1,87 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="The capital clock and the build clock">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1010" width="1200" height="1010" role="img" aria-label="The capital clock and the build clock">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.tick{font-size:11.5px;letter-spacing:1.4px;fill:#6A6B72}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="660" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 3.1 — THE TWO CLOCKS</text>
-<text class="t h" x="64" y="112">Both are correct. The value leaks at the interface.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1010" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 3.1 — THE TWO CLOCKS</text>
+<text class="h" x="64" y="122">Both are correct. The value leaks at the interface.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<rect x="228" y="330" width="406" height="310" fill="#B0432D" opacity="0.10"/>
+<line x1="228" y1="330" x2="228" y2="640" stroke="#B0432D" stroke-width="2" stroke-dasharray="6 6"/><line x1="634" y1="330" x2="634" y2="640" stroke="#B0432D" stroke-width="2" stroke-dasharray="6 6"/>
+<text class="cap" x="64" y="206">CAPITAL CLOCK · the industrial business</text>
+<text class="mut" x="64" y="236">calibrated to assets that run for thirty years</text>
+<line x1="150" y1="330" x2="1120" y2="330" stroke="#1C1D20" stroke-width="3"/>
+<line x1="150" y1="316" x2="150" y2="344" stroke="#1C1D20" stroke-width="3"/>
+<line x1="392" y1="316" x2="392" y2="344" stroke="#1C1D20" stroke-width="3"/>
+<line x1="634" y1="316" x2="634" y2="344" stroke="#1C1D20" stroke-width="3"/>
+<line x1="876" y1="316" x2="876" y2="344" stroke="#1C1D20" stroke-width="3"/>
+<line x1="1118" y1="316" x2="1118" y2="344" stroke="#1C1D20" stroke-width="3"/>
+<text class="cap" x="64" y="296">ANNUAL PLAN</text>
+<text class="cap mid" x="392" y="296">Q REVIEW</text>
+<text class="cap mid" x="634" y="296">Q REVIEW</text>
+<text class="cap mid" x="876" y="296">Q REVIEW</text>
+<text class="cap end" x="1136" y="296">Q REVIEW</text>
+<line x1="150" y1="640" x2="1120" y2="640" stroke="#1C1D20" stroke-width="3"/>
+<line x1="150" y1="630" x2="150" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="189" y1="630" x2="189" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="227" y1="630" x2="227" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="266" y1="630" x2="266" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="305" y1="630" x2="305" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="344" y1="630" x2="344" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="382" y1="630" x2="382" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="421" y1="630" x2="421" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="460" y1="630" x2="460" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="498" y1="630" x2="498" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="537" y1="630" x2="537" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="576" y1="630" x2="576" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="615" y1="630" x2="615" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="653" y1="630" x2="653" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="692" y1="630" x2="692" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="731" y1="630" x2="731" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="770" y1="630" x2="770" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="808" y1="630" x2="808" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="847" y1="630" x2="847" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="886" y1="630" x2="886" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="924" y1="630" x2="924" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="963" y1="630" x2="963" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="1002" y1="630" x2="1002" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="1041" y1="630" x2="1041" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="1079" y1="630" x2="1079" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<line x1="1118" y1="630" x2="1118" y2="650" stroke="#8A8B92" stroke-width="2"/>
+<text class="mut" x="64" y="690">WEEK 1</text>
+<text class="mut end" x="1136" y="690">WEEK 26</text>
+<text class="cap" x="64" y="750">BUILD CLOCK · the digital business</text>
+<text class="mut" x="64" y="780">calibrated to information that arrives from shipping</text>
+<defs><marker id="up" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#B0432D"/></marker></defs>
+<circle cx="228" cy="640" r="9" fill="#B0432D"/>
+<path d="M232 628 C 300 520 540 440 628 346" stroke="#B0432D" stroke-width="3" fill="none" marker-end="url(#up)"/>
+<text class="cap red mid" x="431" y="604">THE QUEUE</text>
+<text class="lab red" x="670" y="388" style="font-size:22px">A two-day question enters</text>
+<text class="lab red" x="670" y="418" style="font-size:22px">a ninety-day queue.</text>
+<text class="mut" x="670" y="462">One data access. One policy sign-off.</text>
+<text class="mut" x="670" y="490">One change to a system of record.</text>
+<text class="mut" x="670" y="518">Nobody replans, so the plan quietly</text>
+<text class="mut" x="670" y="546">becomes fiction, and the team builds</text>
+<text class="mut" x="670" y="574">the thing that needs no permission:</text>
+<text class="mut" x="670" y="602">something adjacent to the point.</text>
+<line x1="64" y1="826" x2="1136" y2="826" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="870">A deployment needing four slow-clock decisions is not four</text>
+<text class="lab" x="64" y="902">times harder than one. It is roughly dead.</text>
+<text class="mut" x="64" y="942">Mismatched clocks do not synchronise by being asked to. Design deployments</text>
+<text class="mut" x="64" y="970">that spend as few slow-clock decisions as possible.</text>
 
-<!-- dead zone -->
-<rect x="228" y="262" width="406" height="196" fill="#C8553D" opacity="0.10"/>
-<line x1="228" y1="262" x2="228" y2="458" stroke="#C8553D" stroke-dasharray="4 5"/>
-<line x1="634" y1="262" x2="634" y2="458" stroke="#C8553D" stroke-dasharray="4 5"/>
-
-<!-- capital clock -->
-<text class="t col" x="64" y="216">CAPITAL CLOCK · the industrial business</text>
-<text class="t note" x="1136" y="216" text-anchor="end" font-size="12">calibrated to assets that run for thirty years</text>
-<line x1="150" y1="250" x2="1120" y2="250" stroke="#1C1D20" stroke-width="2"/>
-<g stroke="#1C1D20" stroke-width="2">
-<line x1="150" y1="238" x2="150" y2="262"/><line x1="392" y1="238" x2="392" y2="262"/>
-<line x1="634" y1="238" x2="634" y2="262"/><line x1="876" y1="238" x2="876" y2="262"/>
-<line x1="1118" y1="238" x2="1118" y2="262"/>
 </g>
-<g class="t tick" text-anchor="middle">
-<text x="150" y="230">ANNUAL PLAN</text><text x="392" y="230">Q REVIEW</text>
-<text x="634" y="230">Q REVIEW</text><text x="876" y="230">Q REVIEW</text><text x="1118" y="230">Q REVIEW</text>
-</g>
-
-<!-- build clock -->
-<text class="t col" x="64" y="524">BUILD CLOCK · the digital business</text>
-<text class="t note" x="1136" y="524" text-anchor="end" font-size="12">calibrated to information that arrives from shipping</text>
-<line x1="150" y1="470" x2="1120" y2="470" stroke="#1C1D20" stroke-width="2"/>
-<g stroke="#7A7B82" stroke-width="1.4">
-<line x1="150" y1="462" x2="150" y2="478"/><line x1="189" y1="462" x2="189" y2="478"/><line x1="228" y1="462" x2="228" y2="478"/>
-<line x1="266" y1="462" x2="266" y2="478"/><line x1="305" y1="462" x2="305" y2="478"/><line x1="344" y1="462" x2="344" y2="478"/>
-<line x1="383" y1="462" x2="383" y2="478"/><line x1="421" y1="462" x2="421" y2="478"/><line x1="460" y1="462" x2="460" y2="478"/>
-<line x1="499" y1="462" x2="499" y2="478"/><line x1="538" y1="462" x2="538" y2="478"/><line x1="576" y1="462" x2="576" y2="478"/>
-<line x1="615" y1="462" x2="615" y2="478"/><line x1="654" y1="462" x2="654" y2="478"/><line x1="693" y1="462" x2="693" y2="478"/>
-<line x1="731" y1="462" x2="731" y2="478"/><line x1="770" y1="462" x2="770" y2="478"/><line x1="809" y1="462" x2="809" y2="478"/>
-<line x1="848" y1="462" x2="848" y2="478"/><line x1="886" y1="462" x2="886" y2="478"/><line x1="925" y1="462" x2="925" y2="478"/>
-<line x1="964" y1="462" x2="964" y2="478"/><line x1="1003" y1="462" x2="1003" y2="478"/><line x1="1041" y1="462" x2="1041" y2="478"/>
-<line x1="1080" y1="462" x2="1080" y2="478"/><line x1="1118" y1="462" x2="1118" y2="478"/>
-</g>
-<text class="t tick" x="150" y="500">WEEK 1</text>
-<text class="t tick" x="1118" y="500" text-anchor="end">WEEK 26</text>
-
-<!-- the dependency -->
-<defs><marker id="up" markerWidth="9" markerHeight="9" refX="4.5" refY="2" orient="auto"><path d="M0,9 L4.5,0 L9,9 z" fill="#C8553D"/></marker></defs>
-<circle cx="228" cy="470" r="6" fill="#C8553D"/>
-<path d="M228 460 C 300 400 560 340 630 272" stroke="#C8553D" stroke-width="1.8" fill="none" marker-end="url(#up)"/>
-<text class="t note" x="252" y="360" fill="#C8553D" font-size="15">A two-day question enters a ninety-day queue.</text>
-<text class="t note" x="252" y="384" fill="#7A7B82">One data access. One policy sign-off. One change to a system of record.</text>
-<text class="t note" x="252" y="408" fill="#7A7B82">Nobody replans — so the plan quietly becomes fiction, and the team</text>
-<text class="t note" x="252" y="432" fill="#7A7B82">builds the thing that needs no permission: something adjacent to the point.</text>
-
-<line x1="64" y1="576" x2="1136" y2="576" stroke="#D2D1CD"/>
-<text class="t" x="64" y="612" font-size="16" fill="#4A4B50">A deployment needing four slow-clock decisions is not four times harder than one. It is roughly dead.</text>
-<text class="t note" x="64" y="638" font-size="13" fill="#7A7B82">Mismatched clocks do not synchronise by being asked to. Design deployments that spend as few slow-clock decisions as possible.</text>
 </svg>

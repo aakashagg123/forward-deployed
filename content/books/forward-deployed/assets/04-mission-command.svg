@@ -1,73 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-label="Detailed orders versus mission command">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1030" width="1200" height="1030" role="img" aria-label="Detailed orders versus mission command">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.step{font-size:13.5px;fill:#4A4B50}
-.note{font-size:12.5px;fill:#7A7B82}
-.contact{font-size:12px;letter-spacing:3px;fill:#C8553D}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="700" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 4.2 — WHAT TRAVELS DOWN THE CHAIN</text>
-<text class="t h" x="64" y="112">Send the intent, not the method</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
-<line x1="600" y1="176" x2="600" y2="640" stroke="#E4E3DF"/>
+<rect width="1200" height="1030" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 4.2 — WHAT TRAVELS DOWN THE CHAIN</text>
+<text class="h" x="64" y="122">Send the intent, not the method</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<line x1="608" y1="186" x2="608" y2="880" stroke="#D2D1CD"/>
+<text class="cap" x="64" y="206">DETAILED ORDERS</text>
+<text class="mut" x="64" y="236">decisions made where the information is worst</text>
+<line x1="88" y1="274" x2="88" y2="436" stroke="#8A8B92" stroke-width="2.5"/>
+<text class="body" x="116" y="296">1 · Approach on the left flank</text>
+<text class="body" x="116" y="340">2 · Cross at the bridge</text>
+<text class="body" x="116" y="384">3 · Hold until the artillery lifts</text>
+<text class="body" x="116" y="428">4 · Advance to the ridge</text>
+<path d="M80 482 L 140 496 L 200 482 L 260 496 L 320 482 L 380 496 L 440 482 L 500 496 L 560 482" stroke="#B0432D" stroke-width="3" fill="none"/>
+<text class="cap red" x="80" y="530">CONTACT</text>
+<text class="body" x="116" y="590" style="fill:#55565D;text-decoration:line-through">5 · Secure the crossing by 0600</text>
+<text class="body" x="116" y="634" style="fill:#55565D;text-decoration:line-through">6 · Await further orders</text>
+<text class="lab red" x="64" y="706" style="font-size:22px">The bridge is gone. The ridge is held.</text>
+<text class="mut" x="64" y="744">Steps 5 and 6 describe a world that no longer</text>
+<text class="mut" x="64" y="772">exists. The subordinate can see this and has no</text>
+<text class="mut" x="64" y="800">authority to act on it.</text>
+<text class="cap" x="640" y="206">MISSION COMMAND</text>
+<text class="mut" x="640" y="236">decisions made where the information is best</text>
+<rect x="640" y="266" width="496" height="280" fill="none" stroke="#1C1D20" stroke-width="2"/>
+<text class="cap" x="662" y="302">INTENT</text>
+<text class="body" x="662" y="332">Deny the crossing to the enemy,</text>
+<text class="body" x="662" y="360">because the division moves through</text>
+<text class="body" x="662" y="388">here on Thursday.</text>
+<text class="cap" x="662" y="424">CONSTRAINTS</text>
+<text class="mut" x="662" y="452">No civilian casualties; hold until relieved</text>
+<text class="cap" x="662" y="496">RESOURCES</text>
+<text class="mut" x="662" y="524">One company, two days of supply</text>
+<defs><marker id="dn" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#B8952B"/></marker></defs>
+<path d="M722 546 L722 646" stroke="#B8952B" stroke-width="3" fill="none" marker-end="url(#dn)"/>
+<path d="M888 546 L888 646" stroke="#B8952B" stroke-width="3" fill="none" marker-end="url(#dn)"/>
+<path d="M1054 546 L1054 646" stroke="#B8952B" stroke-width="3" fill="none" marker-end="url(#dn)"/>
+<path d="M640 588 L 702 602 L 764 588 L 826 602 L 888 588 L 950 602 L 1012 588 L 1074 602 L 1136 588" stroke="#B0432D" stroke-width="3" fill="none" opacity=".6"/>
+<text class="body mid" x="722" y="684">mine the</text>
+<text class="body mid" x="722" y="710">ford</text>
+<text class="mut mid" x="722" y="750">decided locally</text>
+<text class="body mid" x="888" y="684">take the ridge</text>
+<text class="body mid" x="888" y="710">instead</text>
+<text class="mut mid" x="888" y="750">decided locally</text>
+<text class="body mid" x="1054" y="684">call in</text>
+<text class="body mid" x="1054" y="710">the strike</text>
+<text class="mut mid" x="1054" y="750">decided locally</text>
+<text class="mut" x="640" y="806">All three serve the intent. None was in the order.</text>
+<text class="mut" x="640" y="834">The price: subordinates good enough to be</text>
+<text class="mut" x="640" y="862">trusted with it.</text>
+<text class="lab red" x="64" y="950">Optimised for control.</text>
+<text class="lab red" x="64" y="982">Fails on contact.</text>
+<text class="lab gold" x="640" y="950">Optimised for adaptation.</text>
+<text class="lab gold" x="640" y="982">Requires trust.</text>
+<line x1="64" y1="906" x2="1136" y2="906" stroke="#D2D1CD"/>
 
-<!-- LEFT: detailed orders -->
-<text class="t col" x="64" y="204">DETAILED ORDERS</text>
-<text class="t note" x="64" y="228" fill="#7A7B82">decisions made where the information is worst</text>
-<g stroke="#C5C4C0" stroke-width="1.4" fill="none">
-<line x1="120" y1="256" x2="120" y2="366"/>
 </g>
-<g class="t step">
-<text x="146" y="272">1 · Approach on the left flank</text>
-<text x="146" y="300">2 · Cross at the bridge</text>
-<text x="146" y="328">3 · Hold until the artillery lifts</text>
-<text x="146" y="356">4 · Advance to the ridge</text>
-</g>
-<!-- contact line -->
-<path d="M80 392 L 140 384 L 200 400 L 260 382 L 320 400 L 380 386 L 440 398 L 500 388 L 540 396"
-      stroke="#C8553D" stroke-width="2" fill="none"/>
-<text class="t contact" x="80" y="424">CONTACT</text>
-<g class="t step" fill="#7A7B82">
-<text x="146" y="470" text-decoration="line-through">5 · Secure the crossing by 0600</text>
-<text x="146" y="498" text-decoration="line-through">6 · Await further orders</text>
-</g>
-<text class="t note" x="120" y="544" fill="#C8553D">The bridge is gone. The ridge is held.</text>
-<text class="t note" x="120" y="568">Steps 5 and 6 describe a world that no longer exists.</text>
-<text class="t note" x="120" y="592">The subordinate can see this and has no authority to act on it.</text>
-<text class="t" x="120" y="626" font-size="15" fill="#C8553D">Optimised for control. Fails on contact.</text>
-
-<!-- RIGHT: mission command -->
-<text class="t col" x="660" y="204">MISSION COMMAND</text>
-<text class="t note" x="660" y="228" fill="#7A7B82">decisions made where the information is best</text>
-<rect x="660" y="250" width="440" height="112" fill="none" stroke="#1C1D20" stroke-width="1.4"/>
-<text class="t step" x="680" y="278" fill="#1C1D20">INTENT — deny the crossing to the enemy,</text>
-<text class="t step" x="680" y="300" fill="#1C1D20">because the division moves through here on Thursday</text>
-<text class="t step" x="680" y="326">CONSTRAINTS — no civilian casualties; hold until relieved</text>
-<text class="t step" x="680" y="348">RESOURCES — one company, two days of supply</text>
-
-<defs><marker id="dn" markerWidth="9" markerHeight="9" refX="4.5" refY="8" orient="auto"><path d="M0,0 L9,0 L4.5,9 z" fill="#B8952B"/></marker></defs>
-<g stroke="#B8952B" stroke-width="1.6" fill="none" marker-end="url(#dn)">
-<path d="M760 362 C 760 400 700 420 700 452"/>
-<path d="M880 362 L 880 452"/>
-<path d="M1000 362 C 1000 400 1060 420 1060 452"/>
-</g>
-<!-- contact line crossed -->
-<path d="M640 392 L 700 384 L 760 400 L 820 382 L 880 400 L 940 386 L 1000 398 L 1060 388 L 1120 396"
-      stroke="#C8553D" stroke-width="2" fill="none" opacity="0.55"/>
-<text class="t contact" x="1120" y="376" text-anchor="end" opacity="0.7">CONTACT</text>
-
-<g class="t note" text-anchor="middle" fill="#4A4B50">
-<text x="700" y="486">mine the ford</text>
-<text x="880" y="486">take the ridge instead</text>
-<text x="1060" y="486">call in the strike</text>
-</g>
-<g class="t note" text-anchor="middle" font-size="11.5" fill="#7A7B82">
-<text x="700" y="508">decided locally</text><text x="880" y="508">decided locally</text><text x="1060" y="508">decided locally</text>
-</g>
-<text class="t note" x="660" y="568">All three serve the intent. None was in the order.</text>
-<text class="t note" x="660" y="592">The price: subordinates good enough to be trusted with it.</text>
-<text class="t" x="660" y="626" font-size="15" fill="#B8952B">Optimised for adaptation. Requires trust.</text>
 </svg>

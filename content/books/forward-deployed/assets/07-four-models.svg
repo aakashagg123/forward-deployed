@@ -1,84 +1,106 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="The four adjacent models and the gap between them">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1104" width="1200" height="1104" role="img" aria-label="The four adjacent models and the gap between them">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#1C1D20}
-.note{font-size:12.5px;fill:#7A7B82}
-.modelname{font-size:14px;letter-spacing:1.6px;fill:#1C1D20}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="800" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 7.1 — FOUR MODELS AND A GAP</text>
-<text class="t h" x="64" y="112">Each sells a different deliverable. None sells a changed workflow.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1104" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 7.1 — FOUR MODELS AND A GAP</text>
+<text class="h" x="64" y="122">Each sells a different deliverable.</text>
+<text class="h" x="64" y="164">None sells a changed workflow.</text>
+<line x1="64" y1="194" x2="1136" y2="194" stroke="#D2D1CD"/>
+<g transform="translate(0,42)">
+<rect x="958" y="190" width="177" height="558" fill="#B8952B" fill-opacity=".14"/>
+<text class="cap" x="260" y="216">CONSULTING</text>
+<text class="cap" x="437" y="216">SI /</text>
+<text class="cap" x="437" y="242">INTEGRATOR</text>
+<text class="cap" x="614" y="216">OUTSOURCING</text>
+<text class="cap" x="791" y="216">SAAS</text>
+<text class="cap gold" x="968" y="216">FORWARD-</text>
+<text class="cap gold" x="968" y="242">DEPLOYED</text>
+<line x1="64" y1="268" x2="1136" y2="268" stroke="#8A8B92" stroke-width="2"/>
+<text class="cap" x="64" y="304" style="fill:#55565D">SELLS</text>
+<text class="lab" x="260" y="304" style="font-size:20px">A</text>
+<text class="lab" x="260" y="330" style="font-size:20px">recommendation</text>
+<text class="mut" x="260" y="358">diagnosis +</text>
+<text class="mut" x="260" y="383">conviction</text>
+<text class="lab" x="437" y="304" style="font-size:20px">A system</text>
+<text class="lab" x="437" y="330" style="font-size:20px">to spec</text>
+<text class="mut" x="437" y="358">build to a</text>
+<text class="mut" x="437" y="383">specification</text>
+<text class="lab" x="614" y="304" style="font-size:20px">A process</text>
+<text class="lab" x="614" y="330" style="font-size:20px">running</text>
+<text class="mut" x="614" y="358">same process,</text>
+<text class="mut" x="614" y="383">lower cost</text>
+<text class="lab" x="791" y="304" style="font-size:20px">A product</text>
+<text class="mut" x="791" y="332">generic,</text>
+<text class="mut" x="791" y="357">scalable</text>
+<text class="lab gold" x="968" y="304" style="font-size:20px">A changed</text>
+<text class="lab gold" x="968" y="330" style="font-size:20px">workflow</text>
+<text class="mut" x="968" y="358">measured, owned,</text>
+<text class="mut" x="968" y="383">persists</text>
+<line x1="64" y1="408" x2="1136" y2="408" stroke="#D2D1CD"/>
+<text class="cap" x="64" y="444" style="fill:#55565D">REVENUE</text>
+<text class="lab" x="260" y="444" style="font-size:20px">People × rate</text>
+<text class="lab" x="437" y="444" style="font-size:20px">Milestones</text>
+<text class="lab" x="614" y="444" style="font-size:20px">Per</text>
+<text class="lab" x="614" y="470" style="font-size:20px">transaction</text>
+<text class="lab" x="791" y="444" style="font-size:20px">Per seat</text>
+<text class="lab gold" x="968" y="444" style="font-size:20px">Per outcome</text>
+<line x1="64" y1="484" x2="1136" y2="484" stroke="#D2D1CD"/>
+<text class="cap" x="64" y="520" style="fill:#55565D">INCENTIVE</text>
+<text class="lab" x="260" y="520" style="font-size:20px">Deploy more</text>
+<text class="lab" x="260" y="546" style="font-size:20px">people</text>
+<text class="mut" x="260" y="574">activity =</text>
+<text class="mut" x="260" y="599">revenue</text>
+<text class="lab" x="437" y="520" style="font-size:20px">Build to</text>
+<text class="lab" x="437" y="546" style="font-size:20px">spec exactly</text>
+<text class="mut" x="437" y="574">deviation =</text>
+<text class="mut" x="437" y="599">risk</text>
+<text class="lab" x="614" y="520" style="font-size:20px">Standardise</text>
+<text class="mut" x="614" y="548">change = risk</text>
+<text class="mut" x="614" y="573">to margin</text>
+<text class="lab" x="791" y="520" style="font-size:20px">Generalise</text>
+<text class="mut" x="791" y="548">specificity =</text>
+<text class="mut" x="791" y="573">cost</text>
+<text class="lab gold" x="968" y="520" style="font-size:20px">Solve cheaply</text>
+<text class="mut" x="968" y="548">efficiency =</text>
+<text class="mut" x="968" y="573">margin</text>
+<line x1="64" y1="616" x2="1136" y2="616" stroke="#D2D1CD"/>
+<text class="cap" x="64" y="652" style="fill:#55565D">LEAVES BEHIND</text>
+<text class="lab red" x="260" y="652" style="font-size:20px">A report</text>
+<text class="mut" x="260" y="680">knowledge</text>
+<text class="mut" x="260" y="705">walks out</text>
+<text class="lab red" x="437" y="652" style="font-size:20px">A system</text>
+<text class="mut" x="437" y="680">spec was the</text>
+<text class="mut" x="437" y="705">problem</text>
+<text class="lab red" x="614" y="652" style="font-size:20px">The same</text>
+<text class="lab red" x="614" y="678" style="font-size:20px">process</text>
+<text class="mut" x="614" y="706">preserved,</text>
+<text class="mut" x="614" y="731">not changed</text>
+<text class="lab red" x="791" y="652" style="font-size:20px">A capability</text>
+<text class="mut" x="791" y="680">not in the path</text>
+<text class="lab gold" x="968" y="652" style="font-size:20px">A different</text>
+<text class="lab gold" x="968" y="678" style="font-size:20px">Tuesday</text>
+<text class="mut" x="968" y="706">owned</text>
+<text class="mut" x="968" y="731">internally</text>
+<line x1="64" y1="748" x2="1136" y2="748" stroke="#D2D1CD"/>
+<text class="mut" x="64" y="798">Every model above the line is honest about what it does. None of them sells the thing the</text>
+<text class="mut" x="64" y="826">enterprise actually needs, which is a workflow that runs differently after the provider</text>
+<text class="mut" x="64" y="854">leaves. That is the gap. The forward-deployed firm sits in it.</text>
+<rect x="64" y="914" width="1072" height="104" fill="#B0432D" fill-opacity=".10"/>
+<text class="body" x="88" y="954" style="fill:#B0432D">The confusion between them is not academic. It is the single most common reason</text>
+<text class="body" x="88" y="986" style="fill:#B0432D">forward-deployed firms die: they drift into an adjacent model without noticing.</text>
 
-<!-- headers -->
-<text class="t col" x="88" y="198">MODEL</text>
-<text class="t col" x="320" y="198">SELLS</text>
-<text class="t col" x="576" y="198">REVENUE</text>
-<text class="t col" x="790" y="198">INCENTIVE</text>
-<text class="t col" x="1000" y="198">LEAVES BEHIND</text>
-<line x1="64" y1="214" x2="1136" y2="214" stroke="#C5C4C0"/>
-
-<!-- Row 1: Consulting -->
-<text class="t modelname" x="88" y="262">CONSULTING</text>
-<text class="t note" x="320" y="254" fill="#4A4B50">A recommendation</text>
-<text class="t note" x="320" y="272" fill="#7A7B82">diagnosis + conviction</text>
-<text class="t note" x="576" y="262" fill="#4A4B50">People × rate</text>
-<text class="t note" x="790" y="254" fill="#4A4B50">Deploy more people</text>
-<text class="t note" x="790" y="272" fill="#7A7B82">activity = revenue</text>
-<text class="t note" x="1000" y="254" fill="#C8553D">A report</text>
-<text class="t note" x="1000" y="272" fill="#7A7B82">knowledge walks out</text>
-<line x1="88" y1="294" x2="1112" y2="294" stroke="#E0DFDB"/>
-
-<!-- Row 2: Systems integration -->
-<text class="t modelname" x="88" y="342">SI / INTEGRATOR</text>
-<text class="t note" x="320" y="334" fill="#4A4B50">A system to spec</text>
-<text class="t note" x="320" y="352" fill="#7A7B82">build to a specification</text>
-<text class="t note" x="576" y="342" fill="#4A4B50">Milestones</text>
-<text class="t note" x="790" y="334" fill="#4A4B50">Build to spec exactly</text>
-<text class="t note" x="790" y="352" fill="#7A7B82">deviation = risk</text>
-<text class="t note" x="1000" y="334" fill="#C8553D">A system</text>
-<text class="t note" x="1000" y="352" fill="#7A7B82">spec was the problem</text>
-<line x1="88" y1="374" x2="1112" y2="374" stroke="#E0DFDB"/>
-
-<!-- Row 3: Outsourcing -->
-<text class="t modelname" x="88" y="422">OUTSOURCING</text>
-<text class="t note" x="320" y="414" fill="#4A4B50">A process running</text>
-<text class="t note" x="320" y="432" fill="#7A7B82">same process, lower cost</text>
-<text class="t note" x="576" y="422" fill="#4A4B50">Per transaction</text>
-<text class="t note" x="790" y="414" fill="#4A4B50">Standardise</text>
-<text class="t note" x="790" y="432" fill="#7A7B82">change = risk to margin</text>
-<text class="t note" x="1000" y="414" fill="#C8553D">The same process</text>
-<text class="t note" x="1000" y="432" fill="#7A7B82">preserved, not changed</text>
-<line x1="88" y1="454" x2="1112" y2="454" stroke="#E0DFDB"/>
-
-<!-- Row 4: SaaS -->
-<text class="t modelname" x="88" y="502">SAAS</text>
-<text class="t note" x="320" y="494" fill="#4A4B50">A product</text>
-<text class="t note" x="320" y="512" fill="#7A7B82">generic, scalable</text>
-<text class="t note" x="576" y="502" fill="#4A4B50">Per seat</text>
-<text class="t note" x="790" y="494" fill="#4A4B50">Generalise</text>
-<text class="t note" x="790" y="512" fill="#7A7B82">specificity = cost</text>
-<text class="t note" x="1000" y="494" fill="#C8553D">A capability</text>
-<text class="t note" x="1000" y="512" fill="#7A7B82">not in the path</text>
-<line x1="88" y1="534" x2="1112" y2="534" stroke="#C5C4C0"/>
-
-<!-- Gap row -->
-<rect x="64" y="554" width="1072" height="90" fill="#B8952B" opacity="0.10"/>
-<text class="t modelname" x="88" y="590" fill="#B8952B">FORWARD-DEPLOYED</text>
-<text class="t note" x="320" y="582" fill="#B8952B">A changed workflow</text>
-<text class="t note" x="320" y="600" fill="#4A4B50">measured, owned, persists</text>
-<text class="t note" x="576" y="590" fill="#B8952B">Per outcome</text>
-<text class="t note" x="790" y="582" fill="#B8952B">Solve cheaply</text>
-<text class="t note" x="790" y="600" fill="#4A4B50">efficiency = margin</text>
-<text class="t note" x="1000" y="582" fill="#B8952B">A different Tuesday</text>
-<text class="t note" x="1000" y="600" fill="#4A4B50">owned internally</text>
-
-<!-- bottom annotation -->
-<text class="t note" x="64" y="686" font-size="13" fill="#7A7B82">Every model above the line is honest about what it does. None of them sells the thing the enterprise actually needs,</text>
-<text class="t note" x="64" y="706" font-size="13" fill="#7A7B82">which is a workflow that runs differently after the provider leaves. That is the gap. The forward-deployed firm sits in it.</text>
-
-<rect x="64" y="730" width="1072" height="46" fill="#C8553D" opacity="0.10"/>
-<text class="t note" x="84" y="758" fill="#C8553D">The confusion between them is not academic. It is the single most common reason forward-deployed firms die — they drift into an adjacent model without noticing.</text>
+</g>
 </svg>

@@ -1,71 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 740" width="1200" height="740" role="img" aria-label="Behaviours that build trust versus behaviours that destroy it">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1080" width="1200" height="1080" role="img" aria-label="Behaviours that build trust versus behaviours that destroy it">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.item{font-size:15px;fill:#1C1D20}
-.note{font-size:13px;fill:#7A7B82}
-.speed{font-size:12px;letter-spacing:1.4px}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="740" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 10.3 — THE ASYMMETRY OF TRUST</text>
-<text class="t h" x="64" y="112">Six months to build. One action to destroy.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="1080" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 10.3 — THE ASYMMETRY OF TRUST</text>
+<text class="h" x="64" y="122">Six months to build. One action to destroy.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<line x1="600" y1="186" x2="600" y2="900" stroke="#D2D1CD"/>
+<text class="cap gold" x="64" y="206">BUILDS TRUST</text>
+<text class="mut" x="64" y="236">weeks to months</text>
+<text class="cap red" x="660" y="206">DESTROYS TRUST</text>
+<text class="mut" x="660" y="236">minutes to hours</text>
+<text class="lab" x="64" y="300" style="font-size:22px">Ship something small and correct</text>
+<text class="mut" x="64" y="330">Before the big plan, before the deck</text>
+<text class="lab red" x="660" y="300" style="font-size:22px">Escalate without warning</text>
+<text class="mut" x="660" y="330">Finding goes up before it goes sideways</text>
+<text class="lab" x="64" y="408" style="font-size:22px">Fix the unglamorous thing</text>
+<text class="mut" x="64" y="438">The CSV export, the timeout,</text>
+<text class="mut" x="64" y="464">the column header</text>
+<text class="lab red" x="660" y="408" style="font-size:22px">Solve the wrong problem conspicuously</text>
+<text class="mut" x="660" y="438">Build on the SOP nobody follows</text>
+<text class="lab" x="64" y="516" style="font-size:22px">Share sideways before sharing upward</text>
+<text class="mut" x="64" y="546">The team sees the steering review</text>
+<text class="mut" x="64" y="572">slide first</text>
+<text class="lab red" x="660" y="516" style="font-size:22px">Break confidence</text>
+<text class="mut" x="660" y="546">The corridor aside appears in a slide deck</text>
+<text class="lab" x="64" y="624" style="font-size:22px">Stay when it breaks</text>
+<text class="mut" x="64" y="654">11 PM debugging earns more than a</text>
+<text class="mut" x="64" y="680">week of meetings</text>
+<text class="lab red" x="660" y="624" style="font-size:22px">Disappear after delivery</text>
+<text class="mut" x="660" y="654">Ship and move on; it breaks;</text>
+<text class="mut" x="660" y="680">nobody is there</text>
+<text class="lab" x="64" y="732" style="font-size:22px">Hand the credit to the internal team</text>
+<text class="mut" x="64" y="762">Their name on the win, not yours</text>
+<text class="lab red" x="660" y="732" style="font-size:22px">Take the credit</text>
+<text class="mut" x="660" y="762">Present the work as your achievement</text>
+<text class="lab" x="64" y="840" style="font-size:22px">Respect the hierarchy’s pace</text>
+<text class="mut" x="64" y="870">Patience with seniority is not a</text>
+<text class="mut" x="64" y="896">compromise</text>
+<text class="lab red" x="660" y="840" style="font-size:22px">Show impatience with seniority</text>
+<text class="mut" x="660" y="870">Visible frustration with a</text>
+<text class="mut" x="660" y="896">senior person’s pace</text>
+<circle cx="600" cy="570" r="24" fill="#F7F6F3" stroke="#8A8B92" stroke-width="2"/><text class="lab red mid" x="600" y="579">≠</text>
+<line x1="64" y1="940" x2="1136" y2="940" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="984">In an Indian enterprise, destroying behaviours travel laterally through</text>
+<text class="lab" x="64" y="1016">informal networks faster than any correction can travel through formal ones.</text>
 
-<!-- Column headers -->
-<text class="t col" x="64" y="196" fill="#B8952B">BUILDS TRUST</text>
-<text class="t speed" x="64" y="216" fill="#B8952B">WEEKS TO MONTHS</text>
-<line x1="64" y1="232" x2="540" y2="232" stroke="#D2D1CD"/>
-
-<text class="t col" x="660" y="196" fill="#C8553D">DESTROYS TRUST</text>
-<text class="t speed" x="660" y="216" fill="#C8553D">MINUTES TO HOURS</text>
-<line x1="660" y1="232" x2="1136" y2="232" stroke="#D2D1CD"/>
-
-<line x1="600" y1="176" x2="600" y2="680" stroke="#D2D1CD"/>
-
-<!-- Build column -->
-<text class="t item" x="64" y="280">Ship something small and correct</text>
-<text class="t note" x="64" y="302">Before the big plan, before the deck</text>
-
-<text class="t item" x="64" y="350">Fix the unglamorous thing</text>
-<text class="t note" x="64" y="372">The CSV export, the timeout, the column header</text>
-
-<text class="t item" x="64" y="420">Share sideways before sharing upward</text>
-<text class="t note" x="64" y="442">The team sees the steering review slide first</text>
-
-<text class="t item" x="64" y="490">Stay when it breaks</text>
-<text class="t note" x="64" y="512">11 PM debugging earns more than a week of meetings</text>
-
-<text class="t item" x="64" y="560">Hand the credit to the internal team</text>
-<text class="t note" x="64" y="582">Their name on the win, not yours</text>
-
-<text class="t item" x="64" y="630">Respect the hierarchy's pace</text>
-<text class="t note" x="64" y="652">Patience with seniority is not a compromise</text>
-
-<!-- Destroy column -->
-<text class="t item" x="660" y="280" fill="#C8553D">Escalate without warning</text>
-<text class="t note" x="660" y="302">Finding goes up before it goes sideways</text>
-
-<text class="t item" x="660" y="350" fill="#C8553D">Solve the wrong problem conspicuously</text>
-<text class="t note" x="660" y="372">Build on the SOP nobody follows</text>
-
-<text class="t item" x="660" y="420" fill="#C8553D">Break confidence</text>
-<text class="t note" x="660" y="442">The corridor aside appears in a slide deck</text>
-
-<text class="t item" x="660" y="490" fill="#C8553D">Disappear after delivery</text>
-<text class="t note" x="660" y="512">Ship and move on; it breaks; nobody is there</text>
-
-<text class="t item" x="660" y="560" fill="#C8553D">Take the credit</text>
-<text class="t note" x="660" y="582">Present the work as your achievement</text>
-
-<text class="t item" x="660" y="630" fill="#C8553D">Show impatience with seniority</text>
-<text class="t note" x="660" y="652">Visible frustration with a senior person's pace</text>
-
-<!-- Asymmetry marker -->
-<circle cx="600" cy="430" r="22" fill="#F7F6F3" stroke="#C5C4C0"/>
-<text class="t" x="600" y="437" font-size="20" fill="#C8553D" text-anchor="middle">≠</text>
-
-<line x1="64" y1="692" x2="1136" y2="692" stroke="#D2D1CD"/>
-<text class="t" x="64" y="724" font-size="16" fill="#4A4B50">In an Indian enterprise, destroying behaviours travel laterally through informal networks faster than any correction can travel through formal ones.</text>
+</g>
 </svg>

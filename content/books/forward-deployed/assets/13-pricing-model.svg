@@ -1,68 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-label="The base-plus-value-share pricing model">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 990" width="1200" height="990" role="img" aria-label="The base-plus-value-share pricing model">
 <style>
-.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
-.kicker{font-size:13px;letter-spacing:3.2px;fill:#6A6B72}
-.h{font-size:30px;fill:#1C1D20}
-.col{font-size:12.5px;letter-spacing:2.6px;fill:#6A6B72}
-.note{font-size:13px;fill:#7A7B82}
-.lbl{font-size:16px;fill:#1C1D20}
-.num{font-size:28px;fill:#1C1D20}
-.unit{font-size:14px;fill:#6A6B72}
+text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#1C1D20}
+.kicker{font-size:18px;letter-spacing:3px;fill:#5A5B62;font-weight:700}
+.h{font-size:36px;font-weight:700;letter-spacing:-.4px}
+.cap{font-size:18px;letter-spacing:2.2px;font-weight:700}
+.lab{font-size:24px;font-weight:700}
+.body{font-size:22px}
+.mut{font-size:20px;fill:#55565D}
+.note{font-size:19px;fill:#55565D}
+.red{fill:#B0432D}
+.gold{fill:#8A6D12}
+.inv{fill:#F7F6F3}
+.mid{text-anchor:middle}
+.end{text-anchor:end}
 </style>
-<rect width="1200" height="640" fill="#F7F6F3"/>
-<text class="t kicker" x="64" y="70">FIGURE 13.3 — THE PRICING MODEL</text>
-<text class="t h" x="64" y="112">Revenue follows impact, not headcount.</text>
-<line x1="64" y1="146" x2="1136" y2="146" stroke="#D2D1CD"/>
+<rect width="1200" height="990" fill="#F7F6F3"/>
+<text class="kicker" x="64" y="72">FIGURE 13.3 — THE PRICING MODEL</text>
+<text class="h" x="64" y="122">Revenue follows impact, not headcount.</text>
+<line x1="64" y1="152" x2="1136" y2="152" stroke="#D2D1CD"/>
+<g transform="translate(0,0)">
+<text class="cap" x="64" y="206">THE STRUCTURE</text>
+<line x1="64" y1="224" x2="544" y2="224" stroke="#8A8B92" stroke-width="2"/>
+<rect x="64" y="246" width="480" height="132" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/><text class="lab" x="88" y="288" style="font-size:23px">Base fee</text>
+<text class="mut" x="88" y="320">Covers operator cost during deployment</text>
+<text class="mut" x="88" y="348">Low enough for procurement to approve</text>
+<text class="mid" x="304" y="430" style="font-size:40px;font-weight:700;fill:#55565D">+</text>
+<rect x="64" y="458" width="480" height="176" fill="#B8952B" fill-opacity=".14" stroke="#B8952B" stroke-width="2.5"/><text class="lab gold" x="88" y="500" style="font-size:23px">Value share</text>
+<text class="mut" x="88" y="532">Percentage of measured outcome</text>
+<text class="mut" x="88" y="558">over defined period</text>
+<text class="mut" x="88" y="584">Aligns operator incentive with</text>
+<text class="mut" x="88" y="610">client outcome</text>
+<text class="cap" x="600" y="206">EXAMPLE · DEALER RECONCILIATION</text>
+<line x1="600" y1="224" x2="1136" y2="224" stroke="#8A8B92" stroke-width="2"/>
+<rect x="600" y="246" width="262" height="176" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/><text class="cap" x="620" y="284">DEPLOYMENT</text><text x="620" y="336" style="font-size:44px;font-weight:700">₹12L</text>
+<text class="mut" x="620" y="372">12-week operator</text>
+<text class="mut" x="620" y="398">cost</text>
+<rect x="878" y="246" width="258" height="176" fill="#ECEBE7" stroke="#8A8B92" stroke-width="2"/><text class="cap" x="898" y="284">ANNUAL OUTCOME</text><text x="898" y="336" style="font-size:44px;font-weight:700">₹2Cr</text>
+<text class="mut" x="898" y="372">Working capital</text>
+<text class="mut" x="898" y="398">released</text>
+<rect x="600" y="442" width="536" height="192" fill="#B8952B" fill-opacity=".14" stroke="#B8952B" stroke-width="2.5"/><text class="cap gold" x="620" y="480">VALUE SHARE (20% OVER 3 YEARS)</text><text class="gold" x="620" y="544" style="font-size:44px;font-weight:700">₹1.2Cr</text>
+<text class="mut" x="820" y="524">Total revenue from</text>
+<text class="mut" x="820" y="550">one deployment</text>
+<rect x="64" y="690" width="520" height="96" fill="#ECEBE7"/>
+<text class="body" x="88" y="728" style="font-size:20px">Consulting model: revenue = billing</text>
+<text class="body" x="88" y="758" style="font-size:20px">rate × headcount × utilisation</text>
+<rect x="616" y="690" width="520" height="96" fill="#B8952B" fill-opacity=".14"/>
+<text class="body gold" x="640" y="728" style="font-size:20px;font-weight:700">Forward-deployed: revenue = base +</text>
+<text class="body gold" x="640" y="758" style="font-size:20px;font-weight:700">(outcome × share % × years)</text>
+<line x1="64" y1="830" x2="1136" y2="830" stroke="#D2D1CD"/>
+<text class="lab" x="64" y="874">The constraint is not demand. The constraint is the number of</text>
+<text class="lab" x="64" y="906">operators who can deliver.</text>
 
-<!-- Left: the structure -->
-<text class="t col" x="64" y="200">THE STRUCTURE</text>
-<line x1="64" y1="216" x2="500" y2="216" stroke="#D2D1CD"/>
-
-<!-- Base fee box -->
-<rect x="64" y="240" width="420" height="100" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t lbl" x="84" y="272">Base fee</text>
-<text class="t note" x="84" y="296">Covers operator cost during deployment</text>
-<text class="t note" x="84" y="316">Low enough for procurement to approve</text>
-
-<!-- Plus sign -->
-<text class="t" x="274" y="370" text-anchor="middle" font-size="24" fill="#6A6B72">+</text>
-
-<!-- Value share box -->
-<rect x="64" y="390" width="420" height="100" rx="8" fill="#B8952B" opacity="0.10" stroke="#B8952B"/>
-<text class="t lbl" x="84" y="422" fill="#B8952B">Value share</text>
-<text class="t note" x="84" y="446">Percentage of measured outcome over defined period</text>
-<text class="t note" x="84" y="466">Aligns operator incentive with client outcome</text>
-
-<!-- Right: example -->
-<text class="t col" x="600" y="200">EXAMPLE · DEALER RECONCILIATION</text>
-<line x1="600" y1="216" x2="1136" y2="216" stroke="#D2D1CD"/>
-
-<!-- Deployment cost -->
-<rect x="600" y="240" width="240" height="120" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t unit" x="620" y="268">DEPLOYMENT</text>
-<text class="t num" x="620" y="306">₹12L</text>
-<text class="t note" x="620" y="334">12-week operator cost</text>
-
-<!-- Outcome -->
-<rect x="860" y="240" width="276" height="120" rx="8" fill="#EBEAE6" stroke="#D2D1CD"/>
-<text class="t unit" x="880" y="268">ANNUAL OUTCOME</text>
-<text class="t num" x="880" y="306">₹2Cr</text>
-<text class="t note" x="880" y="334">Working capital released</text>
-
-<!-- Value share calc -->
-<rect x="600" y="390" width="536" height="100" rx="8" fill="#B8952B" opacity="0.10" stroke="#B8952B"/>
-<text class="t unit" x="620" y="418" fill="#B8952B">VALUE SHARE (20% OVER 3 YEARS)</text>
-<text class="t num" x="620" y="456" fill="#B8952B">₹1.2Cr</text>
-<text class="t note" x="820" y="456">Total revenue from one deployment</text>
-
-<!-- Bottom comparison -->
-<line x1="64" y1="530" x2="1136" y2="530" stroke="#D2D1CD"/>
-
-<rect x="64" y="548" width="500" height="32" rx="4" fill="#EBEAE6"/>
-<text class="t note" x="84" y="570">Consulting model: revenue = billing rate × headcount × utilisation</text>
-
-<rect x="600" y="548" width="536" height="32" rx="4" fill="#B8952B" opacity="0.10"/>
-<text class="t note" x="620" y="570" fill="#B8952B">Forward-deployed: revenue = base + (outcome × share %  × years)</text>
-
-<text class="t" x="64" y="620" font-size="16" fill="#4A4B50">The constraint is not demand. The constraint is the number of operators who can deliver.</text>
+</g>
 </svg>
