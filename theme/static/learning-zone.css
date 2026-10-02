@@ -214,7 +214,14 @@ pre.mermaid { background: #FFFFFF !important; border: 1px solid var(--lz-soft) !
 .card, a.card, .thread, .toc, .pm-band, .recap {
   background: var(--lz-bg) !important; border: 1px solid var(--lz-rule) !important; color: var(--lz-ink);
 }
-.card:hover, a.card:hover { background: var(--lz-fill) !important; border-color: var(--lz-rule) !important; }
+/* Hover: the targeted module inverts (ink fill, paper text) and its
+   siblings fade back, so it is obvious which module a click will open. */
+a.card { transition: background .15s, color .15s, opacity .15s; }
+.card:hover, a.card:hover, a.card:focus-visible { background: var(--lz-ink) !important; border-color: var(--lz-ink) !important; color: var(--lz-bg); text-decoration: none; }
+a.card:hover *, a.card:focus-visible * { color: var(--lz-bg) !important; }
+a.card:hover .tag, a.card:hover .card-num, a.card:hover p, a.card:hover li { opacity: .8; }
+:has(> a.card:hover) > a.card:not(:hover) { opacity: .6; }
+@media (hover: none) { :has(> a.card:hover) > a.card:not(:hover) { opacity: 1; } }
 .card h2, .card h3, a.card h2 { font-weight: 700; letter-spacing: -.01em; font-size: 18px; }
 .card p, a.card p, .card li, .thread p { color: var(--lz-ink2); }
 .card-go, .card-iw { color: var(--lz-ink); }
