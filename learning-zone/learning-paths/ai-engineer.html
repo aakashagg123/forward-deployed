@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Learning path: AI Engineer — Learning paths</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Learning paths</span><em>start here</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="senior-product-manager.html">1 · Learning path: Senior Product Manager</a><a class="modlink" href="ai-product-lead.html">2 · Learning path: AI Product Lead</a><a class="modlink active" href="ai-engineer.html">3 · Learning path: AI Engineer</a><a class="modlink" href="ai-engineering-lead.html">4 · Learning path: AI Engineering Lead</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <h1>Learning path: AI Engineer</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>This path is build-first. It starts with how models learn, then moves through models and APIs, grounding and memory, agents and the harness, and production. It is the longest path. The harness track is the core: you build a coding agent's parts by hand and end with a tested capstone.</p>
+<p><strong>Who it is for:</strong> a software engineer who builds AI-powered systems.</p>
+<p><strong>Outcome:</strong> You can build, test and run a retrieval-backed, tool-using agent, and explain how it fails.</p>
+<p><strong>Before you start:</strong> Comfortable Python and one backend stack. Basic linear algebra helps. The foundations stage covers what you need.</p>
+<p><strong>Length:</strong> about 71.5 hours, across 5 stages. The time is a rough estimate (see Under the hood).</p>
+<p><strong>Terms:</strong> a large language model (LLM) is a model like those behind chat assistants; the plural is large language models (LLMs); machine learning (ML) is the practice of training models from data; convolutional neural networks (CNNs) are a model type built for images; Extensible Markup Language (XML) is a tag-based text format.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI engineer</strong></p>
+<p><strong>Why it matters</strong> — Calling an API is easy. Making the result reliable, safe and affordable is the job.</p>
+<p><strong>What it changes in your decisions</strong> — You test before you tune. You put checks in code, not in prompts. You design for failure first.</p>
+<p><strong>Ask yourself</strong> — <em>"If this step returns garbage, what stops it from doing damage?"</em></p>
+<p><strong>Risk if ignored</strong> — The demo works. Production loops, leaks or overspends, and nobody can say why.</p>
+</blockquote>
+<h2 id="the-path-at-a-glance">The path at a glance</h2>
+<p>Each stage ends with a checkpoint. Move on when you can do what the checkpoint says.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Focus</th>
+<th>About</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Foundations</td>
+<td>about 4.5 hours (plus planned modules)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Models and APIs</td>
+<td>about 6.5 hours</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Grounding and memory</td>
+<td>about 5 hours</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Agents and the harness (build it)</td>
+<td>about 29 hours</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Production</td>
+<td>about 26 hours</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stage-1-foundations">Stage 1: Foundations</h2>
+<p>Learn how a model is trained and what its data looks like. Everything later builds on it. (about 4.5 hours plus the planned modules)</p>
+<ul>
+<li><strong>Machine learning</strong>: <a href="../machine-learning/what-machine-learning-is.html">1. What machine learning is, and when to use it</a> · <a href="../machine-learning/data-features-labels-and-leakage.html">2. Data: features, labels, splits and leakage</a> · <a href="../machine-learning/training-loss-and-gradient-descent.html">3. Training: loss and gradient descent</a> · <a href="../machine-learning/generalization-overfitting-and-bias-variance.html">4. Generalization: overfitting and the bias–variance tradeoff</a> · <a href="../machine-learning/measuring-a-model.html">5. Measuring a model: metrics, thresholds and baselines</a> · <a href="../machine-learning/model-families.html">6. Model families: linear models, trees and neural networks</a> · <a href="../machine-learning/ml-in-production.html">7. ML in production: drift, skew and the lifecycle</a> · <a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">8. Learning and doing ML with Claude Code</a></li>
+<li><strong>Tensors</strong>: coming soon. Shapes, broadcasting and batching. Planned.</li>
+<li><strong>CNNs</strong>: coming soon. Optional branch for vision. Planned.</li>
+<li><strong>LLMs</strong>: <a href="../llms/what-is-an-llm.html">1. What an LLM actually is</a> · <a href="../llms/the-context-window.html">2. The context window</a> · <a href="../llms/temperature-sampling-and-determinism.html">5. Temperature, sampling &amp; determinism</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can explain what a token and a context window are, and how sampling changes the output. You can read a training curve and say whether a model is overfitting.</p>
+<h2 id="stage-2-models-and-apis">Stage 2: Models and APIs</h2>
+<p>Call models well: contracts, streaming, retries, structured output and prompts that hold up. (about 6.5 hours)</p>
+<ul>
+<li><strong>LLMs</strong>: <a href="../llms/capabilities-and-the-jagged-frontier.html">3. Capabilities &amp; the jagged frontier</a> · <a href="../llms/choosing-a-model.html">6. Choosing a model</a> · <a href="../llms/prompting-vs-rag-vs-finetuning.html">7. Prompting vs. RAG vs. fine-tuning</a></li>
+<li><strong>APIs &amp; integrations</strong>: <a href="../api-integrations/the-request-response-contract.html">1. The request/response contract</a> · <a href="../api-integrations/calling-an-llm-api.html">2. Calling an LLM API</a> · <a href="../api-integrations/structured-output-and-json-mode.html">3. Structured output &amp; JSON mode</a> · <a href="../api-integrations/webhooks-and-async-patterns.html">4. Webhooks &amp; async patterns</a> · <a href="../api-integrations/integrating-into-existing-systems.html">5. Integrating into existing systems</a> · <a href="../api-integrations/mcp-and-standard-connectors.html">6. MCP &amp; standard connectors</a></li>
+<li><strong>Prompt engineering</strong>: <a href="../prompt-engineering/the-anatomy-of-a-prompt.html">2. The anatomy of a prompt</a> · <a href="../prompt-engineering/structured-prompting.html">4. Structured prompting: XML, delimiters, scaffolds</a> · <a href="../prompt-engineering/few-shot-cot-self-consistency.html">5. Few-shot, chain-of-thought, and self-consistency</a> · <a href="../prompt-engineering/prompt-chaining-and-workflows.html">6. Prompt chaining and multi-step workflows</a> · <a href="../prompt-engineering/prompting-for-tools-and-agents.html">7. Prompting for tools and agents</a> · <a href="../prompt-engineering/when-prompts-fail.html">9. When prompts fail: the diagnostic playbook</a> · <a href="../prompt-engineering/prompts-in-production.html">10. Prompts in production: versioning, testing, and model upgrades</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can call a model with retries and a typed output, and you can diagnose a failing prompt.</p>
+<h2 id="stage-3-grounding-and-memory">Stage 3: Grounding and memory</h2>
+<p>Give the model the right data, in the right shape, at the right time. (about 5 hours)</p>
+<ul>
+<li><strong>RAG &amp; vector databases</strong>: <a href="../rag-vector-databases/why-rag.html">1. Why RAG?</a> · <a href="../rag-vector-databases/embeddings-and-semantic-search.html">2. Embeddings &amp; semantic search</a> · <a href="../rag-vector-databases/vector-databases.html">3. Vector databases</a> · <a href="../rag-vector-databases/chunking-and-ingestion.html">4. Chunking &amp; ingestion</a> · <a href="../rag-vector-databases/retrieval-quality.html">5. Retrieval quality</a> · <a href="../rag-vector-databases/graphrag-and-structured-retrieval.html">7. Beyond flat RAG: GraphRAG &amp; structured retrieval</a></li>
+<li><strong>AI engineering: RAG</strong>: <a href="../ai/03-rag.html#rag-architecture">RAG architecture: chunking, embeddings, hybrid search, reranking, and freshness</a> · <a href="../ai/03-rag.html#retrieval-evals">Retrieval evals: recall, precision, grounding, attribution, and citation quality</a></li>
+<li><strong>Memory &amp; context</strong>: <a href="../memory-and-context/writing-and-maintaining-memory.html">3. Writing and maintaining memory</a> · <a href="../memory-and-context/retrieval-as-memory.html">4. Retrieval as memory</a></li>
+<li><strong>Context engineering</strong>: <a href="../context-engineering/the-anatomy-of-a-context-pipeline.html">3. The anatomy of a context pipeline</a> · <a href="../context-engineering/evaluating-context-quality.html">6. Evaluating context quality</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can build a retrieval pipeline and measure its quality with a test set.</p>
+<h2 id="stage-4-agents-and-the-harness-build-it">Stage 4: Agents and the harness (build it)</h2>
+<p>Build the parts of an agent by hand. This is the core of the path. (about 29 hours)</p>
+<ul>
+<li><strong>Tool calling</strong>: <a href="../tool-calling/tool-contracts-and-reliability.html">2. Tool contracts &amp; reliability</a> · <a href="../tool-calling/permissions-blast-radius-and-the-trust-boundary.html">3. Permissions, blast radius &amp; the trust boundary</a></li>
+<li><strong>AI engineering: reliable outputs</strong>: <a href="../ai/02-reliable-outputs.html#function-calling">Function calling reliability, tool contracts, argument validation, and idempotency</a></li>
+<li><strong>AI agents</strong>: <a href="../ai-agents/planning-reasoning-and-reliability-across-a-run.html">2. Planning, reasoning &amp; reliability across a run</a></li>
+<li><strong>Agentic workflows</strong>: <a href="../agentic-workflows/choosing-a-workflow-pattern.html">1. Choosing a workflow pattern</a> · <a href="../agentic-workflows/orchestrating-more-than-one-agent.html">2. Orchestrating more than one agent</a> · <a href="../agentic-workflows/making-a-workflow-durable-and-worth-owning.html">3. Making a workflow durable, and worth owning</a></li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/01-foundations-and-the-loop/README.html">Phase 01 — Foundations and the Loop</a> (5 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/02-tools/README.html">Phase 02 — Tools</a> (3 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/03-context-and-memory/README.html">Phase 03 — Context and memory</a> (5 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/04-prompts-and-instructions/README.html">Phase 04 — Prompts and instructions</a> (3 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/05-files-and-shell/README.html">Phase 05 — Files and Shell</a> (6 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/06-permissions-and-security/README.html">Phase 06 — Permissions and Security</a> (4 lessons, build it)</li>
+</ul>
+<p><strong>Ready to move on when:</strong> You have a working loop with tools, a permission gate and a context budget, and tests that fail when you break them.</p>
+<h2 id="stage-5-production">Stage 5: Production</h2>
+<p>Plan for failure: extend, test, observe, secure and scale. (about 26 hours)</p>
+<ul>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/07-planning-and-subagents/README.html">Phase 07 — Planning and Subagents</a> (4 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/08-extending-mcp-skills-retrieval/README.html">Phase 08 — Extending: MCP, Skills, Retrieval</a> (5 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/09-reliability-evals-and-ops/README.html">Phase 09 — Reliability, evals, and ops</a> (5 lessons, build it)</li>
+<li><strong>Harness engineering</strong>: <a href="../harness/phases/10-capstone/README.html">Phase 10 — Capstone</a> (1 lessons, build it). Allow about 3 hours: the capstone plus your own evals, traces and cost.</li>
+<li><strong>AI agents</strong>: <a href="../ai-agents/running-an-agent-in-production.html">4. Running an agent in production</a> · <a href="../ai-agents/choosing-and-acceptance-testing-an-agent.html">5. Choosing and acceptance-testing an agent</a></li>
+<li><strong>AI engineering: inference internals</strong>: <a href="../ai/01-inference-internals.html#prefill-vs-decode">Prefill vs. decode latency</a> · <a href="../ai/01-inference-internals.html#batching-and-paged-attention">Continuous batching &amp; paged attention</a> · <a href="../ai/01-inference-internals.html#kv-cache-management">KV cache management: eviction, reuse, and memory pressure at scale</a> · <a href="../ai/01-inference-internals.html#prompt-vs-semantic-caching">Prompt caching vs. semantic caching</a></li>
+<li><strong>AI engineering: reliable outputs</strong>: <a href="../ai/02-reliable-outputs.html#model-routing">Model routing, graceful fallback logic, and degraded-mode UX</a> · <a href="../ai/02-reliable-outputs.html#structured-output">Structured output: validation, repair loops, and fallback chains</a> · <a href="../ai/02-reliable-outputs.html#agent-guardrails">Agent guardrails: loop budgets, tool budgets, and termination conditions</a></li>
+<li><strong>AI engineering: evals &amp; observability</strong>: <a href="../ai/04-evals-observability.html#evals">Evals: golden sets, regression tests, adversarial tests, LLM-as-judge, and human evals</a> · <a href="../ai/04-evals-observability.html#observability">LLM observability: traces, spans, tokens, latency, errors, and drift</a> · <a href="../ai/04-evals-observability.html#cost-attribution">Cost attribution per feature, workflow, tenant, and user journey — not just per model</a></li>
+<li><strong>AI engineering: safety &amp; multi-tenancy</strong>: <a href="../ai/05-safety-multitenancy.html#safety-engineering">Safety engineering: prompt injection defense, data leakage prevention, and permission boundaries</a> · <a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation, cache safety, and cross-user context contamination prevention</a></li>
+<li><strong>AI security &amp; guardrails</strong>: <a href="../ai-security-and-guardrails/the-threat-model-and-guardrails.html">1. The threat model, and guardrails as architecture</a> · <a href="../ai-security-and-guardrails/red-teaming-and-proving-your-defenses.html">2. Red-teaming: testing your defenses</a></li>
+<li><strong>Access control</strong>: <a href="../access-control/authentication-authorization-and-the-access-control-model.html">1. Authentication, authorization and the access-control model</a> · <a href="../access-control/oauth-openid-connect-and-tokens.html">2. OAuth 2.0, OpenID Connect and tokens</a> · <a href="../access-control/access-control-for-ai-agents.html">8. Access control for AI agents</a></li>
+<li><strong>System design</strong>: <a href="../system-design/foundations-and-framework.html">1. Foundations &amp; framework</a> · <a href="../system-design/core-building-blocks.html">2. Core building blocks</a> · <a href="../system-design/data-infrastructure.html">7. Data infrastructure</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> Your capstone passes its tests, and you can show its evals, traces, permission rules and cost.</p>
+<h2 id="skip-ahead-rules">Skip-ahead rules</h2>
+<ul>
+<li>If you know machine learning, skip the foundations stage and start at models and APIs.</li>
+<li>If you only work with hosted models, read the inference lessons as background and skip the deep ones.</li>
+<li>If you want a faster tour, build harness phases 1, 2, 3 and 6 and skim the rest.</li>
+</ul>
+<h2 id="worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</h2>
+<p><em>This example is invented, to show the method.</em></p>
+<p>An AI engineer with nine hours a week plans 8 weeks of work. Each week ends with something you can show. At this pace the full path (about 71.5 hours) takes about 8 weeks.</p>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Stage</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Stage 2</td>
+<td>Call a model through an API with retries and a typed output.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Stage 3</td>
+<td>Add retrieval over your own documents and measure it with ten questions.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Stage 4</td>
+<td>Build harness phase 1: the loop. Run its asserts.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Stage 4</td>
+<td>Build harness phases 2 and 3: tools and context.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Stage 4</td>
+<td>Build harness phases 4 and 5: prompts, files and shell.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Stage 4</td>
+<td>Build harness phase 6: permissions and security.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Stage 5</td>
+<td>Build harness phases 7 and 8: planning, subagents and MCP.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Stage 5</td>
+<td>Build phase 9 and the capstone. Break the capstone on purpose and watch it fail.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<ul>
+<li><strong>Build vs. read.</strong> The harness lessons ask you to type the code. Skimming saves time and loses the failures you would have hit.</li>
+<li><strong>Depth vs. breadth.</strong> The inference lessons go deep on serving. Read them if you run models, skim them if you call hosted ones.</li>
+<li><strong>Frameworks vs. from scratch.</strong> Building by hand first makes later framework choices easier to judge.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Tuning before testing.</strong> Build the eval set first. Tuning without one is guessing.</li>
+<li><strong>Checks in prompts.</strong> A rule in a prompt is a request. A rule in code is a control.</li>
+<li><strong>Skipping the permission gate.</strong> An agent without one is a security incident waiting for a trigger.</li>
+<li><strong>No failure tests.</strong> Break your agent on purpose and watch the tests catch it.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Does every model call have a timeout, a retry rule and a typed output?</li>
+<li class="task todo">Do I have a test set for retrieval and for the agent?</li>
+<li class="task todo">Is every tool call behind a permission check in code?</li>
+<li class="task todo">Is there a budget on steps and cost?</li>
+<li class="task todo">Can I trace one request from input to answer?</li>
+</ul>
+<h2 id="under-the-hood-how-this-path-was-built">Under the hood: how this path was built</h2>
+<p>Lesson links come from the track build configs, so a renamed lesson is caught by the link check. Time is the number of lessons times 25 minutes for a reading lesson, times 60 minutes for a harness lesson that you build, and 120 minutes to skim a harness phase. Add time for exercises. Modules marked "coming soon" are planned and not counted.</p>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="ai-engineering-lead.html">AI Engineering Lead path</a></li>
+<li><a href="ai-product-lead.html">AI Product Lead path</a></li>
+<li><a href="index.html">Choose your path</a></li>
+<li><a href="recap.html">Recap: paths compared</a></li>
+</ul>
+<h2 id="sources">Sources</h2>
+<p>Lesson counts and titles come from the track overview pages and build configs in this repository. The time estimates are this course's rule of thumb, not measured results. The week plan is invented.</p></div>
+  <div class="pagenav"><a class="navcard prev" href="ai-product-lead.html"><span class="lbl">← Previous</span><span class="ttl">Learning path: AI Product Lead</span></a><a class="navcard next" href="ai-engineering-lead.html"><span class="lbl">→ Next</span><span class="ttl">Learning path: AI Engineering Lead</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-path-at-a-glance">The path at a glance</a><a class="h2" href="#stage-1-foundations">Stage 1: Foundations</a><a class="h2" href="#stage-2-models-and-apis">Stage 2: Models and APIs</a><a class="h2" href="#stage-3-grounding-and-memory">Stage 3: Grounding and memory</a><a class="h2" href="#stage-4-agents-and-the-harness-build-it">Stage 4: Agents and the harness (build it)</a><a class="h2" href="#stage-5-production">Stage 5: Production</a><a class="h2" href="#skip-ahead-rules">Skip-ahead rules</a><a class="h2" href="#worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#under-the-hood-how-this-path-was-built">Under the hood: how this path was built</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=learning-paths%2Fai-engineer.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="learning-paths/ai-engineer.html"</script><script defer src="../assets/glossary.js"></script></body></html>

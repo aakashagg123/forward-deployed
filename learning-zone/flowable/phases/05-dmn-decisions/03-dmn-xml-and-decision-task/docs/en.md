@@ -19,29 +19,29 @@ table, feeds it variables, and collects the outputs.
 Two artifacts, two lifecycles, one seam:
 
 <style>
-.dgm-dxd{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-dxd{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-dxd-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-dxd-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-dxd h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-dxd-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-dxd h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-dxd-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-dxd-cols{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .dgm-dxd-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
-.dgm-dxd-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
-.dgm-dxd-col.accent{background:#faeceb;border-color:#e3b3ad}
-.dgm-dxd-col.blue{background:#ddf4ff;border-color:#b6e3ff}
-.dgm-dxd-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-dxd-col.neutral{background:var(--color-surface-tertiary);border-color:var(--color-border)}
+.dgm-dxd-col.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-dxd-col.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-dxd-col.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
 .dgm-dxd-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.dgm-dxd-col.neutral h6{color:#59636e}
-.dgm-dxd-col.accent h6{color:#7a2c2e}
-.dgm-dxd-col.blue h6{color:#0550ae}
-.dgm-dxd-col.green h6{color:#1a614f}
-.dgm-dxd-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
-  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-dxd-col.neutral h6{color:var(--color-text-secondary)}
+.dgm-dxd-col.accent h6{color:var(--color-text-danger)}
+.dgm-dxd-col.blue h6{color:var(--color-text-info)}
+.dgm-dxd-col.green h6{color:var(--color-text-success)}
+.dgm-dxd-item{background:var(--color-surface);border:1px solid var(--color-border-info-surface);border-radius:8px;padding:6px 9px;font-size:10px;
+  color:var(--color-text);line-height:1.35;margin-bottom:5px}
 .dgm-dxd-item:last-child{margin-bottom:0}
-.dgm-dxd-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+.dgm-dxd-link{display:flex;justify-content:center;color:var(--color-text-tertiary);font-size:9.5px;font-weight:700;
   text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
 @media (max-width:640px){.dgm-dxd{padding:20px 16px 18px}.dgm-dxd-cols{grid-template-columns:1fr}}
 </style>

@@ -28,23 +28,23 @@ the start event, moves along flows, and is consumed at an end event. The instanc
 is complete when no tokens remain.
 
 <style>
-.dgm-tsf{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-tsf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-tsf-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-tsf-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-tsf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-tsf-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-tsf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-tsf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-tsf-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
-.dgm-tsf-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
-  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
-.dgm-tsf-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
-.dgm-tsf-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
-.dgm-tsf-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
-.dgm-tsf-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
-.dgm-tsf-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
-.dgm-tsf-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+.dgm-tsf-n{background:var(--color-surface-tertiary);border:1px solid var(--color-border);border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:var(--color-text);line-height:1.3}
+.dgm-tsf-n.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-tsf-n.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface);color:var(--color-text-info)}
+.dgm-tsf-n.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface);color:var(--color-text-success)}
+.dgm-tsf-n.red{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-tsf-arr{color:var(--color-text-tertiary);font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-tsf-arr .lbl{font-size:8.5px;font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.3px}
 @media (max-width:640px){.dgm-tsf{padding:20px 16px 18px}.dgm-tsf-row{flex-direction:column}}
 </style>
 <div class="dgm-tsf">

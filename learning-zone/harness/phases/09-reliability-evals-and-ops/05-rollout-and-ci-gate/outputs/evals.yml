@@ -1,0 +1,23 @@
+# Copy to .github/workflows/evals.yml. Marks a PR red when the eval score regresses.
+name: Harness evals
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Eval gate (exits 1 on a regression)
+        run: python3 harness-engineering/phases/09-reliability-evals-and-ops/03-eval-harness/code/eval_harness.py
+      - name: The gate must reject a regressed candidate
+        run: |
+          if python3 harness-engineering/phases/09-reliability-evals-and-ops/03-eval-harness/code/eval_harness.py --candidate regressed; then
+            echo "the gate passed a regressed candidate"
+            exit 1
+          fi

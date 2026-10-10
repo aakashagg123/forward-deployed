@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Learning paths: recap — Learning paths</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Learning paths</span><em>start here</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="senior-product-manager.html">1 · Learning path: Senior Product Manager</a><a class="modlink" href="ai-product-lead.html">2 · Learning path: AI Product Lead</a><a class="modlink" href="ai-engineer.html">3 · Learning path: AI Engineer</a><a class="modlink" href="ai-engineering-lead.html">4 · Learning path: AI Engineering Lead</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
+    <h1>Learning paths: recap</h1>
+  </div>
+  <div class="MarkdownContent"><h2 id="the-paths-in-one-view">The paths in one view</h2>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Starts with</th>
+<th>Spends the most time on</th>
+<th>Ends with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="senior-product-manager.html">Senior PM</a></td>
+<td>A technical footing</td>
+<td>The decisions only the PM owns</td>
+<td>Optional depth where the roadmap needs it</td>
+</tr>
+<tr>
+<td><a href="ai-product-lead.html">AI Product Lead</a></td>
+<td>Model and data foundations</td>
+<td>Context, agents, and trust</td>
+<td>Running the product</td>
+</tr>
+<tr>
+<td><a href="ai-engineer.html">AI Engineer</a></td>
+<td>Machine learning and LLM basics</td>
+<td>Agents and the harness</td>
+<td>Production</td>
+</tr>
+<tr>
+<td><a href="ai-engineering-lead.html">AI Engineering Lead</a></td>
+<td>Model behaviour and cost</td>
+<td>Quality, safety and access</td>
+<td>Working with product</td>
+</tr>
+</tbody>
+</table>
+<h2 id="which-path-reads-how-much-of-each-track">Which path reads how much of each track</h2>
+<p>"Full" means every lesson. A number means that many lessons out of the track's total. A dash means the path skips the track.</p>
+<table>
+<thead>
+<tr>
+<th>Track</th>
+<th>Senior PM</th>
+<th>AI Product Lead</th>
+<th>AI Engineer</th>
+<th>AI Engineering Lead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product sense</td>
+<td>1 of 7</td>
+<td>1 of 7</td>
+<td>—</td>
+<td>1 of 7</td>
+</tr>
+<tr>
+<td>Technical product sense</td>
+<td>5 of 9</td>
+<td>1 of 9</td>
+<td>—</td>
+<td>2 of 9</td>
+</tr>
+<tr>
+<td>Technical product management</td>
+<td>1 of 9</td>
+<td>5 of 9</td>
+<td>—</td>
+<td>7 of 9</td>
+</tr>
+<tr>
+<td>Generative AI</td>
+<td>Full</td>
+<td>3 of 6</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>LLMs</td>
+<td>6 of 7</td>
+<td>6 of 7</td>
+<td>6 of 7</td>
+<td>5 of 7</td>
+</tr>
+<tr>
+<td>Prompt engineering</td>
+<td>4 of 10</td>
+<td>1 of 10</td>
+<td>7 of 10</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Evaluation &amp; observability</td>
+<td>Full</td>
+<td>Full</td>
+<td>—</td>
+<td>Full</td>
+</tr>
+<tr>
+<td>Cost optimization</td>
+<td>Full</td>
+<td>Full</td>
+<td>—</td>
+<td>Full</td>
+</tr>
+<tr>
+<td>AI security &amp; guardrails</td>
+<td>2 of 3</td>
+<td>Full</td>
+<td>2 of 3</td>
+<td>Full</td>
+</tr>
+<tr>
+<td>Agentic AI</td>
+<td>2 of 8</td>
+<td>2 of 8</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>RAG &amp; vector databases</td>
+<td>3 of 7</td>
+<td>4 of 7</td>
+<td>6 of 7</td>
+<td>3 of 7</td>
+</tr>
+<tr>
+<td>Memory &amp; context</td>
+<td>2 of 5</td>
+<td>Full</td>
+<td>2 of 5</td>
+<td>2 of 5</td>
+</tr>
+<tr>
+<td>Context engineering</td>
+<td>—</td>
+<td>6 of 7</td>
+<td>2 of 7</td>
+<td>3 of 7</td>
+</tr>
+<tr>
+<td>Tool calling</td>
+<td>1 of 3</td>
+<td>Full</td>
+<td>2 of 3</td>
+<td>1 of 3</td>
+</tr>
+<tr>
+<td>AI agents</td>
+<td>—</td>
+<td>Full</td>
+<td>3 of 5</td>
+<td>3 of 5</td>
+</tr>
+<tr>
+<td>Agentic workflows</td>
+<td>—</td>
+<td>Full</td>
+<td>Full</td>
+<td>Full</td>
+</tr>
+<tr>
+<td>Knowledge graphs</td>
+<td>—</td>
+<td>3 of 8</td>
+<td>—</td>
+<td>2 of 8</td>
+</tr>
+<tr>
+<td>Access control</td>
+<td>—</td>
+<td>2 of 8</td>
+<td>3 of 8</td>
+<td>4 of 8</td>
+</tr>
+<tr>
+<td>System design</td>
+<td>—</td>
+<td>—</td>
+<td>3 of 8</td>
+<td>4 of 8</td>
+</tr>
+<tr>
+<td>APIs &amp; integrations</td>
+<td>—</td>
+<td>—</td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Machine learning</td>
+<td>4 of 8</td>
+<td>5 of 8</td>
+<td>Full</td>
+<td>7 of 8</td>
+</tr>
+<tr>
+<td>AI engineering stack (content/)</td>
+<td>—</td>
+<td>—</td>
+<td>15 of 23</td>
+<td>12 of 23</td>
+</tr>
+<tr>
+<td>Harness engineering</td>
+<td>—</td>
+<td>—</td>
+<td>41 of 41 lessons</td>
+<td>18 of 41 lessons (part skim)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-the-paths-share">What the paths share</h2>
+<p>Three of the four paths read the evaluation, security and cost lessons. The PM reads them to make the call. The product lead and the engineering lead read them to set the standard. The AI engineer meets the same ideas by building them, in the harness track and the AI engineering stack.</p>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>You are a senior PM with a launch in two weeks. Which stage do you do first, and why?</strong>
+ <br />
+<details><summary>Answer</summary>Stage 3, the decisions. It covers the eval plan, cost and risk, which a launch needs. Read stage 1 and 2 later. Each stage's checkpoint shows what you missed. (<a href="senior-product-manager.html">Path page</a>)</details></p>
+</li>
+<li>
+<p><strong>What is the difference between the AI Product Lead path and the Senior PM path?</strong>
+ <br />
+<details><summary>Answer</summary>The lead path is wider and deeper on the layers between a model and a product: grounding, context, memory, agents, workflows, trust and cost. It assumes the PM path or equivalent. (<a href="ai-product-lead.html">Path page</a>)</details></p>
+</li>
+<li>
+<p><strong>Why does the AI Engineer path put the harness lessons in the middle and not at the start?</strong>
+ <br />
+<details><summary>Answer</summary>You need models, APIs and grounding first. The harness lessons build an agent from those parts, so they need them. (<a href="ai-engineer.html">Path page</a>)</details></p>
+</li>
+<li>
+<p><strong>An engineering lead skims the harness phases. What do they lose, and what do they keep?</strong>
+ <br />
+<details><summary>Answer</summary>They lose the failures you only meet by typing the code. They keep the shape of each part: the loop, tools, permissions, budgets and failure handling, which is what a design review needs. (<a href="ai-engineering-lead.html">Path page</a>)</details></p>
+</li>
+<li>
+<p><strong>What is a checkpoint, and what do you do if you cannot meet it?</strong>
+ <br />
+<details><summary>Answer</summary>A checkpoint is something you can do or explain at the end of a stage. If you cannot meet it, read the stage again before you move on. (<a href="senior-product-manager.html">Path page</a>)</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<p>Lesson counts come from the track build configs in this repository. The time estimates are a rule of thumb, not measured.</p>
+<hr /></div>
+  <div class="pagenav"><a class="navcard prev" href="ai-engineering-lead.html"><span class="lbl">← Previous</span><span class="ttl">Learning path: AI Engineering Lead</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#the-paths-in-one-view">The paths in one view</a><a class="h2" href="#which-path-reads-how-much-of-each-track">Which path reads how much of each track</a><a class="h2" href="#what-the-paths-share">What the paths share</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=learning-paths%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="learning-paths/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

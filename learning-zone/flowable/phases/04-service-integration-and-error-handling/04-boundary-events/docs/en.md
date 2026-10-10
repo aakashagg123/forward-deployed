@@ -19,40 +19,40 @@ Once you've built its dispatch logic by hand, the XML is obvious.
 ## The Concept
 
 <style>
-.dgm-be{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-be{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-be-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-be-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-be h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-be-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-be h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-be-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-be-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
-.dgm-be-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
-  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
-.dgm-be-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
-.dgm-be-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
-.dgm-be-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
-.dgm-be-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
-.dgm-be-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
-.dgm-be-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+.dgm-be-n{background:var(--color-surface-tertiary);border:1px solid var(--color-border);border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:var(--color-text);line-height:1.3}
+.dgm-be-n.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-be-n.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface);color:var(--color-text-info)}
+.dgm-be-n.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface);color:var(--color-text-success)}
+.dgm-be-n.red{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-be-arr{color:var(--color-text-tertiary);font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-be-arr .lbl{font-size:8.5px;font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.3px}
 @media (max-width:640px){.dgm-be{padding:20px 16px 18px}.dgm-be-row{flex-direction:column}}
-.dgm-be-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
-  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+.dgm-be-q{background:var(--color-surface-tertiary);border:1px dashed var(--color-border);border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:var(--color-text);margin-bottom:10px}
 .dgm-be-branches{display:grid;grid-template-columns:repeat(1,1fr);gap:10px}
 .dgm-be-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
 .dgm-be-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
-.dgm-be-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
-.dgm-be-b.accent{background:#faeceb;border-color:#e3b3ad}
-.dgm-be-b.accent h6{color:#7a2c2e}
-.dgm-be-b.blue{background:#ddf4ff;border-color:#b6e3ff}
-.dgm-be-b.blue h6{color:#0550ae}
-.dgm-be-b.green{background:#dafbe1;border-color:#aceebb}
-.dgm-be-b.green h6{color:#1a614f}
-.dgm-be-b.red{background:#ffebe9;border-color:#ffcecb}
-.dgm-be-b.red h6{color:#82061e}
-.dgm-be-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
-.dgm-be-b.neutral h6{color:#1f2328}
+.dgm-be-b p{margin:0;font-size:10px;color:var(--color-text-secondary);line-height:1.35}
+.dgm-be-b.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-be-b.accent h6{color:var(--color-text-danger)}
+.dgm-be-b.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-be-b.blue h6{color:var(--color-text-info)}
+.dgm-be-b.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-be-b.green h6{color:var(--color-text-success)}
+.dgm-be-b.red{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-be-b.red h6{color:var(--color-text-danger)}
+.dgm-be-b.neutral{background:var(--color-surface-tertiary);border-color:var(--color-border)}
+.dgm-be-b.neutral h6{color:var(--color-text)}
 @media (max-width:640px){.dgm-be{padding:20px 16px 18px}.dgm-be-branches{grid-template-columns:1fr}}
 </style>
 <div class="dgm-be">

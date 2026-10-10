@@ -18,30 +18,30 @@ answers, and choosing the wrong one costs you testability or Spring injection.
 ## The Concept
 
 <style>
-.dgm-std{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-std{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-std-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-std-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-std h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-std-sub{font-size:12px;color:#59636e;margin:0 0 16px}
-.dgm-std-q{background:#f6f8fa;border:1px dashed #d1d9e0;border-radius:10px;padding:9px 14px;text-align:center;
-  font-size:11px;font-weight:700;color:#1f2328;margin-bottom:10px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-std h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-std-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-std-q{background:var(--color-surface-tertiary);border:1px dashed var(--color-border);border-radius:10px;padding:9px 14px;text-align:center;
+  font-size:11px;font-weight:700;color:var(--color-text);margin-bottom:10px}
 .dgm-std-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .dgm-std-b{border-radius:11px;padding:11px 13px;border:1.5px solid}
 .dgm-std-b h6{margin:0 0 4px;font-size:10.5px;font-weight:700}
-.dgm-std-b p{margin:0;font-size:10px;color:#59636e;line-height:1.35}
-.dgm-std-b.accent{background:#faeceb;border-color:#e3b3ad}
-.dgm-std-b.accent h6{color:#7a2c2e}
-.dgm-std-b.blue{background:#ddf4ff;border-color:#b6e3ff}
-.dgm-std-b.blue h6{color:#0550ae}
-.dgm-std-b.green{background:#dafbe1;border-color:#aceebb}
-.dgm-std-b.green h6{color:#1a614f}
-.dgm-std-b.red{background:#ffebe9;border-color:#ffcecb}
-.dgm-std-b.red h6{color:#82061e}
-.dgm-std-b.neutral{background:#f6f8fa;border-color:#d1d9e0}
-.dgm-std-b.neutral h6{color:#1f2328}
+.dgm-std-b p{margin:0;font-size:10px;color:var(--color-text-secondary);line-height:1.35}
+.dgm-std-b.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-std-b.accent h6{color:var(--color-text-danger)}
+.dgm-std-b.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-std-b.blue h6{color:var(--color-text-info)}
+.dgm-std-b.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-std-b.green h6{color:var(--color-text-success)}
+.dgm-std-b.red{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-std-b.red h6{color:var(--color-text-danger)}
+.dgm-std-b.neutral{background:var(--color-surface-tertiary);border-color:var(--color-border)}
+.dgm-std-b.neutral h6{color:var(--color-text)}
 @media (max-width:640px){.dgm-std{padding:20px 16px 18px}.dgm-std-branches{grid-template-columns:1fr}}
 </style>
 <div class="dgm-std">

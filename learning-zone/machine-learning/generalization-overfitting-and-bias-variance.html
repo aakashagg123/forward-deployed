@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Generalization: overfitting and the bias–variance tradeoff — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink active" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
+    <h1>Generalization: overfitting and the bias–variance tradeoff</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A model earns its keep on cases it has never seen. That skill is <strong>generalization</strong>. Two
+opposite mistakes damage it.</p>
+<p><strong>Underfitting</strong> means the model is too simple. It misses a real pattern. It scores
+poorly on the training rows and on new rows alike. Statisticians call this high <strong>bias</strong>.</p>
+<p><strong>Overfitting</strong> means the model is too flexible. It memorizes the quirks and the noise of
+its training rows. It scores very well on rows it has seen and poorly on new ones. This is
+high <strong>variance</strong>: the model changes a lot when the training rows change.</p>
+<p>The task is to find the middle. Two charts tell you where you are. One plots score against
+model complexity. The other plots score against the amount of training data. Together they
+say whether to spend on more data, on a simpler model, or on better features.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — "It worked in the demo" and "it works on customers" are different
+claims. The gap between them is overfitting. It is the most common reason an ML feature
+underperforms its prototype.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the training score and the validation
+score side by side. A big gap says: more data, or a simpler model, will help. A small gap
+with a poor score says: more data will not help, and you need better signals.</p>
+<p><strong>Ask your eng team</strong> — <em>"What is the gap between training and validation performance,
+and would ten times more data close it?"</em></p>
+<p><strong>Risk if ignored</strong> — You fund a data-collection effort that cannot help. Or you ship a
+model that memorized last quarter.</p>
+</blockquote>
+<h2 id="the-mental-model-three-fits-to-the-same-dots">The mental model: three fits to the same dots</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Overfitting, measured</span>
+<h4>Score against model complexity</h4>
+<p class="dgm-ml-sub">Balanced accuracy of decision trees on 600 training customers and 1,500 validation customers.</p>
+<svg viewBox="0 0 540 215" role="img" aria-label="Training score rises with tree depth while validation score peaks at depth 4 and falls" style="width:100%;height:auto">
+  <rect x="50" y="30" width="147" height="140" style="fill:var(--color-background-info-surface)"/>
+  <rect x="197" y="30" width="147" height="140" style="fill:var(--color-background-success-surface)"/>
+  <rect x="343" y="30" width="147" height="140" style="fill:var(--color-background-danger-surface)"/>
+  <text x="123" y="24" text-anchor="middle" style="fill:var(--color-text-info);font-size:11px;font-weight:600">underfit</text>
+  <text x="270" y="24" text-anchor="middle" style="fill:var(--color-text-success);font-size:11px;font-weight:600">about right</text>
+  <text x="417" y="24" text-anchor="middle" style="fill:var(--color-text-danger);font-size:11px;font-weight:600">overfit</text>
+  <polyline points="50,133 123,124 197,119 270,106 343,93 417,82 490,52" fill="none" style="stroke:var(--color-text-secondary);stroke-width:2.2"/>
+  <polyline points="50,142 123,134 197,134 270,131 343,134 417,146 490,159" fill="none" style="stroke:var(--color-text-discovery);stroke-width:2.6"/>
+  <circle cx="270" cy="131" r="5" style="fill:var(--color-text-discovery)"/>
+  <text x="278" y="121" style="fill:var(--color-text-discovery);font-size:11px;font-weight:600">depth 4: 65.1%</text>
+  <text x="350" y="68" style="fill:var(--color-text-secondary);font-size:11px">training 95.5%</text>
+  <text x="400" y="151" style="fill:var(--color-text-discovery);font-size:11px">validation 54.2%</text>
+  <text x="50" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">1</text><text x="123" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">2</text><text x="197" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">3</text><text x="270" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">4</text><text x="343" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">6</text><text x="417" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">8</text><text x="490" y="192" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">12</text>
+  <text x="270" y="209" text-anchor="middle" style="fill:var(--color-text-tertiary);font-size:10px">tree depth (more flexible →)</text>
+  <line x1="50" y1="170" x2="490" y2="170" style="stroke:var(--color-border-strong)"/>
+</svg>
+<p class="dgm-ml-foot">Grey: training score. Purple: validation score. Pick the depth on validation. Report on a test set you touch once.</p>
+</div>
+
+<p>Imagine a scatter of noisy points along a gentle curve. A straight line misses the curve
+(underfit). A wiggly line that touches every point follows the noise, and it flies off
+between the points (overfit). A smooth curve sits between them.</p>
+<p>The scikit-learn guide uses this exact picture. It fits a curve with three models: a
+straight line, a degree-4 polynomial and a degree-15 polynomial. The first is too simple,
+the second fits well, and the third fits the training points perfectly but misses the true
+curve.</p>
+<h2 id="bias-variance-and-noise-in-plain-words">Bias, variance and noise, in plain words</h2>
+<p>The error on new data has three parts.</p>
+<ul>
+<li><strong>Bias.</strong> The model's error that stays however you pick the training rows. A model that
+  can only draw straight lines is stuck with the bias of a straight line.</li>
+<li><strong>Variance.</strong> How much the model changes when the training rows change. A flexible model
+  that follows each point has high variance. Retrain it on a different sample and it moves.</li>
+<li><strong>Noise.</strong> Randomness in the world that no model can predict. Whether a customer cancels
+  this month depends partly on things nobody recorded. This part sets a ceiling.</li>
+</ul>
+<p>Making a model more flexible lowers bias and raises variance. Making it simpler does the
+reverse. That is the tradeoff. You pick the point where the total is lowest. Noise stays
+either way.</p>
+<h2 id="chart-1-score-against-complexity">Chart 1: score against complexity</h2>
+<p>Train the same kind of model at several levels of flexibility. Score each one on its
+training rows and on held-out validation rows. Training error always improves with
+flexibility. Validation error improves, then turns.</p>
+<p>For a decision tree, the flexibility knob is its depth: how many yes-or-no questions it
+may chain. A depth-1 tree asks one question. A depth-12 tree can isolate almost every
+training customer in a leaf of their own.</p>
+<h2 id="chart-2-score-against-data">Chart 2: score against data</h2>
+<p>Fix the model. Give it more and more training rows. The training score falls, because more
+rows are harder to memorize. The validation score rises. The gap between them shrinks.</p>
+<p>This chart answers the data question. If the gap is wide and closing as rows grow, more
+data helps. If the two lines have met at a poor score, more data will not help. You need a
+different model or better features. The scikit-learn guide makes the same point. More
+training data lowers variance, and it is worth collecting only if a simpler model cannot
+capture the true pattern.</p>
+<h2 id="what-to-do-about-it">What to do about it</h2>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>Diagnosis</th>
+<th>Try</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Training poor, validation poor, gap small</td>
+<td>Underfitting (bias)</td>
+<td>A more flexible model; better features; train longer</td>
+</tr>
+<tr>
+<td>Training great, validation poor, gap large</td>
+<td>Overfitting (variance)</td>
+<td>More data; a simpler model; regularization; fewer features; early stopping</td>
+</tr>
+<tr>
+<td>Both good, gap small</td>
+<td>A model that generalizes</td>
+<td>Ship, then monitor</td>
+</tr>
+<tr>
+<td>Training good, validation good, production poor</td>
+<td>Not overfitting. Leakage or a changed world</td>
+<td><a href="data-features-labels-and-leakage.html">Lesson 2</a> and <a href="ml-in-production.html">lesson 7</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regularization</strong> adds a price for complexity to the loss. A common form penalizes large
+weights, so the model prefers a simple explanation unless the data insists. <strong>Early
+stopping</strong> ends training when validation loss stops improving. <strong>Averaging many models</strong>
+lowers variance, because their individual quirks cancel. The ensemble methods in
+<a href="model-families.html">lesson 6</a> use this.</p>
+<h2 id="a-caution-about-very-large-models">A caution about very large models</h2>
+<p>The U-shaped picture is the classic one. Modern large models complicate it. In a 2019 paper
+in the <em>Proceedings of the National Academy of Sciences</em>, Belkin and colleagues showed
+a "double descent" pattern. As a model grows past the point where it fits the training data
+exactly, the error on new data can fall again. Very large neural networks are often trained
+well past that point.</p>
+<p>This does not remove the need to measure on held-out data. It means that for big neural
+networks, "bigger is automatically worse" is false. For small tabular models, the classic
+picture is a practical rule of thumb, not a law. Belkin and colleagues also report double
+descent for random forests. In every case the habit is the same: judge a model by rows it
+has not seen.</p>
+<h2 id="worked-example-how-deep-should-the-tree-be">Worked example: how deep should the tree be?</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed.</em></p>
+<p>We train decision trees on 600 churn customers. We score each on those 600 rows and on 1,500
+separate validation rows. The score is balanced accuracy, from lesson 1.</p>
+<table>
+<thead>
+<tr>
+<th>Tree depth</th>
+<th>Score on training rows</th>
+<th>Score on validation rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>64.4%</td>
+<td>60.8%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>67.7%</td>
+<td>63.7%</td>
+</tr>
+<tr>
+<td>3</td>
+<td>69.8%</td>
+<td>63.9%</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>74.5%</td>
+<td><strong>65.1%</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td>79.5%</td>
+<td>63.7%</td>
+</tr>
+<tr>
+<td>8</td>
+<td>83.7%</td>
+<td>59.2%</td>
+</tr>
+<tr>
+<td>12</td>
+<td>95.5%</td>
+<td>54.2%</td>
+</tr>
+</tbody>
+</table>
+<p>Read the two columns. The training score climbs to 95.5%. The depth-12 tree has memorized
+nearly every customer. Its validation score is 54.2%, barely above a coin flip. The best
+validation score is at depth 4. We choose depth 4 on the validation rows. Only then do we
+score 1,500 more rows we have never touched. The result is 66.5%, in line with validation.
+That final number is the one to report.</p>
+<p>Now fix the depth at 8 and vary the data.</p>
+<table>
+<thead>
+<tr>
+<th>Training rows</th>
+<th>Training score</th>
+<th>Validation score</th>
+<th>Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50</td>
+<td>100.0%</td>
+<td>53.7%</td>
+<td>46.3 points</td>
+</tr>
+<tr>
+<td>200</td>
+<td>94.0%</td>
+<td>55.3%</td>
+<td>38.7 points</td>
+</tr>
+<tr>
+<td>800</td>
+<td>88.3%</td>
+<td>59.7%</td>
+<td>28.6 points</td>
+</tr>
+<tr>
+<td>1,600</td>
+<td>81.9%</td>
+<td>64.6%</td>
+<td>17.3 points</td>
+</tr>
+<tr>
+<td>3,000</td>
+<td>76.3%</td>
+<td>62.6%</td>
+<td>13.7 points</td>
+</tr>
+</tbody>
+</table>
+<p>More data helps. The gap shrinks from 46 points to 14. The comparison to make is this one:
+the depth-8 tree trained on 3,000 rows scores 62.6% on validation. The depth-4 tree
+trained on only 600 rows scores 65.1%. Five times the data did not rescue the flexible
+model. A simpler model on less data did at least as well.</p>
+<p>One more caution. The validation set has about 270 churners among its 1,500 rows. A
+difference of one or two points between two models is inside the noise of that sample. Do
+not tune against gaps that small.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Flexibility vs. interpretability.</strong> Simple models generalize more easily and are easier
+  to explain. You give up some peak accuracy on large, rich data.</li>
+<li><strong>More data vs. a simpler model.</strong> Data costs money and time. A simpler model costs
+  little. Use chart 2 to see which one helps.</li>
+<li><strong>Regularization strength.</strong> Too little leaves overfitting. Too much causes underfitting.
+  It is one more setting to tune on validation rows.</li>
+<li><strong>A small validation set vs. a big training set.</strong> Cross-validation rotates the held-out
+  part, so every row is used for both jobs in turn. It costs training time.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Judging by training score.</strong> The demo uses the data the model learned from.</li>
+<li><strong>Tuning on the test set.</strong> Each choice that looks at the test score moves information
+  from the test set into the model. Keep it for one final check.</li>
+<li><strong>Overfitting the validation set.</strong> Try a hundred settings and the best one will look
+  good partly by luck. Treat the final test score as the honest one.</li>
+<li><strong>Collecting data that cannot help.</strong> The gap is small and the score is poor. More rows
+  repeat the same failure.</li>
+<li><strong>Mistaking a changed world for overfitting.</strong> A model that was fine last quarter and is
+  poor now is probably drifting. See <a href="ml-in-production.html">lesson 7</a>.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The sweep behind chart 1 is a loop. <code>scores</code> returns the training score and the validation
+score for a model. The file is <code>machine-learning/code/lesson4_overfitting.py</code>.</p>
+<pre><code class="language-python">complexity = {}
+for depth in (1, 2, 3, 4, 6, 8, 12):
+    tree = grow(train[0], train[1], depth, min_leaf=1)
+    complexity[depth] = scores(tree, cut, train, valid)       # (train score, validation score)
+
+best_depth = max(complexity, key=lambda d: complexity[d][1])  # choose on validation rows
+tree = grow(train[0], train[1], best_depth, min_leaf=1)
+final = scores(tree, cut, train, test)[1]                     # test rows are used once
+</code></pre>
+<p>Regularization in one line. For a linear model, the loss from <a href="training-loss-and-gradient-descent.html">lesson 3</a>
+gains a penalty on the size of the weights:</p>
+<pre><code class="language-text">total loss = average loss on the training rows + alpha × (sum of squared weights)
+</code></pre>
+<p>A larger <code>alpha</code> pulls weights toward zero and makes the model simpler. K-fold
+cross-validation splits the labelled rows into <code>k</code> parts. It trains on <code>k − 1</code> of them and
+scores on the part left out, then rotates. If the rows share a group, such as one customer
+with many rows, split by group, as in <a href="data-features-labels-and-leakage.html">lesson 2</a>.</p>
+<p>Habits to adopt:</p>
+<ul>
+<li><strong>Report both scores, always.</strong> One number hides the gap.</li>
+<li><strong>Pick on validation, report on test.</strong> Touch the test rows once.</li>
+<li><strong>Plot both charts</strong> for any model you plan to keep.</li>
+<li><strong>Keep a simple model as a reference.</strong> If a complex model beats it by little, take the
+  simple one.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we report training and validation scores together?</li>
+<li class="task todo">Is the gap between them small, or do we know what is closing it?</li>
+<li class="task todo">Have we plotted score against complexity and score against data?</li>
+<li class="task todo">Were settings chosen on validation rows, and the test rows scored once?</li>
+<li class="task todo">Is there a simpler reference model, and by how much does the chosen model beat it?</li>
+<li class="task todo">Would more data change the answer, according to the learning curve?</li>
+<li class="task todo">Are differences smaller than the noise of the validation set being ignored?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> — how
+  to build a validation set that tells the truth.</li>
+<li><a href="measuring-a-model.html">Measuring a model</a> — which score to compare.</li>
+<li><a href="model-families.html">Model families</a> — models that average away variance.</li>
+<li><a href="ml-in-production.html">ML in production</a> — when a good model stops generalizing to
+  today's customers.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — the same
+  habit of holding data back, for LLM features.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/modules/learning_curve.html">Validation curves: plotting scores to evaluate models</a>:
+  generalization error as bias, variance and noise; the three-model polynomial example;
+  more training data lowers variance, but only worth collecting if a lower-variance
+  estimator cannot approximate the true function. Read from the guide's source text in the
+  scikit-learn repository, 2026-10.</li>
+<li>Belkin, Hsu, Ma and Mandal, <em>Reconciling modern machine-learning practice and the classical
+  bias–variance trade-off</em>, Proceedings of the National Academy of Sciences 116(32),
+  15849–15854, 2019. <a href="https://doi.org/10.1073/pnas.1903070116">doi.org/10.1073/pnas.1903070116</a>.
+  The "double descent" curve. Checked through search-result excerpts, 2026-10.</li>
+<li>Goodfellow, Bengio and Courville, <em>Deep Learning</em> (2016), chapter 5: capacity,
+  overfitting, underfitting, regularization and validation sets.</li>
+<li>The churn data, the tree depths and every score are invented. They come from
+  <code>machine-learning/code/lesson4_overfitting.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="training-loss-and-gradient-descent.html"><span class="lbl">← Previous</span><span class="ttl">Training: loss and gradient descent</span></a><a class="navcard next" href="measuring-a-model.html"><span class="lbl">→ Next</span><span class="ttl">Measuring a model: metrics, thresholds and baselines</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-fits-to-the-same-dots">The mental model: three fits to the same dots</a><a class="h2" href="#bias-variance-and-noise-in-plain-words">Bias, variance and noise, in plain words</a><a class="h2" href="#chart-1-score-against-complexity">Chart 1: score against complexity</a><a class="h2" href="#chart-2-score-against-data">Chart 2: score against data</a><a class="h2" href="#what-to-do-about-it">What to do about it</a><a class="h2" href="#a-caution-about-very-large-models">A caution about very large models</a><a class="h2" href="#worked-example-how-deep-should-the-tree-be">Worked example: how deep should the tree be?</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Fgeneralization-overfitting-and-bias-variance.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/generalization-overfitting-and-bias-variance.html"</script><script defer src="../assets/glossary.js"></script></body></html>
