@@ -21,24 +21,24 @@ The fix is a discipline, not a feature: **between wait states, the instance exis
 in the database.**
 
 <style>
-.dgm-wsp{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-wsp{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-wsp-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-wsp-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-wsp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-wsp-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-wsp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-wsp-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-wsp-actors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .dgm-wsp-actor{border-radius:9px;padding:7px 6px;text-align:center;font-size:9.5px;font-weight:700}
-.dgm-wsp-actor.a{background:#ddf4ff;border:1px solid #b6e3ff;color:#0550ae}
-.dgm-wsp-actor.b{background:#faeceb;border:1px solid #e3b3ad;color:#7a2c2e}
-.dgm-wsp-actor.c{background:#dafbe1;border:1px solid #aceebb;color:#1a614f}
+.dgm-wsp-actor.a{background:var(--color-background-info-surface);border:1px solid var(--color-border-info-surface);color:var(--color-text-info)}
+.dgm-wsp-actor.b{background:var(--color-background-danger-surface);border:1px solid var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-wsp-actor.c{background:var(--color-background-success-surface);border:1px solid var(--color-border-success-surface);color:var(--color-text-success)}
 .dgm-wsp-msgs{display:flex;flex-direction:column;gap:5px}
 .dgm-wsp-msg{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;font-size:10.5px;
-  color:#1f2328;line-height:1.35;padding:7px 10px;border-radius:8px;background:#f6f8fa}
-.dgm-wsp-msg .tag{font-size:9px;font-weight:700;color:#8c959f}
-.dgm-wsp-msg.note{display:block;background:#faeceb;color:#7a2c2e;font-style:italic;text-align:center}
+  color:var(--color-text);line-height:1.35;padding:7px 10px;border-radius:8px;background:var(--color-surface-tertiary)}
+.dgm-wsp-msg .tag{font-size:9px;font-weight:700;color:var(--color-text-tertiary)}
+.dgm-wsp-msg.note{display:block;background:var(--color-background-danger-surface);color:var(--color-text-danger);font-style:italic;text-align:center}
 @media (max-width:640px){.dgm-wsp{padding:20px 16px 18px}.dgm-wsp-actors{grid-template-columns:1fr 1fr}}
 </style>
 <div class="dgm-wsp">

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Learning path: AI Product Lead — Learning paths</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Learning paths</span><em>start here</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="senior-product-manager.html">1 · Learning path: Senior Product Manager</a><a class="modlink active" href="ai-product-lead.html">2 · Learning path: AI Product Lead</a><a class="modlink" href="ai-engineer.html">3 · Learning path: AI Engineer</a><a class="modlink" href="ai-engineering-lead.html">4 · Learning path: AI Engineering Lead</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <h1>Learning path: AI Product Lead</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>This path covers the layers between a model and a product: grounding, context, memory, tools, agents, workflows, trust and cost. It is wider and deeper than the Senior PM path. It stays at the decision level. You read enough mechanics to ask sharp questions, not to build.</p>
+<p><strong>Who it is for:</strong> a product leader who owns an AI product line or a team of PMs shipping AI features.</p>
+<p><strong>Outcome:</strong> You set direction for how the product grounds its answers, remembers, acts, stays safe and stays affordable. You can review a design with engineering and ask informed questions.</p>
+<p><strong>Before you start:</strong> This path builds on the Senior PM path, stages 1 to 3, or equivalent experience. Lessons marked ↺ repeat that path, so skip them if you did it. You have shipped or closely reviewed one AI feature.</p>
+<p><strong>Length:</strong> about 26 hours, across 5 stages. If you did the Senior PM path, about 14 hours, because lessons marked ↺ repeat it. The time is a rough estimate (see Under the hood).</p>
+<p><strong>Terms:</strong> a large language model (LLM) is a model like those behind chat assistants; the plural is large language models (LLMs); machine learning (ML) is the practice of training models from data.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI product lead</strong></p>
+<p><strong>Why it matters</strong> — At this level your decisions set the architecture. A weak call on grounding or autonomy is expensive to reverse.</p>
+<p><strong>What it changes in your decisions</strong> — You choose retrieval, memory and agent scope on purpose. You set the autonomy dial per task. You fund evals and guardrails as roadmap items.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which layer fails first, and how would we see it in production?"</em></p>
+<p><strong>Risk if ignored</strong> — You ship an agent with the wrong autonomy or a memory that leaks. You find out from a customer.</p>
+</blockquote>
+<h2 id="the-path-at-a-glance">The path at a glance</h2>
+<p>Each stage ends with a checkpoint. Move on when you can do what the checkpoint says.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Focus</th>
+<th>About</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Model and data foundations</td>
+<td>about 9 hours</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Context and memory</td>
+<td>about 5 hours</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Action: tools, agents, workflows</td>
+<td>about 5.5 hours</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Trust, access and cost</td>
+<td>about 4 hours</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Run the product</td>
+<td>about 2.5 hours</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stage-1-model-and-data-foundations">Stage 1: Model and data foundations</h2>
+<p>You decide how the product grounds answers. That choice drives quality and cost. (about 9 hours)</p>
+<ul>
+<li><strong>LLMs</strong>: <a href="../llms/what-is-an-llm.html">1. What an LLM actually is</a> ↺ · <a href="../llms/the-context-window.html">2. The context window</a> ↺ · <a href="../llms/capabilities-and-the-jagged-frontier.html">3. Capabilities &amp; the jagged frontier</a> ↺ · <a href="../llms/temperature-sampling-and-determinism.html">5. Temperature, sampling &amp; determinism</a> ↺ · <a href="../llms/choosing-a-model.html">6. Choosing a model</a> ↺ · <a href="../llms/prompting-vs-rag-vs-finetuning.html">7. Prompting vs. RAG vs. fine-tuning</a> ↺</li>
+<li><strong>Generative AI</strong>: <a href="../generative-ai/probabilistic-software.html">3. Probabilistic software</a> ↺ · <a href="../generative-ai/the-genai-product-stack.html">4. The generative AI product stack</a> ↺ · <a href="../generative-ai/build-buy-or-fine-tune.html">5. Build, buy, or fine-tune</a> ↺</li>
+<li><strong>Machine learning</strong>: <a href="../machine-learning/what-machine-learning-is.html">1. What machine learning is, and when to use it</a> ↺ · <a href="../machine-learning/data-features-labels-and-leakage.html">2. Data: features, labels, splits and leakage</a> ↺ · <a href="../machine-learning/measuring-a-model.html">5. Measuring a model: metrics, thresholds and baselines</a> ↺ · <a href="../machine-learning/ml-in-production.html">7. ML in production: drift, skew and the lifecycle</a> · <a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">8. Learning and doing ML with Claude Code</a> ↺</li>
+<li><strong>RAG &amp; vector databases</strong>: <a href="../rag-vector-databases/why-rag.html">1. Why RAG?</a> ↺ · <a href="../rag-vector-databases/retrieval-quality.html">5. Retrieval quality</a> ↺ · <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">6. RAG vs. long-context vs. fine-tuning</a> ↺ · <a href="../rag-vector-databases/graphrag-and-structured-retrieval.html">7. Beyond flat RAG: GraphRAG &amp; structured retrieval</a></li>
+<li><strong>Knowledge graphs</strong>: <a href="../knowledge-graphs/what-is-a-knowledge-graph.html">1. What is a knowledge graph?</a> · <a href="../knowledge-graphs/knowledge-graphs-and-llms.html">6. Knowledge graphs &amp; LLMs</a> · <a href="../knowledge-graphs/knowledge-graphs-as-a-product.html">8. Knowledge graphs as a product</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can compare prompting, retrieval and fine-tuning for a feature and pick one with reasons.</p>
+<h2 id="stage-2-context-and-memory">Stage 2: Context and memory</h2>
+<p>What the model sees is a product decision. So is what it remembers. (about 5 hours)</p>
+<ul>
+<li><strong>Context engineering</strong>: <a href="../context-engineering/what-is-context-engineering.html">1. What is context engineering, for a product leader?</a> · <a href="../context-engineering/the-anatomy-of-a-context-pipeline.html">3. The anatomy of a context pipeline</a> · <a href="../context-engineering/context-as-a-spec-able-requirement.html">4. Context as a spec-able requirement</a> · <a href="../context-engineering/context-governance-at-scale.html">5. Context governance at scale</a> · <a href="../context-engineering/evaluating-context-quality.html">6. Evaluating context quality</a> · <a href="../context-engineering/context-across-the-product-lifecycle.html">7. Context engineering across the product lifecycle</a></li>
+<li><strong>Memory &amp; context</strong>: <a href="../memory-and-context/memory-as-a-product-decision.html">1. Memory as a product decision</a> ↺ · <a href="../memory-and-context/session-user-and-organizational-memory.html">2. Session, user &amp; organizational memory</a> · <a href="../memory-and-context/writing-and-maintaining-memory.html">3. Writing and maintaining memory</a> · <a href="../memory-and-context/retrieval-as-memory.html">4. Retrieval as memory</a> · <a href="../memory-and-context/when-memory-goes-wrong.html">5. When memory goes wrong</a> ↺</li>
+<li><strong>Prompt engineering</strong>: <a href="../prompt-engineering/prompts-in-production.html">10. Prompts in production: versioning, testing, and model upgrades</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can write the context spec for a feature: sources, owners, freshness and how quality is measured.</p>
+<h2 id="stage-3-action-tools-agents-workflows">Stage 3: Action: tools, agents, workflows</h2>
+<p>The line between talking and doing carries the most risk and the most value. (about 5.5 hours)</p>
+<ul>
+<li><strong>Tool calling</strong>: <a href="../tool-calling/what-tool-calling-is.html">1. What tool calling is</a> ↺ · <a href="../tool-calling/tool-contracts-and-reliability.html">2. Tool contracts &amp; reliability</a> · <a href="../tool-calling/permissions-blast-radius-and-the-trust-boundary.html">3. Permissions, blast radius &amp; the trust boundary</a></li>
+<li><strong>AI agents</strong>: <a href="../ai-agents/what-an-agent-is-and-how-much-autonomy-it-needs.html">1. What an agent is, and how much autonomy it needs</a> · <a href="../ai-agents/planning-reasoning-and-reliability-across-a-run.html">2. Planning, reasoning &amp; reliability across a run</a> · <a href="../ai-agents/when-not-to-build-an-agent.html">3. When not to build an agent</a> · <a href="../ai-agents/running-an-agent-in-production.html">4. Running an agent in production</a> · <a href="../ai-agents/choosing-and-acceptance-testing-an-agent.html">5. Choosing and acceptance-testing an agent</a></li>
+<li><strong>Agentic workflows</strong>: <a href="../agentic-workflows/choosing-a-workflow-pattern.html">1. Choosing a workflow pattern</a> · <a href="../agentic-workflows/orchestrating-more-than-one-agent.html">2. Orchestrating more than one agent</a> · <a href="../agentic-workflows/making-a-workflow-durable-and-worth-owning.html">3. Making a workflow durable, and worth owning</a></li>
+<li><strong>Agentic AI</strong>: <a href="../agentic-ai/reliability-and-evals.html">6. Reliability &amp; evals</a> · <a href="../agentic-ai/agentic-ai-as-a-product.html">8. Agentic AI as a product</a> ↺</li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can set the autonomy level for a task, justify it, and say what would make you lower it.</p>
+<h2 id="stage-4-trust-access-and-cost">Stage 4: Trust, access and cost</h2>
+<p>Evals, security, permissions and spend decide whether the feature survives contact with real use. (about 4 hours)</p>
+<ul>
+<li><strong>Evaluation &amp; observability</strong>: <a href="../evaluation-and-observability/why-eval-investment-is-the-job.html">1. Why eval investment is the job</a> ↺ · <a href="../evaluation-and-observability/building-the-eval-stack-in-the-right-order.html">2. Building the eval stack in the right order</a> ↺</li>
+<li><strong>AI security &amp; guardrails</strong>: <a href="../ai-security-and-guardrails/the-threat-model-and-guardrails.html">1. The threat model, and guardrails as architecture</a> ↺ · <a href="../ai-security-and-guardrails/red-teaming-and-proving-your-defenses.html">2. Red-teaming: testing your defenses</a> · <a href="../ai-security-and-guardrails/governance-audit-and-compliance.html">3. Governance, audit &amp; compliance</a> ↺</li>
+<li><strong>Access control</strong>: <a href="../access-control/authentication-authorization-and-the-access-control-model.html">1. Authentication, authorization and the access-control model</a> · <a href="../access-control/access-control-for-ai-agents.html">8. Access control for AI agents</a></li>
+<li><strong>Cost optimization</strong>: <a href="../cost-optimization/the-cost-stack-and-the-build-vs-buy-breakeven.html">1. The cost stack, and the build-vs-buy breakeven</a> ↺ · <a href="../cost-optimization/finops-budgets-forecasting-and-the-cost-review.html">2. FinOps for AI: budgets, forecasting &amp; the cost review</a> ↺</li>
+<li><strong>Technical product sense</strong>: <a href="../technical-product-sense/economics-of-infrastructure.html">8. The economics of infrastructure</a></li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can show a reviewer your eval results, your threat model and your cost per task.</p>
+<h2 id="stage-5-run-the-product">Stage 5: Run the product</h2>
+<p>Turn the above into specs, launches and a response plan. (about 2.5 hours)</p>
+<ul>
+<li><strong>Technical product management</strong>: <a href="../technical-product-management/specs-prds-and-rfcs.html">3. Specs, PRDs &amp; RFCs</a> · <a href="../technical-product-management/metrics-and-experimentation.html">6. Metrics &amp; experimentation</a> · <a href="../technical-product-management/launches-rollouts-and-migrations.html">7. Launches, rollouts &amp; migrations</a> · <a href="../technical-product-management/incidents-and-postmortems.html">8. Incidents &amp; postmortems</a> · <a href="../technical-product-management/tpm-for-ai-products.html">9. Technical product management for AI</a> ↺</li>
+<li><strong>Product sense</strong>: <a href="../product-sense/product-sense-for-ai.html">7. Product sense for AI products</a> ↺</li>
+</ul>
+<p><strong>Ready to move on when:</strong> You can write the spec, the launch gate and the incident plan for an AI feature.</p>
+<h2 id="skip-ahead-rules">Skip-ahead rules</h2>
+<ul>
+<li>If you ran the Senior PM path, skip the LLMs and generative AI lessons you have already read.</li>
+<li>If your product has no agents yet, read the agent lessons in stage 3 as risk reading, not as design reading.</li>
+<li>If you do not work with regulated customers, skim the governance lesson.</li>
+</ul>
+<h2 id="worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</h2>
+<p><em>This example is invented, to show the method.</em></p>
+<p>An AI product lead with four hours a week plans 6 weeks of work. Each week ends with something you can show. At this pace the full path (about 26 hours) takes about 7 weeks.</p>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Stage</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Stage 1</td>
+<td>Pick one feature and write which of prompting, retrieval or fine-tuning it should use.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Stage 2</td>
+<td>Write its context spec.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Stage 2</td>
+<td>Review its memory design with a privacy owner.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Stage 3</td>
+<td>Set its autonomy level and the trigger to lower it.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Stage 4</td>
+<td>Run a tabletop review of its threat model, evals and cost.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Stage 5</td>
+<td>Write the launch gate and incident plan.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<ul>
+<li><strong>Coverage vs. time.</strong> This is a long path. Each stage ends with a checkpoint, so you can stop at the layer you own.</li>
+<li><strong>Product depth vs. engineering depth.</strong> You read mechanics only to ask better questions. The engineer path covers building.</li>
+<li><strong>Standards vs. speed.</strong> Stage 4 slows early work and speeds later work.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Treating agents as the default.</strong> Read "when not to build an agent" before you commit.</li>
+<li><strong>Memory without a privacy owner.</strong> Memory is a data product with a retention policy.</li>
+<li><strong>No eval owner.</strong> Every layer in this path needs a quality measure and a person who owns it.</li>
+<li><strong>Reading without reviewing.</strong> Take each stage to a real design review.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Does every AI feature have a grounding choice with a written reason?</li>
+<li class="task todo">Is there a context spec for each feature?</li>
+<li class="task todo">Is the autonomy level of each agent written down?</li>
+<li class="task todo">Can I show evals, a threat model and a cost per task for each feature?</li>
+<li class="task todo">Is there a launch gate and an incident plan?</li>
+</ul>
+<h2 id="under-the-hood-how-this-path-was-built">Under the hood: how this path was built</h2>
+<p>Lesson links come from the track build configs, so a renamed lesson is caught by the link check. Time is the number of lessons times 25 minutes for a reading lesson, times 60 minutes for a harness lesson that you build, and 120 minutes to skim a harness phase. Add time for exercises. Modules marked "coming soon" are planned and not counted.</p>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="senior-product-manager.html">Senior PM path</a></li>
+<li><a href="ai-engineering-lead.html">AI Engineering Lead path</a></li>
+<li><a href="index.html">Choose your path</a></li>
+<li><a href="recap.html">Recap: paths compared</a></li>
+</ul>
+<h2 id="sources">Sources</h2>
+<p>Lesson counts and titles come from the track overview pages and build configs in this repository. The time estimates are this course's rule of thumb, not measured results. The week plan is invented.</p></div>
+  <div class="pagenav"><a class="navcard prev" href="senior-product-manager.html"><span class="lbl">← Previous</span><span class="ttl">Learning path: Senior Product Manager</span></a><a class="navcard next" href="ai-engineer.html"><span class="lbl">→ Next</span><span class="ttl">Learning path: AI Engineer</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-path-at-a-glance">The path at a glance</a><a class="h2" href="#stage-1-model-and-data-foundations">Stage 1: Model and data foundations</a><a class="h2" href="#stage-2-context-and-memory">Stage 2: Context and memory</a><a class="h2" href="#stage-3-action-tools-agents-workflows">Stage 3: Action: tools, agents, workflows</a><a class="h2" href="#stage-4-trust-access-and-cost">Stage 4: Trust, access and cost</a><a class="h2" href="#stage-5-run-the-product">Stage 5: Run the product</a><a class="h2" href="#skip-ahead-rules">Skip-ahead rules</a><a class="h2" href="#worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#under-the-hood-how-this-path-was-built">Under the hood: how this path was built</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=learning-paths%2Fai-product-lead.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="learning-paths/ai-product-lead.html"</script><script defer src="../assets/glossary.js"></script></body></html>

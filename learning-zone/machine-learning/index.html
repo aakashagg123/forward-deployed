@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Machine learning for the product and technology leader</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><main class="content index" id="top">
+  <div class="index-hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">A standalone module</span>
+    <h1>Machine learning for the product and technology leader</h1>
+    <p class="lede">What a learned system is, what it learns from, how it learns, how to trust its score, which kind of model to pick, and how to keep it working after launch.</p>
+    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">8 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">runnable code</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">knowledge graph</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
+  </div>
+  <div class="intro MarkdownContent"><p>Most AI products rest on one idea. A program improves at a task by learning from examples, not by following rules a person wrote. A spam filter, a fraud score, a price forecast and a large language model all work this way. They differ in scale, not in kind.</p>
+<p>Product and technology leaders make decisions about this idea every week. Is this a rules problem or a learning problem? Is the data good enough? Is a 94% score real? Why did the model get worse after launch? Those decisions do not need the mathematics. They need a clear picture of the learning loop and of the five ways it fails.</p>
+<p>This module gives that picture. Every lesson has two layers. The body is for the leader who decides. A short <strong>Under the hood</strong> section is for the engineer who builds. It shows real code that runs on the Python standard library alone, with no install, and ends in <code>assert</code> lines so the claims in the lesson are checked.</p>
+<p><strong>One running example.</strong> A subscription company wants to predict which customers will cancel in the next 30 days. About one customer in five does. The data is invented and generated by code with a fixed seed, so every number in the lessons can be reproduced. Each lesson meets the same dataset and learns one more way it can go wrong.</p>
+<p><strong>A note on scope.</strong> This module does not teach prompting, retrieval, fine-tuning, or how a transformer works. <a href="../llms/index.html">LLMs</a> covers the model most products call. This module stays one level lower and earlier. It answers the questions that come before and after any model: whether you need one, what it learns from, how it learns, how to trust its score, and how to keep it working. Deep networks get their own modules, on tensors and on convolutional networks.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarizes an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Choosing between prompting, retrieval and fine-tuning for an LLM</td>
+<td><a href="../llms/prompting-vs-rag-vs-finetuning.html">Prompting vs. RAG vs. fine-tuning</a></td>
+</tr>
+<tr>
+<td>Build, buy or fine-tune as a business decision</td>
+<td><a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a></td>
+</tr>
+<tr>
+<td>What training and inference mean for a language model</td>
+<td><a href="../llms/what-is-an-llm.html">What an LLM actually is</a></td>
+</tr>
+<tr>
+<td>Precision and recall for search and retrieval</td>
+<td><a href="../rag-vector-databases/retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td>Building an eval set and watching an LLM feature</td>
+<td><a href="../evaluation-and-observability/index.html">Evaluation and observability</a></td>
+</tr>
+<tr>
+<td>Running an online experiment on the product number</td>
+<td><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a></td>
+</tr>
+<tr>
+<td>What training and serving cost over a model's life</td>
+<td><a href="../cost-optimization/index.html">Cost optimization</a></td>
+</tr>
+<tr>
+<td>Operating a system that acts, with limits and a kill switch</td>
+<td><a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-knowledge-graph">The knowledge graph</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.ml-idx{grid-template-columns:repeat(4,1fr)}@media (max-width:760px){.ml-idx{grid-template-columns:repeat(2,1fr)}}@media (max-width:420px){.ml-idx{grid-template-columns:1fr}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">The learning loop</span>
+<h4>From a decision to a system that keeps working</h4>
+<p class="dgm-ml-sub">Read left to right, then follow the dashed arrow back: the world moves, so the loop runs again.</p>
+<div class="dgm-ml-grid ml-idx"><div class="dgm-ml-card"><h5><span class="dgm-ml-num">1</span>Decide</h5><p>Rules, a trained model or an LLM?</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">2</span>Feed it</h5><p>Features, labels, honest splits</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">3</span>Teach it</h5><p>Loss, gradient descent</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">3-4</span>Generalize</h5><p>Overfit or underfit?</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">5</span>Trust it</h5><p>Metrics, cutoffs, baselines</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">6</span>Shape it</h5><p>Linear, trees, networks</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">7</span>Keep it working</h5><p>Skew, drift, lifecycle</p></div><div class="dgm-ml-card"><h5><span class="dgm-ml-num">8</span>Work with agents</h5><p>Contract, checks, review</p></div></div><p class="dgm-ml-foot">↺ retrain when the world moves — back to lesson 2</p>
+</div>
+
+<p>Read it as one loop with a feedback arrow. You <strong>decide</strong> that learning is the right tool. You <strong>feed</strong> it data that matches the future. It <strong>learns</strong> by repeated small corrections, and you check that it <strong>generalizes</strong> to cases it has not seen. You <strong>measure</strong> it against a baseline with a threshold that fits your costs. You <strong>choose a shape</strong> of model that fits the data. Then you <strong>keep it working</strong>, because the world moves and the loop has to run again.</p>
+<h2 id="the-lessons">The lessons</h2>
+<ol>
+<li><a href="what-machine-learning-is.html">What machine learning is, and when to use it</a> — three parts of every learned system, four ways a machine learns, and a test for rules, a trained model or an LLM.</li>
+<li><a href="data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> — what the model learns from, and why a score that looks too good deserves a leak check.</li>
+<li><a href="training-loss-and-gradient-descent.html">Training: loss and gradient descent</a> — the loop that every model uses, and how to read a loss curve.</li>
+<li><a href="generalization-overfitting-and-bias-variance.html">Generalization: overfitting and the bias–variance tradeoff</a> — why a model fails on new cases, and which of three fixes to buy.</li>
+<li><a href="measuring-a-model.html">Measuring a model: metrics, thresholds and baselines</a> — accuracy's traps, confusion matrices, cost-based cutoffs and calibration.</li>
+<li><a href="model-families.html">Model families: linear models, trees and neural networks</a> — what each can see, and backpropagation in one page.</li>
+<li><a href="ml-in-production.html">ML in production: drift, skew and the lifecycle</a> — the five failure modes after launch, and the monitors that catch them.</li>
+<li><a href="learning-and-doing-ml-with-claude-code.html">Learning and doing ML with Claude Code</a> — how to run experiments through a coding agent without fooling yourself, and how to use the agent to learn this module.</li>
+</ol>
+<p>Then the <a href="recap.html">recap and real-world examples</a>, with a self-test.</p>
+<h2 id="run-the-code">Run the code</h2>
+<p>Every example is in <code>machine-learning/code/</code>. Run them all with one command.</p>
+<pre><code class="language-bash">python3 machine-learning/code/test_examples.py
+</code></pre>
+<p>The files are <code>lesson1_rules_vs_learning.py</code> through <code>lesson8_agent_guardrails.py</code>, with shared pieces in <code>data.py</code>, <code>tree.py</code> and <code>mlp.py</code>. A passing file checks the direction of each claim, such as a deep tree scoring worse on new rows. Run a file to see every quoted number printed.</p></div>
+  <h2 class="sec">The lessons</h2>
+  <div class="cards"><a class="card" href="what-machine-learning-is.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>What machine learning is, and when to use it</h3><span class="card-go">Read lesson →</span></a><a class="card" href="data-features-labels-and-leakage.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>Data: features, labels, splits and leakage</h3><span class="card-go">Read lesson →</span></a><a class="card" href="training-loss-and-gradient-descent.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Training: loss and gradient descent</h3><span class="card-go">Read lesson →</span></a><a class="card" href="generalization-overfitting-and-bias-variance.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Generalization: overfitting and the bias–variance tradeoff</h3><span class="card-go">Read lesson →</span></a><a class="card" href="measuring-a-model.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Measuring a model: metrics, thresholds and baselines</h3><span class="card-go">Read lesson →</span></a><a class="card" href="model-families.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Model families: linear models, trees and neural networks</h3><span class="card-go">Read lesson →</span></a><a class="card" href="ml-in-production.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>ML in production: drift, skew and the lifecycle</h3><span class="card-go">Read lesson →</span></a><a class="card" href="learning-and-doing-ml-with-claude-code.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">08</span><h3>Learning and doing ML with Claude Code</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
+  </main>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/index.html"</script><script defer src="../assets/glossary.js"></script></body></html>

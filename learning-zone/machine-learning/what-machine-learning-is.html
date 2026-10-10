@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>What machine learning is, and when to use it — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
+    <h1>What machine learning is, and when to use it</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A normal program follows rules a person wrote. A machine learning (ML) program finds its
+own rules from examples. You show it past cases with known outcomes. It adjusts itself
+until its answers match those outcomes. Then it applies what it found to new cases.</p>
+<p>Tom Mitchell gave the classic definition in 1997. A program learns from experience if its
+score on a task improves as it gets more experience. Three words carry the idea: a <em>task</em>,
+an <em>experience</em> (data), and a <em>score</em>. If you cannot name all three, you do not have an ML
+problem yet.</p>
+<p>The core tradeoff is simple to state. Rules are exact, cheap and easy to audit, but you
+must write them. A learned model finds patterns you could not write down, but you must feed
+it data and test it hard. Most of the work in a real ML project sits in the data and the
+testing, not in the model.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — "Add AI" is not a requirement. Behind each such request sits a
+choice between rules, a model trained on your data, and a model someone else already
+trained. The wrong choice costs months.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for a baseline first: the best simple
+rule, or doing nothing. A model must beat the baseline by enough to pay for its data,
+its upkeep and its risk.</p>
+<p><strong>Ask your eng team</strong> — <em>"What is the best rule we could write in an afternoon, and how
+much better than that is the model?"</em></p>
+<p><strong>Risk if ignored</strong> — You fund a model that beats nothing. Or you hand-write rules for a
+problem with a thousand weak signals, and the rules never catch up.</p>
+</blockquote>
+<h2 id="the-mental-model-two-ways-to-build-a-decision">The mental model: two ways to build a decision</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.ml-two{grid-template-columns:1fr 1fr}@media (max-width:640px){.ml-two{grid-template-columns:1fr}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Two ways to build a decision</span>
+<h4>Where does the logic come from?</h4>
+<p class="dgm-ml-sub">The two sides give the same kind of output. The difference is the author: a person, or the data.</p>
+<div class="dgm-ml-grid ml-two">
+  <div class="dgm-ml-card"><h5>Rules</h5>
+    <div class="dgm-ml-grid" style="margin-top:8px">
+      <div class="dgm-ml-card dgm-ml-info"><p><b>An expert writes the rule</b><br>"3 or more tickets means trouble"</p></div>
+      <div class="dgm-ml-arrow">↓</div>
+      <div class="dgm-ml-card"><p><b>Program</b> applies the rule to a new case</p></div>
+      <div class="dgm-ml-arrow">↓</div>
+      <div class="dgm-ml-card dgm-ml-ok"><p><b>Answer</b> — exact, cheap, easy to audit</p></div>
+    </div></div>
+  <div class="dgm-ml-card"><h5>Learning</h5>
+    <div class="dgm-ml-grid" style="margin-top:8px">
+      <div class="dgm-ml-card dgm-ml-info"><p><b>Past cases with known outcomes</b><br>3,000 customers: cancelled or stayed</p></div>
+      <div class="dgm-ml-arrow">↓ training adjusts the knobs</div>
+      <div class="dgm-ml-card"><p><b>Model</b> applies what it found to a new case</p></div>
+      <div class="dgm-ml-arrow">↓</div>
+      <div class="dgm-ml-card dgm-ml-ok"><p><b>Prediction</b> — finds weights nobody could write by hand</p></div>
+    </div></div>
+</div>
+<p class="dgm-ml-foot">Same output, different author. With learning, the data is part of the logic.</p>
+</div>
+
+<p>The two sides produce the same kind of thing: an answer for a new case. They differ in
+where the logic comes from. On the left, a person decides. On the right, the data decides.
+That is why data quality becomes a product concern. The data is now part of the logic.</p>
+<h2 id="three-parts-of-every-learned-system">Three parts of every learned system</h2>
+<p>Every ML system has the same three parts. Learn to point at each one.</p>
+<ul>
+<li><strong>Data.</strong> The past cases. Each case has <em>features</em>, the facts you know at prediction
+  time, such as how long a customer has subscribed. Many cases also have a <em>label</em>, the
+  outcome you want to predict, such as "cancelled within 30 days".</li>
+<li><strong>Model.</strong> A function with adjustable numbers, called <em>parameters</em>. A tiny model may have
+  two. A large language model (LLM) has billions. The parameters are the "knobs" that
+  training sets.</li>
+<li><strong>Objective.</strong> A score that says how wrong the model is. Training turns the knobs to make
+  that score better. The objective is a product decision in disguise. The model will chase
+  whatever you score, even if it is not what you meant.</li>
+</ul>
+<p><em>Training</em> is the process of setting the parameters. <em>Inference</em> is using the finished
+model on a new case. Training is slow and costly and happens in advance. Inference is fast
+and happens on every request. <a href="../llms/what-is-an-llm.html">What an LLM actually is</a> shows
+the same split at large scale.</p>
+<h2 id="four-ways-a-machine-learns">Four ways a machine learns</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>What the data looks like</th>
+<th>Example</th>
+<th>Where you meet it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Supervised</strong></td>
+<td>Cases with labels</td>
+<td>Customer history with "cancelled" or "stayed"</td>
+<td>Churn, fraud, price and demand forecasts</td>
+</tr>
+<tr>
+<td><strong>Unsupervised</strong></td>
+<td>Cases with no labels</td>
+<td>Raw purchase logs</td>
+<td>Grouping customers into segments, finding outliers</td>
+</tr>
+<tr>
+<td><strong>Self-supervised</strong></td>
+<td>The data supplies its own labels</td>
+<td>Text where the model predicts the next word</td>
+<td>The first stage of training a language model</td>
+</tr>
+<tr>
+<td><strong>Reinforcement</strong></td>
+<td>A score for actions over time</td>
+<td>A reward for winning a game</td>
+<td>Game play, robotics, tuning a model with human feedback</td>
+</tr>
+</tbody>
+</table>
+<p>Most business ML is supervised. It needs labels, and labels cost money: someone must record
+the outcome, and the outcome must arrive. A churn label does not exist until 30 days pass.
+This delay shapes the whole project.</p>
+<p>A language model is trained mostly by self-supervised learning. No one hand-labels each
+sentence, because the next word in a real text is the label. That is why such models could
+grow so large. The labels were free. Later stages add human-written examples and feedback.
+<a href="../llms/index.html">LLMs</a> covers that path.</p>
+<h2 id="rules-a-trained-model-or-an-llm">Rules, a trained model, or an LLM</h2>
+<p>Three tools solve problems that look alike. Use a short test to pick one.</p>
+<table>
+<thead>
+<tr>
+<th>If the situation is...</th>
+<th>Reach for</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The logic fits on a page and rarely changes</td>
+<td><strong>Rules</strong></td>
+<td>Exact, cheap, easy to audit and explain</td>
+</tr>
+<tr>
+<td>Many weak signals, recorded outcomes, structured data, a score or a category as the answer</td>
+<td><strong>A model trained on your data</strong></td>
+<td>It finds weights no one could write by hand</td>
+</tr>
+<tr>
+<td>Free text, images or speech, no labelled history, wording that varies</td>
+<td><strong>A pre-trained model such as an LLM</strong>, steered by prompts or retrieval</td>
+<td>It already learned language or vision at scale. You do not have the data to repeat that</td>
+</tr>
+<tr>
+<td>High stakes and a duty to explain every decision</td>
+<td><strong>Rules first.</strong> A model may advise, with a person deciding</td>
+<td>Auditability is a feature you can lose</td>
+</tr>
+</tbody>
+</table>
+<p>Four questions sort a new problem.</p>
+<ol>
+<li><strong>Can you write the rule?</strong> If an expert can state it in a page, write it.</li>
+<li><strong>Do you have the outcomes?</strong> A trained model needs many past cases with known results.
+   If you have none, you may need a pre-trained model, or a way to collect them first.</li>
+<li><strong>What does a wrong answer cost, and can a person check it?</strong> A wrong movie suggestion
+   costs a click. A wrong credit decision costs a customer and may breach a law.</li>
+<li><strong>Will the world change under it?</strong> A model trained on last year's customers can fail on
+   this year's. <a href="ml-in-production.html">Lesson 7</a> covers this.</li>
+</ol>
+<p>Google's <em>Rules of Machine Learning</em>, written by engineer Martin Zinkevich, opens with
+Rule 1: do not be afraid to launch a product without machine learning. The reasoning is
+practical. ML needs data. Without good data, a model often loses to simple heuristics. A
+rule also gives you a baseline, and a baseline is how you learn whether a model was worth
+building.</p>
+<p>For the choice between prompting, retrieval and fine-tuning once you have decided to use
+an LLM, see <a href="../llms/prompting-vs-rag-vs-finetuning.html">Prompting vs. RAG vs. fine-tuning</a>
+and <a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a>. This lesson sits
+one step earlier. It asks whether the problem needs a learned model at all.</p>
+<h2 id="worked-example-a-rule-a-learned-rule-and-doing-nothing">Worked example: a rule, a learned rule, and doing nothing</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed. It is not
+real customer data.</em></p>
+<p>A subscription company wants to predict which customers will cancel in the next 30 days.
+About 18% of customers cancel. We have 4,000 customers: 3,000 to learn from and 1,000 held
+back for testing.</p>
+<p>We compare three approaches, using one score called <strong>balanced accuracy</strong>. It is the
+average of two rates: the share of cancelling customers we catch, and the share of staying
+customers we leave alone. A program that does nothing scores 50%, the same as a coin flip.
+Plain accuracy would score "do nothing" at about 82%, which hides the problem. Lesson 5
+explains why.</p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Where the logic came from</th>
+<th>Balanced accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Do nothing (predict that nobody cancels)</td>
+<td>No logic at all</td>
+<td>50.0%</td>
+</tr>
+<tr>
+<td>Hand-written rule: "3 or more support tickets in 90 days"</td>
+<td>A product manager's instinct</td>
+<td>58.9%</td>
+</tr>
+<tr>
+<td>Learned rule: the best single yes-or-no cut found by search</td>
+<td>The data</td>
+<td>59.7%</td>
+</tr>
+</tbody>
+</table>
+<p>The learned rule picked the same column the manager picked, tickets in the last 90 days.
+It chose "2 or more" in place of "3 or more". It beat the hand-written rule by under one
+point. On this problem, a single rule teaches us little.</p>
+<p>That is the lesson. ML does not win by finding a cleverer cut on one column. It wins when
+many weak signals must be combined. Lesson 3 trains a model that combines four columns. It
+scores 67.4% on the same test. The extra 8.5 points over the hand rule come from combining
+signals. You would never write that rule by hand, because the weights have no natural round
+numbers. One caution: we generated this data from a weighted sum of four columns. So
+combining them was bound to win here. On your own data, the baseline is how you find out.</p>
+<p>The baseline did its job. It told us a single column was nearly worthless and that the
+payoff was in combination. A team that skipped the baseline would not know what its model
+bought.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Rules vs. a model.</strong> Rules cost engineering time up front and again at every change. A
+  model costs data, training, testing and monitoring. Rules win when the logic is stable and
+  small. Models win when signals are many, weak and shifting.</li>
+<li><strong>Build vs. buy.</strong> A pre-trained model, reached by an API, gives results in days. Your own
+  model gives control over data and cost per call. Use a pre-trained model when the task is
+  language or vision. Build your own when you have unique data and a stable, repeated task.</li>
+<li><strong>Accuracy vs. explainability.</strong> The most accurate model is often the hardest to explain.
+  Lesson 6 gives the options.</li>
+<li><strong>Time to first value vs. time to trust.</strong> A prototype takes days. A model you can run
+  without watching it takes quarters. Plan both.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>ML where a rule would do.</strong> The team builds a model for logic one analyst could write
+  in an hour. Upkeep and risk arrive. The gain does not.</li>
+<li><strong>No baseline.</strong> The model scores 80% and nobody knows if that is good, because nobody
+  scored the simple rule.</li>
+<li><strong>No labels, or labels that arrive too late.</strong> The team starts without a plan to record
+  outcomes. The first usable label arrives after the budget ends.</li>
+<li><strong>The objective is not the goal.</strong> The model is scored on clicks, and the product wanted
+  satisfied customers. The model finds more clicks and fewer satisfied customers.</li>
+<li><strong>A model treated as finished.</strong> It launches and nobody owns it. <a href="ml-in-production.html">Lesson 7</a>
+  shows how it decays.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The smallest learner is a search. This function tries every column, every cut point and
+both directions, and keeps the rule with the best score. The program is the search. The
+rule is what it found. The file is <code>machine-learning/code/lesson1_rules_vs_learning.py</code>.</p>
+<pre><code class="language-python">def learn_stump(rows, labels):
+    best = (-1, None)
+    for f in range(len(rows[0])):                      # every column
+        for cut in sorted({r[f] for r in rows}):       # every cut point seen in the data
+            for sign in (1, -1):                       # &quot;at least&quot; and &quot;at most&quot;
+                pred = [1 if sign * (r[f] - cut) &gt;= 0 else 0 for r in rows]
+                score = balanced_accuracy(pred, labels)
+                if score &gt; best[0]:
+                    best = (score, (f, cut, sign))
+    return best[1]
+</code></pre>
+<p>Real training does the same thing in spirit: define a score, search for the parameters that
+improve it, and stop. The search differs. A decision stump can try every option. A model
+with millions of parameters cannot, so it follows the slope of the score, as
+<a href="training-loss-and-gradient-descent.html">lesson 3</a> shows. Three habits matter to an
+engineer here.</p>
+<ul>
+<li><strong>Score on rows the model never saw.</strong> The score above uses the 1,000 held-back rows.
+  <a href="data-features-labels-and-leakage.html">Lesson 2</a> explains why this is not optional.</li>
+<li><strong>Fix the random seed.</strong> Every number in this module can be reproduced. Do the same in
+  your own experiments, so a change in score means a change in the model.</li>
+<li><strong>Run the baseline in the same harness.</strong> The do-nothing and hand-written rules use the
+  same scoring function. If the model's harness differs, the comparison is meaningless.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Can we name the task, the data and the score in one sentence each?</li>
+<li class="task todo">Have we written and scored the best simple rule or the do-nothing baseline?</li>
+<li class="task todo">Do we have recorded outcomes, and how long after an event does each outcome arrive?</li>
+<li class="task todo">Have we said what a wrong answer costs, and whether a person can check it?</li>
+<li class="task todo">Did we compare rules, a model trained on our data, and a pre-trained model?</li>
+<li class="task todo">Is the score we optimize the thing the product actually needs?</li>
+<li class="task todo">Does a named person own the model after launch?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> — what
+  the model learns from, and how to keep the test honest.</li>
+<li><a href="training-loss-and-gradient-descent.html">Training: loss and gradient descent</a> — how the
+  knobs get set.</li>
+<li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — the same learning loop at very
+  large scale.</li>
+<li><a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a> — the next
+  decision once you choose a pre-trained model.</li>
+<li><a href="../first-principles/the-method.html">The method (first principles)</a> — a way to test
+  whether the problem is what you think it is.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Mitchell, T. <em>Machine Learning</em> (McGraw-Hill, 1997), chapter 1: the definition of a
+  program that learns from experience E with respect to a task T and a score P.</li>
+<li>Zinkevich, M. <em>Rules of Machine Learning: Best Practices for ML Engineering</em>, Google.
+  <a href="https://developers.google.com/machine-learning/guides/rules-of-ml">developers.google.com/machine-learning/guides/rules-of-ml</a>.
+  Rule 1 ("Don't be afraid to launch a product without machine learning") and its
+  reasoning that ML needs data and that simple heuristics are a strong baseline. Checked
+  2026-10 through a search summary, since the page itself was blocked.</li>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/modules/model_evaluation.html">Model evaluation</a>:
+  balanced accuracy as the average of recall on each class. Read from the guide's source
+  text in the scikit-learn repository, 2026-10.</li>
+<li>The churn data, the rule, the learned rule and every score are invented. They come from
+  <code>machine-learning/code/</code> and can be reproduced with
+  <code>python3 machine-learning/code/lesson1_rules_vs_learning.py</code>.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="data-features-labels-and-leakage.html"><span class="lbl">→ Next</span><span class="ttl">Data: features, labels, splits and leakage</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-two-ways-to-build-a-decision">The mental model: two ways to build a decision</a><a class="h2" href="#three-parts-of-every-learned-system">Three parts of every learned system</a><a class="h2" href="#four-ways-a-machine-learns">Four ways a machine learns</a><a class="h2" href="#rules-a-trained-model-or-an-llm">Rules, a trained model, or an LLM</a><a class="h2" href="#worked-example-a-rule-a-learned-rule-and-doing-nothing">Worked example: a rule, a learned rule, and doing nothing</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Fwhat-machine-learning-is.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/what-machine-learning-is.html"</script><script defer src="../assets/glossary.js"></script></body></html>

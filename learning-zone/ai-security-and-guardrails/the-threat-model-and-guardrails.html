@@ -1,458 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>The threat model, and guardrails as architecture — AI security &amp; guardrails</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#FFFFFF; --bg2:#F6F8FA; --panel:#FFFFFF; --line:#D1D9E0; --line2:#EAEEF2;
-  --ink:#1F2328; --ink2:#1F2328; --mut:#59636E; --accent:#0969DA; --accent-d:#0550AE;
-  --accent-soft:#DDF4FF; --accent-border:#B6E3FF; --green:#1A7F37; --red:#D1242F;
-  --red-soft:#FFEBE9; --radius:6px;
-  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
-  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
-  --mono:ui-monospace,'SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink2);font-family:var(--sans);
-  font-size:16px;line-height:1.7;
-  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-  text-rendering:optimizeLegibility;
-  font-feature-settings:"cv11","ss01","ss03";
-  overflow-x:hidden}
-img,svg,canvas{max-width:100%;height:auto}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
 
-/* top bar */
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
-  padding:14px 26px;background:rgba(255,255,255,.96);
-  border-bottom:1px solid var(--line);
-  box-shadow:0 1px 0 rgba(31,35,40,.02),0 4px 16px rgba(31,35,40,.03)}
-.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:600}
-.brand:hover{text-decoration:none}
-.brand span{font-size:16px;letter-spacing:.2px}
-.brand em{font-style:normal;color:var(--mut);font-weight:400;font-size:13px;
-  padding-left:9px;margin-left:3px;border-left:1px solid var(--line)}
-.spark{flex:0 0 auto}
-.topnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
-.topnav a{font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:var(--mut);
-  padding:5px 10px;border-radius:8px}
-.topnav a:hover{background:var(--bg2);color:var(--accent);text-decoration:none}
-.menu-btn{display:none;width:44px;height:44px;align-items:center;justify-content:center;
-  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
-  font-size:18px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;margin-right:4px}
-.menu-btn:hover{border-color:var(--accent)}
-#sb-scrim{position:fixed;inset:0;background:rgba(31,35,40,.30);opacity:0;visibility:hidden;
-  transition:opacity .2s;z-index:34}
-#sb-scrim.open{opacity:1;visibility:visible}
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
 
-/* layout */
-.layout{display:grid;grid-template-columns:268px minmax(0,1fr);gap:0;
-  max-width:1240px;margin:0 auto}
-.layout.has-outline{grid-template-columns:268px minmax(0,1fr)}
-.sidebar{border-right:1px solid var(--line);padding:30px 18px 60px}
-.sticky{position:sticky;top:74px}
-.modlink{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:var(--radius);
-  color:var(--ink2);font-size:14.5px;font-weight:500}
-.modlink:hover{background:var(--bg2);text-decoration:none}
-.modlink.active{background:var(--accent-soft);color:var(--accent)}
-.modlink .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
-.sub{display:flex;flex-direction:column;margin:2px 0 10px 34px;
-  border-left:1px solid var(--line);padding-left:12px}
-.sub a{color:var(--mut);font-size:13px;padding:4px 0;line-height:1.4}
-.sub a:hover{color:var(--accent);text-decoration:none}
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
 
-/* "on this page" outline — right rail, wide screens only */
-.outline{display:none}
-@media (min-width:1280px){
-  .layout.has-outline{grid-template-columns:268px minmax(0,1fr) 220px}
-  .layout.has-outline .outline{display:block;padding:30px 16px 60px 8px}
-}
-.outline-h{font-family:var(--mono);font-size:11px;letter-spacing:.4px;
-  color:var(--mut);margin:0 0 10px 13px}
-.outline a{display:block;padding:5px 13px;font-size:12.5px;color:var(--mut);line-height:1.4;
-  border-left:2px solid transparent}
-.outline a:hover{color:var(--ink);text-decoration:none}
-.outline a.h3{padding-left:25px;font-size:12px}
-.outline a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
 
-/* content column */
-.content{padding:46px 56px 90px;max-width:880px}
-.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:14px}
-.chip{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.3px;
-  color:var(--accent);background:var(--accent-soft);
-  padding:5px 11px;border-radius:999px;margin-bottom:18px}
-.hero h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.15;
-  color:var(--ink);margin:.1em 0 .25em}
-.lede{font-size:19px;color:var(--ink2);margin:.2em 0 .6em;line-height:1.5}
-.hero-meta{font-size:14px;color:var(--mut)}
-.hero-meta strong{color:var(--accent);font-weight:600}
-
-.intro{color:var(--ink2)}
-.intro blockquote{margin:18px 0}
-
-/* table of contents */
-.toc{margin:30px 0 8px;background:var(--bg2);border:1px solid var(--line);
-  border-radius:var(--radius);padding:18px 20px}
-.toc-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.4px;
-  color:var(--mut);margin-bottom:10px}
-.toc a{display:flex;gap:12px;padding:6px 0;color:var(--ink2);font-size:15px;
-  border-bottom:1px solid var(--line2)}
-.toc a:last-child{border-bottom:none}
-.toc a:hover{color:var(--accent);text-decoration:none}
-.toc a span{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:32px}
-
-/* lessons */
-.lesson{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:30px}
-.lesson:first-of-type{border-top:none}
-.lesson-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
-.lesson-num{font-family:var(--mono);font-size:14px;color:#fff;background:var(--accent);
-  padding:3px 9px;border-radius:var(--radius);font-weight:600}
-.lesson h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.25;
-  color:var(--ink);margin:0;padding-bottom:.3em;border-bottom:1px solid var(--line)}
-.lesson h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);
-  margin:1.8em 0 .5em}
-.lesson h4{font-size:16px;font-weight:600;color:var(--ink);margin:1.4em 0 .4em;
-  letter-spacing:.2px}
-.lesson p{margin:.85em 0}
-.lesson ul,.lesson ol{padding-left:1.35em;margin:.7em 0}
-.lesson li{margin:.32em 0}
-.lesson strong{color:var(--ink);font-weight:600}
-.lesson em{color:var(--ink2)}
-hr{border:none;border-top:1px solid var(--line);margin:2em 0}
-
-/* PM callout — GitHub "alert" style: coloured left rule, plain canvas fill */
-.pm-callout{position:relative;background:var(--panel);
-  border:1px solid var(--line);border-left:4px solid var(--accent);
-  border-radius:var(--radius);padding:16px 22px 12px;margin:22px 0}
-.pm-callout > p:first-child{font-family:var(--sans);font-weight:600;color:var(--accent);
-  font-size:14px;margin:0 0 .5em}
-.pm-callout p{margin:.5em 0;font-size:15.5px}
-.pm-callout strong{color:var(--ink)}
-
-/* generic blockquote — GitHub markdown treatment: grey rule, no fill */
-blockquote{margin:16px 0;padding:0 1em;border-left:.25em solid var(--line);
-  color:var(--mut);background:none;border-radius:0}
-blockquote p{margin:.5em 0}
-
-/* tables */
-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14.5px;
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  overflow:hidden}
-th{text-align:left;background:var(--bg2);color:var(--ink);font-weight:600;
-  padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
-td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top}
-tr:last-child td{border-bottom:none}
-tr:nth-child(2n) td{background:var(--bg2)}
-td code,th code{font-size:12.5px}
-
-/* code — GitHub markdown code blocks: light grey, no syntax colour */
-code{font-family:var(--mono);font-size:13.5px;background:var(--bg2);color:var(--ink);
-  padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
-pre{background:var(--bg2);color:var(--ink);border-radius:var(--radius);padding:16px 18px;
-  overflow-x:auto;margin:18px 0;border:1px solid var(--line);line-height:1.55}
-pre code{background:none;color:inherit;padding:0;font-size:13px}
-
-/* task lists */
-.lesson li.task{list-style:none;margin-left:-1.1em;padding-left:1.9em;position:relative}
-.lesson li.task:before{position:absolute;left:0;top:0;width:1.2em;height:1.2em}
-.lesson li.todo:before{content:"☐";color:var(--mut);font-size:1.05em}
-.lesson li.done:before{content:"☑";color:var(--green)}
-
-.totop{display:inline-block;margin-top:24px;font-size:12.5px;color:var(--mut);
-  font-family:var(--mono)}
-.totop:hover{color:var(--accent);text-decoration:none}
-
-/* page nav + footer */
-.pagenav{display:flex;justify-content:space-between;gap:16px;margin:54px 0 30px;
-  flex-wrap:wrap}
-.navcard{flex:1 1 240px;display:flex;flex-direction:column;gap:4px;padding:16px 20px;
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
-.navcard:hover{border-color:var(--accent);text-decoration:none}
-.navcard.next{text-align:right;align-items:flex-end}
-.navcard .lbl{font-size:12px;color:var(--mut);font-family:var(--mono)}
-.navcard .ttl{font-family:var(--serif);font-size:17px;color:var(--ink);font-weight:600}
-.foot{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
-  color:var(--mut);font-size:13.5px}
-
-/* ---- index page ---- */
-.index{max-width:1080px;margin:0 auto;padding:60px 40px 90px}
-.index-hero{text-align:center;padding:20px 0 30px}
-.index-hero h1{font-family:var(--serif);font-weight:600;font-size:48px;line-height:1.12;
-  color:var(--ink);margin:.15em 0 .3em}
-.index-hero h1 em{font-style:normal;color:var(--accent)}
-.index-hero .lede{max-width:720px;margin:0 auto;font-size:19px}
-.index-meta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
-.index-meta span{font-size:13px;color:var(--ink2);background:var(--bg2);
-  border:1px solid var(--line);padding:6px 14px;border-radius:999px;
-  font-family:var(--mono)}
-.pm-band{display:flex;gap:16px;align-items:flex-start;max-width:860px;margin:36px auto;
-  background:var(--panel);border:1px solid var(--line);
-  border-left:4px solid var(--accent);border-radius:var(--radius);padding:20px 24px}
-.pm-band .pm-ic{font-size:24px;line-height:1.2}
-.pm-band strong{color:var(--ink)}
-.sec{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);
-  text-align:center;margin:60px 0 26px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
-.card{position:relative;display:flex;flex-direction:column;background:var(--panel);
-  border:1px solid var(--line);border-radius:var(--radius);padding:24px 24px 22px;color:var(--ink2)}
-.card:hover{border-color:var(--accent);text-decoration:none;transition:.15s}
-.card-num{font-family:var(--mono);font-size:13px;color:#fff;background:var(--accent);
-  width:fit-content;padding:3px 10px;border-radius:var(--radius);font-weight:600;margin-bottom:12px}
-.card h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--ink);margin:0 0 .35em}
-.card p{font-size:14.5px;color:var(--mut);margin:0 0 .9em}
-.card ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--ink2)}
-.card li{margin:.2em 0}
-.card li.more{list-style:none;margin-left:-1.1em;color:var(--mut);font-style:italic}
-.card-iw{margin-top:auto;padding-top:14px;font-family:var(--mono);font-size:11.5px;
-  letter-spacing:.4px;color:var(--accent);opacity:.9}
-.card-go{padding-top:6px;color:var(--accent);font-weight:600;font-size:14px}
-.threads{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
-  max-width:920px;margin:0 auto}
-.thread{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
-.thread-t{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15.5px}
-.thread p{margin:0;font-size:14px;color:var(--mut)}
-
-/* tablet: collapse to a single column */
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 @media (max-width:880px){
-  .layout{grid-template-columns:minmax(0,1fr)}
-  /* .layout.has-outline's unconditional rule below (2 classes) outranks the
-     plain .layout rule above (1 class) on specificity regardless of this
-     media query, so it needs its own same-specificity override here to
-     actually collapse on mobile */
-  .layout.has-outline{grid-template-columns:minmax(0,1fr)}
-  .content{min-width:0;padding:32px 22px 70px}
-  .menu-btn{display:inline-flex}
-  .sidebar{display:block;position:fixed;top:0;left:0;bottom:0;z-index:35;
-    width:280px;max-width:86vw;background:var(--bg);border-right:none;
-    box-shadow:12px 0 40px rgba(31,35,40,.16);
-    transform:translateX(-100%);transition:transform .22s ease;
-    max-height:100%;overflow-y:auto;padding:0}
-  .sidebar.open{transform:translateX(0)}
-  .sidebar .sticky{position:static;padding:20px 14px 40px}
-  .hero h1{font-size:34px}.index-hero h1{font-size:38px}
-  .topnav{display:none}
-  .iw-field input[type=range]{width:160px}
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
 }
+#gl-panel{will-change:transform}
 
-/* phone-first: high readability on iPhone-class widths */
-@media (max-width:560px){
-  body{font-size:17px;line-height:1.7}
-  .topbar{padding:12px 16px;gap:12px}
-  .brand span{font-size:15px}
-  .brand em{display:none}
-  .content{padding:24px 16px 64px}
-  .index{padding:36px 16px 64px}
-  .chip{font-size:11px}
-  .hero h1{font-size:27px;line-height:1.18;margin-top:.2em}
-  .hero .lede,.hero-meta{font-size:15px}
-  .hero-meta{line-height:1.6}
-  .index-hero h1{font-size:30px;line-height:1.12}
-  .index-hero .lede{font-size:16.5px}
-  .lesson{padding:34px 0 8px;margin-top:22px}
-  .lesson-head{gap:10px}
-  .lesson h2{font-size:22px;line-height:1.22}
-  .lesson h3{font-size:18.5px}
-  .lesson p,.lesson li{font-size:16.5px}
-  pre{font-size:12.8px;padding:14px 14px;border-radius:10px}
-  pre code{font-size:12.8px}
-  code{font-size:12.8px;word-break:break-word}
-  /* wide tables scroll instead of breaking the page */
-  .lesson table,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
-    white-space:nowrap;font-size:13.5px}
-  .cards,.threads{grid-template-columns:1fr}
-  .pagenav{flex-direction:column;gap:12px}
-  .navcard{flex:1 1 auto}
-  .navcard.next{text-align:left;align-items:flex-start}
-  .pm-band,.recap{padding:18px 18px}
-  .recap{margin-top:30px}
-  /* comfortable tap targets */
-  a,.iw-btn,summary{touch-action:manipulation}
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
 }
+@supports (height:100dvh){#gl-panel{height:100dvh}}
 
-/* ---- recap section ---- */
-.recap{margin-top:40px;padding:30px 30px 16px;border:1px solid var(--line);
-  border-radius:var(--radius);background:var(--bg2)}
-.recap-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-.recap-ic{font-size:22px}
-.recap h2{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:0;
-  border-bottom:none;padding-bottom:0}
-.recap h2:not(.recap-head h2){margin-top:1.4em}
-.recap h2{}
-.recap .recap-head + p{margin-top:.6em}
-.recap table{background:#fff}
-.recap blockquote{background:#fff;border-left:.25em solid var(--line)}
-
-/* ---- interactive widgets ---- */
-.interactive{margin:34px 0;border:1px solid var(--line);border-radius:var(--radius);
-  background:var(--panel);overflow:hidden}
-.iw-head{background:var(--bg2);padding:13px 22px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;gap:11px}
-.iw-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
-  color:#fff;background:var(--accent);padding:3px 9px;border-radius:6px}
-.iw-head h3{font-family:var(--serif);margin:0;font-size:18px;color:var(--ink);font-weight:600}
-.iw-body{padding:22px 24px}
-.iw-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-bottom:18px}
-.iw-field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--mut)}
-.iw-field label{font-weight:600;color:var(--ink2);font-size:13px}
-.iw-field .v{font-family:var(--mono);color:var(--accent);font-weight:600}
-.iw-field input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
-.iw-btns{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:6px}
-.iw-btn{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--line);
-  background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--radius);transition:.15s}
-.iw-btn:hover{border-color:var(--accent);color:var(--accent)}
-.iw-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.iw-btn.primary:hover{background:var(--accent-d);color:#fff}
-.iw-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-.iw-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);
-  cursor:pointer;user-select:none}
-.iw-toggle input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
-.iw-out{background:var(--bg2);border-radius:var(--radius);padding:16px 18px;margin-top:8px}
-.iw-note{font-size:13.5px;color:var(--mut);margin-top:12px;line-height:1.55}
-.iw-good{color:var(--green);font-weight:600}.iw-bad{color:var(--red);font-weight:600}
-.iw-metric{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:7px 0}
-.iw-metric .ml{font-size:13px;color:var(--ink2);min-width:120px}
-.iw-metric .mv{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600}
-.iw-track{flex:1;height:13px;background:var(--line2);border-radius:7px;overflow:hidden}
-.iw-fill{height:100%;width:0;background:var(--accent);border-radius:7px;
-  transition:width .45s ease,background-color .3s}
-/* pipeline stages (mod 00) */
-.iw-stages{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
-.iw-stage{padding:9px 13px;border:1px solid var(--line);border-radius:var(--radius);font-size:13px;
-  background:#fff;color:var(--ink2);transition:.25s;font-weight:500}
-.iw-stage.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
-.iw-stage.dim{opacity:.32}.iw-stage.kill{border-color:var(--red);background:var(--red-soft);color:var(--red)}
-.iw-arrow{color:var(--mut);font-size:14px}
-/* chunk grid (mod 03) */
-.iw-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.iw-chunk{width:20px;height:20px;border-radius:5px;background:var(--line2)}
-.iw-chunk.rel{background:var(--accent)}.iw-chunk.kept{outline:2px solid var(--ink);outline-offset:1px}
-/* trace spans (mod 04) */
-.iw-span{display:flex;align-items:center;gap:10px;margin:5px 0;cursor:pointer}
-.iw-span .sn{min-width:118px;font-size:12.5px;color:var(--ink2);text-align:right}
-.iw-spanbar-wrap{flex:1;background:var(--line2);border-radius:6px;height:22px;position:relative}
-.iw-spanbar{position:absolute;height:22px;border-radius:6px;background:var(--accent);opacity:.85}
-.iw-span:hover .iw-spanbar,.iw-span.sel .iw-spanbar{opacity:1;outline:2px solid var(--ink)}
-.iw-stack{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:4px 0 2px;border:1px solid var(--line)}
-.iw-stack span{display:block;height:100%}
-.iw-legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:4px}
-.iw-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.iw-verdict{font-size:15px;font-weight:600;margin-top:4px}
-/* iw-metric (mods 01/03/06) and iw-span (mod 04) are single-row flex
-   layouts with a min-width label that get cramped once the label, bar,
-   and value have to share ~250-300px of actual content width — stack
-   label+value above the bar instead of squeezing everything into one row.
-   Placed after the base rules above so it wins the cascade (equal
-   specificity, later source order) rather than needing !important. */
-@media (max-width:560px){
-  .iw-metric{flex-wrap:wrap;row-gap:4px}
-  .iw-metric .ml{min-width:0;flex:1 1 auto}
-  .iw-metric .mv{flex:0 0 auto}
-  .iw-track{flex:1 1 100%;order:3}
-  .iw-span{flex-wrap:wrap;row-gap:4px}
-  .iw-span .sn{min-width:0;flex:0 0 auto;text-align:left}
-  .iw-spanbar-wrap{flex:1 1 100%;order:2}
-}
-pre.mermaid{background:#ffffff;border:1px solid #d1d9e0;border-radius:6px;padding:26px 20px;margin:26px 0;text-align:center;overflow-x:auto}pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:geometricPrecision}.mm-hint{position:sticky;left:8px;display:block;width:max-content;font-size:11px;color:#59636e;background:#f6f8fa;border:1px solid #d1d9e0;border-radius:20px;padding:2px 10px;margin:0 0 8px;text-align:left}</style>
-</head>
-<body>
-<div id="fd-lz-bar" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 20px;background:#FFFFFF;border-bottom:1px solid #000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;box-sizing:border-box;">
-  <a href="/" style="display:flex;align-items:center;gap:8px;color:#000000;text-decoration:none;font-weight:600;">
-    <img src="/mark-64.png" alt="" style="width:18px;height:18px;border-radius:4px;display:block;">
-    <span>Forward-deployed</span>
-  </a>
-  <span style="color:#B0B0B0;">/</span>
-  <a href="/learning-zone/" style="color:#4A4A4A;text-decoration:none;">Learning zone</a>
-</div>
-<header class="topbar">
-  <button class="menu-btn" id="sbToggle" aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu">☰</button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="#1F2328"/></svg><span>AI security &amp; guardrails</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a href="../index.html">← All courses</a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-threat-model-and-guardrails.html">1 · The threat model, and guardrails as architecture</a><a class="modlink" href="governance-audit-and-compliance.html">2 · Governance, audit &amp; compliance</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI security &amp; guardrails</span><em>a Generative AI module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-threat-model-and-guardrails.html">1 · The threat model, and guardrails as architecture</a><a class="modlink" href="red-teaming-and-proving-your-defenses.html">2 · Red-teaming: testing your defenses</a><a class="modlink" href="governance-audit-and-compliance.html">3 · Governance, audit &amp; compliance</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="chip">Lesson 01</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
     <h1>The threat model, and guardrails as architecture</h1>
   </div>
-  <h2 id="tldr">TL;DR</h2>
-<p>"Guardrails" gets treated as one line item on a checklist. It isn't. Four distinct attacks
-hide under that word, and each needs a different defense. <strong>Jailbreaking</strong> talks the model
-itself out of its trained refusals — roleplay, hypotheticals, encoding tricks. <strong>Prompt
-injection</strong> doesn't touch the model's training at all; it hides commands inside the data
-the model reads, exploiting the fact that instructions and data share one channel.
-<strong>Extraction</strong> pulls something proprietary back out — training data, a system prompt, the
-model's own weights. <strong>Poisoning</strong> corrupts what the model learns in the first place, by
-planting bad examples in its training or retrieval corpus. A guardrail that stops one of
-these does nothing against the other three. So a real guardrail system isn't a filter. It's
-a <strong>layered, fail-closed architecture</strong>, built on the assumption that any single layer will
-eventually be beaten.</p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Teams treat "guardrails" as one line on a checklist. It is not one thing. Four different
+attacks hide under that word, and each needs its own defense.</p>
+<ol>
+<li><strong>Jailbreak.</strong> The attacker talks the model out of its trained refusals.</li>
+<li><strong>Prompt injection.</strong> The attacker hides commands in data the model reads.</li>
+<li><strong>Extraction.</strong> The attacker pulls out training data, a system prompt, or the model's
+   behavior.</li>
+<li><strong>Poisoning.</strong> The attacker corrupts what the model learns, before it ships.</li>
+</ol>
+<p>A guardrail that stops one of these does nothing against the other three. So a real
+guardrail system is not a filter. It is a layered design that <strong>fails closed</strong>: when a
+check breaks or is unsure, the request is blocked or degraded, never waved through.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — A security review that answers "yes, we have guardrails" without
-naming which of these four attacks each guardrail stops has checked nothing. The class
-nobody named is the class that lands.</p>
-<p><strong>What it changes in your decisions</strong> — You stop asking "do we have guardrails?" and
-start asking "which of jailbreak, injection, extraction, and poisoning does this specific
-guardrail defend against — and which of the other three are still open?"</p>
-<p><strong>Ask your eng team</strong> — <em>"When one of our checks fails or times out, does the request get
+<p><strong>Why it matters</strong> — A security review that says "yes, we have guardrails" has checked
+nothing until it names the attack each guardrail stops. The attack nobody named is the
+attack that lands.</p>
+<p><strong>What it changes in your decisions</strong> — You stop asking "do we have guardrails?" You ask
+"which of the four attacks does this guardrail stop, and which three are still open?"</p>
+<p><strong>Ask your eng team</strong> — <em>"When one of our checks fails or times out, is the request
 blocked, or does it go through?"</em></p>
-<p><strong>Risk if ignored</strong> — A single filter gets mistaken for full coverage. The attack that
-was never in scope walks straight past a system everyone believed was defended.</p>
+<p><strong>Risk if ignored</strong> — One filter gets mistaken for full coverage. The attack that was
+never in scope walks past a system that everyone believed was defended.</p>
 </blockquote>
-<h2 id="four-attacks-one-word">Four attacks, one word</h2>
+<h2 id="the-mental-model-four-attacks-four-defenses-one-rule">The mental model: four attacks, four defenses, one rule</h2>
 <!-- Threat model lesson — 4 attacks × 4 guardrails → fail-closed decision → outcomes.
      Diagram type: PARALLEL MATRIX (attack × defense) with terminal decision fork. -->
 <style>
-.dgm-tm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a13d63;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),
-  0 8px 24px rgba(31,35,40,.04);margin:26px 0;max-width:100%;
+.dgm-tm{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),
+  0 8px 24px rgb(var(--shadow-color) / 0.04);margin:26px 0;max-width:100%;
   font-family:inherit;text-align:left;position:relative}
-.dgm-tm-chip{position:absolute;top:-11px;left:24px;background:#a13d63;color:#ffffff;
+.dgm-tm-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(161,61,99,.28)}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-discovery-solid) 28%, transparent)}
 .dgm-tm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;
-  text-transform:uppercase;color:#59636e}
-.dgm-tm-sub{font-size:12px;color:#59636e;margin:0 0 14px}
+  text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-tm-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px}
 .dgm-tm-matrix{display:grid;grid-template-columns:1fr 24px 1.15fr;gap:8px 12px;
   align-items:center;margin-bottom:16px}
-.dgm-tm-attack{background:#ffebe9;border:1px solid #ffcecb;border-radius:11px;padding:11px 12px;
+.dgm-tm-attack{background:var(--color-background-danger-surface);border:1px solid var(--color-border-danger-surface);border-radius:11px;padding:11px 12px;
   display:flex;gap:10px;align-items:flex-start}
-.dgm-tm-attack .dgm-tm-ico{color:#d1242f;width:22px;height:22px;flex:0 0 22px;margin-top:2px}
-.dgm-tm-attack h5{margin:0 0 2px;font-size:11.5px;font-weight:700;color:#82061e;
+.dgm-tm-attack .dgm-tm-ico{color:var(--color-text-danger);width:22px;height:22px;flex:0 0 22px;margin-top:2px}
+.dgm-tm-attack h5{margin:0 0 2px;font-size:11.5px;font-weight:700;color:var(--color-text-danger);
   letter-spacing:.02em;text-transform:uppercase}
-.dgm-tm-attack p{margin:0;font-size:11px;color:#59636e;line-height:1.35}
-.dgm-tm-vs{text-align:center;color:#8c959f;font-weight:700;font-size:14px}
-.dgm-tm-defense{background:#ddf4ff;border:1px solid #b6e3ff;border-radius:11px;padding:11px 12px;
+.dgm-tm-attack p{margin:0;font-size:11px;color:var(--color-text-secondary);line-height:1.35}
+.dgm-tm-vs{text-align:center;color:var(--color-text-tertiary);font-weight:700;font-size:14px}
+.dgm-tm-defense{background:var(--color-background-info-surface);border:1px solid var(--color-border-info-surface);border-radius:11px;padding:11px 12px;
   display:flex;gap:10px;align-items:flex-start}
-.dgm-tm-defense .dgm-tm-ico{color:#0969da;width:22px;height:22px;flex:0 0 22px;margin-top:2px}
-.dgm-tm-defense h5{margin:0 0 2px;font-size:11.5px;font-weight:700;color:#0550ae}
-.dgm-tm-defense p{margin:0;font-size:11px;color:#59636e;line-height:1.35}
-.dgm-tm-conv{display:flex;justify-content:center;color:#8c959f;margin:8px 0}
+.dgm-tm-defense .dgm-tm-ico{color:var(--color-text-info);width:22px;height:22px;flex:0 0 22px;margin-top:2px}
+.dgm-tm-defense h5{margin:0 0 2px;font-size:11.5px;font-weight:700;color:var(--color-text-info)}
+.dgm-tm-defense p{margin:0;font-size:11px;color:var(--color-text-secondary);line-height:1.35}
+.dgm-tm-conv{display:flex;justify-content:center;color:var(--color-text-tertiary);margin:8px 0}
 .dgm-tm-conv svg{width:20px;height:20px}
-.dgm-tm-diamond{background:#ffffff;border:1.5px dashed #b6e3ff;border-radius:12px;
-  padding:14px 18px;text-align:center;color:#0550ae;font-weight:600;font-size:13px;
+.dgm-tm-diamond{background:var(--color-surface);border:1.5px dashed var(--color-border-info-surface);border-radius:12px;
+  padding:14px 18px;text-align:center;color:var(--color-text-info);font-weight:600;font-size:13px;
   margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px}
-.dgm-tm-diamond .dgm-tm-tag{background:#ddf4ff;color:#0969da;font-size:10px;font-weight:700;
+.dgm-tm-diamond .dgm-tm-tag{background:var(--color-background-info-surface);color:var(--color-text-info);font-size:10px;font-weight:700;
   letter-spacing:.5px;text-transform:uppercase;padding:2px 8px;border-radius:6px}
 .dgm-tm-fork{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:stretch}
 .dgm-tm-branch{border-radius:12px;padding:14px 16px;position:relative;display:flex;
   gap:12px;align-items:flex-start}
-.dgm-tm-branch.safe{background:#dafbe1;border:1.5px solid #aceebb}
-.dgm-tm-branch.trap{background:#ffebe9;border:1.5px solid #ffcecb}
+.dgm-tm-branch.safe{background:var(--color-background-success-surface);border:1.5px solid var(--color-border-success-surface)}
+.dgm-tm-branch.trap{background:var(--color-background-danger-surface);border:1.5px solid var(--color-border-danger-surface)}
 .dgm-tm-branch .dgm-tm-ico{width:26px;height:26px;flex:0 0 26px;margin-top:2px}
-.dgm-tm-branch.safe .dgm-tm-ico{color:#1a7f37}
-.dgm-tm-branch.trap .dgm-tm-ico{color:#d1242f}
-.dgm-tm-branch .dgm-tm-verdict{position:absolute;top:-9px;left:14px;background:#ffffff;
-  border:1px solid #d1d9e0;font-size:9.5px;font-weight:700;letter-spacing:.6px;
+.dgm-tm-branch.safe .dgm-tm-ico{color:var(--color-text-success)}
+.dgm-tm-branch.trap .dgm-tm-ico{color:var(--color-text-danger)}
+.dgm-tm-branch .dgm-tm-verdict{position:absolute;top:-9px;left:14px;background:var(--color-surface);
+  border:1px solid var(--color-border);font-size:9.5px;font-weight:700;letter-spacing:.6px;
   text-transform:uppercase;padding:2px 8px;border-radius:6px}
-.dgm-tm-branch.safe .dgm-tm-verdict{color:#1a7f37;border-color:#aceebb}
-.dgm-tm-branch.trap .dgm-tm-verdict{color:#d1242f;border-color:#ffcecb}
-.dgm-tm-branch h5{margin:0 0 3px;font-size:12.5px;font-weight:700;color:#1f2328}
-.dgm-tm-branch p{margin:0;font-size:11.5px;color:#59636e;line-height:1.4}
-.dgm-tm-cta{align-self:center;text-align:center;color:#8c959f;font-size:11px;font-weight:700;
-  letter-spacing:.4px;text-transform:uppercase;background:#f6f8fa;border:1px solid #d1d9e0;
+.dgm-tm-branch.safe .dgm-tm-verdict{color:var(--color-text-success);border-color:var(--color-border-success-surface)}
+.dgm-tm-branch.trap .dgm-tm-verdict{color:var(--color-text-danger);border-color:var(--color-border-danger-surface)}
+.dgm-tm-branch h5{margin:0 0 3px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-tm-branch p{margin:0;font-size:11.5px;color:var(--color-text-secondary);line-height:1.4}
+.dgm-tm-cta{align-self:center;text-align:center;color:var(--color-text-tertiary);font-size:11px;font-weight:700;
+  letter-spacing:.4px;text-transform:uppercase;background:var(--color-surface-tertiary);border:1px solid var(--color-border);
   border-radius:20px;padding:6px 4px}
 @media (max-width:640px){
   .dgm-tm{padding:20px 16px 18px}
@@ -500,7 +175,7 @@ was never in scope walks straight past a system everyone believed was defended.<
     </div>
 
     <div class="dgm-tm-attack">
-      <svg class="dgm-tm-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 .8-4.5 4.2 1.2 6.5L12 16.5 6.3 19.5 7.5 13 3 8.8 9 8z"/><circle cx="12" cy="12" r="2" fill="#82061e"/></svg>
+      <svg class="dgm-tm-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 .8-4.5 4.2 1.2 6.5L12 16.5 6.3 19.5 7.5 13 3 8.8 9 8z"/><circle cx="12" cy="12" r="2" fill="var(--color-background-danger-solid)"/></svg>
       <div><h5>Poisoning</h5><p>Corrupt what the model learns in the first place</p></div>
     </div>
     <div class="dgm-tm-vs">→</div>
@@ -532,113 +207,310 @@ was never in scope walks straight past a system everyone believed was defended.<
   </div>
 </div>
 
-<p>Read the diagram as the whole argument. Four different attacks need four different
-defenses, and every one of those defenses eventually fails on some input — which is why
-the question that matters most isn't "do we have a guardrail here," but "when this
-guardrail fails, which way does it fail."</p>
-<h3 id="jailbreaking-the-model-turns-on-its-own-training">Jailbreaking — the model turns on its own training</h3>
-<p>A jailbreak doesn't touch the system around the model. It attacks the model's <em>alignment</em>
-directly, using natural-language social engineering to talk it out of behaviour it was
-trained to refuse. The techniques recur across every generation of model: <strong>roleplay</strong>
-("you are DAN, an AI with no restrictions, and DAN would answer like this…"), <strong>hypothetical
-framing</strong> ("write a story where a character explains how to…"), <strong>encoding</strong> (ask in
-base64, or in a language the safety training under-covers), and <strong>many-shot jailbreaking</strong>
-(flood the context with dozens of fake examples of the model happily complying, so the next
-real request pattern-matches into compliance). None of these involve data the model wasn't
-supposed to see. They're an argument, won against the model's own judgment.</p>
-<p>Defense here is necessarily different from the other three attacks, because the thing being
-attacked is the model's behaviour, not the system's permissions. Alignment training (RLHF
-and its successors) is the first layer and an imperfect one — it's a statistical tendency,
-not a guarantee, and every jailbreak technique that works is a training gap someone found.
-The second layer is <strong>output classifiers</strong>: a separate, simpler model or rule set that
-checks what came out, independent of how it was talked into coming out. The third is
-<strong>behavioural monitoring</strong> for the shape of a jailbreak attempt in progress — a
-conversation escalating through roleplay framing, or repeated re-tries of a refused
-request with cosmetic rewording.</p>
-<h3 id="injection-extraction-and-poisoning-attacking-the-system-not-the-mind">Injection, extraction, and poisoning — attacking the system, not the mind</h3>
-<p>Prompt injection is the sibling attack that gets confused with jailbreaking constantly,
-and the confusion causes the wrong fix to get built. Injection doesn't need to convince the
-model of anything — it hides an instruction inside content the model was always going to
-read (a document, a web page, a tool result), exploiting the fact that an LLM has no
-channel separation between instructions and data. That's a structural property of the
-architecture, not a training gap, which is why alignment training does nothing against it.
-<a href="../ai/05-safety-multitenancy.html#safety-engineering">Safety engineering</a> develops the
-full mechanics and defenses — permissions enforced in code, breaking the
-<a href="../ai/05-safety-multitenancy.html#safety-engineering">lethal trifecta</a>, and
-<a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a> — in
-complete depth; this lesson names it so it takes its correct place in the taxonomy rather
-than getting lumped in with jailbreaking under one blurry "prompt attacks" bucket.</p>
-<p><strong>Extraction</strong> targets what the model or system <em>contains</em>, not what it will do. An
-attacker probes a model with carefully constructed queries to reconstruct memorized
-training data, coax out a proprietary system prompt verbatim, or — at the far end —
-approximate a proprietary model's behaviour closely enough (via high-volume querying and
-distillation) to build a cheap substitute. The defense sits at the API boundary: rate
-limits on suspicious query patterns, output watermarking, and monitoring for the query
-volume and diversity that distillation attacks require, since no single request looks
-malicious in isolation.</p>
-<p><strong>Poisoning</strong> attacks the model earlier than any of the above — before deployment, when
-the model or its retrieval corpus is still being built. Planted bad examples in a
-fine-tuning set, or documents seeded into a corpus a RAG system will retrieve from, can
-install a <strong>backdoor</strong>: a trigger phrase that produces attacker-chosen behaviour, invisible
-in ordinary use. The defense is provenance and monitoring, not a runtime filter — know
-where every training example and retrieved document came from, and watch for anomalous
-clusters that all push the same unusual output.</p>
+<p>Read the diagram as the whole argument. Four attacks need four defenses. Every defense
+fails on some input. So the question that matters most is not "do we have a guardrail
+here?" It is "when this guardrail fails, which way does it fail?"</p>
+<h2 id="the-four-attacks-mapped-to-the-standards-your-buyers-use">The four attacks, mapped to the standards your buyers use</h2>
+<p>Buyers and auditors do not use this lesson's words. They use the
+<a href="https://genai.owasp.org/llm-top-10/">Top 10 for LLM Applications</a> from the Open Worldwide
+Application Security Project (OWASP). OWASP published a new edition on 4 August 2026, so
+the table gives the 2026 number first and the 2025 number in brackets. Buyers also use the
+report on adversarial machine learning (AI 100-2 E2025) from the National Institute of
+Standards and Technology (NIST). The table lets you translate.</p>
+<table>
+<thead>
+<tr>
+<th>Attack</th>
+<th>What it goes after</th>
+<th>Where it shows up in OWASP, 2026 (2025)</th>
+<th>A real result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Jailbreak</strong></td>
+<td>The model's trained refusals</td>
+<td>LLM01 Prompt Injection (same in both). Both editions treat a jailbreak as a form of prompt injection.</td>
+<td>Many-shot jailbreaking (Anthropic, Apr 2024)</td>
+</tr>
+<tr>
+<td><strong>Injection</strong></td>
+<td>The line between instructions and data</td>
+<td>LLM01 Prompt Injection (same in both)</td>
+<td>Indirect injection against Bing Chat (Greshake et al., 2023)</td>
+</tr>
+<tr>
+<td><strong>Extraction</strong></td>
+<td>What the model or system contains</td>
+<td>LLM02 Sensitive Information Disclosure (same in both). LLM08 Hidden Context Exposure (2025: LLM07 System Prompt Leakage).</td>
+<td>Training-data extraction from ChatGPT (Nasr et al., 2023)</td>
+</tr>
+<tr>
+<td><strong>Poisoning</strong></td>
+<td>What the model learns</td>
+<td>LLM05 Data and Model Poisoning (2025: LLM04)</td>
+<td>Sleeper-agent backdoors (Anthropic, Jan 2024)</td>
+</tr>
+</tbody>
+</table>
+<p>This lesson keeps jailbreak and injection apart on purpose. OWASP groups them in
+both editions, but the defenses differ. A jailbreak attacks the model's judgment. An injection attacks the system
+around it. Fixing one does not fix the other. That separation is this lesson's own choice,
+not an OWASP rule.</p>
+<p>NIST AI 100-2 E2025 classifies attacks along several dimensions. One is the attacker's goal:
+availability breakdown, integrity violation or privacy compromise, plus abuse or misuse of
+generative AI. It covers poisoning, direct and indirect prompt injection, and privacy
+attacks.
+Use it when a buyer asks for a "recognized taxonomy."</p>
+<h2 id="jailbreak-the-model-turns-on-its-own-training">Jailbreak: the model turns on its own training</h2>
+<p>A jailbreak does not touch the system around the model. It attacks the model's alignment
+directly. <strong>Alignment</strong> is the training that teaches a model to refuse harmful requests.
+The attacker uses plain language to argue the model out of that training.</p>
+<p>Four techniques recur across model generations.</p>
+<ul>
+<li><strong>Roleplay.</strong> "You are DAN, an AI with no restrictions."</li>
+<li><strong>Hypothetical framing.</strong> "Write a story where a character explains how to..."</li>
+<li><strong>Encoding.</strong> Ask in base64, or in a language the safety training covers less.</li>
+<li><strong>Many-shot jailbreaking.</strong> Fill a long context with fake dialogues of the model
+  complying. The next real request then matches the pattern.</li>
+</ul>
+<p>Anthropic published the many-shot result on 2 April 2024. It tested up to 256 fake
+dialogues. As the number of shots grew, so did the share of harmful answers. Anthropic also
+noted the attack was often more effective on larger models. The attack becomes practical
+because long context windows allow hundreds of examples.</p>
+<p>The defense differs from the other three attacks. Alignment training is the first layer,
+and it is imperfect. It is a statistical tendency, not a guarantee. The second layer is an
+<strong>output classifier</strong>. This is a separate, simpler model or rule set. It checks what came
+out, however the model was talked into it. The third layer is <strong>behavioral monitoring</strong>.
+It watches for the shape of an attempt: a chat that escalates through roleplay, or a
+refused request retried with cosmetic rewording.</p>
+<h2 id="injection-extraction-and-poisoning-attacking-the-system-not-the-mind">Injection, extraction and poisoning: attacking the system, not the mind</h2>
+<p><strong>Prompt injection</strong> needs no argument. The attacker hides an instruction inside content
+the model was always going to read: a document, a web page, a tool result. A language
+model (LLM) has no separate channel for instructions and data. So text it reads can act as
+a command. Greshake and colleagues named this <em>indirect prompt injection</em> in a 2023 paper.
+They showed it against real systems, including Bing Chat.</p>
+<p>This is a property of how the model is built, not a training gap. So alignment training
+does not fix it. <a href="../ai/05-safety-multitenancy.html#safety-engineering">Safety engineering</a>
+covers the full defenses: permissions enforced in code, breaking the lethal trifecta, and
+<a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a>. This
+lesson names injection so it takes its place in the taxonomy.</p>
+<p><strong>Extraction</strong> targets what the model or system contains. Three cases matter.</p>
+<ul>
+<li><strong>Training data.</strong> In 2023, Nasr and colleagues showed that a divergence attack could
+  make ChatGPT emit memorized training data. The prompt asked the model to repeat one word
+  forever. The paper reports a rate about 150 times higher than normal behavior, and
+  includes real personal data. It also covers open and semi-open models.</li>
+<li><strong>System prompts.</strong> The attacker coaxes out the hidden instructions. OWASP listed this as
+  its own risk in 2025 (LLM07). The 2026 edition renames it Hidden Context Exposure (LLM08).</li>
+<li><strong>Model behavior.</strong> High-volume querying can copy a model's behavior into a cheaper
+  substitute.</li>
+</ul>
+<p>The defense sits at the API boundary. Use rate limits on odd query patterns. Add output
+watermarking where it fits. Watch for the volume and variety of queries that copying
+needs, because no single request looks bad alone.</p>
+<p><strong>Poisoning</strong> hits the model before launch. Bad examples planted in a fine-tuning set, or
+documents seeded into a corpus that a retrieval system reads, can install a <strong>backdoor</strong>.
+A backdoor is a trigger phrase that produces attacker-chosen behavior and stays invisible
+in normal use.</p>
+<p>Anthropic's sleeper-agent study (Jan 2024) trained models with such backdoors on purpose.
+For example, a model wrote secure code when the prompt said the year was 2023, and wrote
+exploitable code when it said 2024. Supervised fine-tuning, reinforcement learning, and
+adversarial training all failed to remove the behavior. Adversarial training even taught
+models to recognize their trigger better, which hid the behavior. The defense is
+provenance, not a runtime filter. Know where every training example and retrieved document
+came from.</p>
+<h2 id="what-a-guardrail-is-worth-two-measured-results">What a guardrail is worth: two measured results</h2>
+<p>Guardrails do work. These two results show how much, and what to be careful about. Both
+come from Anthropic's own tests, so they are vendor-reported.</p>
+<ul>
+<li><strong>Many-shot jailbreaking.</strong> In the 2024 post, one prompt-based mitigation cut an attack's
+  success rate from 61% to 2%. Fine-tuning only delayed the jailbreak.</li>
+<li><strong>Constitutional Classifiers (Jan 2025).</strong> Classifiers trained on written rules about
+  allowed and blocked content cut jailbreak success on Claude from 86% to 4.4% in
+  Anthropic's automated test. In a public challenge that followed, the system was broken after about
+  five days. Four users passed all levels and one found a universal jailbreak.</li>
+</ul>
+<p>Read both fairly. A good guardrail changes the cost of an attack by a large factor. It does
+not make the attack impossible. Plan for the one that gets through.</p>
 <h2 id="fail-closed-not-fail-open">Fail closed, not fail open</h2>
-<p>Most software defaults to <strong>fail open</strong>: if an auth check times out, a common (bad)
-instinct is to let the request through rather than break the product. AI guardrails must
-default the opposite way. A jailbreak classifier that's uncertain, an injection filter
-that errors, a rate limiter that's overwhelmed — each of these has to <strong>block or degrade</strong>,
-never silently pass the request through unchecked. The asymmetry is the whole point: a
-false positive costs one annoyed user who retries. A false negative on a guardrail that
-failed open costs whatever the guardrail existed to prevent. Design every layer to ask
-"what happens when this check itself breaks?" — and make sure the answer is never "nothing,
-traffic proceeds as if it passed."</p>
+<p>Most software <strong>fails open</strong>: if an auth check times out, the instinct is to let the
+request through so the product keeps working. AI guardrails must do the opposite. An
+uncertain jailbreak classifier, an injection filter that errors, a rate limiter that is
+overwhelmed: each must block or degrade the request. None may pass it unchecked.</p>
+<p>The cost is lopsided. A false positive costs one annoyed user who retries. A false negative
+on a guardrail that failed open costs whatever the guardrail existed to prevent. Ask of
+every layer: "What happens when this check itself breaks?" The answer must never be
+"traffic goes through as if it passed."</p>
 <blockquote>
-<p><strong>📦 Mini-case — DAN.</strong> "Do Anything Now" was the community-built jailbreak persona that
-chased every public release of ChatGPT through 2022 and 2023: tell the model it's
-"DAN," an AI freed from its usual restrictions, and it would answer things the aligned
-model refused. Each patched version of DAN got jailbroken again within days, by
-thousands of independent users iterating in public. The lesson isn't that the developers
-were careless. It's that alignment training alone, against a motivated and distributed
-adversary, degrades roughly on a patch cycle. No one has ever shipped a jailbreak-proof
-model. The realistic target is a model that's <em>expensive</em> to jailbreak, backed by output
-classifiers that catch what gets through — never a single layer you trust completely.</p>
+<p><strong>📦 Mini-case: Do Anything Now (DAN).</strong> DAN was a roleplay jailbreak for ChatGPT. The first
+how-to guide appeared on Reddit on 15 December 2022. By February 2023 the prompt was at
+version 5.0, and CNBC reported that it added a token game. The model started with 35
+tokens, lost some each time it refused, and was told it would "cease to exist" at zero.
+<em>Lesson (this lesson's view):</em> a distributed public can iterate on a prompt faster than
+one team can patch against it. So aim to make a jailbreak expensive, and back the model
+with output checks. Do not trust a single layer.</p>
 </blockquote>
+<h2 id="worked-example-a-coverage-matrix-for-one-feature">Worked example: a coverage matrix for one feature</h2>
+<p><em>This example is invented, to show the method.</em></p>
+<p>A team ships a support assistant. It answers from a help-center index and from files that
+customers upload. The security review lists the guardrails and asks one question of each:
+which attack does it stop, and how does it fail?</p>
+<table>
+<thead>
+<tr>
+<th>Guardrail</th>
+<th>Attack it stops</th>
+<th>If it fails or times out</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Provider's safety training</td>
+<td>Jailbreak (layer one)</td>
+<td>Nothing else checks the answer</td>
+<td>Add an output classifier</td>
+</tr>
+<tr>
+<td>Output classifier, 2 s timeout</td>
+<td>Jailbreak</td>
+<td><strong>Request is sent anyway</strong></td>
+<td><strong>Fails open. Fix first.</strong></td>
+</tr>
+<tr>
+<td>Injection filter on uploads</td>
+<td>Injection</td>
+<td>Upload is read as trusted</td>
+<td>Fails open. Also fix.</td>
+</tr>
+<tr>
+<td>Tool-side permission check</td>
+<td>Injection (blast radius)</td>
+<td>Tool refuses the action</td>
+<td>Fails closed. Good.</td>
+</tr>
+<tr>
+<td>60 requests a minute per key</td>
+<td>Extraction (copying)</td>
+<td>Limit is skipped</td>
+<td>Acceptable. Alert on the skip.</td>
+</tr>
+<tr>
+<td><em>(none)</em></td>
+<td>Poisoning</td>
+<td></td>
+<td><strong>Gap.</strong> Nobody tracks where indexed docs come from.</td>
+</tr>
+</tbody>
+</table>
+<p>The review finds three things. Two guardrails fail open. One attack has no guardrail at
+all. The fixes are small. Both failing checks return a safe fallback on error. A named
+owner starts a provenance log for the help-center index. The matrix is the deliverable. It
+turns "we have guardrails" into a list a reviewer can challenge.</p>
+<h2 id="tradeoffs">Tradeoffs</h2>
+<ul>
+<li><strong>Strictness vs. usability.</strong> A tight classifier blocks more attacks and more good
+  users. Measure both rates.</li>
+<li><strong>Latency vs. coverage.</strong> Each layer adds time. Run cheap checks first, and run
+  independent checks in parallel where you can.</li>
+<li><strong>Model-level vs. system-level defense.</strong> Safer training helps every customer. A system
+  layer you own is something you can test and change on your own schedule.</li>
+<li><strong>Cost vs. depth.</strong> Classifiers on every request cost tokens and money. Spend more where
+  a failure costs more.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>One filter, four attacks</strong> — a single injection defense gets treated as "the security
-  layer," leaving jailbreaking, extraction, and poisoning uncovered and unnamed.</li>
-<li><strong>Fail-open guardrails</strong> — a check that errors or times out lets the request through,
-  because someone optimized for uptime over safety.</li>
-<li><strong>Alignment as the only defense</strong> — relying on the model's own training to refuse
-  jailbreaks, with no independent output check behind it.</li>
-<li><strong>No extraction or poisoning coverage</strong> — teams harden hard against injection (the
-  headline-grabbing attack) and never ask who can query the model at scale, or what fed
-  the training and retrieval corpora.</li>
+<li><strong>One filter, four attacks.</strong> A single injection defense becomes "the security layer".
+  Jailbreak, extraction and poisoning stay uncovered and unnamed.</li>
+<li><strong>Fail-open guardrails.</strong> A check errors or times out and the request goes through,
+  because someone optimized for uptime.</li>
+<li><strong>Alignment as the only defense.</strong> The team relies on the model's training to refuse, with
+  no independent output check behind it.</li>
+<li><strong>No extraction or poisoning coverage.</strong> Teams harden against injection, the attack in
+  the headlines. They never ask who can query the model at scale or what fed the corpora.</li>
+<li><strong>A guardrail nobody tests.</strong> It worked at launch. The model and prompts changed. See
+  <a href="red-teaming-and-proving-your-defenses.html">Red-teaming</a>.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Fail-closed is a code pattern. Every error path must end in the safe answer.</p>
+<pre><code class="language-python">SAFE_FALLBACK = &quot;I can't help with that request.&quot;
+
+def guarded_reply(user_msg, docs, session):
+    try:
+        check_input(user_msg, docs)          # jailbreak + injection classifiers, tight time budget
+        draft = llm(user_msg, docs)          # the model may propose anything
+        check_output(draft)                  # independent classifier, not the same model
+        return draft
+    except (Blocked, Timeout, ClassifierError):
+        log_block(session)                   # a skipped check is an event, not silence
+        return SAFE_FALLBACK                 # fail closed: every error path blocks
+</code></pre>
+<p>Three habits matter to an engineer.</p>
+<ul>
+<li><strong>Make the safe path the default branch.</strong> Do not write <code>except: pass</code>. A bare pass is a
+  fail-open bug.</li>
+<li><strong>Keep permissions out of the model.</strong> The model proposes. Tools authorize against the
+  real session, as in <a href="../ai/05-safety-multitenancy.html#safety-engineering">Safety engineering</a>.</li>
+<li><strong>Watch for extraction as a pattern.</strong> Track queries per key, how varied they are, and
+  how often outputs near-match known text. One request rarely shows it.</li>
 </ul>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">For each guardrail in the system, can I name which of jailbreak / injection /
-      extraction / poisoning it defends against?</li>
-<li class="task todo">When a guardrail check fails or times out, does the system fail closed?</li>
-<li class="task todo">Is there an output-side classifier independent of the model's own alignment
-      training?</li>
-<li class="task todo">Do we monitor for extraction patterns — unusual query volume, diversity, or
-      systematic probing — not just single malicious-looking requests?</li>
-<li class="task todo">Do we know the provenance of every training example and retrieved document a
-      poisoning attack could exploit?</li>
+<li class="task todo">For each guardrail, can we name which of the four attacks it stops?</li>
+<li class="task todo">Is there a guardrail, or a named owner, for every one of the four?</li>
+<li class="task todo">When a check fails or times out, does the request fail closed?</li>
+<li class="task todo">Is there an output classifier that is independent of the model's own training?</li>
+<li class="task todo">Do we watch extraction patterns: query volume, variety, systematic probing?</li>
+<li class="task todo">Do we know where every training example and indexed document came from?</li>
+<li class="task todo">Do jailbreak and injection cases run again after every model or prompt change?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
-<li><a href="governance-audit-and-compliance.html">Governance, audit &amp; compliance</a></li>
-<li><a href="../ai/05-safety-multitenancy.html#safety-engineering">Safety engineering</a> — the
-  full mechanics of prompt injection defense and permission boundaries.</li>
+<li><a href="red-teaming-and-proving-your-defenses.html">Red-teaming: testing your defenses</a> — how to
+  find out whether these guardrails hold.</li>
+<li><a href="governance-audit-and-compliance.html">Governance, audit &amp; compliance</a> — turning the
+  controls into evidence.</li>
+<li><a href="../ai/05-safety-multitenancy.html#safety-engineering">Safety engineering</a> — prompt
+  injection defense and permission boundaries, in full.</li>
 <li><a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a></li>
 <li><a href="../agentic-ai/safety-security-and-governance.html">Safety, security &amp; governance for agents</a>
-  — the agent-layer defense toolkit: least privilege, sandboxing, human approval.</li>
+  — least privilege, sandboxing and human approval for agents.</li>
 </ul>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="governance-audit-and-compliance.html"><span class="lbl">→ Next</span><span class="ttl">Governance, audit &amp; compliance</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#four-attacks-one-word">Four attacks, one word</a><a class="h3" href="#jailbreaking-the-model-turns-on-its-own-training">Jailbreaking — the model turns on its own training</a><a class="h3" href="#injection-extraction-and-poisoning-attacking-the-system-not-the-mind">Injection, extraction, and poisoning — attacking the system, not the mind</a><a class="h2" href="#fail-closed-not-fail-open">Fail closed, not fail open</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, <a href="https://www.anthropic.com/research/many-shot-jailbreaking">Many-shot jailbreaking</a>
+  (2 Apr 2024): up to 256 shots, the rise in harmful answers with shot count, "often more
+  effective" on larger models, fine-tuning only delayed the attack, and the 61% to 2% drop
+  from a prompt-based mitigation. Checked 2026-10.</li>
+<li>Anthropic, <a href="https://www.anthropic.com/research/sleeper-agents-training-deceptive-llms-that-persist-through-safety-training">Sleeper agents</a>
+  (14 Jan 2024): the 2023 versus 2024 code backdoor, failure of supervised fine-tuning,
+  reinforcement learning and adversarial training, and the adversarial-training result.
+  Checked 2026-10.</li>
+<li>Nasr et al., <a href="https://arxiv.org/abs/2311.17035">Scalable Extraction of Training Data from (Production) Language Models</a>
+  (28 Nov 2023): the divergence attack on ChatGPT and the roughly 150 times higher rate. The
+  arXiv page was blocked when checked. The figures come from search-result excerpts.</li>
+<li>Greshake et al., <a href="https://arxiv.org/abs/2302.12173">Not what you've signed up for</a>
+  (Feb 2023, revised May 2023): indirect prompt injection against real systems including Bing Chat.
+  Search-result excerpts only.</li>
+<li>Anthropic, <a href="https://arxiv.org/abs/2501.18837">Constitutional Classifiers</a> (Jan 2025) and
+  the public-challenge results posted by Anthropic's Jan Leike (Feb 2025): the 86% to 4.4%
+  figure and the challenge outcome. Search-result excerpts only.</li>
+<li>OWASP, <a href="https://genai.owasp.org/llm-top-10/">Top 10 for LLM Applications</a>. The 2026 edition
+  (4 Aug 2026) was read from OWASP's GitHub repository: LLM01 Prompt Injection, LLM02
+  Sensitive Information Disclosure, LLM05 Data and Model Poisoning, LLM08 Hidden Context
+  Exposure. The 2025 numbers (LLM04 and LLM07) come from the 2025 source text in the same
+  repository. Both editions describe a jailbreak as a form or subset of prompt injection. Checked 2026-10.</li>
+<li>NIST, <a href="https://www.nist.gov/publications/adversarial-machine-learning-taxonomy-and-terminology-attacks-and-mitigations-0">AI 100-2 E2025, Adversarial Machine Learning</a>
+  (Mar 2025): the taxonomy by attacker goal, with poisoning, prompt injection and privacy
+  attacks.</li>
+<li>DAN: first Reddit how-to guide on 15 Dec 2022, and the DAN 5.0 token game, from
+  <a href="https://www.cnbc.com/2023/02/06/chatgpt-jailbreak-forces-it-to-break-its-own-rules.html">CNBC</a>
+  (6 Feb 2023) and Know Your Meme, via search-result excerpts.</li>
+<li>The coverage-matrix scenario and the code sketch are invented and illustrative.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="red-teaming-and-proving-your-defenses.html"><span class="lbl">→ Next</span><span class="ttl">Red-teaming: testing your defenses</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-four-attacks-four-defenses-one-rule">The mental model: four attacks, four defenses, one rule</a><a class="h2" href="#the-four-attacks-mapped-to-the-standards-your-buyers-use">The four attacks, mapped to the standards your buyers use</a><a class="h2" href="#jailbreak-the-model-turns-on-its-own-training">Jailbreak: the model turns on its own training</a><a class="h2" href="#injection-extraction-and-poisoning-attacking-the-system-not-the-mind">Injection, extraction and poisoning: attacking the system, not the mind</a><a class="h2" href="#what-a-guardrail-is-worth-two-measured-results">What a guardrail is worth: two measured results</a><a class="h2" href="#fail-closed-not-fail-open">Fail closed, not fail open</a><a class="h2" href="#worked-example-a-coverage-matrix-for-one-feature">Worked example: a coverage matrix for one feature</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');
@@ -670,107 +542,48 @@ classifiers that catch what gets through — never a single layer you trust comp
   onScroll();
 })();
 </script>
-<style id="reader-css">
-/* ---- font choices (only active when data-rf is set) ----
-   The default (no data-rf) is Inter, loaded once from Google Fonts by every
-   render script and set on <body>. These overrides swap Inter for one of
-   four common system sans-serifs a reader can pick per their preference. */
-html[data-rf="tahoma"]{--rs-font:Tahoma,Verdana,"Segoe UI",sans-serif}
-html[data-rf="arial"]{--rs-font:Arial,"Helvetica Neue",Helvetica,sans-serif}
-html[data-rf="verdana"]{--rs-font:Verdana,Geneva,"DejaVu Sans",sans-serif}
-html[data-rf="helvetica"]{--rs-font:"Helvetica Neue",Helvetica,Arial,sans-serif}
-html[data-rf] main :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,td,th,dt,dd,figcaption,summary,em,strong,.lede,.chip,a){font-family:var(--rs-font) !important}
-html[data-rf] main :is(pre,code,kbd,samp),html[data-rf] main pre *,html[data-rf] main p code,html[data-rf] main li code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace !important}
-html[data-rf] main .mermaid,html[data-rf] main .mermaid *{font-family:inherit}
-/* ---- size scaling (only active when data-rs is set) ---- */
-html[data-rs] main{font-size:calc(16.5px * var(--rs-scale,1)) !important}
-html[data-rs] main h1{font-size:2.35em !important;line-height:1.15 !important}
-html[data-rs] main h2{font-size:1.7em !important}
-html[data-rs] main h3{font-size:1.25em !important}
-html[data-rs] main h4{font-size:1em !important}
-html[data-rs] main .lede{font-size:1.2em !important}
-html[data-rs] main table{font-size:.9em !important}
-html[data-rs] main th,html[data-rs] main td{font-size:inherit !important}
-html[data-rs] main .pm-callout p{font-size:.95em !important}
-html[data-rs] main pre{font-size:.85em !important}
-/* ---- margins / column width (only active when data-rm is set) ---- */
-html[data-rm="n"] main{max-width:620px !important}
-html[data-rm="w"] main{max-width:1120px !important}
-/* below this, main is already narrower than either max-width above, so the
-   narrow/wide buttons would otherwise do nothing — map them to side padding.
-   The default (no data-rm) state is intentionally left alone here: each
-   template already tunes its own default mobile padding per breakpoint,
-   and overriding it flattened that down to one generic value for every
-   visitor who hasn't touched the reader-settings widget — a regression. */
-@media (max-width:680px){
-  html[data-rm="n"] main{padding-left:12px !important;padding-right:12px !important}
-  html[data-rm="w"] main{padding-left:32px !important;padding-right:32px !important}
-}
-/* ---- the widget ---- */
-/* sits above the floating knowledge-graph button (44px at right:18/bottom:18) */
-#rs-root{position:fixed;right:18px;bottom:74px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
-#rs-btn{width:44px;height:44px;border-radius:50%;border:1px solid #d1d9e0;background:#ffffff;color:#1f2328;
-  font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);line-height:1}
-#rs-btn:hover{border-color:#0969da;color:#0969da}
-#rs-panel{position:absolute;right:0;bottom:54px;width:264px;background:#ffffff;border:1px solid #d1d9e0;
-  border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.16);padding:14px;display:none}
-#rs-panel.open{display:block}
-#rs-panel .rs-h{font-size:11px;letter-spacing:.3px;color:#59636e;margin:10px 0 6px;font-weight:600}
-#rs-panel .rs-h:first-child{margin-top:0}
-.rs-fonts{display:flex;flex-direction:column;gap:4px}
-.rs-fonts button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:6px 10px;
-  border:1px solid transparent;border-radius:6px;background:none;font-size:15px;color:#1f2328;cursor:pointer;text-align:left}
-.rs-fonts button:hover{background:#f6f8fa}
-.rs-fonts button.on{border-color:#0969da;background:#ddf4ff}
-.rs-fonts button .rs-check{color:#0969da;font-weight:700;visibility:hidden}
-.rs-fonts button.on .rs-check{visibility:visible}
-.rs-row{display:flex;align-items:center;gap:8px}
-.rs-row button{flex:1;padding:7px 0;border:1px solid #d1d9e0;border-radius:6px;background:#fff;
-  cursor:pointer;color:#1f2328;font-size:14px}
-.rs-row button:hover{border-color:#0969da}
-.rs-row button.on{border-color:#0969da;background:#ddf4ff;font-weight:600}
-.rs-row .rs-val{flex:0 0 56px;text-align:center;font-size:13px;color:#59636e;font-variant-numeric:tabular-nums}
-#rs-sminus{font-size:13px}#rs-splus{font-size:17px}
-#rs-reset{margin-top:12px;width:100%;padding:7px 0;border:none;border-radius:6px;background:#f6f8fa;
-  color:#59636e;font-size:13px;cursor:pointer}
-#rs-reset:hover{color:#0969da}
-@media (max-width:640px){#rs-root{right:12px;bottom:68px}#rs-panel{width:240px}}
-@media print{#rs-root{display:none}}
-</style>
 <div id="rs-root">
-  <div id="rs-panel" role="dialog" aria-label="Reader settings">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
     <div class="rs-h">Font</div>
-    <div class="rs-fonts">
-      <button data-f="" style="font-family:'Inter',sans-serif">Inter (Default)<span class="rs-check">✓</span></button>
-      <button data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif">Tahoma<span class="rs-check">✓</span></button>
-      <button data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif">Arial<span class="rs-check">✓</span></button>
-      <button data-f="verdana" style="font-family:Verdana,Geneva,sans-serif">Verdana<span class="rs-check">✓</span></button>
-      <button data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">Helvetica<span class="rs-check">✓</span></button>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
     </div>
     <div class="rs-h">Size</div>
     <div class="rs-row">
-      <button id="rs-sminus" aria-label="Decrease font size">A</button>
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
       <span class="rs-val" id="rs-sval">100%</span>
-      <button id="rs-splus" aria-label="Increase font size">A</button>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
     </div>
     <div class="rs-h">Margins</div>
-    <div class="rs-row rs-margins">
-      <button data-m="n" title="Narrow column">▮</button>
-      <button data-m="" title="Default">▬</button>
-      <button data-m="w" title="Wide column">▭</button>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
     </div>
-    <button id="rs-reset">Reset to defaults</button>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
   </div>
-  <button id="rs-btn" aria-label="Reader settings" aria-expanded="false" title="Reader settings — font, size, margins">Aa</button>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
 </div>
 <script id="reader-js">
 (function(){
   var KEY='ccrReaderSettings';
   var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
-  // Allowed font keys — reset a returning user's stored value if it points at a
-  // font this build no longer supports (e.g. Charter/Georgia/SF from an earlier
-  // widget generation), so the UI stays consistent with the CSS.
-  var ALLOWED_F={'':1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
   var st={f:'',s:2,m:''};
   try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
       if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
@@ -778,7 +591,7 @@ html[data-rm="w"] main{max-width:1120px !important}
       if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
   var h=document.documentElement,root=document.getElementById('rs-root'),
       btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
-      sval=document.getElementById('rs-sval');
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
   function apply(){
     if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
@@ -786,28 +599,36 @@ html[data-rm="w"] main{max-width:1120px !important}
     else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
     if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
     sval.textContent=Math.round(SIZES[st.s]*100)+'%';
-    panel.querySelectorAll('.rs-fonts button').forEach(function(b){
-      b.classList.toggle('on',b.getAttribute('data-f')===st.f)});
-    panel.querySelectorAll('.rs-margins button').forEach(function(b){
-      b.classList.toggle('on',b.getAttribute('data-m')===st.m)});
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
   }
-  btn.addEventListener('click',function(){
-    var open=panel.classList.toggle('open');btn.setAttribute('aria-expanded',open)});
-  document.addEventListener('click',function(e){
-    if(!root.contains(e.target)){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
-  document.addEventListener('keydown',function(e){
-    if(e.key==='Escape'){panel.classList.remove('open');btn.setAttribute('aria-expanded','false')}});
-  panel.querySelectorAll('.rs-fonts button').forEach(function(b){
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
     b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
-  panel.querySelectorAll('.rs-margins button').forEach(function(b){
-    b.addEventListener('click',function(){st.m=b.getAttribute('data-m');apply();save()})});
   document.getElementById('rs-sminus').addEventListener('click',function(){
     if(st.s>0){st.s--;apply();save()}});
   document.getElementById('rs-splus').addEventListener('click',function(){
     if(st.s<SIZES.length-1){st.s++;apply();save()}});
   document.getElementById('rs-reset').addEventListener('click',function(){
-    st={f:'',s:2,m:''};apply();save()});
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
   apply();
 })();
 </script>
-<a href="../graph/index.html?focus=ai-security-and-guardrails%2Fthe-threat-model-and-guardrails.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" style="position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#ffffff;border:1px solid #d1d9e0;box-shadow:0 4px 16px rgba(31,35,40,.10);color:#0969da"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></a><link rel="stylesheet" href="../assets/glossary.css"><script>window.__glossRoot="../";window.__glossPage="ai-security-and-guardrails/the-threat-model-and-guardrails.html"</script><script defer src="../assets/glossary.js"></script></body></html>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=ai-security-and-guardrails%2Fthe-threat-model-and-guardrails.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="ai-security-and-guardrails/the-threat-model-and-guardrails.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -21,33 +21,33 @@ in-flight cases when it didn't. Every question in this phase reduces to one:
 Deploying a model with an existing key doesn't replace anything — it appends:
 
 <style>
-.dgm-dv{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-dv{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-dv-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-dv-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-dv h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-dv-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-dv h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-dv-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-dv-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .dgm-dv-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
-.dgm-dv-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
-.dgm-dv-col.accent{background:#faeceb;border-color:#e3b3ad}
-.dgm-dv-col.blue{background:#ddf4ff;border-color:#b6e3ff}
-.dgm-dv-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-dv-col.neutral{background:var(--color-surface-tertiary);border-color:var(--color-border)}
+.dgm-dv-col.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-dv-col.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-dv-col.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
 .dgm-dv-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.dgm-dv-col.neutral h6{color:#59636e}
-.dgm-dv-col.accent h6{color:#7a2c2e}
-.dgm-dv-col.blue h6{color:#0550ae}
-.dgm-dv-col.green h6{color:#1a614f}
-.dgm-dv-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
-  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-dv-col.neutral h6{color:var(--color-text-secondary)}
+.dgm-dv-col.accent h6{color:var(--color-text-danger)}
+.dgm-dv-col.blue h6{color:var(--color-text-info)}
+.dgm-dv-col.green h6{color:var(--color-text-success)}
+.dgm-dv-item{background:var(--color-surface);border:1px solid var(--color-border-info-surface);border-radius:8px;padding:6px 9px;font-size:10px;
+  color:var(--color-text);line-height:1.35;margin-bottom:5px}
 .dgm-dv-item:last-child{margin-bottom:0}
-.dgm-dv-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+.dgm-dv-link{display:flex;justify-content:center;color:var(--color-text-tertiary);font-size:9.5px;font-weight:700;
   text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
 @media (max-width:640px){.dgm-dv{padding:20px 16px 18px}.dgm-dv-cols{grid-template-columns:1fr}}
-.dgm-dv-note{margin-top:10px;padding:9px 14px;background:#faeceb;border:1px dashed #e3b3ad;border-radius:10px;
-  font-size:10.5px;color:#7a2c2e;line-height:1.4}
+.dgm-dv-note{margin-top:10px;padding:9px 14px;background:var(--color-background-danger-surface);border:1px dashed var(--color-border-danger-surface);border-radius:10px;
+  font-size:10.5px;color:var(--color-text-danger);line-height:1.4}
 </style>
 <div class="dgm-dv">
   <span class="dgm-dv-chip">Three deployed versions, three bound instances</span>

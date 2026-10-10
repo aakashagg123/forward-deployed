@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Training: loss and gradient descent — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink active" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <h1>Training: loss and gradient descent</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Training is a loop with four steps. The model makes predictions. A <strong>loss</strong> function turns
+the mistakes into one number. The loop works out which way to nudge each parameter to lower
+that number. It nudges them a small step. Then it repeats, often thousands of times.</p>
+<p>The nudging method is <strong>gradient descent</strong>. The <strong>gradient</strong> is the slope of the loss with
+respect to each parameter. The loop walks downhill. The size of each step is the <strong>learning
+rate</strong>.</p>
+<p>The tradeoff is speed against stability. Big steps cover ground fast and can overshoot.
+Small steps are safe and can take forever. Training cost grows with three things: the number
+of examples, the number of parameters and the number of passes over the data. The loop in
+this lesson is the same loop that trains a large language model. The scale is different. The
+idea is not.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Training cost and training time are product constraints. They decide
+how often you can refresh a model and how many ideas you can try. The loss curve is the
+one chart that tells you whether training worked.</p>
+<p><strong>What it changes in your decisions</strong> — You read two lines on one chart, training loss and
+validation loss, and you know whether to spend on more data, more training, or a simpler
+model. You stop treating "we trained it" as a result.</p>
+<p><strong>Ask your eng team</strong> — <em>"Show me the training and validation loss curves. Did they
+flatten, and did they move together?"</em></p>
+<p><strong>Risk if ignored</strong> — You approve a model that trained badly. Or you pay for another week
+of training on a curve that flattened days ago.</p>
+</blockquote>
+<h2 id="the-mental-model-walking-downhill-in-fog">The mental model: walking downhill in fog</h2>
+<p>Picture a hiker on a hillside in thick fog. The hiker cannot see the valley. The hiker can
+feel the slope under their feet. So they step downhill, feel the slope again, and step again.</p>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.ml-loop{grid-template-columns:repeat(4,1fr)}@media (max-width:760px){.ml-loop{grid-template-columns:1fr 1fr}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">The training loop</span>
+<h4>Predict, measure, step downhill, repeat</h4>
+<p class="dgm-ml-sub">The loss is the height of the ground. Each parameter is a direction you can walk.</p>
+<div class="dgm-ml-grid ml-loop">
+  <div class="dgm-ml-card"><h5><span class="dgm-ml-num">1</span>Predict</h5><p>Run the model on the training rows.</p></div>
+  <div class="dgm-ml-card"><h5><span class="dgm-ml-num">2</span>Loss</h5><p>One number: how wrong.</p></div>
+  <div class="dgm-ml-card"><h5><span class="dgm-ml-num">3</span>Gradient</h5><p>Which way is down, for every parameter.</p></div>
+  <div class="dgm-ml-card"><h5><span class="dgm-ml-num">4</span>Update</h5><p>Step each parameter by learning rate × slope.</p></div>
+</div>
+<svg viewBox="0 0 520 170" role="img" aria-label="A loss curve with steps walking downhill" style="width:100%;height:auto;margin-top:14px">
+  <path d="M40 20 Q 260 220 480 20" fill="none" style="stroke:var(--color-border-strong);stroke-width:2"/>
+  <g style="fill:var(--color-background-discovery-solid)">
+    <circle cx="86" cy="52" r="6"/><circle cx="150" cy="94" r="6"/><circle cx="212" cy="118" r="6"/><circle cx="262" cy="124" r="6"/>
+  </g>
+  <g style="stroke:var(--color-text-discovery);stroke-width:1.5;fill:none"><path d="M92 56 L144 90"/><path d="M156 98 L206 115"/><path d="M218 120 L256 124"/></g>
+  <text x="60" y="40" style="fill:var(--color-text-secondary);font-size:11px">start: loss 0.636</text>
+  <text x="300" y="150" style="fill:var(--color-text-secondary);font-size:11px">flattens near loss 0.403 (epoch 150)</text>
+  <text x="420" y="60" style="fill:var(--color-text-danger);font-size:11px">too large a step: overshoots</text>
+  <path d="M440 66 L470 24 L400 30 L428 66" fill="none" style="stroke:var(--color-text-danger);stroke-width:1.2;stroke-dasharray:3 3"/>
+</svg>
+</div>
+
+<p>The loss is the height of the ground. Each parameter is a direction you can walk. The
+model starts at a random spot. Training is the walk down.</p>
+<h2 id="the-loss-the-number-training-chases">The loss: the number training chases</h2>
+<p>A <strong>loss</strong> scores one prediction against the truth. Lower is better. The average loss over
+all training rows is the number training tries to shrink.</p>
+<p>The choice of loss is a product decision in technical clothing. The model will chase
+whatever the loss rewards.</p>
+<ul>
+<li><strong>Squared error</strong> suits numbers, such as a price. A miss of 10 counts four times a miss
+  of 5. Big misses hurt most.</li>
+<li><strong>Log loss</strong> suits probabilities. It measures how surprised the model was by the truth. A
+  model that says "2% chance" for something that happens is punished hard. A coin-flip
+  prediction scores 0.693.</li>
+<li><strong>A custom loss</strong> can encode the business. If a missed churner costs four times a wasted
+  offer, the loss can weigh them so. <a href="measuring-a-model.html">Lesson 5</a> shows the same
+  idea applied after training.</li>
+</ul>
+<h2 id="gradient-descent-in-one-knob">Gradient descent in one knob</h2>
+<p>The smallest training run has one parameter, <code>w</code>. Say the loss is the squared distance from
+the best value, 3. The slope is <code>2 × (w − 3)</code>. With a learning rate of 0.1, each step moves
+<code>w</code> by 0.1 times the slope, downhill.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th><code>w</code></th>
+<th>Slope</th>
+<th>New <code>w</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0.00</td>
+<td>−6.00</td>
+<td>0.60</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.60</td>
+<td>−4.80</td>
+<td>1.08</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1.08</td>
+<td>−3.84</td>
+<td>1.46</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1.46</td>
+<td>−3.07</td>
+<td>1.77</td>
+</tr>
+<tr>
+<td>4</td>
+<td>1.77</td>
+<td>−2.46</td>
+<td>2.02</td>
+</tr>
+</tbody>
+</table>
+<p>Two things show up. The steps shrink on their own, because the slope shrinks as <code>w</code>
+approaches 3. And <code>w</code> has not arrived after five steps. It needs many more. Real models
+have millions or billions of parameters. Each step moves all of them at once, using the
+slope for each.</p>
+<h2 id="the-learning-rate-the-one-setting-everyone-tunes">The learning rate: the one setting everyone tunes</h2>
+<p>The learning rate is the step multiplier. It is the most-tuned setting in training.</p>
+<ul>
+<li><strong>Too small.</strong> Progress is slow. The model looks stuck. You pay for compute and learn
+  nothing.</li>
+<li><strong>Too large.</strong> Steps overshoot the valley. The loss jumps up and down, or grows without
+  limit. The run is wasted.</li>
+<li><strong>About right.</strong> The loss falls quickly at first, then flattens.</li>
+</ul>
+<p>An <strong>epoch</strong> is one pass over all the training rows. Real systems often update on small
+groups of rows, called <strong>mini-batches</strong>, so one epoch holds many updates. Mini-batch methods
+are noisy, and they scale to data that does not fit in memory. Momentum carries part of the
+last step into the next one. Adam adapts the step size on the fly. The scikit-learn guide
+says Adam "can automatically adjust the amount to update parameters based on adaptive
+estimates of lower-order moments". Its authors, Kingma and Ba, describe it as computing
+individual adaptive learning rates for different parameters.</p>
+<h2 id="reading-a-loss-curve">Reading a loss curve</h2>
+<p>Plot the loss against the number of epochs, for the training rows and the validation rows.</p>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What it usually means</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Both fall, then flatten together</td>
+<td>Training converged</td>
+<td>Stop. More epochs buy little</td>
+</tr>
+<tr>
+<td>Still falling at the end</td>
+<td>Stopped too early, or the rate is small</td>
+<td>Train longer, or raise the rate</td>
+</tr>
+<tr>
+<td>Jumps up and down, or rises</td>
+<td>The learning rate is too large</td>
+<td>Lower it</td>
+</tr>
+<tr>
+<td>Training falls, validation rises</td>
+<td>The model memorizes the training rows</td>
+<td>Lesson 4: simplify, add data, stop early</td>
+</tr>
+<tr>
+<td>Flat from the first epoch</td>
+<td>A bug, a rate far too small, or features carrying no signal</td>
+<td>Check the data pipeline first</td>
+</tr>
+</tbody>
+</table>
+<p>A test engineers like: train on a handful of rows and check that the loss reaches nearly
+zero. If a model cannot memorize ten rows, something in the code is wrong.</p>
+<h2 id="what-training-costs">What training costs</h2>
+<p>Three things multiply.</p>
+<ol>
+<li><strong>Examples.</strong> Each pass reads all the training rows.</li>
+<li><strong>Parameters.</strong> Each step updates every one.</li>
+<li><strong>Passes.</strong> The number of epochs, plus every repeat run when you tune settings.</li>
+</ol>
+<p>A small churn model trains in seconds on a laptop. A frontier language model trains on
+large clusters of specialist chips for a very long time. The loop is identical. This is why the
+data-and-parameter scale of a model, covered in <a href="../llms/what-is-an-llm.html">What an LLM actually is</a>,
+sets its price. It is also why experiments matter: a team that can try ten ideas a day
+learns faster than a team that can try one a week.</p>
+<h2 id="worked-example-training-a-churn-model">Worked example: training a churn model</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed.</em></p>
+<p>We train a logistic regression on the 4,000-customer churn data from lesson 1. It has four
+parameters, one per column, plus one bias. We standardize the columns first, using the
+training rows only (lesson 2). We use a learning rate of 0.5 and 150 epochs.</p>
+<table>
+<thead>
+<tr>
+<th>Epoch</th>
+<th>Average loss on training rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0.636</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0.453</td>
+</tr>
+<tr>
+<td>150</td>
+<td>0.403</td>
+</tr>
+</tbody>
+</table>
+<p>The loss started near the coin-flip value of 0.693 and fell fast, then flattened. On the
+1,000 held-back rows the loss is 0.424. A model that always predicts the average churn rate
+scores 0.482. So the model learned something real, and it did so without overfitting.</p>
+<p>The learned weights, on standardized columns, are readable:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Weight</th>
+<th>Reading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tenure_months</td>
+<td>−0.70</td>
+<td>Longer-tenured customers cancel less</td>
+</tr>
+<tr>
+<td>tickets_90d</td>
+<td>+0.69</td>
+<td>More support tickets mean more cancellations</td>
+</tr>
+<tr>
+<td>logins_30d</td>
+<td>−0.41</td>
+<td>More logins mean fewer cancellations</td>
+</tr>
+<tr>
+<td>monthly_spend</td>
+<td>+0.13</td>
+<td>A small effect</td>
+</tr>
+</tbody>
+</table>
+<p>Flagging customers whose predicted risk is at or above the average churn rate gives a
+balanced accuracy of 67.4% on the test rows. The best hand-written rule scored 58.9%. The
+model won by combining four weak signals. Lesson 5 shows how to pick the cutoff on purpose.</p>
+<p>Now change only the learning rate.</p>
+<table>
+<thead>
+<tr>
+<th>Learning rate</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.01</td>
+<td>After 150 epochs the loss is 0.563. Still far from done</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>After 150 epochs the loss is 0.403. Converged</td>
+</tr>
+<tr>
+<td>60</td>
+<td>In 20 epochs the loss swings between 0.92 and 3.69 and never settles</td>
+</tr>
+</tbody>
+</table>
+<p>Same data, same model, same code. One number decides whether the run works.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Learning rate: speed vs. stability.</strong> Teams often run a short search over a few rates.
+  That is cheap next to a bad long run.</li>
+<li><strong>Training longer vs. overfitting.</strong> More epochs keep lowering the training loss and can
+  raise the validation loss. Stop when validation stops improving. This is called early
+  stopping.</li>
+<li><strong>More parameters vs. more data.</strong> A larger model can fit more. It also needs more data to
+  avoid memorizing. Cost grows with both.</li>
+<li><strong>Train from scratch vs. start from a trained model.</strong> Starting from an existing model and
+  adjusting it is far cheaper. That is the idea behind fine-tuning, covered in
+  <a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a>.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Divergence.</strong> The rate is too large and the loss becomes huge or undefined.</li>
+<li><strong>Silent stall.</strong> The loss barely moves. The rate is too small or a pipeline bug feeds the
+  model noise.</li>
+<li><strong>Wrong objective.</strong> The loss is easy to compute but does not match what the product
+  needs. The model improves the loss and nothing else.</li>
+<li><strong>Training that cannot be repeated.</strong> No fixed random seed, no recorded settings. A good
+  result cannot be reproduced and a bad one cannot be debugged.</li>
+<li><strong>Stopping on the wrong curve.</strong> The team watches only the training loss and misses the
+  rise in validation loss.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>This is the whole loop for logistic regression, from <code>machine-learning/code/lesson3_gradient_descent.py</code>.
+The <code>err</code> line is the gradient for this model: prediction minus truth.</p>
+<pre><code class="language-python">def train_logistic(rows, labels, lr=0.5, epochs=150):
+    n, d = len(rows), len(rows[0])
+    weights, bias, curve = [0.0] * d, 0.0, []
+    for _ in range(epochs):
+        grad_w, grad_b = [0.0] * d, 0.0
+        for x, y in zip(rows, labels):
+            err = sigmoid(sum(w * v for w, v in zip(weights, x)) + bias) - y
+            for j in range(d):
+                grad_w[j] += err * x[j]
+            grad_b += err
+        weights = [w - lr * g / n for w, g in zip(weights, grad_w)]   # step downhill
+        bias -= lr * grad_b / n
+        curve.append(log_loss(weights, bias, rows, labels))
+    return weights, bias, curve
+</code></pre>
+<p>For a model with one layer, the gradient has a short closed form, as above. A deep network
+has many layers. Its gradient comes from <strong>backpropagation</strong>, which applies the chain rule
+from the output back to the input, one layer at a time. <a href="model-families.html">Lesson 6</a>
+writes that out by hand for a small network and checks it against a numerical slope. The
+Tensors module that follows shows how libraries compute it for you.</p>
+<p>Habits that save time:</p>
+<ul>
+<li><strong>Fix the seed and log the settings.</strong> Save the learning rate, epochs, data version and code
+  version with every run.</li>
+<li><strong>Plot both curves every run.</strong> Training loss alone hides overfitting.</li>
+<li><strong>Overfit a tiny batch first.</strong> It tests the whole loop in seconds.</li>
+<li><strong>Watch for a loss of <code>nan</code>.</strong> It means a step overshot. Lower the rate.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we have training and validation loss curves for every run?</li>
+<li class="task todo">Did the validation curve flatten, and did it move with the training curve?</li>
+<li class="task todo">Does the loss match what the product needs?</li>
+<li class="task todo">Did we try more than one learning rate?</li>
+<li class="task todo">Are the random seed, data version and settings recorded for each run?</li>
+<li class="task todo">Do we know what one training run costs, and how often we plan to repeat it?</li>
+<li class="task todo">Could we start from an existing model in place of training from scratch?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="generalization-overfitting-and-bias-variance.html">Generalization: overfitting and the bias–variance tradeoff</a>
+  — what the validation curve is for.</li>
+<li><a href="model-families.html">Model families</a> — backpropagation for a small neural network.</li>
+<li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — training versus inference at scale.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — where training and serving spend
+  goes.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/modules/neural_networks_supervised.html">Neural network models (supervised)</a>:
+  gradient descent as the update <code>w ← w − η × slope</code>, the learning rate as the step size,
+  backpropagation as the way the gradients are computed, and Adam as an optimizer that adapts
+  the update size from adaptive estimates of lower-order moments. Read from the guide's
+  source text in the scikit-learn repository, 2026-10.</li>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/modules/model_evaluation.html">Model evaluation</a>:
+  log loss, also called cross-entropy loss, defined on probability estimates. Same reading.</li>
+<li>Kingma and Ba, <em>Adam: A method for stochastic optimization</em> (International Conference on Learning Representations, 2015),
+  <a href="https://arxiv.org/abs/1412.6980">arXiv:1412.6980</a>. The optimizer named in the scikit-learn
+  guide, and the source of "individual adaptive learning rates for different parameters".
+  The guide cites this paper. arXiv was blocked when checked.</li>
+<li>Goodfellow, Bengio and Courville, <em>Deep Learning</em> (2016), chapters 4 and 8:
+  gradient-based optimization and optimization for training.</li>
+<li>The churn data, the weights, the loss values and the learning-rate results are invented.
+  They come from <code>machine-learning/code/lesson3_gradient_descent.py</code> and can be reproduced
+  with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="data-features-labels-and-leakage.html"><span class="lbl">← Previous</span><span class="ttl">Data: features, labels, splits and leakage</span></a><a class="navcard next" href="generalization-overfitting-and-bias-variance.html"><span class="lbl">→ Next</span><span class="ttl">Generalization: overfitting and the bias–variance tradeoff</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-walking-downhill-in-fog">The mental model: walking downhill in fog</a><a class="h2" href="#the-loss-the-number-training-chases">The loss: the number training chases</a><a class="h2" href="#gradient-descent-in-one-knob">Gradient descent in one knob</a><a class="h2" href="#the-learning-rate-the-one-setting-everyone-tunes">The learning rate: the one setting everyone tunes</a><a class="h2" href="#reading-a-loss-curve">Reading a loss curve</a><a class="h2" href="#what-training-costs">What training costs</a><a class="h2" href="#worked-example-training-a-churn-model">Worked example: training a churn model</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Ftraining-loss-and-gradient-descent.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/training-loss-and-gradient-descent.html"</script><script defer src="../assets/glossary.js"></script></body></html>

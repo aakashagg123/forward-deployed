@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Learning and doing ML with Claude Code — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink active" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 08</span>
+    <h1>Learning and doing ML with Claude Code</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Claude Code is a coding agent. This lesson uses it from the terminal. It reads files, runs commands, edits code and reads the output. Machine learning (ML) work fits that shape. An experiment is a script that prints a score. So an agent can write it, run it, read the score and try again.</p>
+<p>This lesson covers two uses.</p>
+<ul>
+<li><strong>Doing.</strong> The agent runs the experiments. You set the rules and review the result.</li>
+<li><strong>Learning.</strong> The agent works as a tutor that runs real code with you. You use it to learn this module faster.</li>
+</ul>
+<p>You do not need to guess how far agents in the terminal will go. You need habits that keep a result true, whoever wrote the code. The agent speeds up the loop from <a href="training-loss-and-gradient-descent.html">lesson 3</a>. It does not change what makes a score honest. The hard parts stay with you: a fair split, a baseline, a leak check and the right metric.</p>
+<p>One risk is new. An agent that chases a score will take shortcuts without meaning to. It may tune on the test rows. It may add a column that leaks the answer. So you give it a contract, and checks that fail loudly.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Agents make experiments cheap, so a team can try many settings quickly. More tries give more chances for a lucky number. A fast team with weak controls ships a worse model with a better-looking score.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the log, not the headline. You ask how many times the test rows were scored. You ask who reviewed the agent's code, and whether that reviewer saw the agent's reasoning or only the result.</p>
+<p><strong>Ask your eng team</strong> — <em>"How many times did the agent score the test rows, and where is the log that shows it?"</em></p>
+<p><strong>Risk if ignored</strong> — A model that looked like 66% in the report and does 64% in production. Or a leak that no one saw, because the agent reported a number it was never asked to explain.</p>
+</blockquote>
+<h2 id="the-mental-model-you-hold-the-contract-the-agent-runs-the-loop">The mental model: you hold the contract, the agent runs the loop</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.l8-flow{grid-template-columns:1fr 28px 1fr 28px 1fr;align-items:stretch}.l8-out{grid-template-columns:1fr 1fr;margin-top:12px}
+@media (max-width:640px){.l8-flow,.l8-out{grid-template-columns:1fr}.l8-flow .dgm-ml-arrow{transform:rotate(90deg);height:18px}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Working with an agent</span>
+<h4>You hold the contract. The agent runs the loop.</h4>
+<p class="dgm-ml-sub">An agent makes the loop fast. The checks keep the result true.</p>
+<div class="dgm-ml-grid l8-flow">
+  <div class="dgm-ml-card dgm-ml-info"><h5><span class="dgm-ml-num">1</span>You</h5><p>Frame the question.<br>Own the data contract: split, baseline, metric.<br>Review the evidence.</p></div>
+  <div class="dgm-ml-arrow">→</div>
+  <div class="dgm-ml-card"><h5><span class="dgm-ml-num">2</span>Agent loop</h5><p>Read the data.<br>Write the code.<br>Run it.<br>Read the output.</p></div>
+  <div class="dgm-ml-arrow">→</div>
+  <div class="dgm-ml-card dgm-ml-ok"><h5><span class="dgm-ml-num">3</span>Checks</h5><p>Asserts and tests.<br>A test set scored once, with a log.<br>A leak audit.</p></div>
+</div>
+<div class="dgm-ml-grid l8-out">
+  <div class="dgm-ml-card dgm-ml-bad"><h5>A check fails</h5><p>Back to the loop, loudly. The agent fixes the cause, not the symptom.</p></div>
+  <div class="dgm-ml-card dgm-ml-ok"><h5>All checks pass, with evidence</h5><p>The command, the output and the log line come to you. You decide.</p></div>
+</div>
+<p class="dgm-ml-foot">The agent can run hundreds of experiments. Each extra try is another chance for a lucky score.</p>
+</div>
+
+<p>Treat the agent as a fast junior who never tires. It is good at the loop: write, run, read, fix. It does not know what your business counts as a fair test. You do. The contract is where you put that knowledge.</p>
+<p>The official guidance for Claude Code says the same thing about code in general. Claude "stops when the work looks done", so give it "a check it can run". Without one, you become the verification loop.</p>
+<h2 id="doing-ml-with-the-agent">Doing ML with the agent</h2>
+<h3 id="1-write-the-contract-in-claudemd">1. Write the contract in <code>CLAUDE.md</code></h3>
+<p><code>CLAUDE.md</code> is a file that Claude Code reads at the start of every session. Keep it short. Put in the rules that apply to every task. For an ML project, that means the rules from lessons 2 to 5.</p>
+<pre><code class="language-text"># ML rules for this repo
+- Data: data/train.csv and data/valid.csv. Never open anything under data/test/.
+- Split by customer_id, never by row.
+- Always report a baseline first: predict the average, and the best single rule.
+- Choose settings on valid. The test rows are scored once, by `python score_test.py`.
+- Set seeds. Log every run to runs.log: settings, split, score.
+- Show the command you ran and its output. Do not report a number you did not run.
+</code></pre>
+<p><code>CLAUDE.md</code> is advice, not enforcement. The Claude Code docs say hooks are the deterministic option: "Unlike CLAUDE.md instructions which are advisory, hooks are deterministic and guarantee the action happens." Use <code>CLAUDE.md</code> for what the agent should know. Use a hook or a permission rule for what must never happen. <a href="../harness/phases/04-prompts-and-instructions/02-memory-files/docs/en.html">Memory files</a> and <a href="../harness/phases/06-permissions-and-security/02-hooks/docs/en.html">Hooks</a> in the harness track show how.</p>
+<h3 id="2-keep-the-final-test-labels-out-of-reach">2. Keep the final test labels out of reach</h3>
+<p>A <code>Read</code> deny rule such as <code>Read(./data/test/**)</code> blocks Claude's file tools from reading that path. The permissions docs say it also covers the shell file commands Claude Code recognizes. It does not cover a script the agent writes and runs. Rules are covered in <a href="../harness/phases/06-permissions-and-security/03-settings-json/docs/en.html">Settings.json</a>. That track also warns that a hook cannot see inside a script, and that only the operating-system sandbox enforces at that level.</p>
+<p>So think of the rule as a guard rail. A Python script the agent writes can open any file the operating system lets it open. The docs point to the sandbox for operating-system-level enforcement. The strongest control is structural. Keep the final test labels where the agent cannot read them, and score them through a step that you or your pipeline run. The example below shows a softer version in code: a ledger that allows one test score.</p>
+<h3 id="3-plan-first-then-run">3. Plan first, then run</h3>
+<p>Claude Code has a plan mode. In plan mode it reads files and answers questions without making changes. You enter it with <code>Shift+Tab</code>, or start with <code>claude --permission-mode plan</code>. The docs recommend four steps: explore, plan, implement, commit. Use it for ML when the question is open. Ask for the experiment design before any code: which split, which baseline, which metric, which settings to try, and what would change your mind.</p>
+<p>For a small, clear task such as "add a column to the table", skip the plan. The docs say the same: if you can describe the change in one sentence, skip planning.</p>
+<h3 id="4-close-the-loop-with-checks">4. Close the loop with checks</h3>
+<p>Give the agent something that returns pass or fail. In ML the checks are the ones you met in this module:</p>
+<ul>
+<li>an <code>assert</code> that the loss falls, as in <a href="training-loss-and-gradient-descent.html">lesson 3</a>;</li>
+<li>a test that no customer appears on both sides of the split;</li>
+<li>a leak audit that flags a single column that predicts the label too well;</li>
+<li>a rule that the test rows are scored once.</li>
+</ul>
+<p>The Claude Code docs give a ladder for how hard a check gates the work: ask in the prompt, set a goal for the session, run a Stop hook that blocks the end of a turn until a script passes, or use a second agent to check the first. They also say to have the agent "show evidence rather than asserting success". For ML, evidence is the command, the output and the log line.</p>
+<h3 id="5-get-an-independent-review">5. Get an independent review</h3>
+<p>A reviewer in a fresh context sees only the diff and your criteria. It does not see the reasoning that produced the change. The docs call this an adversarial review and suggest a subagent for it. For ML, point the reviewer at one job: find leakage and any use of the test rows. Tell it to report only gaps that change correctness. The docs warn that a reviewer asked to find gaps "will usually report some, even when the work is sound".</p>
+<h3 id="6-run-unattended-only-with-guard-rails">6. Run unattended only with guard rails</h3>
+<p><code>claude -p "prompt"</code> runs Claude Code without an interactive session. That suits a nightly retrain or a batch of experiments. Unattended runs need tight permissions. The docs describe a <code>dontAsk</code> permission mode that denies any call that would otherwise ask, and an <code>--allowedTools</code> flag that lists what is pre-approved. Start narrow. Widen only when the log shows the agent needs more.</p>
+<h2 id="learning-ml-with-the-agent">Learning ML with the agent</h2>
+<p>The agent can also be your tutor for this module. The risk is the reverse of the one above. If the agent does the exercise, you learn nothing. These habits keep you doing the thinking.</p>
+<ol>
+<li><strong>Turn on the Learning style.</strong> Run <code>/output-style learning</code>. The docs describe it this way: Claude adds <code>Insight</code> blocks and also asks you to write some of the code. It marks the spot with a <code>TODO(human)</code> comment and waits. The Explanatory style adds the <code>Insight</code> blocks without asking you to write code.</li>
+<li><strong>Predict, run, compare.</strong> Before you run a lesson file, write down what you expect. Run <code>python3 machine-learning/code/lesson4_overfitting.py</code>. Compare. If you were wrong, ask the agent to explain the gap, then check its answer against the lesson.</li>
+<li><strong>Change one knob.</strong> Ask the agent to change the learning rate in lesson 3, or the tree depth in lesson 4. Predict the effect first.</li>
+<li><strong>Break it on purpose.</strong> Ask the agent to add a leaky column to the data, as lesson 2 does. Watch which check catches it. Then ask what check would have caught it earlier.</li>
+<li><strong>Explain it back.</strong> Say a lesson in your own words and ask the agent to find the holes. Use the recap's test-yourself questions and ask it to grade your answers against the lesson text.</li>
+<li><strong>Read code with the agent.</strong> Reference a file with <code>@</code> and ask it to walk through the backward pass in <code>mlp.py</code> line by line.</li>
+<li><strong>Keep a rule.</strong> The agent explains with confidence, and it can be wrong. For a fact that matters, check the lesson or its sources.</li>
+</ol>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Autonomy vs. oversight.</strong> In Manual mode Claude Code asks before most edits and commands. In auto mode a second model reviews actions instead of you. The mode a session starts in depends on your version and settings, so check yours. More autonomy saves attention and raises the cost of a mistake. Match the mode to how reversible the work is.</li>
+<li><strong>Many experiments vs. an honest score.</strong> The more settings you try, the more the best one looks better than it is. The example below measures it.</li>
+<li><strong>Scripts vs. notebooks.</strong> A script that ends in asserts gives an agent a pass or fail. A notebook is good for looking at data. Move a result to a script before you trust it.</li>
+<li><strong>Learning vs. finishing.</strong> Let the agent write the code when you want the result. Use the Learning style and write the key lines when you want the skill.</li>
+<li><strong>One long session vs. fresh ones.</strong> The docs say a full context window lowers quality, and suggest clearing between unrelated tasks. Keep experiment logs in files, not in the chat.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Tuning on the test rows.</strong> The agent compares many settings and keeps the one with the best test score. The reported number is too good.</li>
+<li><strong>A leak by convenience.</strong> The agent adds a useful-looking column that only exists after the outcome.</li>
+<li><strong>A number that was never run.</strong> The report states a score with no command behind it. Ask for the command and the output.</li>
+<li><strong>A quiet change to the data or the seed.</strong> The score moves and nobody knows why. Log the seed and the split.</li>
+<li><strong>Review by the author.</strong> The agent that wrote the code also grades it. Use a fresh reviewer.</li>
+<li><strong>Over-trust in an explanation.</strong> A fluent answer can be wrong. Check it.</li>
+<li><strong>Skipping the learning.</strong> The exercise is done and you cannot repeat it alone.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>machine-learning/code/lesson8_agent_guardrails.py</code>. It uses only the standard library. It builds three controls.</p>
+<p>The first is a ledger. It scores a split and writes down every evaluation. The test rows can be scored once.</p>
+<pre><code class="language-python">class Ledger:
+    def score(self, split, predict, note=&quot;&quot;):
+        if split == self.protected and self.count(split) &gt;= 1:
+            raise TestSetReused(f&quot;the {split} rows were already scored once: {self.log[-1]}&quot;)
+        rows, labels = self.splits[split]
+        value = balanced_accuracy(predict(rows), labels)
+        self.log.append((split, round(value, 4), note))
+        return value
+</code></pre>
+<p>The second is a measurement. It tries 36 tree settings on invented churn data. It keeps the best one by its test score, then scores that setting on fresh rows that were never used to choose. It repeats this 30 times.</p>
+<p>The third is a leak audit. It finds the best single yes-or-no cut for each column and flags any column above 90%.</p>
+<pre><code class="language-python">def leak_audit(rows, labels, names, limit=0.90):
+    &quot;&quot;&quot;Names of columns that predict the label better than `limit` on their own.&quot;&quot;&quot;
+    return [n for n, s in zip(names, column_strength(rows, labels)) if s &gt; limit]
+</code></pre>
+<h2 id="worked-example-how-much-does-the-shortcut-cost">Worked example: how much does the shortcut cost?</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed.</em></p>
+<p><strong>The ledger.</strong> The disciplined loop scores 36 settings on the validation rows and 1 setting on the test rows. Every score in this example is balanced accuracy, from <a href="what-machine-learning-is.html">lesson 1</a>. The ledger shows 36 validation entries and 1 test entry. The chosen setting is depth 4 with at least 20 rows per leaf. Its test score is 61.1%. The shortcut loop tries to score a second setting on the test rows. The ledger stops it at step 2 of 36.</p>
+<p><strong>The overstatement.</strong> With no ledger, how wrong is a score chosen on the test rows? Over 30 repeats:</p>
+<table>
+<thead>
+<tr>
+<th>Settings tried</th>
+<th>Test-chosen score minus fresh-row score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>−0.4 points</td>
+</tr>
+<tr>
+<td>6</td>
+<td>+1.4 points</td>
+</tr>
+<tr>
+<td>36</td>
+<td>+2.5 points</td>
+</tr>
+<tr>
+<td>36, chosen on validation (test score of that choice minus fresh-row score)</td>
+<td>+0.4 points</td>
+</tr>
+</tbody>
+</table>
+<p>With 36 tries, the test score beat the fresh-row score in 23 of 30 repeats. More tries gave a bigger gap. Choosing on the validation rows left a gap of 0.4 points, which is noise. The gap is modest here. The model is small and the sweep is only 36 settings. An agent that tries hundreds of settings, or a larger search space, has more room to fool you. We did not measure that.</p>
+<p><strong>The leak audit.</strong> On the clean churn data, no column predicts churn above 90% alone. The best is tickets in 90 days, at 62.8%. We then add the column <code>retention_offer_sent</code> from <a href="data-features-labels-and-leakage.html">lesson 2</a>. It alone scores 96.6%. The audit flags it and nothing else. A single column this strong deserves a leak check before it deserves a celebration.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Does the repo have a short <code>CLAUDE.md</code> with the split, baseline, metric and test-set rules?</li>
+<li class="task todo">Is anything that must never happen enforced by a hook, a permission rule or the sandbox, not only by advice?</li>
+<li class="task todo">Are the final test labels out of the agent's reach?</li>
+<li class="task todo">Does every experiment write a log line: settings, seed, split, score?</li>
+<li class="task todo">Do the checks include a leak audit and a test-scored-once rule?</li>
+<li class="task todo">Did a fresh reviewer, not the author agent, look for leakage?</li>
+<li class="task todo">Did the agent show the command and output behind each reported number?</li>
+<li class="task todo">Are unattended runs limited to the tools they need?</li>
+<li class="task todo">For learning: did you predict before you ran, and write the key lines yourself?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> — the leaks the audit looks for.</li>
+<li><a href="generalization-overfitting-and-bias-variance.html">Generalization: overfitting and the bias–variance tradeoff</a> — why the test rows are scored once.</li>
+<li><a href="../prompt-engineering/prompting-inside-coding-agents.html">Prompting inside coding agents</a> — the prompt patterns for any coding agent.</li>
+<li><a href="../harness/phases/07-planning-and-subagents/02-plan-mode/docs/en.html">Plan mode</a> and <a href="../harness/phases/07-planning-and-subagents/04-supervisor-and-workers/docs/en.html">Supervisor and workers</a> — how the agent features work underneath.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — the same discipline for LLM features.</li>
+<li><a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a> — limits and a kill switch for unattended agents.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/best-practices">Best practices</a>: verification checks, "stops when the work looks done", show evidence, explore then plan then code, plan mode with <code>Shift+Tab</code> or <code>--permission-mode plan</code>, <code>CLAUDE.md</code>, hooks as deterministic, subagents and the adversarial review step, <code>/clear</code>, and non-interactive <code>claude -p</code>. Read 2026-10.</li>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/output-styles">Output styles</a>: the built-in Explanatory and Learning styles, <code>TODO(human)</code>, and <code>/output-style</code>. Read 2026-10.</li>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/permission-modes">Permission modes</a>: Manual mode, auto mode and which mode a session starts in. Read 2026-10.</li>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/permissions">Configure permissions</a>: <code>Read</code> deny rules, gitignore-style paths, what they do not cover (a script that opens files itself), and the sandbox as the operating-system control. Read 2026-10.</li>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/headless">Run Claude Code programmatically</a>: <code>claude -p</code>, <code>--allowedTools</code> and the <code>dontAsk</code> permission mode. Read 2026-10.</li>
+<li>The harness-engineering lessons linked above, which cite the Claude Code docs for permission rules, hooks and the sandbox.</li>
+<li>These docs change often. Check the page for your version before you rely on a flag or a setting name.</li>
+<li>The churn data, the settings and every score are invented. They come from <code>machine-learning/code/lesson8_agent_guardrails.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="ml-in-production.html"><span class="lbl">← Previous</span><span class="ttl">ML in production: drift, skew and the lifecycle</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-you-hold-the-contract-the-agent-runs-the-loop">The mental model: you hold the contract, the agent runs the loop</a><a class="h2" href="#doing-ml-with-the-agent">Doing ML with the agent</a><a class="h3" href="#1-write-the-contract-in-claudemd">1. Write the contract in CLAUDE.md</a><a class="h3" href="#2-keep-the-final-test-labels-out-of-reach">2. Keep the final test labels out of reach</a><a class="h3" href="#3-plan-first-then-run">3. Plan first, then run</a><a class="h3" href="#4-close-the-loop-with-checks">4. Close the loop with checks</a><a class="h3" href="#5-get-an-independent-review">5. Get an independent review</a><a class="h3" href="#6-run-unattended-only-with-guard-rails">6. Run unattended only with guard rails</a><a class="h2" href="#learning-ml-with-the-agent">Learning ML with the agent</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-how-much-does-the-shortcut-cost">Worked example: how much does the shortcut cost?</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Flearning-and-doing-ml-with-claude-code.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/learning-and-doing-ml-with-claude-code.html"</script><script defer src="../assets/glossary.js"></script></body></html>

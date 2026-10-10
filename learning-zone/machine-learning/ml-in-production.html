@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ML in production: drift, skew and the lifecycle — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink active" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 07</span>
+    <h1>ML in production: drift, skew and the lifecycle</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Launch is the middle of the story. A normal feature keeps working until someone changes
+the code. An ML feature can get worse with no code change at all, because its inputs and
+the world around it change.</p>
+<p>Five problems cause most production failures. <strong>Training-serving skew:</strong> the model sees
+different inputs live than it saw in training. <strong>Data drift:</strong> the mix of incoming cases
+changes. <strong>Concept drift:</strong> the link between the inputs and the outcome changes. <strong>Feedback
+loops:</strong> the model's own actions change the data it learns from later. <strong>Silent upstream
+changes:</strong> a column changes meaning and nothing crashes.</p>
+<p>The defense is a lifecycle, not a better model. Watch the inputs, the scores and the
+outcomes. Decide in advance when to retrain and who owns the decision. Treat the
+surrounding system as the product. The ML code is one part of it.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — A model's accuracy is a measurement taken at one moment. The product
+promise is for every moment after. Most of the cost of ML sits after launch.</p>
+<p><strong>What it changes in your decisions</strong> — You budget for monitoring and retraining before
+you approve the build. You assign an owner. You ask for the alarm that would tell you the
+model has decayed.</p>
+<p><strong>Ask your eng team</strong> — <em>"If this model got worse next Tuesday, which alarm fires, who
+gets it, and what do they do?"</em></p>
+<p><strong>Risk if ignored</strong> — Revenue decays quietly for months. The first alarm is a customer
+complaint, a finance review, or an audit.</p>
+</blockquote>
+<h2 id="the-mental-model-a-loop-with-five-weak-points">The mental model: a loop with five weak points</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.ml-prod{grid-template-columns:repeat(5,1fr)}.ml-fail{grid-template-columns:repeat(5,1fr)}@media (max-width:860px){.ml-prod,.ml-fail{grid-template-columns:repeat(2,1fr)}}@media (max-width:420px){.ml-prod,.ml-fail{grid-template-columns:1fr}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">After launch</span>
+<h4>A loop with five weak points</h4>
+<p class="dgm-ml-sub">Each arrow is a handoff between people or systems. Each can break.</p>
+<div class="dgm-ml-grid ml-prod">
+  <div class="dgm-ml-card"><h5>Data</h5><p>collect and label</p></div>
+  <div class="dgm-ml-card"><h5>Train</h5><p>evaluate</p></div>
+  <div class="dgm-ml-card"><h5>Deploy</h5><p>ship the model</p></div>
+  <div class="dgm-ml-card"><h5>Live</h5><p>predictions on real traffic</p></div>
+  <div class="dgm-ml-card dgm-ml-info"><h5>Monitor</h5><p>inputs · scores · outcomes</p></div>
+</div>
+<div class="dgm-ml-grid ml-fail" style="margin-top:12px">
+  <div class="dgm-ml-card dgm-ml-bad"><h5><span class="dgm-ml-num">1</span>Skew</h5><p>Train ≠ serve. AUC 0.727 → 0.621 when tenure arrived in days.</p></div>
+  <div class="dgm-ml-card dgm-ml-bad"><h5><span class="dgm-ml-num">2</span>Data drift</h5><p>The mix of cases moves. PSI tenure 0.00 → 0.49.</p></div>
+  <div class="dgm-ml-card dgm-ml-bad"><h5><span class="dgm-ml-num">3</span>Concept drift</h5><p>The rule changes. AUC 0.756 → 0.611 in six months.</p></div>
+  <div class="dgm-ml-card dgm-ml-bad"><h5><span class="dgm-ml-num">4</span>Feedback loop</h5><p>Our actions change the data we learn from.</p></div>
+  <div class="dgm-ml-card dgm-ml-bad"><h5><span class="dgm-ml-num">5</span>Upstream change</h5><p>A column shifts meaning and nothing crashes.</p></div>
+</div>
+<p class="dgm-ml-foot">↺ drift alarm or schedule → retrain, in shadow mode first</p>
+</div>
+
+<p>A model is not a file you ship once. It is a loop. Each arrow is a handoff between people
+or systems, and each can break.</p>
+<h2 id="the-model-is-a-small-part-of-the-system">The model is a small part of the system</h2>
+<p>Sculley and colleagues at Google described this in a 2015 paper on the "hidden technical
+debt" of ML systems. ML makes the usual maintenance costs of software worse, and adds new
+ones. Their list of risk factors includes entanglement, hidden feedback loops, undeclared
+consumers, data dependencies, configuration problems and changes in the external world.</p>
+<p>The paper's sharpest idea is the changing-anything-changes-everything (CACE) principle.
+If you change the distribution of one input, the model may reweigh all the others. So you
+cannot fix one feature in isolation, and you cannot treat a model as a set of independent
+parts.</p>
+<h2 id="five-failure-modes">Five failure modes</h2>
+<h3 id="1-training-serving-skew">1. Training-serving skew</h3>
+<p>The model trained on one version of the inputs and serves on another. The code that builds
+features for training is not the same code that builds them live. Units differ, defaults
+differ, or a lookup is stale. Nothing crashes. The numbers are just wrong.</p>
+<p>Google's <em>Rules of Machine Learning</em> treats this as its own family of problems. It advises
+saving the features the model used at serving time and using that log for training, and it
+has a rule to measure the gap between training and serving. A strong habit is to share one
+feature-building code path between training and serving.</p>
+<h3 id="2-data-drift">2. Data drift</h3>
+<p>The cases arriving now do not look like the cases the model trained on. Growth brings new
+customers. A new channel brings a different mix. The model's rules may still be right. It
+has just not seen these cases.</p>
+<h3 id="3-concept-drift">3. Concept drift</h3>
+<p>The link between inputs and outcome changes. A price rise changes why people cancel. A new
+fraud tactic makes yesterday's pattern useless. Gama and colleagues surveyed this problem in</p>
+<ol start="2014">
+<li>The model's inputs may look unchanged while its answers get worse. This is harder to
+detect, because you need outcomes to see it.</li>
+</ol>
+<h3 id="4-feedback-loops">4. Feedback loops</h3>
+<p>The model's action changes the data it will later learn from. If you only offer discounts to
+customers the model flags, you will never learn what the unflagged customers would have
+done. If a recommender shows only what it already favors, it trains on the clicks it caused.
+The model slowly confirms itself.</p>
+<h3 id="5-silent-upstream-changes">5. Silent upstream changes</h3>
+<p>Another team renames a field, changes a unit, adds a new category, or starts filling a blank
+with a default. Your model reads the new values as if they were old. Sculley and colleagues
+call this "unstable data dependencies". They also warn about the reverse case: teams that
+use your output without telling you, which they call "undeclared consumers".</p>
+<h2 id="monitoring-inputs-scores-and-outcomes">Monitoring: inputs, scores and outcomes</h2>
+<p>Watch three layers. They answer different questions and arrive at different speeds.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What you watch</th>
+<th>Example alarm</th>
+<th>Speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inputs</strong></td>
+<td>The spread of each input and the share of missing values, against training</td>
+<td>Population stability index above a limit on any key column</td>
+<td>Immediate</td>
+</tr>
+<tr>
+<td><strong>Scores</strong></td>
+<td>The spread of the model's outputs</td>
+<td>The average predicted risk jumps, or the share flagged doubles</td>
+<td>Immediate</td>
+</tr>
+<tr>
+<td><strong>Outcomes</strong></td>
+<td>Real results against predictions</td>
+<td>AUC or precision on recent labelled cases falls</td>
+<td>Delayed by the label delay</td>
+</tr>
+</tbody>
+</table>
+<p>The first two layers are fast and cannot prove the model is wrong. The third proves it, and
+arrives late. A 30-day churn label means the first accurate reading is a month behind. So
+teams run all three. Fast alarms trigger a look. Slow outcomes confirm it.</p>
+<p>The <strong>population stability index (PSI)</strong> compares the live spread of one input to its
+spread in training. Cut the training values into ten equal bands. Count what share of live
+values lands in each. The score is zero when the shares match and grows as they diverge. A
+common habit treats 0.1 as "look" and 0.25 as "act". That is a convention from credit-risk
+work, not a standard. Tune it on your own history.</p>
+<h2 id="retraining-is-a-decision">Retraining is a decision</h2>
+<p>Retraining brings a model back up to date. It is also a release, with all the risks of one.
+Plan three things.</p>
+<ul>
+<li><strong>Triggers.</strong> Retrain on a schedule, on a drift alarm, on a fall in measured performance,
+  or on a mix. A schedule is simple and wastes effort when nothing changed. An alarm is
+  efficient and needs good monitoring.</li>
+<li><strong>Safe rollout.</strong> Run the new model in <strong>shadow mode</strong>: it scores live traffic, nobody
+  acts on it, and you compare it with the old one. Then send it a small share of traffic,
+  called a <strong>canary</strong>. Keep a one-step rollback.</li>
+<li><strong>Versions.</strong> Record the data, the code and the settings for every model. Without that you
+  cannot reproduce it or explain a past decision.</li>
+</ul>
+<p>Retraining does not cure everything. If the world changed so that the problem is harder, a
+retrained model will still do worse than at launch. The example below shows this.</p>
+<h2 id="ownership">Ownership</h2>
+<p>A model without an owner decays. Name one person or team who sees the alarms, can retrain,
+and can switch the model off. Write a short runbook. State what happens when the model is
+unavailable, such as a default rule. Teams call the practice around all of this MLOps. It is
+the same discipline as running any other service, extended with data and models.</p>
+<h2 id="worked-example-a-unit-slip-then-six-months-of-drift">Worked example: a unit slip, then six months of drift</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed.</em></p>
+<p><strong>Skew.</strong> We train the churn model on customers whose tenure is in months. It scores an AUC
+of 0.727 on a held-out set, the offline number. At launch, the serving system sends tenure
+in <strong>days</strong> by mistake. No error appears. The same model's AUC on live traffic is 0.621.
+That is a loss of 10.6 points.</p>
+<p>The input monitor would have caught it on day one. The PSI for tenure is 7.51. The PSI for
+tickets, which did not change, is 0.00. A single check on input spread points straight at
+the broken column.</p>
+<p><strong>Drift.</strong> Now the customer base changes over six months. New customers arrive faster,
+logins fall, and support tickets stop being such a strong signal. We score the original
+model on each month's new customers.</p>
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>AUC of the original model</th>
+<th>PSI of tenure</th>
+<th>PSI of logins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0.756</td>
+<td>0.00</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.720</td>
+<td>0.01</td>
+<td>0.04</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.697</td>
+<td>0.06</td>
+<td>0.09</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.647</td>
+<td>0.15</td>
+<td>0.22</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0.639</td>
+<td>0.29</td>
+<td>0.36</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0.611</td>
+<td>0.49</td>
+<td>0.44</td>
+</tr>
+</tbody>
+</table>
+<p>Look at what each layer saw. The AUC fell from month 1. A real team would see that only
+after the 30-day label delay. The input check stayed quiet longer. The logins PSI crossed
+0.1 in month 3 and tenure crossed 0.25 in month 4, by which time the AUC was down 11 and 12
+points. One reason is that part of this drift is concept drift. The tickets column spreads
+the same as before. It just predicts less. A PSI check cannot see that. So neither fast
+alarms nor slow outcomes are enough on their own. You need both.</p>
+<p><strong>Retraining.</strong> We retrain on the newest data and score a fresh sample from that period. The
+old model scores 0.594. The retrained model scores 0.613. Retraining helped by about two
+points. It did not bring the model back to 0.756. The new customers are simply harder to
+predict. That is a product fact for the roadmap, not a modelling fix: when the world gets
+less predictable, a better model is not always available.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Retrain often vs. rarely.</strong> Frequent retraining keeps the model fresh and creates more
+  releases to test. Rare retraining is stable and risks long decay.</li>
+<li><strong>Alarm sensitivity vs. noise.</strong> Tight limits catch drift early and cry wolf. Loose limits
+  stay quiet and miss it.</li>
+<li><strong>Automate the retrain vs. keep a person in the loop.</strong> Automation is fast. A person
+  catches a retrain that learned from a broken input.</li>
+<li><strong>Fresh vs. reproducible.</strong> Always training on the latest data makes results hard to
+  repeat. Pin the data version for every model.</li>
+<li><strong>Monitoring cost vs. coverage.</strong> You cannot watch everything. Start with the inputs and
+  scores that matter most.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>No owner.</strong> The model keeps running and nobody sees it decay.</li>
+<li><strong>Monitoring only accuracy.</strong> Outcomes arrive late, so the first alarm is far too late.</li>
+<li><strong>Two feature code paths.</strong> Training and serving build inputs in different places.</li>
+<li><strong>Retraining on broken data.</strong> An upstream error becomes the new training set.</li>
+<li><strong>A feedback loop nobody modelled.</strong> The system confirms its own mistakes.</li>
+<li><strong>No fallback.</strong> The model fails and there is no default rule to fall back on.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The PSI function is short. Bin edges come from the training values. The live share in each
+bin is compared with the training share.</p>
+<pre><code class="language-python">def psi(expected, actual, bins=10):
+    ordered = sorted(expected)
+    edges = [ordered[int(len(ordered) * i / bins)] for i in range(1, bins)]
+
+    def shares(values):
+        counts = [0] * bins
+        for v in values:
+            counts[sum(1 for e in edges if v &gt; e)] += 1
+        return [max(c / len(values), 1e-4) for c in counts]   # floor avoids log(0)
+
+    e, a = shares(expected), shares(actual)
+    return sum((ai - ei) * math.log(ai / ei) for ei, ai in zip(e, a))
+</code></pre>
+<p>A skew test can run before every release. Replay a sample of real requests through the
+training feature code and the serving feature code and compare the outputs.</p>
+<pre><code class="language-python">for request in sample_of_live_requests:
+    assert train_features(request) == serve_features(request)   # same inputs, same numbers
+</code></pre>
+<p>The files are <code>machine-learning/code/lesson7_drift.py</code> and <code>data.py</code>. Habits that pay off:</p>
+<ul>
+<li><strong>Log the features and the score</strong> for every live prediction. You need them to debug, to
+  compute PSI, and to retrain on what the model actually saw.</li>
+<li><strong>Join outcomes back</strong> when they arrive, keyed to the prediction. That gives you the slow
+  signal.</li>
+<li><strong>Alert on missing data</strong>, not just on changed data. A column that goes blank is the
+  commonest silent failure.</li>
+<li><strong>Version everything</strong>: data snapshot, feature code, model file, and cutoff.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is there a named owner and a runbook?</li>
+<li class="task todo">Do training and serving share one feature code path, with a test that proves it?</li>
+<li class="task todo">Do we monitor inputs, scores and outcomes?</li>
+<li class="task todo">Do we know the label delay, and what we watch while we wait?</li>
+<li class="task todo">Are there written triggers for retraining?</li>
+<li class="task todo">Is new-model rollout done in shadow mode or on a canary, with a rollback?</li>
+<li class="task todo">Are data, code, settings and cutoff versioned for every model?</li>
+<li class="task todo">Is there a fallback rule if the model is switched off?</li>
+<li class="task todo">Have we asked how our own actions change the data we will learn from?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="measuring-a-model.html">Measuring a model</a> — the scores you monitor.</li>
+<li><a href="data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> — the
+  same discipline before launch.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — monitoring
+  for LLM features.</li>
+<li><a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a> — limits,
+  approvals and a kill switch for a system that acts.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — what training and serving cost over
+  a model's life.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Sculley et al., <em>Hidden Technical Debt in Machine Learning Systems</em>, Advances in Neural
+  Information Processing Systems 28 (2015), 2503–2511.
+  <a href="https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf">papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems</a>.
+  The risk factors (entanglement, hidden feedback loops, undeclared consumers, data
+  dependencies, configuration issues, changes in the external world) and the CACE
+  principle. Checked through the abstract and search-result excerpts, 2026-10.</li>
+<li>Zinkevich, M. <em>Rules of Machine Learning: Best Practices for ML Engineering</em>, Google.
+  <a href="https://developers.google.com/machine-learning/guides/rules-of-ml">developers.google.com/machine-learning/guides/rules-of-ml</a>.
+  The advice to save the features used at serving time and train on them (Rule 29), and the
+  rule to measure training-serving skew (Rule 37). Checked through search-result excerpts,
+  2026-10.</li>
+<li>Gama, Žliobaitė, Bifet, Pechenizkiy and Bouchachia, <em>A survey on concept drift
+  adaptation</em>, Computing Surveys 46(4), article 44, 2014 (Association for Computing Machinery).</li>
+<li>PSI thresholds of 0.1 and 0.25: a habit from credit-risk practice. This lesson gives them
+  as a convention, not a standard. No primary standard was found.</li>
+<li>The data, the unit mismatch, the six months of drift and every score are invented. They
+  come from <code>machine-learning/code/lesson7_drift.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="model-families.html"><span class="lbl">← Previous</span><span class="ttl">Model families: linear models, trees and neural networks</span></a><a class="navcard next" href="learning-and-doing-ml-with-claude-code.html"><span class="lbl">→ Next</span><span class="ttl">Learning and doing ML with Claude Code</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-loop-with-five-weak-points">The mental model: a loop with five weak points</a><a class="h2" href="#the-model-is-a-small-part-of-the-system">The model is a small part of the system</a><a class="h2" href="#five-failure-modes">Five failure modes</a><a class="h3" href="#1-training-serving-skew">1. Training-serving skew</a><a class="h3" href="#2-data-drift">2. Data drift</a><a class="h3" href="#3-concept-drift">3. Concept drift</a><a class="h3" href="#4-feedback-loops">4. Feedback loops</a><a class="h3" href="#5-silent-upstream-changes">5. Silent upstream changes</a><a class="h2" href="#monitoring-inputs-scores-and-outcomes">Monitoring: inputs, scores and outcomes</a><a class="h2" href="#retraining-is-a-decision">Retraining is a decision</a><a class="h2" href="#ownership">Ownership</a><a class="h2" href="#worked-example-a-unit-slip-then-six-months-of-drift">Worked example: a unit slip, then six months of drift</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Fml-in-production.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/ml-in-production.html"</script><script defer src="../assets/glossary.js"></script></body></html>

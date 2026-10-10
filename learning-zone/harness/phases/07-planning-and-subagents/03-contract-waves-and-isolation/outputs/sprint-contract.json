@@ -1,0 +1,10 @@
+{
+  "sprint_name": "health-check",
+  "budget": {"max_workers": 3, "max_calls_per_worker": 15, "max_waves": 2},
+  "tasks": [
+    {"name": "api",   "files": ["api/routes.py"],  "deps": []},
+    {"name": "model", "files": ["api/models.py"],  "deps": []},
+    {"name": "ui",    "files": ["web/app.tsx"],    "deps": ["api"]}
+  ],
+  "acceptance": ["GET /health returns {\"status\": \"ok\"}"]
+}

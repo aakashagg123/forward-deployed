@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Model families: linear models, trees and neural networks — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink active" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
+    <h1>Model families: linear models, trees and neural networks</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Most models fall into three families. Each one can find a different shape of pattern.</p>
+<ul>
+<li><strong>Linear models</strong> add up weighted facts. "Each support ticket adds this much risk."
+  They are fast, readable and less prone to overfit when features are few. With many
+  columns, or with polynomial features, they can still overfit, so regularize them. They
+  cannot see that two facts matter only together.</li>
+<li><strong>Tree models</strong> ask a chain of yes-or-no questions. They handle mixed data and
+  interactions with little preparation. One tree overfits easily. So practitioners combine
+  many trees, by averaging them (a <em>random forest</em>) or by adding them one at a time, each
+  correcting the last (<em>gradient boosting</em>).</li>
+<li><strong>Neural networks</strong> stack layers of weighted sums with bends between them. They can learn
+  almost any shape and they learn their own features. They need a lot of data and compute.
+  They are the engine behind images, speech and language models.</li>
+</ul>
+<p>Match the family to the data. For rows and columns, such as customer tables, start with a
+linear model and a tree ensemble. For text, images and audio, use a neural network, usually
+one that someone has already trained.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — The family sets four things you care about: how accurate the model
+can get, how well you can explain it, what it costs to train and serve, and how much data
+you need.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the simplest model that gets close to
+the best one. Each step up in complexity must buy a gain you can name.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which family did we choose, and how much better is it than a
+linear model on the same data?"</em></p>
+<p><strong>Risk if ignored</strong> — You pay for a deep network on a small table that a simpler model
+would beat. Or you ship an unexplainable model where a regulator expects an explanation.</p>
+</blockquote>
+<h2 id="the-mental-model-what-each-family-can-see">The mental model: what each family can see</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.ml-fam{grid-template-columns:repeat(3,1fr)}@media (max-width:760px){.ml-fam{grid-template-columns:1fr}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Three families</span>
+<h4>What each can see, and what it costs</h4>
+<p class="dgm-ml-sub">A model can only find patterns its shape allows.</p>
+<div class="dgm-ml-grid ml-fam">
+  <div class="dgm-ml-card"><svg viewBox="0 0 120 60" style="width:100%;height:46px"><line x1="10" y1="52" x2="110" y2="10" style="stroke:var(--color-text-discovery);stroke-width:3"/><g style="fill:var(--color-text-tertiary)"><circle cx="24" cy="40" r="3"/><circle cx="50" cy="38" r="3"/><circle cx="76" cy="22" r="3"/><circle cx="98" cy="20" r="3"/></g></svg>
+    <h5>Linear model</h5><p><b>Sees:</b> weighted sums, straight-line effects.<br><b>Needs:</b> little data.<br><b>Explains:</b> yes, weight by weight.<br><b>Best for:</b> a first model, regulated decisions.</p></div>
+  <div class="dgm-ml-card"><svg viewBox="0 0 120 60" style="width:100%;height:46px"><g style="stroke:var(--color-text-discovery);stroke-width:2;fill:none"><path d="M60 8 L30 28 M60 8 L90 28 M30 28 L15 50 M30 28 L45 50 M90 28 L75 50 M90 28 L105 50"/></g><g style="fill:var(--color-background-discovery-solid)"><circle cx="60" cy="8" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="90" cy="28" r="5"/></g></svg>
+    <h5>Trees and ensembles</h5><p><b>Sees:</b> if-then splits and interactions.<br><b>Needs:</b> little preparation.<br><b>Explains:</b> one tree yes, a forest no.<br><b>Best for:</b> tables of rows and columns.</p></div>
+  <div class="dgm-ml-card"><svg viewBox="0 0 120 60" style="width:100%;height:46px"><g style="stroke:var(--color-border-strong);stroke-width:1"><path d="M15 12 L60 8 M15 12 L60 30 M15 30 L60 8 M15 30 L60 30 M15 48 L60 30 M15 48 L60 52 M60 8 L105 30 M60 30 L105 30 M60 52 L105 30"/></g><g style="fill:var(--color-background-discovery-solid)"><circle cx="15" cy="12" r="4"/><circle cx="15" cy="30" r="4"/><circle cx="15" cy="48" r="4"/><circle cx="60" cy="8" r="4"/><circle cx="60" cy="30" r="4"/><circle cx="60" cy="52" r="4"/><circle cx="105" cy="30" r="4"/></g></svg>
+    <h5>Neural network</h5><p><b>Sees:</b> almost any shape; learns its own features.<br><b>Needs:</b> lots of data and compute.<br><b>Explains:</b> hard.<br><b>Best for:</b> text, images, audio.</p></div>
+</div>
+<p class="dgm-ml-foot">Pattern "two scores with the same sign": linear 47.3% · tree 90.8% · small network 89.5%.</p>
+</div>
+
+<p>A model can only find patterns its shape allows. A straight line cannot draw a circle. This
+is why the family matters before any tuning.</p>
+<h2 id="linear-models">Linear models</h2>
+<p>A linear model scores a case as a weighted sum of its features, plus a starting value. In
+the churn model of lesson 3, the weight on support tickets is positive and the weight on
+tenure is negative. A person can read the weights and check them against common sense. A
+linear model is also fast to train and to serve.</p>
+<p>Two limits matter.</p>
+<ul>
+<li><strong>Straight-line effects only.</strong> Each feature pushes the score the same way at every
+  level. The model cannot learn "tickets matter only for new customers" unless an engineer
+  adds that combined feature by hand.</li>
+<li><strong>Scaling.</strong> The features usually need standardizing, as in lesson 3.</li>
+</ul>
+<p>Logistic regression is the linear model for yes-or-no questions. It has a useful extra: the
+scikit-learn guide notes that it is more likely to return well-calibrated probabilities by
+itself, because its loss has a canonical link function. That holds when the model suits the
+data and the regularization is tuned. <a href="measuring-a-model.html">Lesson 5</a> explains why
+calibration matters.</p>
+<h2 id="trees-and-their-ensembles">Trees and their ensembles</h2>
+<p>A <strong>decision tree</strong> splits the cases with a question such as "tickets in 90 days at most
+2?", then splits each group again. At the end each leaf holds a group of similar cases and
+the share of them that left. Trees need little data preparation. They accept mixed kinds of
+columns. They find interactions on their own. You can draw one and read it.</p>
+<p>A single deep tree memorizes, as lesson 4 showed. Two ensemble ideas fix that.</p>
+<ul>
+<li><strong>Random forest.</strong> Grow many trees, each on a random sample of the rows. At each split,
+  let the tree consider only a random subset of the columns. Average their answers. The
+  quirks of each tree cancel, so variance drops. Leo Breiman described the method in 2001.</li>
+<li><strong>Gradient boosting.</strong> Build small trees one after another. Each new tree is trained on
+  the mistakes the ensemble still makes. Add them up with a small weight. Jerome Friedman
+  described the idea in 2001. The tool XGBoost, published by Chen and Guestrin in 2016,
+  made it popular in competitions and in industry.</li>
+</ul>
+<p>On tables, boosted trees are the usual strong baseline. A 2022 benchmark paper by
+Grinsztajn, Oyallon and Varoquaux found that tree-based models remained state of the art on
+medium-sized tabular data, about 10,000 rows. They did so even without counting the trees'
+speed advantage. The authors traced it to how neural networks cope with irregular targets
+and with uninformative columns.</p>
+<p>That finding is dated. As of 2026-10, newer work is narrowing the gap. A 2025 paper in
+<em>Nature</em> on a pre-trained "tabular foundation model", TabPFN, reports beating tuned tree
+ensembles on data up to about 10,000 rows. The TabArena benchmark (NeurIPS 2025) finds that
+gradient-boosted trees remain competitive. It also finds that deep networks catch up with
+larger time budgets and ensembling, and that foundation models do well on smaller datasets.
+Do not read any of this as a law. Keep trees as the baseline to beat, not the assumed
+winner, and try one before a deep network on a table.</p>
+<h2 id="neural-networks">Neural networks</h2>
+<p>A <strong>neural network</strong> is a stack of layers. Each layer computes weighted sums of the layer
+before it. Then a bend, called an <strong>activation function</strong>, is applied to each result. The
+bend is what lets the network draw curves. Without it, many layers would collapse into one
+straight-line model.</p>
+<p>The layers between the input and the output are <strong>hidden layers</strong>. The network is free to
+decide what each hidden unit should detect. That is why networks learn their own features.
+A network for images learns edges first and shapes later. A network for text learns word
+patterns. Nobody tells it what to look for.</p>
+<p>The costs are real. A network needs a lot of data and compute. Its decisions are hard to
+explain. It has many settings to tune. In return it handles data that rows and columns
+cannot hold: pictures, speech, free text. A large language model is a very large neural
+network of a specific design, trained as in <a href="../llms/what-is-an-llm.html">What an LLM actually is</a>.
+Two modules that follow this one cover how networks handle numbers in bulk (tensors) and
+how they see images (convolutional networks).</p>
+<h2 id="backpropagation-in-one-page">Backpropagation in one page</h2>
+<p>Training a network uses the loop from lesson 3. The gradient for a network is harder to
+compute than for a linear model, because each weight sits behind several layers.
+<strong>Backpropagation</strong> is the method. David Rumelhart, Geoffrey Hinton and Ronald Williams
+described it in a 1986 paper in <em>Nature</em>.</p>
+<p>It has two passes.</p>
+<ol>
+<li><strong>Forward.</strong> Push an input through the layers to get a prediction. Save each layer's
+   output on the way.</li>
+<li><strong>Backward.</strong> Start with the slope of the loss at the output. Use the chain rule to
+   pass that slope back through each layer. At each weight, the slope equals the slope
+   arriving from above, times the value that went in.</li>
+</ol>
+<p>That is all it is. The chain rule applied from the end to the start. Libraries do it
+automatically, which is why you rarely write it. The code under the hood does it by hand
+for a small network. It then checks the answer against a slow numerical slope.</p>
+<h2 id="choosing-a-family">Choosing a family</h2>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>A good first choice</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A customer or transaction table, thousands to millions of rows</td>
+<td>Logistic or linear regression, then boosted trees</td>
+<td>Strong, fast, and cheap to run. Boosting often wins on tables</td>
+</tr>
+<tr>
+<td>Few rows, many columns</td>
+<td>A regularized linear model</td>
+<td>Less able to memorize</td>
+</tr>
+<tr>
+<td>You must justify each decision to a customer or a regulator</td>
+<td>A linear model or a small tree</td>
+<td>You can state the reasons</td>
+</tr>
+<tr>
+<td>Interactions matter and you cannot name them</td>
+<td>A tree ensemble</td>
+<td>It finds them</td>
+</tr>
+<tr>
+<td>Free text, images, speech</td>
+<td>A pre-trained neural network</td>
+<td>You lack the data to train one from scratch</td>
+</tr>
+<tr>
+<td>Millions of examples of one repeated perception task</td>
+<td>Your own neural network</td>
+<td>Scale pays for itself</td>
+</tr>
+</tbody>
+</table>
+<h2 id="worked-example-when-the-shape-of-the-model-decides">Worked example: when the shape of the model decides</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed.</em></p>
+<p><strong>Data A: the churn table.</strong> The same 8,000 customers as lesson 5, split in half: 4,000 to
+train on and 4,000 to score. We compare a logistic
+model and a decision tree on rows neither has seen, using AUC.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Logistic regression</td>
+<td>0.760</td>
+</tr>
+<tr>
+<td>Decision tree, depth 4</td>
+<td>0.704</td>
+</tr>
+</tbody>
+</table>
+<p>The simple linear model wins here. That is partly by design: we generated the churn data
+from a weighted sum, so a weighted sum fits it. Real data is messier. The point is not that
+linear always wins. It is that a plain model can be hard to beat, and it is cheap to try
+first.</p>
+<p><strong>Data B: an interaction.</strong> Each case has two scores between −1 and 1. The label is 1 when
+the two scores have the <strong>same sign</strong>. Alone, neither score says anything. Only the pair
+does. We add 5% label noise. We train on 300 cases and test on 400.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Accuracy on unseen cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Logistic regression</td>
+<td>47.3%</td>
+</tr>
+<tr>
+<td>Decision tree, depth 5</td>
+<td>90.8%</td>
+</tr>
+<tr>
+<td>Neural network, 6 hidden units, 25 parameters</td>
+<td>89.5%</td>
+</tr>
+</tbody>
+</table>
+<p>The linear model is at coin-flip level. It cannot express "same sign". The tree and the
+network can. The loss of the network fell from 0.911 to 0.217 in 800 steps.</p>
+<p>Two honest notes. A tree of depth 3 reaches only 81% here. This either-or pattern gives no
+useful first question, because a greedy tree picks the best single split and no single split
+helps. The tree needs depth to find the pair. And the gradient check for the network agrees
+with the numerical slope to about 2 parts in 10 billion, which is how we know the hand-written
+backpropagation is right.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Accuracy vs. explainability.</strong> The strongest model on a table is often a boosted
+  ensemble that no person can read in full. Tools can give feature importances. They are
+  summaries, not reasons.</li>
+<li><strong>Cost to train vs. cost to serve.</strong> A boosted ensemble often trains quickly on a table
+  and serves in milliseconds. A large network can cost far more at both ends.</li>
+<li><strong>Feature engineering vs. data volume.</strong> Linear and tree models reward careful features.
+  Neural networks trade that effort for more data.</li>
+<li><strong>Your own model vs. a pre-trained one.</strong> For language and vision, starting from a
+  trained network beats training your own. For your private tabular data, there is no such
+  option, and you train.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>A deep network on a small table.</strong> Cost and risk rise and accuracy does not.</li>
+<li><strong>A linear model on interacting signals.</strong> It cannot see the pattern and reports a weak
+  model as if the problem were hard.</li>
+<li><strong>Complexity creep.</strong> Each extra layer or tree adds a little accuracy and a lot of upkeep.</li>
+<li><strong>An unexplainable model in a regulated decision.</strong> A buyer or regulator asks for the
+  reasons, and you have none.</li>
+<li><strong>Benchmark chasing.</strong> A family wins a public leaderboard on data unlike yours.</li>
+<li><strong>Uncalibrated scores.</strong> Boosted trees and networks can rank well and give poor
+  probabilities. Check calibration before you use the number.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The core of the tiny network is the backward pass. It is <code>machine-learning/code/mlp.py</code>.
+Read it against the two-pass description above.</p>
+<pre><code class="language-python">def gradients(self, rows, labels):
+    n = len(rows)
+    g_w1 = [[0.0] * len(self.w1[0]) for _ in self.w1]
+    g_b1, g_w2, g_b2 = [0.0] * len(self.b1), [0.0] * len(self.w2), 0.0
+    for x, y in zip(rows, labels):
+        h, p = self.forward(x)                              # forward pass, saving the hidden values h
+        d_out = p - y                                       # slope of the loss at the output
+        for j, a in enumerate(h):
+            g_w2[j] += d_out * a / n                        # output weight: slope times its input
+            d_hidden = d_out * self.w2[j] * (1 - a * a)     # pass the slope back through tanh
+            g_b1[j] += d_hidden / n
+            for i, v in enumerate(x):
+                g_w1[j][i] += d_hidden * v / n              # hidden weight: slope times its input
+        g_b2 += d_out / n
+    return g_w1, g_b1, g_w2, g_b2
+</code></pre>
+<p>The gradient check is a standard habit. Nudge one weight up and down by a tiny amount,
+measure how the loss moves, and compare with the backward pass.</p>
+<pre><code class="language-python">numeric = (loss_with(w + eps) - loss_with(w - eps)) / (2 * eps)
+assert abs(numeric - analytic) / (abs(numeric) + abs(analytic)) &lt; 1e-5
+</code></pre>
+<p>Practical habits:</p>
+<ul>
+<li><strong>Fit the simplest model first</strong> and keep its score as the reference.</li>
+<li><strong>Tune trees on validation rows.</strong> Depth, number of trees and learning rate each change
+  how much the model overfits.</li>
+<li><strong>Check calibration</strong> of any tree or network whose score a person reads.</li>
+<li><strong>Use a library for real work.</strong> Scikit-learn covers linear models, forests and boosting.
+  Deep-learning libraries compute gradients for you.</li>
+</ul>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Did we start with a linear model and record its score?</li>
+<li class="task todo">Is there a reason the chosen family beats the simple one by a margin we can name?</li>
+<li class="task todo">Does the data type fit the family: tables to trees, perception tasks to networks?</li>
+<li class="task todo">Must we explain each decision, and does the model allow it?</li>
+<li class="task todo">Do we know the training cost, the serving cost and the latency?</li>
+<li class="task todo">Are the scores calibrated, if anyone reads them as probabilities?</li>
+<li class="task todo">Could a pre-trained model replace training our own?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="training-loss-and-gradient-descent.html">Training: loss and gradient descent</a> — the loop
+  that every family uses.</li>
+<li><a href="generalization-overfitting-and-bias-variance.html">Generalization</a> — why ensembles
+  average away variance.</li>
+<li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — a very large neural network.</li>
+<li><a href="../llms/choosing-a-model.html">Choosing a model</a> — the same decision for language models.</li>
+<li><a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a> — when to start
+  from someone else's trained network.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Breiman, L. <em>Random Forests</em>, Machine Learning 45(1), 5–32, 2001.
+  <a href="https://doi.org/10.1023/A:1010933404324">doi.org/10.1023/A:1010933404324</a>.</li>
+<li>Friedman, J. H. <em>Greedy function approximation: A gradient boosting machine</em>, The Annals of
+  Statistics 29(5), 1189–1232, 2001.
+  <a href="https://doi.org/10.1214/aos/1013203451">doi.org/10.1214/aos/1013203451</a>.</li>
+<li>Chen, T. and Guestrin, C. <em>XGBoost: A Scalable Tree Boosting System</em>, Proceedings of the
+  22nd International Conference on Knowledge Discovery and Data Mining, 2016.</li>
+<li>Grinsztajn, L., Oyallon, E. and Varoquaux, G. <em>Why do tree-based models still outperform
+  deep learning on typical tabular data?</em>, NeurIPS 2022 Datasets and Benchmarks Track.
+  <a href="https://neurips.cc/virtual/2022/poster/55627">neurips.cc/virtual/2022/poster/55627</a>. The
+  headline finding for medium-sized data (about 10,000 samples). Checked through search-result
+  excerpts, 2026-10.</li>
+<li>Hollmann et al., <em>Accurate predictions on small data with a tabular foundation model</em>,
+  Nature 637, 319–326, 2025 (TabPFN).
+  <a href="https://doi.org/10.1038/s41586-024-08328-6">doi.org/10.1038/s41586-024-08328-6</a>.</li>
+<li>Erickson et al., <em>TabArena: A Living Benchmark for Machine Learning on Tabular Data</em>,
+  NeurIPS 2025 Datasets and Benchmarks Track.
+  <a href="https://arxiv.org/abs/2506.16791">arxiv.org/abs/2506.16791</a>. Both entries support the
+  paragraph on newer work. Checked through search-result excerpts and abstracts, 2026-10.</li>
+<li>Rumelhart, D. E., Hinton, G. E. and Williams, R. J. <em>Learning representations by
+  back-propagating errors</em>, Nature 323, 533–536, 1986.
+  <a href="https://doi.org/10.1038/323533a0">doi.org/10.1038/323533a0</a>.</li>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/modules/calibration.html">Probability calibration</a>:
+  logistic regression is more likely to return well-calibrated predictions by itself, because
+  it has a canonical link function. Read from the guide's source text in the scikit-learn
+  repository, 2026-10.</li>
+<li>Goodfellow, Bengio and Courville, <em>Deep Learning</em> (2016), chapter 6: feed-forward
+  networks and back-propagation.</li>
+<li>The data, the models and every score are invented. They come from
+  <code>machine-learning/code/lesson6_model_families.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="measuring-a-model.html"><span class="lbl">← Previous</span><span class="ttl">Measuring a model: metrics, thresholds and baselines</span></a><a class="navcard next" href="ml-in-production.html"><span class="lbl">→ Next</span><span class="ttl">ML in production: drift, skew and the lifecycle</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-what-each-family-can-see">The mental model: what each family can see</a><a class="h2" href="#linear-models">Linear models</a><a class="h2" href="#trees-and-their-ensembles">Trees and their ensembles</a><a class="h2" href="#neural-networks">Neural networks</a><a class="h2" href="#backpropagation-in-one-page">Backpropagation in one page</a><a class="h2" href="#choosing-a-family">Choosing a family</a><a class="h2" href="#worked-example-when-the-shape-of-the-model-decides">Worked example: when the shape of the model decides</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Fmodel-families.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/model-families.html"</script><script defer src="../assets/glossary.js"></script></body></html>

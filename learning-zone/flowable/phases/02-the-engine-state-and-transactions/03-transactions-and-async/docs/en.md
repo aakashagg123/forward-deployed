@@ -29,26 +29,26 @@ atomicity is therefore *the segment between wait states*, not the individual
 task:
 
 <style>
-.dgm-txa0{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-txa0{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-txa0-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-txa0-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-txa0 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-txa0-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-txa0 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-txa0-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-txa0-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
-.dgm-txa0-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
-  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
-.dgm-txa0-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
-.dgm-txa0-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
-.dgm-txa0-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
-.dgm-txa0-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
-.dgm-txa0-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
-.dgm-txa0-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+.dgm-txa0-n{background:var(--color-surface-tertiary);border:1px solid var(--color-border);border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:var(--color-text);line-height:1.3}
+.dgm-txa0-n.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-txa0-n.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface);color:var(--color-text-info)}
+.dgm-txa0-n.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface);color:var(--color-text-success)}
+.dgm-txa0-n.red{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-txa0-arr{color:var(--color-text-tertiary);font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-txa0-arr .lbl{font-size:8.5px;font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.3px}
 @media (max-width:640px){.dgm-txa0{padding:20px 16px 18px}.dgm-txa0-row{flex-direction:column}}
-.dgm-txa0-note{margin-top:10px;padding:9px 14px;background:#faeceb;border:1px dashed #e3b3ad;border-radius:10px;
-  font-size:10.5px;color:#7a2c2e;line-height:1.4}
+.dgm-txa0-note{margin-top:10px;padding:9px 14px;background:var(--color-background-danger-surface);border:1px dashed var(--color-border-danger-surface);border-radius:10px;
+  font-size:10.5px;color:var(--color-text-danger);line-height:1.4}
 </style>
 <div class="dgm-txa0">
   <span class="dgm-txa0-chip">One transaction, end to end (synchronous)</span>
@@ -81,23 +81,23 @@ token's position as a **job** and returns. The job executor (next lesson) picks
 it up in a new transaction.
 
 <style>
-.dgm-txa1{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-txa1{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-txa1-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-txa1-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-txa1 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-txa1-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-txa1 h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-txa1-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-txa1-row{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
-.dgm-txa1-n{background:#f6f8fa;border:1px solid #d1d9e0;border-radius:9px;padding:9px 11px;text-align:center;
-  font-size:10.5px;font-weight:700;color:#1f2328;line-height:1.3}
-.dgm-txa1-n.accent{background:#faeceb;border-color:#e3b3ad;color:#7a2c2e}
-.dgm-txa1-n.blue{background:#ddf4ff;border-color:#b6e3ff;color:#0550ae}
-.dgm-txa1-n.green{background:#dafbe1;border-color:#aceebb;color:#1a614f}
-.dgm-txa1-n.red{background:#ffebe9;border-color:#ffcecb;color:#82061e}
-.dgm-txa1-arr{color:#8c959f;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
-.dgm-txa1-arr .lbl{font-size:8.5px;font-weight:700;color:#8c959f;text-transform:uppercase;letter-spacing:.3px}
+.dgm-txa1-n{background:var(--color-surface-tertiary);border:1px solid var(--color-border);border-radius:9px;padding:9px 11px;text-align:center;
+  font-size:10.5px;font-weight:700;color:var(--color-text);line-height:1.3}
+.dgm-txa1-n.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-txa1-n.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface);color:var(--color-text-info)}
+.dgm-txa1-n.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface);color:var(--color-text-success)}
+.dgm-txa1-n.red{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.dgm-txa1-arr{color:var(--color-text-tertiary);font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.dgm-txa1-arr .lbl{font-size:8.5px;font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.3px}
 @media (max-width:640px){.dgm-txa1{padding:20px 16px 18px}.dgm-txa1-row{flex-direction:column}}
 </style>
 <div class="dgm-txa1">

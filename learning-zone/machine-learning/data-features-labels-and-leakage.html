@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Data: features, labels, splits and leakage — Machine learning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Machine learning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-machine-learning-is.html">1 · What machine learning is, and when to use it</a><a class="modlink active" href="data-features-labels-and-leakage.html">2 · Data: features, labels, splits and leakage</a><a class="modlink" href="training-loss-and-gradient-descent.html">3 · Training: loss and gradient descent</a><a class="modlink" href="generalization-overfitting-and-bias-variance.html">4 · Generalization: overfitting and the bias–variance tradeoff</a><a class="modlink" href="measuring-a-model.html">5 · Measuring a model: metrics, thresholds and baselines</a><a class="modlink" href="model-families.html">6 · Model families: linear models, trees and neural networks</a><a class="modlink" href="ml-in-production.html">7 · ML in production: drift, skew and the lifecycle</a><a class="modlink" href="learning-and-doing-ml-with-claude-code.html">8 · Learning and doing ML with Claude Code</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <h1>Data: features, labels, splits and leakage</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A model learns only what its data shows. So three data jobs decide most of a project.
+First, describe each case with <strong>features</strong>: facts you know at the moment of prediction.
+Second, record a <strong>label</strong>: the outcome you want to predict. Third, keep a <strong>test set</strong>
+that behaves like the future the model will face.</p>
+<p>The third job is the one that fails quietly. When the test is easier than the real world,
+the score looks great and the launch disappoints. That gap has a name: <strong>leakage</strong>. Leakage
+means the model saw information during training or testing that it will not have when it
+matters. The scikit-learn guide puts it this way: leakage uses information that would not
+be available at prediction time, so the performance estimate is too optimistic.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — A model that looks 97% accurate in a review can be a coin flip in
+production. The cause is rarely the algorithm. It is how the data was prepared and split.</p>
+<p><strong>What it changes in your decisions</strong> — You treat a very good score as a reason to
+investigate, not to celebrate. You ask how the test set was built before you ask for the
+number.</p>
+<p><strong>Ask your eng team</strong> — <em>"For every input, what do we know at the moment we predict,
+and was the test split made so that this holds?"</em></p>
+<p><strong>Risk if ignored</strong> — You approve a launch on a number that was never real. The failure
+shows up in revenue, not in the review.</p>
+</blockquote>
+<h2 id="the-mental-model-a-line-in-time">The mental model: a line in time</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.ml-tl{grid-template-columns:1fr auto 1fr;align-items:stretch}.ml-leaks{grid-template-columns:1fr 1fr}@media (max-width:640px){.ml-tl,.ml-leaks{grid-template-columns:1fr}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">A line in time</span>
+<h4>Features come from before. The label comes from after.</h4>
+<p class="dgm-ml-sub">Every leak is a fact from the right of the line that slid into a column on the left.</p>
+<div class="dgm-ml-grid ml-tl">
+  <div class="dgm-ml-card dgm-ml-info"><h5>Before today · FEATURES</h5><p>What we know at the moment we predict: tenure, tickets in 90 days, logins.</p></div>
+  <div class="dgm-ml-card" style="text-align:center;align-self:center;border-radius:50%;width:92px;height:92px;display:flex;align-items:center;justify-content:center;margin:auto"><h5 style="margin:0">Prediction<br>moment</h5></div>
+  <div class="dgm-ml-card dgm-ml-ok"><h5>Next 30 days · LABEL</h5><p>What happened: cancelled or stayed. It exists only after 30 days pass.</p></div>
+</div>
+<div class="dgm-ml-grid ml-leaks" style="margin-top:12px">
+  <div class="dgm-ml-card dgm-ml-bad"><h5>Leak 1 · a feature from the future</h5><p>"Retention offer sent" goes out after a customer asks to cancel. Test score 97.3%. In production 50.0%.</p></div>
+  <div class="dgm-ml-card dgm-ml-bad"><h5>Leak 2 · the same customer on both sides</h5><p>Random rows put one customer in training and test. Score 100%. Split by customer: 57.3%.</p></div>
+</div>
+</div>
+
+<p>Draw this line for every model. Everything left of the prediction moment may be a feature.
+Everything right of it is the label, or is forbidden. Most leaks are a fact from the right
+side that slid into a column on the left.</p>
+<h2 id="features-and-labels-are-product-decisions">Features and labels are product decisions</h2>
+<p><strong>A feature</strong> is one fact about a case, such as months as a customer, support tickets in
+the last 90 days, or logins last month. A row is the list of features for one case.</p>
+<p><strong>A label</strong> is the outcome. Defining it is a product decision, not a data task. "Cancelled"
+could mean any of these: the customer pressed the cancel button, the payment lapsed, or
+the account went silent for 60 days. Each definition produces a different model and
+serves a different business action.</p>
+<p>Labels have four common problems.</p>
+<ul>
+<li><strong>Delay.</strong> A 30-day churn label does not exist until 30 days pass. You can only train on
+  customers old enough to have an outcome. Recent behaviour is the least labelled.</li>
+<li><strong>Noise.</strong> Labels are often recorded by people or by rules, and both make mistakes.</li>
+<li><strong>Selection bias.</strong> You see outcomes only for cases you let through. If a rule already
+  blocks the riskiest loans, your history has no examples of how those loans would have
+  gone.</li>
+<li><strong>Proxies.</strong> The label you can record is not always the thing you care about. "Clicked"
+  stands in for "found it useful". The model learns the proxy.</li>
+</ul>
+<h2 id="three-sets-three-jobs">Three sets, three jobs</h2>
+<p>Split the labelled data before you do anything else.</p>
+<table>
+<thead>
+<tr>
+<th>Set</th>
+<th>What it is for</th>
+<th>Who looks at it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Training</strong></td>
+<td>The model learns its parameters from these rows</td>
+<td>The training process, every step</td>
+</tr>
+<tr>
+<td><strong>Validation</strong></td>
+<td>You compare model choices: depth, features, settings</td>
+<td>The team, many times</td>
+</tr>
+<tr>
+<td><strong>Test</strong></td>
+<td>One final check of the chosen model</td>
+<td>The team, <strong>once</strong>, at the end</td>
+</tr>
+</tbody>
+</table>
+<p>A set is only honest while you do not use it to make choices. Each time you pick a model
+because it did well on the test rows, the test set quietly becomes a training set. This is
+why teams keep a validation set for choosing and a test set for reporting. The scikit-learn
+guide states the rule plainly: never fit on the test data, and that includes preprocessing
+such as scaling.</p>
+<p>A model's score on its own training rows says nothing about the future. A model can
+memorize them. <a href="generalization-overfitting-and-bias-variance.html">Lesson 4</a> shows how.</p>
+<h2 id="leakage-four-ways-the-test-gets-easier-than-life">Leakage: four ways the test gets easier than life</h2>
+<ol>
+<li><strong>A feature from the future.</strong> A column recorded after the outcome. In our churn data it
+   is "retention offer sent". A company sends that offer after a customer asks to cancel. In
+   the history the column predicts churn almost perfectly. On the day you need a prediction,
+   it does not exist yet.</li>
+<li><strong>The same entity on both sides.</strong> One customer appears in several rows, such as one row
+   per month. A random split puts some rows in training and some in the test. The model
+   recognises the customer and looks brilliant. The fix is to split by customer, so each
+   customer lives on one side only. scikit-learn calls this group-wise splitting.</li>
+<li><strong>Preprocessing that peeked.</strong> You scale or select features using all the data, then
+   split. The test rows have influenced the training step. For scaling the effect is often
+   small. For feature selection it can be large. In scikit-learn's own example, choosing
+   features on all rows scores 0.76 on purely random labels, against 0.5 when done
+   correctly. Split first, then learn every transformation from the training rows only.</li>
+<li><strong>Time that runs backwards.</strong> A random split mixes next year's rows into the training
+   set for last year's test. For anything that changes over time, train on the past and test
+   on the future.</li>
+</ol>
+<p>Kaufman and colleagues defined leakage as the introduction of information about the target
+that should not be legitimately available. They proposed avoiding it through careful data
+management and a "learn-predict separation". They also gave ways to detect it when you did
+not control how the data was collected.</p>
+<h2 id="a-data-readiness-checklist">A data-readiness checklist</h2>
+<p>Before a team builds, check the data against this table. A "no" is a finding, not a failure.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Is the label defined in one sentence that the business agrees with?</td>
+<td>Two definitions mean two models</td>
+</tr>
+<tr>
+<td>Does each outcome get recorded, and how long after the event?</td>
+<td>Delay sets how fresh the training data can be</td>
+</tr>
+<tr>
+<td>Is every feature available at prediction time, in the same form?</td>
+<td>Otherwise it is a leak, or it will break in production</td>
+</tr>
+<tr>
+<td>Does one customer or device appear on both sides of the split?</td>
+<td>Group-level leakage</td>
+</tr>
+<tr>
+<td>Are the rare cases present in enough numbers?</td>
+<td>A model cannot learn 12 examples of fraud</td>
+</tr>
+<tr>
+<td>Who is missing from the data?</td>
+<td>The model will be weakest where the data is thin</td>
+</tr>
+<tr>
+<td>Are we allowed to use this data for this purpose?</td>
+<td>A legal and trust question. See <a href="../ai-security-and-guardrails/governance-audit-and-compliance.html">Governance, audit &amp; compliance</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="worked-example-two-leaks-two-collapses">Worked example: two leaks, two collapses</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed.</em></p>
+<p><strong>Leak 1: a feature from the future.</strong> We add the column "retention offer sent" to the
+churn data. In the history, about 98% of rows agree with the label. We then run the same
+single-rule search as in lesson 1. It picks that column at once.</p>
+<table>
+<thead>
+<tr>
+<th>Where the score is measured</th>
+<th>Balanced accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>On the test rows (the column is present)</td>
+<td><strong>97.3%</strong></td>
+</tr>
+<tr>
+<td>In "production" (no offer has been sent yet, so the column is 0 for everyone)</td>
+<td><strong>50.0%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The rule is exactly as good as a coin flip when it runs for real. A team that stopped at
+97.3% would celebrate. A team that asked "do we know this at prediction time?" would not.</p>
+<p><strong>Leak 2: the same customer on both sides.</strong> We build 300 customers with six monthly
+rows each. Their churn is a personal quirk the columns cannot predict, so an honest model
+should do poorly. We ask a one-nearest-neighbour model to copy the label of the most
+similar row.</p>
+<table>
+<thead>
+<tr>
+<th>How the rows were split</th>
+<th>Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Random rows: a customer's other months are in training</td>
+<td><strong>100.0%</strong></td>
+</tr>
+<tr>
+<td>By customer: each customer is on one side only</td>
+<td><strong>57.3%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The honest score is worse than guessing "stays" for everyone, which would score 72% on this
+test set. The model has learned nothing about customers it has not met. The 100% was
+memory.</p>
+<p>Both leaks share a signature. The score is <strong>too good</strong>. A score that beats the experts by a
+wide margin deserves a leak check before a celebration.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>More data vs. cleaner data.</strong> Doubling noisy labels helps less than fixing the label
+  definition. Spend on label quality first.</li>
+<li><strong>Label speed vs. label truth.</strong> A fast proxy label lets you iterate. A true label arrives
+  late. Many teams train on the proxy and audit with the truth.</li>
+<li><strong>Strict splits vs. data volume.</strong> Splitting by customer or by time shrinks what you can
+  use. It is the price of an honest score.</li>
+<li><strong>Rich features vs. availability.</strong> A powerful feature that takes a day to compute is
+  useless for a decision made in a second. Check the latency of every input.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The hindsight column.</strong> A field filled in after the fact becomes a feature.</li>
+<li><strong>Shared entities across the split.</strong> The same customer, device or document sits on both
+  sides.</li>
+<li><strong>Peeking preprocessing.</strong> Scaling or feature selection runs on all rows before the split.</li>
+<li><strong>The test set becomes a training set.</strong> The team tries twenty ideas and keeps the one
+  with the best test score.</li>
+<li><strong>Unrepresentative history.</strong> The data covers last year's customers, a policy that has
+  since changed, or only the cases a rule let through.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Split first. Then learn every statistic from the training rows only. This helper standardizes
+columns using the training mean and spread, and applies the same numbers to the test rows.</p>
+<pre><code class="language-python">def standardize(train_rows, other_rows_list=()):
+    cols = list(zip(*train_rows))
+    mean = [sum(c) / len(c) for c in cols]
+    sd = [math.sqrt(sum((v - m) ** 2 for v in c) / len(c)) or 1.0 for c, m in zip(cols, mean)]
+    apply = lambda rows: [[(v - m) / s for v, m, s in zip(r, mean, sd)] for r in rows]
+    return (apply(train_rows),) + tuple(apply(r) for r in other_rows_list)
+</code></pre>
+<p>To split by customer, shuffle the customer ids and send every row of a customer to the same
+side.</p>
+<pre><code class="language-python">customers = sorted(set(owner))
+rng.shuffle(customers)
+held_out = set(customers[: len(customers) // 4])
+test_idx  = [i for i in idx if owner[i] in held_out]
+train_idx = [i for i in idx if owner[i] not in held_out]
+</code></pre>
+<p>Four habits catch leaks early.</p>
+<ul>
+<li><strong>Name the prediction moment</strong> in code. Build features from rows dated before it only.</li>
+<li><strong>Run a single-feature check.</strong> If one column alone scores far above the full model, read
+  its definition.</li>
+<li><strong>Compare random and grouped splits.</strong> A large gap means the same entity crosses the line.</li>
+<li><strong>Use a pipeline.</strong> In scikit-learn, a pipeline learns each step on the training part of
+  every fold. That removes the preprocessing leak by construction.</li>
+</ul>
+<p>The files are <code>machine-learning/code/lesson2_leakage.py</code> and <code>data.py</code>.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is the label defined in one sentence, and does the business agree?</li>
+<li class="task todo">For each feature, do we know it at prediction time, in the same form?</li>
+<li class="task todo">Was the data split before any preprocessing?</li>
+<li class="task todo">Is each customer, device or document on one side of the split only?</li>
+<li class="task todo">For time-based problems, do we train on the past and test on the future?</li>
+<li class="task todo">Is the test set looked at once, at the end?</li>
+<li class="task todo">Did we investigate every score that looked too good?</li>
+<li class="task todo">Do we know who is missing from the data?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="training-loss-and-gradient-descent.html">Training: loss and gradient descent</a> — what the
+  model does with the training rows.</li>
+<li><a href="generalization-overfitting-and-bias-variance.html">Generalization: overfitting and bias–variance</a>
+  — why a score on training rows means little.</li>
+<li><a href="measuring-a-model.html">Measuring a model</a> — which score to report on the honest test.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — the same
+  discipline for LLM features: an eval set is a test set.</li>
+<li><a href="../technical-product-sense/security-and-privacy.html">Security &amp; privacy sense</a> — what you
+  may do with the data.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/common_pitfalls.html">Common pitfalls and recommended practices</a>:
+  the definition of data leakage, "never call fit on the test data", learning preprocessing
+  statistics from the training subset only, and the pipeline as a safeguard. Read from the
+  guide's source text in the scikit-learn repository, 2026-10.</li>
+<li>scikit-learn user guide, <a href="https://scikit-learn.org/stable/modules/cross_validation.html">Cross-validation</a>:
+  group-wise cross-validation when samples share a group such as a patient. Same reading,
+  2026-10.</li>
+<li>Kaufman, Rosset, Perlich and Stitelman, <em>Leakage in Data Mining: Formulation, Detection, and
+  Avoidance</em>, Transactions on Knowledge Discovery from Data 6(4), article 15, Dec 2012
+  (Association for Computing Machinery).
+  <a href="https://www.doi.org/10.1145/2382577.2382579">doi.org/10.1145/2382577.2382579</a>. The framing of
+  leakage as information about the target that should not be legitimately available, and as a
+  data problem. Checked through search-result excerpts, 2026-10.</li>
+<li>The churn data, both leaks and every score are invented. They come from
+  <code>machine-learning/code/lesson2_leakage.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="what-machine-learning-is.html"><span class="lbl">← Previous</span><span class="ttl">What machine learning is, and when to use it</span></a><a class="navcard next" href="training-loss-and-gradient-descent.html"><span class="lbl">→ Next</span><span class="ttl">Training: loss and gradient descent</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-line-in-time">The mental model: a line in time</a><a class="h2" href="#features-and-labels-are-product-decisions">Features and labels are product decisions</a><a class="h2" href="#three-sets-three-jobs">Three sets, three jobs</a><a class="h2" href="#leakage-four-ways-the-test-gets-easier-than-life">Leakage: four ways the test gets easier than life</a><a class="h2" href="#a-data-readiness-checklist">A data-readiness checklist</a><a class="h2" href="#worked-example-two-leaks-two-collapses">Worked example: two leaks, two collapses</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=machine-learning%2Fdata-features-labels-and-leakage.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="machine-learning/data-features-labels-and-leakage.html"</script><script defer src="../assets/glossary.js"></script></body></html>

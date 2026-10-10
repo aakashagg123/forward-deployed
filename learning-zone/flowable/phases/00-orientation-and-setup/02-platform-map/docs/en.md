@@ -19,36 +19,36 @@ a 2016 fork of Activiti, built by that engine's original authors.
 ## The Concept
 
 <style>
-.dgm-pm{background:#ffffff;border:1px solid #d1d9e0;border-top:3px solid #a63d40;
-  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgba(31,35,40,.04),0 8px 24px rgba(31,35,40,.04);
+.dgm-pm{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-danger-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
   margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative}
-.dgm-pm-chip{position:absolute;top:-11px;left:24px;background:#a63d40;color:#ffffff;
+.dgm-pm-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-danger-solid);color:var(--white);
   font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px rgba(166,61,64,.28)}
-.dgm-pm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#59636e}
-.dgm-pm-sub{font-size:12px;color:#59636e;margin:0 0 16px}
+  border-radius:20px;padding:3px 12px;box-shadow:0 2px 6px color-mix(in oklab, var(--color-background-danger-solid) 28%, transparent)}
+.dgm-pm h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-pm-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
 .dgm-pm-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .dgm-pm-col{border-radius:12px;padding:12px 13px;border:1.5px solid}
-.dgm-pm-col.neutral{background:#f6f8fa;border-color:#d1d9e0}
-.dgm-pm-col.accent{background:#faeceb;border-color:#e3b3ad}
-.dgm-pm-col.blue{background:#ddf4ff;border-color:#b6e3ff}
-.dgm-pm-col.green{background:#dafbe1;border-color:#aceebb}
+.dgm-pm-col.neutral{background:var(--color-surface-tertiary);border-color:var(--color-border)}
+.dgm-pm-col.accent{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-pm-col.blue{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-pm-col.green{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
 .dgm-pm-col h6{margin:0 0 8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.dgm-pm-col.neutral h6{color:#59636e}
-.dgm-pm-col.accent h6{color:#7a2c2e}
-.dgm-pm-col.blue h6{color:#0550ae}
-.dgm-pm-col.green h6{color:#1a614f}
-.dgm-pm-item{background:#ffffff;border:1px solid #e5e9ef;border-radius:8px;padding:6px 9px;font-size:10px;
-  color:#1f2328;line-height:1.35;margin-bottom:5px}
+.dgm-pm-col.neutral h6{color:var(--color-text-secondary)}
+.dgm-pm-col.accent h6{color:var(--color-text-danger)}
+.dgm-pm-col.blue h6{color:var(--color-text-info)}
+.dgm-pm-col.green h6{color:var(--color-text-success)}
+.dgm-pm-item{background:var(--color-surface);border:1px solid var(--color-border-info-surface);border-radius:8px;padding:6px 9px;font-size:10px;
+  color:var(--color-text);line-height:1.35;margin-bottom:5px}
 .dgm-pm-item:last-child{margin-bottom:0}
-.dgm-pm-link{display:flex;justify-content:center;color:#8c959f;font-size:9.5px;font-weight:700;
+.dgm-pm-link{display:flex;justify-content:center;color:var(--color-text-tertiary);font-size:9.5px;font-weight:700;
   text-transform:uppercase;letter-spacing:.3px;padding:6px 0}
 @media (max-width:640px){.dgm-pm{padding:20px 16px 18px}.dgm-pm-cols{grid-template-columns:1fr}}
 .dgm-pm-chain{display:flex;flex-direction:column;gap:2px}
-.dgm-pm-node{background:#faeceb;border:1.5px solid #e3b3ad;border-radius:10px;padding:9px 14px;
-  font-weight:700;font-size:11px;color:#7a2c2e}
-.dgm-pm-node.alt{background:#f6f8fa;border-color:#d1d9e0;color:#1f2328}
-.dgm-pm-arr{display:flex;justify-content:center;color:#8c959f;padding:1px 0;font-size:9.5px;text-align:center}
+.dgm-pm-node{background:var(--color-background-danger-surface);border:1.5px solid var(--color-border-danger-surface);border-radius:10px;padding:9px 14px;
+  font-weight:700;font-size:11px;color:var(--color-text-danger)}
+.dgm-pm-node.alt{background:var(--color-surface-tertiary);border-color:var(--color-border);color:var(--color-text)}
+.dgm-pm-arr{display:flex;justify-content:center;color:var(--color-text-tertiary);padding:1px 0;font-size:9.5px;text-align:center}
 @media (max-width:640px){.dgm-pm{padding:20px 16px 18px}}
 </style>
 <div class="dgm-pm">
