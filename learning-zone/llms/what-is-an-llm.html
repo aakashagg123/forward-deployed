@@ -50,7 +50,8 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
     <h1>What an LLM actually is</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
 <p>A large language model does one thing: given some text, it predicts the most likely next
 small piece of text, called a <strong>token</strong>. It does this once, appends the result, and does it
 again, and again, until it decides to stop. A sentence, a paragraph, a whole essay is built
@@ -123,7 +124,7 @@ still a guess, weighted toward what is likely, not verified against what is true
     <div class="dgm-ti-col train">
       <span class="dgm-ti-tag">Once, in advance</span>
       <h5>Training</h5>
-      <p class="dgm-ti-freq">Months, a large budget</p>
+      <p class="dgm-ti-freq">Long and costly</p>
       <div class="dgm-ti-steps">
         <div class="dgm-ti-step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Enormous amounts of text</div>
         <div class="dgm-ti-step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg>Adjust billions of internal numbers</div>
@@ -151,17 +152,94 @@ still a guess, weighted toward what is likely, not verified against what is true
 
 <h2 id="tokens-the-models-actual-unit-of-text">Tokens: the model's actual unit of text</h2>
 <p>A model does not see words the way you do. It sees <strong>tokens</strong> — pieces of text, often
-smaller than a word, that a fixed vocabulary breaks language into. "Generative" might split
-into "Gener," "ative." A short, common word like "the" is usually one token on its own.
-This matters for a product leader for three concrete reasons. <strong>Cost</strong> is charged per
-token, both for what you send in and what the model sends back, so token count is a real
-line item. <strong>The context window</strong>, covered in the next lesson, is measured in tokens, not
+smaller than a word, that a fixed vocabulary breaks language into. The tokenizer can change
+between models. Anthropic, for example, says Claude 4.7 and later models use a newer
+tokenizer that turns the same text into about 30 percent more tokens than earlier models.
+Count tokens with the model you plan to use. As an illustration, a longer word may split into two or three pieces, while a short, common word
+is often one token on its own. This matters for a product leader for three concrete
+reasons. <strong>Cost</strong> is usually counted in tokens. Anthropic, for example, bills Claude by
+input tokens and output tokens. Check your own vendor's pricing page, but expect token
+count to be a real line item. <strong>The context window</strong>, covered in the next lesson, is measured in tokens, not
 words or characters. <strong>Some tasks that look easy to a human are hard for a model precisely
 because of tokens</strong> — counting the letters in a word is awkward for a model that never sees
 individual letters, only token chunks that may not align with them.</p>
+<h2 id="inside-the-model-attention">Inside the model: attention</h2>
+<p>To predict the next token, the model must decide which earlier tokens matter. The step
+that does this is the <strong>attention mechanism</strong>. It is the core of the <strong>transformer</strong>, the
+model design behind LLMs such as Llama 3 and GPT-2. Meta's model card for Llama 3 describes it
+as "an auto-regressive language model that uses an optimized transformer architecture."
+Auto-regressive means it predicts one token at a time, as above.</p>
+<p>Here is the mechanism in plain words. Each token starts as a list of numbers. The model
+turns each token into three new lists:</p>
+<ul>
+<li>a <strong>query</strong>: what this token is looking for</li>
+<li>a <strong>key</strong>: what this token offers, like a label</li>
+<li>a <strong>value</strong>: the content this token passes on</li>
+</ul>
+<p>For each token, the model compares its query with the key of every token it can see. A
+close match gives a high score. The scores become weights that add up to 1. The token then
+takes a blend of the values, weighted by those scores. After this step, each token's numbers
+carry information from the tokens it found relevant.</p>
+<p>Three terms complete the picture. <strong>Self-attention</strong> means the queries, keys and values
+all come from the same text, so the text attends to itself. A <strong>causal mask</strong> lets each
+token look only at tokens before it, never after. That keeps next-token prediction honest:
+the model cannot peek at the answer. <strong>Multi-head</strong> attention runs several of these
+comparisons side by side, so different heads can attend to different parts of the text. A transformer stacks many blocks. Each block has an attention layer and a
+small network that works on each token alone.</p>
+<style>
+.dgm-at{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-info-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-at-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-info-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-at h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-at-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-at-rows{display:grid;gap:8px}
+.dgm-at-row{display:grid;grid-template-columns:5.5em 1fr 3.5em;gap:10px;align-items:center;font-size:var(--font-text-xs-size)}
+.dgm-at-tok{font-family:var(--font-mono);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:2px 8px;text-align:center}
+.dgm-at-track{background:var(--color-surface-secondary);border:1px solid var(--color-border);border-radius:8px;height:1.1em;overflow:hidden}
+.dgm-at-bar{height:100%;background:var(--color-background-info-solid);border-radius:8px}
+.dgm-at-row.top .dgm-at-bar{background:var(--color-background-success-solid)}
+.dgm-at-w{font-family:var(--font-mono);color:var(--color-text-secondary);text-align:right}
+.dgm-at-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-at{padding:22px 16px 18px}}
+</style>
+<div class="dgm-at"><span class="dgm-at-chip">Attention</span>
+<h4>Where the token "it" looks</h4>
+<p class="dgm-at-sub">Illustrative weights from the worked example. They add up to 1. With a causal mask, "it" sees only itself and earlier tokens.</p>
+<div class="dgm-at-rows">
+<div class="dgm-at-row"><span class="dgm-at-tok">The</span><div class="dgm-at-track"><div class="dgm-at-bar" style="width:6.7%"></div></div><span class="dgm-at-w">0.067</span></div>
+<div class="dgm-at-row top"><span class="dgm-at-tok">refund</span><div class="dgm-at-track"><div class="dgm-at-bar" style="width:49.8%"></div></div><span class="dgm-at-w">0.498</span></div>
+<div class="dgm-at-row"><span class="dgm-at-tok">failed</span><div class="dgm-at-track"><div class="dgm-at-bar" style="width:18.3%"></div></div><span class="dgm-at-w">0.183</span></div>
+<div class="dgm-at-row"><span class="dgm-at-tok">because</span><div class="dgm-at-track"><div class="dgm-at-bar" style="width:6.7%"></div></div><span class="dgm-at-w">0.067</span></div>
+<div class="dgm-at-row"><span class="dgm-at-tok">it</span><div class="dgm-at-track"><div class="dgm-at-bar" style="width:18.3%"></div></div><span class="dgm-at-w">0.183</span></div>
+</div>
+<p class="dgm-at-foot">the new numbers for "it" = a blend of each token's value, in these proportions</p>
+</div>
+
+<p>Think of a reader who meets the word "it" and glances back to find what "it" means. That
+is the intuition, and it breaks in two places. The model does not look up a meaning. Its
+scores are learned numbers, and they can favour the wrong word. It also does not glance at
+one word at a time. Every head scores every earlier token at once.</p>
+<p><strong>Why this matters for speed and compute.</strong> Every token is scored against every token it
+can see. With n tokens, that is a table of n × n scores, for each head in each layer. Double
+the tokens and the table grows about four times. This is why the <a href="the-context-window.html">context window</a>
+has a real ceiling. It is also why the compute and the wait for a long prompt grow faster
+than its length. The
+scores are matrix multiplications, the operation covered in
+<a href="../tensors/matrix-multiplication.html">Tensors: matrix multiplication</a>.</p>
+<p><strong>The tradeoff.</strong> Full attention lets every token see every earlier token, and you pay for
+that with compute that grows with the square of the length. Model makers trim it with
+other designs. Grouped-query attention shares each key and value head across several query
+heads. Meta's Llama 3 model card says it uses this "to improve inference efficiency". In
+sliding-window attention, each token sees only the most recent tokens inside the window.
+Older tokens drop out of its direct view. <a href="../ai/01-inference-internals.html#kv-cache-management">KV cache management</a>
+covers these designs. This lesson does not repeat them.</p>
+<p><strong>Ask your eng team:</strong> <em>"When our prompt doubles in length, what happens to our cost and
+latency, and have we measured it or assumed it?"</em></p>
 <h2 id="training-versus-inference-two-very-different-costs">Training versus inference: two very different costs</h2>
 <p>Training happens once, on a huge amount of computing power, and produces the frozen model.
-This is why a vendor can spend months and a large budget building a model, then let
+This is why a vendor can spend a long time and a lot of money building a model, then let
 millions of people use it. Inference happens every single time your product calls the
 model, and it is a much smaller cost per call — but it happens constantly, so it is the
 cost that actually shows up on your monthly bill. Confusing the two leads to real
@@ -179,18 +257,110 @@ specific to your business has to be supplied at request time, which is the entir
 of retrieval, covered in the <a href="../rag-vector-databases/index.html">RAG &amp; vector databases module</a>.
 <strong>Why longer generation costs more</strong> — every additional token is another prediction step,
 so a longer answer is not a flat fee, it is proportionally more work.</p>
+<h2 id="worked-example-what-it-looks-at">Worked example: what "it" looks at</h2>
+<p><em>This example is illustrative. The scores are assumed, not taken from a real model. The
+code in Under the hood reproduces every number.</em></p>
+<p>The text so far is "The refund failed because it". The model must decide what "it" refers
+to. Follow the attention step for the token "it".</p>
+<ol>
+<li><strong>Score.</strong> Compare the query of "it" with the key of each token it can see. The assumed
+   scores, after scaling, are: The 0, refund 2, failed 1, because 0, it 1.</li>
+<li><strong>Turn scores into weights.</strong> Raise e to each score: 1, 7.389, 2.718, 1 and 2.718. They
+   add up to 14.826. Divide each by 14.826. The weights are 0.067, 0.498, 0.183, 0.067 and
+   0.183. They add up to 1, apart from rounding.</li>
+<li><strong>Blend.</strong> The new numbers for "it" are a mix of the values, about half from "refund".
+   The model has linked "it" to "refund".</li>
+</ol>
+<p>Now the cost. All figures below are derived: they are n × n, and the step is shown.</p>
+<table>
+<thead>
+<tr>
+<th>Prompt length (n)</th>
+<th>Scores per head, per layer (n × n)</th>
+<th>With the causal mask (n × (n + 1) ÷ 2)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8,000 tokens</td>
+<td>64,000,000</td>
+<td>32,004,000</td>
+</tr>
+<tr>
+<td>16,000 tokens</td>
+<td>256,000,000</td>
+<td>128,008,000</td>
+</tr>
+</tbody>
+</table>
+<p>The prompt doubled. The score table grew four times. The mask roughly halves the table, and
+it does not change the fourfold growth.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Treating the model like a database</strong> — expecting it to "know" a fact it was never
   trained on or told this request, instead of recognizing it can only guess.</li>
 <li><strong>Assuming a mention becomes memory</strong> — believing that telling the model something once
   means it will remember it in a future, separate conversation.</li>
-<li><strong>Ignoring token cost</strong> — pricing a feature by "one API call" instead of by the number of
-  tokens in and out, and being surprised by the bill.</li>
+<li><strong>Ignoring token cost</strong> — pricing a feature by "one API call" instead of by the tokens
+  it sends and receives, which is how vendors such as Anthropic bill, and being surprised by
+  the bill.</li>
 <li><strong>Expecting letter-level precision</strong> — asking a model to count characters or reverse a
   word and treating the frequent mistakes as a bug, when they follow directly from how
   tokens work.</li>
+<li><strong>Planning long context as linear</strong> — assuming a prompt twice as long needs twice the
+  compute and time. The attention step grows faster than that, so a long-document
+  feature can miss its latency target at the largest inputs.</li>
 </ul>
+<h2 id="under-the-hood-attention-in-a-few-lines">Under the hood: attention in a few lines</h2>
+<p>The formula is <code>softmax(Q·Kᵀ / √d + mask) · V</code>. <code>Q</code>, <code>K</code> and <code>V</code> hold the queries, keys and
+values, one row per token. <code>d</code> is the length of each key. The mask adds minus infinity to
+every score for a later token, so its weight becomes 0. PyTorch's reference version of
+<code>scaled_dot_product_attention</code> follows the same steps: multiply queries by keys, scale by
+<code>1 / √d</code>, apply a lower-triangle mask when <code>is_causal</code> is set, take the softmax, then
+multiply by the values.</p>
+<p>This standard-library version reproduces the worked example. The queries and keys are
+assumed. The values are one-hot, so the output for "it" shows its weights directly.</p>
+<pre><code class="language-python">import math
+
+def softmax(row):
+    top = max(row)
+    e = [math.exp(x - top) for x in row]     # exp(-inf) is 0, so masked tokens get no weight
+    return [x / sum(e) for x in e]
+
+def attention(Q, K, V, causal=True):
+    &quot;&quot;&quot;softmax(Q Kᵀ / √d + mask) · V, one query row at a time.&quot;&quot;&quot;
+    d = len(K[0])
+    out, weights = [], []
+    for i, q in enumerate(Q):
+        scores = [sum(a * b for a, b in zip(q, k)) / math.sqrt(d) for k in K]
+        if causal:                               # token i may look only at tokens 0..i
+            scores = [s if j &lt;= i else float(&quot;-inf&quot;) for j, s in enumerate(scores)]
+        w = softmax(scores)
+        weights.append(w)
+        out.append([sum(w[j] * V[j][c] for j in range(len(V))) for c in range(len(V[0]))])
+    return out, weights
+
+tokens = [&quot;The&quot;, &quot;refund&quot;, &quot;failed&quot;, &quot;because&quot;, &quot;it&quot;]
+K = [[0, 1, 0, 0], [2, 0, 0, 0], [1, 0, 1, 0], [0, 0, 0, 1], [1, 1, 0, 0]]   # assumed keys
+Q = K[:4] + [[2, 0, 0, 0]]                                                   # assumed queries
+V = [[1 if r == c else 0 for c in range(5)] for r in range(5)]              # one-hot values
+
+out, w = attention(Q, K, V)
+print([round(x, 3) for x in w[4]])
+assert all(abs(sum(row) - 1) &lt; 1e-12 for row in w)                 # weights sum to 1
+assert all(w[i][j] == 0 for i in range(5) for j in range(i + 1, 5))  # no peeking ahead
+assert [round(x, 3) for x in w[4]] == [0.067, 0.498, 0.183, 0.067, 0.183]
+assert out[4] == w[4]                                              # one-hot values show the blend
+for n in (8_000, 16_000):
+    print(n, n * n, n * (n + 1) // 2)
+assert 16_000 ** 2 == 4 * 8_000 ** 2
+</code></pre>
+<p>The query for "it" is <code>[2, 0, 0, 0]</code>. Its dot products with the five keys are 0, 4, 2, 0
+and 2. Dividing by √4 = 2 gives the scores 0, 2, 1, 0 and 1 from the worked example. A real
+model learns <code>Q</code>, <code>K</code> and <code>V</code> from weight tables, uses hundreds of numbers per token, and
+runs many heads in parallel. PyTorch's <code>MultiheadAttention</code> documents that last step: each
+head runs attention on its own projections, and the heads are joined and multiplied by one
+more weight table.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
 <li class="task todo">Does our team describe the model as a predictor, not a database, in planning
@@ -200,6 +370,8 @@ so a longer answer is not a flat fee, it is proportionally more work.</p>
 <li class="task todo">Is our cost model based on token counts, not a flat per-call assumption?</li>
 <li class="task todo">For any task involving exact counting, spelling, or character-level detail, have we
       tested it directly instead of assuming the model handles it like a human would?</li>
+<li class="task todo">For long-input features, have we measured cost and latency at our largest real
+      input, not only at a typical one?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -209,9 +381,54 @@ so a longer answer is not a flat fee, it is proportionally more work.</p>
   not have.</li>
 <li><a href="../ai/01-inference-internals.html">Inference internals</a> — the engineering
   depth behind prefill, decode, and the cost of each token.</li>
+<li><a href="../ai/01-inference-internals.html#kv-cache-management">KV cache management</a> — why
+  a model keeps the keys and values of earlier tokens while it generates.</li>
+<li><a href="../tensors/matrix-multiplication.html">Matrix multiplication</a> — the operation that
+  computes the attention scores, and how to count its cost.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>PyTorch source, <code>torch/nn/functional.py</code>, docstring of <code>scaled_dot_product_attention</code>
+  (<a href="https://github.com/pytorch/pytorch/blob/main/torch/nn/functional.py">GitHub, main branch</a>):
+  a reference version that multiplies queries by keys, scales by <code>1 / sqrt(d)</code>, applies a
+  lower-triangle mask when <code>is_causal</code> is set, takes the softmax and multiplies by the
+  values. With <code>enable_gqa</code>, it repeats each key and value head across several query heads.
+  Read 2026-10.</li>
+<li>PyTorch source, <code>torch/nn/modules/activation.py</code>, docstring of <code>MultiheadAttention</code>
+  (<a href="https://github.com/pytorch/pytorch/blob/main/torch/nn/modules/activation.py">GitHub, main branch</a>):
+  multi-head attention as the heads joined and multiplied by an output weight table, and
+  the layer as the architecture of <em>Attention Is All You Need</em>. Read 2026-10.</li>
+<li>Stanford CS231n course notes, <em>Transformers</em>
+  (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/transformers.md">GitHub source, master branch</a>):
+  credits the transformer to Vaswani et al., <em>Attention Is All You Need</em>; self-attention
+  derives queries, keys and values from the input; the masked decoder attends only to
+  previous inputs. Read from the GitHub source, 2026-10.</li>
+<li>OpenAI, source code of GPT-2, its second Generative Pre-trained Transformer (GPT) model, <code>src/model.py</code>
+  (<a href="https://github.com/openai/gpt-2/blob/master/src/model.py">GitHub, master branch</a>): the attention mask
+  keeps ones in the lower triangle, so each token sees only earlier tokens. Read 2026-10.</li>
+<li>Meta, Llama 3 model card
+  (<a href="https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md">GitHub, main branch</a>): "an
+  auto-regressive language model that uses an optimized transformer architecture", with
+  grouped-query attention "to improve inference efficiency". Read 2026-10.</li>
+<li>Hugging Face Transformers source, <code>src/transformers/masking_utils.py</code>, function
+  <code>sliding_window_overlay</code>
+  (<a href="https://github.com/huggingface/transformers/blob/main/src/transformers/masking_utils.py">GitHub, main branch</a>):
+  added on top of a causal mask, it keeps a key only when <code>kv_idx &gt; q_idx - sliding_window</code>,
+  so each token sees only the most recent tokens inside the window. Read 2026-10.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/context-windows">Context windows</a>:
+  conversation history is billed as input tokens and generated text as output tokens.
+  Read 2026-10-11. Other vendors set their own pricing.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/token-counting">Token counting</a>:
+  Claude 4.7 and later models use a newer tokenizer, and the same input text produces
+  approximately 30 percent more tokens than on earlier models, depending on the content.
+  The page advises recounting prompts against the model you plan to use. Read 2026-10-11.</li>
+<li>The worked example's scores, queries, keys and values are assumed. The weights and the
+  score counts are computed by the code in Under the hood.</li>
 </ul></div>
   <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="the-context-window.html"><span class="lbl">→ Next</span><span class="ttl">The context window</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-extremely-well-read-guesser">The mental model: an extremely well-read guesser</a><a class="h2" href="#tokens-the-models-actual-unit-of-text">Tokens: the model&#x27;s actual unit of text</a><a class="h2" href="#training-versus-inference-two-very-different-costs">Training versus inference: two very different costs</a><a class="h2" href="#why-this-mechanism-explains-so-much">Why this mechanism explains so much</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-extremely-well-read-guesser">The mental model: an extremely well-read guesser</a><a class="h2" href="#tokens-the-models-actual-unit-of-text">Tokens: the model&#x27;s actual unit of text</a><a class="h2" href="#inside-the-model-attention">Inside the model: attention</a><a class="h2" href="#training-versus-inference-two-very-different-costs">Training versus inference: two very different costs</a><a class="h2" href="#why-this-mechanism-explains-so-much">Why this mechanism explains so much</a><a class="h2" href="#worked-example-what-it-looks-at">Worked example: what &quot;it&quot; looks at</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood-attention-in-a-few-lines">Under the hood: attention in a few lines</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

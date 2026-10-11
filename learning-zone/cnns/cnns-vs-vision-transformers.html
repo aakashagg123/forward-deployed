@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CNNs vs. vision transformers: picking a backbone — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink active" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
+    <h1>CNNs vs. vision transformers: picking a backbone</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>vision transformer (ViT)</strong> reads an image the way a language model reads text. It cuts the image into square <strong>patches</strong>, turns each patch into a token, and lets every token attend to every other token. A convolutional network (CNN) instead slides small kernels over the image, so it builds in two assumptions: nearby pixels matter most, and the same pattern matters everywhere.</p>
+<p>Those built-in assumptions are the core tradeoff. A CNN starts with them, which tends to help when data is limited. A ViT must learn them from data, and the ViT authors' recommended checkpoints are pre-trained on ImageNet-21k. In return it can relate any two parts of the image from the first layer.</p>
+<p>Neither family wins outright. In torchvision's own ImageNet tables (as of 2026-10), a modern CNN (ConvNeXt-Tiny) and a ViT (ViT-B/16) land within 1.5 points of accuracy. The ViT needs about four times the listed compute. So pick the backbone by your data, your hardware and your resolution, not by fashion.</p>
+<p>This lesson does not explain attention. <a href="../llms/what-is-an-llm.html#inside-the-model-attention">Inside the model: attention</a> in the LLMs track does. Here we add only the part that is specific to images: patches as tokens.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — The backbone sets cost per image, the hardware you can run on, and how resolution changes the bill. A ViT's cost grows faster than a CNN's when you raise resolution.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for a comparison on your data and your resolution, with compute per image, not a headline accuracy. You treat "transformers are better" as a claim to test.</p>
+<p><strong>Ask your eng team</strong> — <em>"At the resolution we need, what do a CNN and a ViT each score on our test set, and what does each cost per image on our hardware?"</em></p>
+<p><strong>Risk if ignored</strong> — A team picks a ViT for a small, specialised dataset and an edge device. It trains poorly without heavy pre-training and runs too slowly on the device. A smaller CNN would have met the bar.</p>
+</blockquote>
+<h2 id="the-mental-model-patches-become-tokens">The mental model: patches become tokens</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Patches</span>
+<h4>A ViT reads an image as tokens</h4>
+<p class="cn-sub">ViT-B/16 at 224 pixels. Counts from cnns/code/lesson5_patches.py.</p>
+<div class="cn-row cn-c4"><div class="cn-card "><h5>Image</h5><p><span class="cn-mono">224 x 224 x 3</span></p></div><div class="cn-card cn-info"><h5>Patches</h5><p>16 x 16 pixels<br>14 x 14 = 196</p></div><div class="cn-card cn-info"><h5>Tokens</h5><p>196 + 1 class token<br>= 197, with positions</p></div><div class="cn-card cn-warn"><h5>Attention</h5><p>197 x 197 = 38,809<br>scores per head per layer</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c2"><div class="cn-card cn-warn"><h5>At 448 pixels</h5><p>785 tokens · 616,225 scores<br>about 15.9 times as many</p></div><div class="cn-card cn-ok"><h5>A conv layer at 448</h5><p>4 times the compute<br>same weights</p></div></div>
+<p class="cn-foot">the patch embedding is a convolution with kernel = stride = 16</p>
+</div>
+
+<p>Think of a jigsaw puzzle. A CNN looks at each piece and its neighbours, then at bigger groups, layer by layer. A ViT lays all the pieces out at once and lets each piece check every other piece.</p>
+<p>The analogy breaks because a ViT does not know where a piece came from unless you tell it. Each token gets a learned <strong>position embedding</strong> for that reason. Without it, the pieces would be an unordered pile.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="patches-as-tokens">Patches as tokens</h3>
+<p>Google's ViT repository describes the model in one sentence: "we split an image into fixed-size patches, linearly embed each of them, add position embeddings, and feed the resulting sequence of vectors to a standard Transformer encoder." For classification it adds "an extra learnable 'classification token'".</p>
+<p>Torchvision's implementation shows the details. The patch embedding is a convolution whose kernel and stride both equal the patch size, so the windows never overlap. The token count is <code>(image_size // patch_size) ** 2</code>, plus 1 for the class token. For ViT-B/16 the patch is 16 pixels, with 12 layers and 12 attention heads.</p>
+<h3 id="built-in-assumptions">Built-in assumptions</h3>
+<p>A CNN builds in locality and weight sharing (<a href="how-a-convolution-sees.html">How a convolution sees</a>). A ViT builds in neither. Its attention can link any two patches from the first layer, and it learns from data which links matter. That is more flexible. It also means the model must learn from examples what a CNN gets for free.</p>
+<p>The ViT authors' repository shows what its models were trained on. Its README says the models were pre-trained on the ImageNet and ImageNet-21k datasets, and its recommended checkpoints are AugReg ones pre-trained on ImageNet-21k. It also lists two follow-up papers, titled <em>How to train your ViT? Data, Augmentation, and Regularization in Vision Transformers</em> and <em>When Vision Transformers Outperform ResNets without Pretraining or Strong Data Augmentations</em>.</p>
+<h3 id="the-modern-cnn">The modern CNN</h3>
+<p>ConvNeXt, from Facebook AI Research and the University of California, Berkeley, is "a pure ConvNet model constructed entirely from standard ConvNet modules." In torchvision's tables it scores 82.5% top-1 on ImageNet at a compute figure of 4.456 that torchvision labels "GFLOPS". In the same tables, the transformer Swin-T scores 81.5% at 4.491 GFLOPS, and ViT-B/16 scores 81.1% at 17.564. At similar or higher compute, both are slightly less accurate than ConvNeXt-Tiny.</p>
+<h3 id="resolution-costs-a-vit-more">Resolution costs a ViT more</h3>
+<p>A convolution layer's compute grows with the pixel count: double the side and it does four times the work. A ViT's token count also grows with the pixel count. Its attention scores grow with the square of the token count, as the <a href="../llms/what-is-an-llm.html#inside-the-model-attention">attention section</a> explains. So raising resolution costs a ViT more than four times in its attention layers.</p>
+<p>Torchvision also asserts that a ViT's input matches the size it was built for. To use a pre-trained ViT at another resolution, its position embeddings must be resized. Torchvision ships a helper, <code>interpolate_embeddings</code>, for this. A CNN is more flexible here. The CS231n transfer-learning notes say a pre-trained ConvNet can run on images of a different spatial size, as long as each layer's stride steps "fit" the new size.</p>
+<h2 id="worked-example-two-resolutions-two-families">Worked example: two resolutions, two families</h2>
+<p><em>This example is illustrative in its framing. The token and score counts are computed in <code>cnns/code/lesson5_patches.py</code>. The model figures come from torchvision's weight tables (as of 2026-10).</em></p>
+<p><strong>Step 1: count the tokens.</strong> At 224 pixels with 16-pixel patches: 224 ÷ 16 = 14 patches a side, 14 × 14 = 196 patches, plus 1 class token: <strong>197 tokens</strong>. At 448 pixels: 28 × 28 = 784, plus 1: <strong>785 tokens</strong>.</p>
+<p><strong>Step 2: count the attention scores.</strong> Each head in each layer scores every token against every token. At 224: 197 × 197 = <strong>38,809</strong>. At 448: 785 × 785 = <strong>616,225</strong>. That is about <strong>15.9 times</strong> as many. Across ViT-B/16's 12 layers and 12 heads, that is 5,588,496 against 88,736,400.</p>
+<p><strong>Step 3: compare a convolution layer.</strong> The 64-kernel layer from lesson 2 does 4 times the work at 448 as at 224.</p>
+<p><strong>Step 4: read the vendor table.</strong> Torchvision lists these ImageNet-1K classifiers:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Family</th>
+<th>Parameters</th>
+<th>Compute (GFLOPS, as listed)</th>
+<th>ImageNet top-1</th>
+<th>Input size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MobileNetV3-Large (IMAGENET1K_V2)</td>
+<td>CNN</td>
+<td>5.5 million</td>
+<td>0.217</td>
+<td>75.3%</td>
+<td>224</td>
+</tr>
+<tr>
+<td>EfficientNet-B0</td>
+<td>CNN</td>
+<td>5.3 million</td>
+<td>0.386</td>
+<td>77.7%</td>
+<td>224</td>
+</tr>
+<tr>
+<td>ResNet-50 (IMAGENET1K_V2)</td>
+<td>CNN</td>
+<td>25.6 million</td>
+<td>4.089</td>
+<td>80.9%</td>
+<td>224</td>
+</tr>
+<tr>
+<td>ConvNeXt-Tiny</td>
+<td>CNN</td>
+<td>28.6 million</td>
+<td>4.456</td>
+<td>82.5%</td>
+<td>224</td>
+</tr>
+<tr>
+<td>ViT-B/16 (IMAGENET1K_V1)</td>
+<td>Transformer</td>
+<td>86.6 million</td>
+<td>17.564</td>
+<td>81.1%</td>
+<td>224, fixed</td>
+</tr>
+<tr>
+<td>ViT-B/16 (IMAGENET1K_SWAG_E2E_V1)</td>
+<td>Transformer</td>
+<td>86.9 million</td>
+<td>55.484</td>
+<td>85.3%</td>
+<td>384, fixed</td>
+</tr>
+</tbody>
+</table>
+<p>All compute figures in this table are torchvision's own, so they compare with each other. They are not on the same scale as the FLOPs counted in <a href="how-a-convolution-sees.html">lesson 2</a>, which may be twice a torchvision figure for the same work.</p>
+<p>Read across. ConvNeXt-Tiny and ViT-B/16 at 224 are within 1.5 points. The ViT lists about 3.9 times the compute (17.564 ÷ 4.456). The 384-pixel ViT lists 3.16 times the compute of the 224-pixel one, while the pixel count grows 2.94 times. That gap is the attention term. The 384 model is also more accurate, but it is a different weights set. Torchvision says it was made by "end-to-end fine-tuning the original SWAG weights on ImageNet-1K data", so not all of that gain comes from resolution.</p>
+<p><strong>The decision.</strong> A team with 5,000 labelled images and a mobile target starts with MobileNetV3 or EfficientNet-B0. A team with a server graphics processing unit (GPU) and a broad task tries ConvNeXt-Tiny and ViT-B/16 on its own test set, at its own resolution, and picks on accuracy per unit of cost.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Built-in assumptions vs. flexibility.</strong> A CNN's locality helps with limited data. A ViT's global attention is more flexible. Its authors' recommended checkpoints are pre-trained on ImageNet-21k, so plan to start from pre-trained weights.</li>
+<li><strong>Compute vs. accuracy.</strong> At similar accuracy in torchvision's tables, the ViT lists about four times the compute of ConvNeXt-Tiny. You pay that on every image.</li>
+<li><strong>Resolution growth.</strong> CNN compute grows with pixels. ViT attention grows with pixels squared. High-resolution products feel this most.</li>
+<li><strong>Fixed vs. flexible input size.</strong> Torchvision's ViT expects one size and needs its position embeddings resized for another. A CNN is easier to run at new sizes.</li>
+<li><strong>Ecosystem.</strong> DINOv2 and most DINOv3 checkpoints are ViTs (<a href="vision-foundation-models.html">Vision foundation models</a>). Choosing a ViT can make it easier to reuse them. DINOv3 also ships ConvNeXt versions.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Choosing by headline accuracy.</strong> The table's best model lists about 12 times the compute of ConvNeXt-Tiny (55.484 ÷ 4.456) for 2.8 more points on ImageNet. That may not repeat on your data.</li>
+<li><strong>A ViT on a small dataset with no pre-training.</strong> It underfits or overfits. Start from pre-trained weights.</li>
+<li><strong>Raising resolution on a ViT without re-costing.</strong> Attention cost grows with the square of the token count. The latency target breaks.</li>
+<li><strong>Serving at a size the model was not built for.</strong> Torchvision's ViT raises an error. A custom stack may resize silently and lose accuracy.</li>
+<li><strong>Mixed compute labels.</strong> Torchvision's tables label compute "GFLOPS". TensorFlow's MobileNet page reports multiply-accumulates (MACs). For MobileNetV3-Large the two sources give the same number: torchvision lists 0.217 "GFLOPS" and the MobileNet page lists 217 million MACs. So torchvision's figure may be a multiply-accumulate count, whatever its label says. Find out how each source counts before you compare or convert. A count that treats a multiply and an add as two FLOPs is twice a multiply-accumulate count.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>cnns/code/lesson5_patches.py</code>. The token count is one line, and it mirrors torchvision's <code>seq_length = (image_size // patch_size) ** 2</code> plus one class token.</p>
+<pre><code class="language-python">def vit_tokens(image, patch, class_token=True):
+    assert image % patch == 0
+    return (image // patch) ** 2 + (1 if class_token else 0)
+
+assert (vit_tokens(224, 16), vit_tokens(448, 16)) == (197, 785)
+assert (197 ** 2, 785 ** 2) == (38_809, 616_225)
+</code></pre>
+<p>The file also checks that the patch embedding is a convolution. Flattening each 4 by 4 patch of an 8 by 8 image and multiplying by one weight table gives the same tokens as a convolution with kernel 4 and stride 4, to within 10⁻¹². Torchvision builds it that way: <code>nn.Conv2d(in_channels=3, out_channels=hidden_dim, kernel_size=patch_size, stride=patch_size)</code>. A 16 by 16 colour patch holds 16 × 16 × 3 = 768 numbers. ViT-B/16's token width is also 768.</p>
+<p>The reshape from patches to a token sequence is ordinary tensor work. <a href="../tensors/operations-and-broadcasting.html">Operations and broadcasting</a> and <a href="../tensors/what-a-tensor-is.html">What a tensor is</a> cover reshapes and views.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Did we compare at least one CNN and one ViT on our own test set at our resolution?</li>
+<li class="task todo">Do we know compute per image for each, in the same unit?</li>
+<li class="task todo">For a ViT, are we starting from pre-trained weights?</li>
+<li class="task todo">Have we re-costed the model for any change in resolution?</li>
+<li class="task todo">Does our serving stack feed the exact input size the model expects?</li>
+<li class="task todo">Is the backbone small enough for our target hardware?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="../llms/what-is-an-llm.html#inside-the-model-attention">Inside the model: attention</a> — the attention step a ViT reuses, and why its cost grows with the square of the length.</li>
+<li><a href="how-a-convolution-sees.html">How a convolution sees</a> — locality and weight sharing.</li>
+<li><a href="vision-foundation-models.html">Vision foundation models</a> — large pre-trained backbones you can reuse.</li>
+<li><a href="../tensors/matrix-multiplication.html">Matrix multiplication</a> — counting compute for both families.</li>
+<li><a href="../llms/choosing-a-model.html">Choosing a model</a> — the same cost-versus-capability choice for language models.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Google Research, <em>Vision Transformer and MLP-Mixer Architectures</em> README (<a href="https://github.com/google-research/vision_transformer/blob/main/README.md">GitHub, main branch</a>): the model overview quoted above, including the extra learnable classification token, in the overview paragraph under the model figure; models pre-trained on the ImageNet and ImageNet-21k datasets; AugReg checkpoints pre-trained on ImageNet-21k; two further checkpoint sets pre-trained on ImageNet only; the listed follow-up papers <em>How to train your ViT? Data, Augmentation, and Regularization in Vision Transformers</em> and <em>When Vision Transformers Outperform ResNets without Pretraining or Strong Data Augmentations</em>. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/vision_transformer.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/vision_transformer.py">GitHub, main branch</a>): <code>conv_proj</code> as <code>nn.Conv2d</code> with <code>kernel_size=patch_size, stride=patch_size</code>; <code>seq_length = (image_size // patch_size) ** 2</code> plus a class token; the input-size assertions; <code>interpolate_embeddings</code> for other resolutions; <code>vit_b_16</code> with patch size 16, 12 layers, 12 heads, hidden size 768; weight tables for <code>IMAGENET1K_V1</code> (86,567,656 parameters, 81.072% top-1, 17.564 GFLOPS) and <code>IMAGENET1K_SWAG_E2E_V1</code> (86,859,496, 85.304%, 55.484, 384 pixels), documented as "learnt via transfer learning by end-to-end fine-tuning the original SWAG weights on ImageNet-1K data". Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>convnext.py</code>, <code>resnet.py</code>, <code>mobilenetv3.py</code> and <code>efficientnet.py</code> (<a href="https://github.com/pytorch/vision/tree/main/torchvision/models">GitHub, main branch</a>): ConvNeXt-Tiny 28,589,128 parameters, 82.520%, 4.456 GFLOPS; ResNet-50 <code>IMAGENET1K_V2</code> 25,557,032, 80.858%, 4.089; MobileNetV3-Large <code>IMAGENET1K_V2</code> 5,483,032, 75.274%, 0.217; EfficientNet-B0 5,288,548, 77.692%, 0.386; the compute figure is the <code>_ops</code> field, which torchvision's documentation build (<code>docs/source/conf.py</code>) labels "GFLOPS" without defining it; and, from <code>swin_transformer.py</code>, Swin-T 81.474% at 4.491. Read 2026-10.</li>
+<li>Meta AI Research, <em>DINOv2</em> and <em>DINOv3</em> READMEs (<a href="https://github.com/facebookresearch/dinov2/blob/main/README.md">DINOv2</a>, <a href="https://github.com/facebookresearch/dinov3/blob/main/README.md">DINOv3</a>, GitHub, main branch): DINOv2 backbones are ViTs; DINOv3 lists ViT and ConvNeXt models pre-trained on its web dataset. Read 2026-10.</li>
+<li>Facebook AI Research and the University of California, Berkeley, <em>ConvNeXt</em> README (<a href="https://github.com/facebookresearch/ConvNeXt/blob/main/README.md">GitHub, main branch</a>): "a pure ConvNet model constructed entirely from standard ConvNet modules"; released under the MIT licence. Read 2026-10.</li>
+<li>TensorFlow Models, <em>MobileNet</em> README (<a href="https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/README.md">GitHub, master branch</a>): efficiency reported in MACs, the number of multiply-accumulates needed for one image; 217 million MACs for MobileNetV3-Large ("Large dm=1 (float)"). Read 2026-10.</li>
+<li>CS231n course notes, <em>Transfer learning</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/transfer-learning.md">GitHub source, master branch</a>): a pre-trained ConvNet can run on images of a different spatial size when the stride steps "fit". Read 2026-10.</li>
+<li>The token counts, score counts and ratios are computed by <code>cnns/code/lesson5_patches.py</code> or shown as arithmetic in the lesson. The two team scenarios are illustrative.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="transfer-learning-and-labels.html"><span class="lbl">← Previous</span><span class="ttl">Transfer learning and labels: start from someone else&#x27;s model</span></a><a class="navcard next" href="vision-foundation-models.html"><span class="lbl">→ Next</span><span class="ttl">Vision foundation models: CLIP, DINO and SAM</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-patches-become-tokens">The mental model: patches become tokens</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#patches-as-tokens">Patches as tokens</a><a class="h3" href="#built-in-assumptions">Built-in assumptions</a><a class="h3" href="#the-modern-cnn">The modern CNN</a><a class="h3" href="#resolution-costs-a-vit-more">Resolution costs a ViT more</a><a class="h2" href="#worked-example-two-resolutions-two-families">Worked example: two resolutions, two families</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Fcnns-vs-vision-transformers.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/cnns-vs-vision-transformers.html"</script><script defer src="../assets/glossary.js"></script></body></html>

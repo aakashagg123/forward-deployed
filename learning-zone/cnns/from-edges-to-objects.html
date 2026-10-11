@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>From edges to objects: what depth buys — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink active" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <h1>From edges to objects: what depth buys</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>One convolution layer sees a 3 by 3 window. A network that recognises a dog must see the whole dog. Depth closes the gap. Each layer looks at a small window of the layer before it, so the patch of the original image that a value depends on grows with every layer. That patch is the <strong>receptive field</strong>. Downsampling makes it grow faster.</p>
+<p>What the layers learn follows the same path. Early layers respond to simple local patterns such as edges and colour blobs. Later layers respond to larger, more specific patterns. The CS231n course notes describe early features as generic and useful for many tasks, and later features as specific to the data the network was trained on.</p>
+<p>Depth has a cost. A deeper network is slower per image. <strong>Residual connections</strong>, the "skip" paths in ResNet, are one well-known design for deep networks. They let each block add a correction to its input instead of replacing it. ResNet, built on them, won the 2015 ImageNet challenge.</p>
+<p>For a product leader, this decides two things: how much model you need, and which layers of a pre-trained model to reuse for your data.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — The layer you reuse decides what you inherit. Early layers carry more generic features, such as edges, that are useful for many tasks. Late layers carry the original dataset's ideas of what matters, which may not fit your images.</p>
+<p><strong>What it changes in your decisions</strong> — You stop treating a pre-trained model as one block. You ask which layers the team keeps, which it retrains, and why. You also treat "this neuron detects X" pictures as illustrations, not proof.</p>
+<p><strong>Ask your eng team</strong> — <em>"Our images look nothing like the pre-training data. Which layer are we taking features from, and did we compare it with an earlier one?"</em></p>
+<p><strong>Risk if ignored</strong> — A medical or industrial team bolts a classifier onto the last layer of an everyday-photo model. The features describe pets and cars, not defects. The model plateaus, and the team blames the labels.</p>
+</blockquote>
+<h2 id="the-mental-model-a-growing-view">The mental model: a growing view</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-success-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-success-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-success-surface);color:var(--color-text-success)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Depth</span>
+<h4>The view grows with every layer</h4>
+<p class="cn-sub">Receptive field in input pixels, computed in cnns/code/lesson3_receptive_field.py.</p>
+<div class="cn-row cn-c4"><div class="cn-card "><span class="cn-tag">early</span><h5>1 layer, 3 x 3</h5><p>sees 3 x 3<br>edges, colour blobs</p></div><div class="cn-card "><h5>3 layers, 3 x 3</h5><p>sees 7 x 7<br>27C² weights, not 49C²</p></div><div class="cn-card cn-info"><h5>ResNet stem + 1 layer</h5><p>sees 19 x 19<br>after two stride-2 steps</p></div><div class="cn-card cn-ok"><span class="cn-tag">late</span><h5>Last stage</h5><p>7 x 7 grid from 224<br>larger, specific patterns</p></div></div>
+<p class="cn-foot">early features are more generic and useful for many tasks; late features are specific to the training data</p>
+</div>
+
+<p>Think of a team reading a large map through small windows. The first reader sees a few streets. The next reads summaries from several first readers, so covers a neighbourhood. A few levels up, one reader covers the city.</p>
+<p>The analogy breaks in one way. Nobody assigns the readers their topics. The network learns what each layer responds to, and a single unit often has no clean meaning on its own. The CS231n notes warn that individual neurons "do not necessarily have any semantic meaning by themselves."</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-receptive-field-grows-with-depth">The receptive field grows with depth</h3>
+<p>A 3 by 3 layer sees 3 pixels across. A second 3 by 3 layer on top sees 3 values of the first, which together cover 5 pixels. A third covers 7. With stride 1, n layers of 3 by 3 kernels see 2n + 1 pixels.</p>
+<p>The CS231n notes compare three 3 by 3 layers with one 7 by 7 layer. Both see 7 by 7. The stack has three non-linear steps instead of one, so it can express more. It also needs fewer weights: 27C² against 49C², where C is the number of channels.</p>
+<h3 id="downsampling-makes-it-grow-faster">Downsampling makes it grow faster</h3>
+<p>A stride of 2 or a pooling layer halves the grid. After that, a 3 by 3 window spans twice as much of the original image. Torchvision's ResNet starts with a 7 by 7 convolution at stride 2 and a 3 by 3 max pool at stride 2. After those two steps each value sees 11 by 11 pixels. One more 3 by 3 layer takes it to 19 by 19. Four 3 by 3 layers without downsampling reach only 9 by 9.</p>
+<p>By the last stage, a 224 by 224 input has become a 7 by 7 grid, 32 times smaller on each side. Each of those 49 positions summarises a large part of the image.</p>
+<h3 id="what-the-layers-respond-to">What the layers respond to</h3>
+<p>The CS231n notes on visualising networks describe the first-layer weights of a trained network as "very nice and smooth". In deeper layers, they show images that most strongly activate single units of AlexNet's fifth pooling layer. Those units respond to things like upper bodies, text and specular highlights, and each one depends on a large part of the image. The transfer-learning notes draw the practical conclusion. Early features are generic, such as edge and colour-blob detectors. Later features are more specific to the classes of the original dataset.</p>
+<h3 id="residual-connections">Residual connections</h3>
+<p>A plain block replaces its input: y = F(x). A residual block adds to it: y = x + F(x). Torchvision's ResNet code shows this as one line, <code>out += identity</code>. If a residual block's weights are all zero, it passes its input through unchanged. A plain block with zero weights passes nothing. So a residual block can keep its input and learn only a correction on top of it.</p>
+<p>The ResNet family, from Kaiming He and colleagues at Microsoft Research Asia, won the ImageNet challenge (ILSVRC) in 2015, according to the CS231n notes. Its authors' repository releases the original ResNet-50, ResNet-101 and ResNet-152 models.</p>
+<h2 id="worked-example-how-far-each-layer-sees">Worked example: how far each layer sees</h2>
+<p><em>This example is illustrative. The layer stacks are common patterns. The code is in <code>cnns/code/lesson3_receptive_field.py</code>.</em></p>
+<p><strong>Step 1: small stacks.</strong> Three 3 by 3 layers at stride 1 see 3, then 5, then 7 pixels.</p>
+<p><strong>Step 2: the weight bill.</strong> With 64 channels in and out, three 3 by 3 layers need 3 × 64 × 3 × 3 × 64 = 110,592 weights. One 7 by 7 layer with the same view needs 64 × 7 × 7 × 64 = 200,704. The stack sees as far for 55% of the weights.</p>
+<p><strong>Step 3: add downsampling.</strong> The ResNet stem (7 by 7 at stride 2, then a 3 by 3 pool at stride 2) reaches 11 pixels. One more 3 by 3 layer reaches 19. Without downsampling, four 3 by 3 layers reach only 9.</p>
+<p><strong>Step 4: the grid shrinks.</strong> Through torchvision's ResNet layout, a 224-pixel side becomes 112, then 56, 28, 14 and 7.</p>
+<p><strong>Step 5: the end of the first stage.</strong> In ResNet-50, the first stage (<code>layer1</code>) adds three blocks after the stem. Each block has one 3 by 3 convolution, and its 1 by 1 convolutions do not widen the view. At that point the grid has a step of 4 pixels, so each 3 by 3 layer adds 2 × 4 = 8 pixels. The view grows from 11 to 19, 27 and then 35 pixels. The map is still 56 by 56, so each position covers 4 by 4 pixels of the image.</p>
+<p><strong>The decision.</strong> A defect-inspection team has 30-pixel scratches on 224-pixel images. After the stem and one layer, each value sees only 19 pixels, less than a scratch. By the end of the first stage it sees 35, enough to cover one, on a 56 by 56 map. At the last stage one cell of the 7 by 7 grid spans 32 pixels, so a scratch fills about one cell and is mixed with everything else in it. The team takes features from an early or middle stage of a pre-trained ResNet, not the last one. This choice is a hypothesis. The team tests features from both stages on a held-out set before it commits.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Depth vs. speed.</strong> More layers see more and cost more time per image. A 50-layer model is slower than an 18-layer one on the same hardware. In torchvision's tables, ResNet-18 lists a compute figure of 1.814 and ResNet-50 lists 4.089, in a column labelled "GFLOPS" (as of 2026-10). Compare them with each other, not with the FLOPs counted in <a href="how-a-convolution-sees.html">lesson 2</a>; torchvision's figure may be a multiply-accumulate count.</li>
+<li><strong>Early features vs. late features.</strong> Early features are more generic and useful for many tasks. Late layers carry the original task's ideas. For images unlike the pre-training data, an earlier layer may serve better, at the cost of training more on top.</li>
+<li><strong>Downsampling vs. small detail.</strong> Each halving speeds up every later layer and blurs small objects. If the product must find small objects, ask how the model keeps a higher-resolution map for them.</li>
+<li><strong>Interpretability pictures vs. evidence.</strong> Feature visualisations help a team debug. They are not a guarantee of what the model relies on. Test behaviour on your data instead.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Features from the wrong depth.</strong> The team uses only the final layer on images unlike the pre-training set. Accuracy stalls.</li>
+<li><strong>Small objects lost to downsampling.</strong> The defect fits in one cell of the last grid, next to a large background. The signal is diluted.</li>
+<li><strong>"This neuron detects wheels."</strong> A team builds a product claim on one visualised unit. The unit also fires on other round things.</li>
+<li><strong>Dead filters.</strong> The CS231n notes warn that activation maps that stay at zero for many inputs can mean dead filters, sometimes from too high a learning rate. Part of the network does nothing.</li>
+<li><strong>Depth added, nothing gained.</strong> A deeper backbone is slower and the accuracy gain is within noise. Measure before you pay for the bigger model.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>cnns/code/lesson3_receptive_field.py</code>. The receptive field follows a short recurrence. Each layer adds (kernel − 1) times the current step between neighbouring values, and each stride multiplies that step.</p>
+<pre><code class="language-python">def receptive_field(layers):
+    r, jump = 1, 1
+    for k, s in layers:          # (kernel size, stride) per layer
+        r += (k - 1) * jump
+        jump *= s
+    return r
+
+assert receptive_field([(3, 1)] * 3) == 7
+assert receptive_field([(7, 2), (3, 2)]) == 11          # ResNet stem
+assert receptive_field([(7, 2), (3, 2), (3, 1)]) == 19
+</code></pre>
+<p>This counts every pixel that can affect a value. It does not say how much each pixel matters.</p>
+<p>The residual block is one addition. Torchvision's ResNet code ends each block with <code>out += identity</code>, then a ReLU. The file checks the arithmetic: with all-zero weights, <code>x + F(x)</code> returns <code>x</code>, and a plain block returns zeros.</p>
+<p>To reuse a middle stage, take the output of a named layer instead of the last one. In torchvision's ResNet these stages are <code>layer1</code> to <code>layer4</code>. Their outputs for a 224-pixel input are 56, 28, 14 and 7 positions on a side.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we know the receptive field at the layer we take features from, compared with the size of what we detect?</li>
+<li class="task todo">Have we compared features from more than one depth on our own held-out images?</li>
+<li class="task todo">For small objects, do we keep a higher-resolution feature map?</li>
+<li class="task todo">Do we treat feature visualisations as debugging aids, not as evidence?</li>
+<li class="task todo">Have we measured whether a deeper backbone pays for its extra latency?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="how-a-convolution-sees.html">How a convolution sees</a> — one layer, the window and the stride.</li>
+<li><a href="transfer-learning-and-labels.html">Transfer learning and labels</a> — choosing what to freeze and what to retrain.</li>
+<li><a href="../tensors/automatic-differentiation.html">Automatic differentiation</a> — how gradients flow back through these layers.</li>
+<li><a href="../tensors/batching-memory-and-precision.html">Batching, memory and precision</a> — why deeper networks cost more memory to train.</li>
+<li><a href="../machine-learning/model-families.html">Model families</a> — neural networks next to linear models and trees.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>CS231n course notes, <em>Convolutional Neural Networks</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/convolutional-networks.md">GitHub source, master branch</a>): three stacked 3 by 3 layers see 7 by 7, with 27C² parameters against 49C² for one 7 by 7 layer; ResNet "developed by Kaiming He et al. was the winner of ILSVRC 2015", with skip connections. Read 2026-10.</li>
+<li>CS231n course notes, <em>Visualizing what ConvNets learn</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/understanding-cnn.md">GitHub source, master branch</a>): first-layer weights described as "very nice and smooth"; AlexNet POOL5 units responding to upper bodies, text and specular highlights over large parts of the image; neurons without semantic meaning on their own; all-zero activation maps as a sign of dead filters. Read 2026-10.</li>
+<li>CS231n course notes, <em>Transfer learning</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/transfer-learning.md">GitHub source, master branch</a>): early features are generic (edge and colour-blob detectors) "that should be useful to many tasks", later features are specific to the original dataset. Read 2026-10.</li>
+<li>Kaiming He et al., <em>Deep Residual Networks</em> README (<a href="https://github.com/KaimingHe/deep-residual-networks/blob/master/README.md">GitHub, master branch</a>): the original ResNet-50, ResNet-101 and ResNet-152 models from the paper "Deep Residual Learning for Image Recognition", Microsoft Research Asia. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/resnet.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py">GitHub, main branch</a>): <code>out += identity</code> in each block; the 7 by 7 stride-2 first convolution and 3 by 3 stride-2 max pool; stride 2 at the start of <code>layer2</code> to <code>layer4</code>; listed compute of 1.814 GFLOPS for ResNet-18 and 4.089 for ResNet-50. Read 2026-10.</li>
+<li>The layer stacks, the scratch example and every computed figure are illustrative. They come from <code>cnns/code/lesson3_receptive_field.py</code>, which ends in <code>assert</code> lines.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="how-a-convolution-sees.html"><span class="lbl">← Previous</span><span class="ttl">How a convolution sees: one small grid, used everywhere</span></a><a class="navcard next" href="transfer-learning-and-labels.html"><span class="lbl">→ Next</span><span class="ttl">Transfer learning and labels: start from someone else&#x27;s model</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-growing-view">The mental model: a growing view</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-receptive-field-grows-with-depth">The receptive field grows with depth</a><a class="h3" href="#downsampling-makes-it-grow-faster">Downsampling makes it grow faster</a><a class="h3" href="#what-the-layers-respond-to">What the layers respond to</a><a class="h3" href="#residual-connections">Residual connections</a><a class="h2" href="#worked-example-how-far-each-layer-sees">Worked example: how far each layer sees</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Ffrom-edges-to-objects.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/from-edges-to-objects.html"</script><script defer src="../assets/glossary.js"></script></body></html>

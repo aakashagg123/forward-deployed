@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Convolutional networks — recap &amp; real-world examples — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
+    <h1>Convolutional networks — recap &amp; real-world examples</h1>
+  </div>
+  <div class="MarkdownContent"><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
+<p>These are documented facts from the sources, not incidents. Where a story is invented to show a failure, it says so.</p>
+<p><strong>Weight sharing cut a layer's size by about 3,000 times.</strong> The CS231n course notes work through the first layer of AlexNet. Without weight sharing it would need 105,705,600 parameters. With one shared kernel per output channel it needs 34,944. 🎯 <em>Takeaway:</em> a convolution's power is that it reuses a few weights everywhere, so parameters are cheap and compute is not. Price resolution, not parameters. This is <a href="how-a-convolution-sees.html">lesson 2</a>.</p>
+<p><strong>Skip connections and the 2015 ImageNet challenge.</strong> The CS231n notes record that ResNet, from Kaiming He and colleagues, won the ILSVRC 2015 challenge, and that it relies on skip connections. Torchvision's code still builds every ResNet block around one line, <code>out += identity</code>. 🎯 <em>Takeaway:</em> a residual block can pass its input through and add a correction on top. Depth still costs latency. When a team proposes a deeper backbone, ask whether the gain pays for the latency. This is <a href="from-edges-to-objects.html">lesson 3</a>.</p>
+<p><strong>Zero-shot matched a supervised baseline, and the vendor still said "not for deployment".</strong> OpenAI's CLIP README reports that CLIP matches the original ResNet-50 on ImageNet zero-shot, without using its 1.28 million labelled examples. The CLIP model card also says that "any deployed use case of the model … is currently out of scope." 🎯 <em>Takeaway:</em> capability and permission are separate questions. Read the model card and the licence before the prototype becomes the plan. This is <a href="vision-foundation-models.html">lesson 6</a>.</p>
+<p><strong>Benchmarks built to break clean scores.</strong> The ImageNet-C benchmark applies 15 corruption types to ImageNet images. Its authors also point to ImageNet-A, natural images "that cause model accuracy to substantially degrade." 🎯 <em>Takeaway:</em> one clean test set does not predict behaviour on real cameras. Score corrupted copies of your own images. This is <a href="shipping-vision-in-production.html">lesson 7</a>.</p>
+<p><strong>An 8-bit model trades accuracy for speed.</strong> TensorFlow's MobileNet page lists MobileNetV3-Large on a Pixel 1 phone at 51.2 ms in float and 44 ms in 8-bit, with ImageNet top-1 of 75.2% and 73.9%. 🎯 <em>Takeaway:</em> lower precision is a priced tradeoff, not a free speed-up. Test it on your images. This is <a href="shipping-vision-in-production.html">lesson 7</a>.</p>
+<p><strong>The camera that swapped red and blue (an illustration).</strong> A warehouse adds new cameras that deliver blue-green-red images. The serving code assumes red-green-blue. Accuracy falls, while latency and error rates look normal. A test comparing training and serving inputs would have caught it before launch. The story is invented. 🎯 <em>Takeaway:</em> treat preprocessing as a contract with a test.</p>
+<p><strong>The detector that should have been a classifier (an illustration).</strong> A team spends months drawing boxes for a shelf monitor whose only product question is "does this shelf need restocking?" A three-way classifier would have needed a few hours of labelling. The story is invented, and the <a href="what-computer-vision-does.html">labelling arithmetic is in lesson 1</a>. 🎯 <em>Takeaway:</em> pick the least detailed output that answers the product question.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The question it makes you ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="what-computer-vision-does.html">What computer vision does</a></td>
+<td>Four jobs: classify, detect, segment, embed. Each step adds detail and labelling cost.</td>
+<td>What is the simplest output that answers our product question?</td>
+</tr>
+<tr>
+<td><a href="how-a-convolution-sees.html">How a convolution sees</a></td>
+<td>One small kernel, shared across the image. Few weights, compute that grows with the pixel count.</td>
+<td>What resolution do we need, and what does doubling it cost?</td>
+</tr>
+<tr>
+<td><a href="from-edges-to-objects.html">From edges to objects</a></td>
+<td>Depth grows the receptive field. Early features are generic, late ones specific.</td>
+<td>Which layer are we reusing, and did we compare it with an earlier one?</td>
+</tr>
+<tr>
+<td><a href="transfer-learning-and-labels.html">Transfer learning and labels</a></td>
+<td>Start from a pre-trained model. How you reuse it depends on data size and similarity.</td>
+<td>What did a frozen baseline score before we fine-tuned?</td>
+</tr>
+<tr>
+<td><a href="cnns-vs-vision-transformers.html">CNNs vs. vision transformers</a></td>
+<td>A ViT turns patches into tokens. A CNN builds in locality. Similar accuracy can carry very different compute.</td>
+<td>What does each family score and cost on our data, at our resolution?</td>
+</tr>
+<tr>
+<td><a href="vision-foundation-models.html">Vision foundation models</a></td>
+<td>CLIP, DINO and SAM can need few labels or none. Licences and intended-use notes vary.</td>
+<td>Does a foundation model meet the bar, and may we ship it?</td>
+</tr>
+<tr>
+<td><a href="shipping-vision-in-production.html">Shipping vision in production</a></td>
+<td>Preprocessing, hardware and changing images decide whether it keeps working.</td>
+<td>Does a test fail if serving preprocessing differs from training?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> a vision product is a chain of choices, and each link has a price. The framing sets the labelling bill. Resolution sets the compute bill. The backbone and the foundation model set accuracy, cost and licence terms. The camera and the preprocessing code decide whether any of it survives contact with real images. At every link, the cheapest test is to measure on your own images before you commit.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"For our vision feature: what is the simplest output that answers the product question, what resolution and hardware does it need, what did a frozen pre-trained baseline score, may we ship the model we used, and what test catches a preprocessing mismatch?"</em></p>
+</blockquote>
+<p>If you can answer all five, you can steer the work. If not, you know which lesson to reread.</p>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>A product team asks for pixel-level masks of every item on a shelf. The product only needs to know when a shelf is nearly empty. What do you suggest, and why?</strong>
+ <br />
+<details><summary>Answer</summary>Start with classification: one label per shelf image, such as full, partly empty or empty. It answers the product question and costs a fraction of the labelling time of masks. Move to detection or segmentation only when the question needs location or area. (<a href="what-computer-vision-does.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>A predicted box and the true box overlap, but the IoU is 0.14. Does it count as a correct detection in COCO-style mAP?</strong>
+ <br />
+<details><summary>Answer</summary>Not at any of the thresholds COCO-style mAP averages over, which run from 0.50 to 0.95. An IoU of 0.14 is below all of them. Touching the object is not enough. (<a href="what-computer-vision-does.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>Engineering wants to double the input side from 224 to 448 pixels to catch small defects. What happens to parameters and to compute in a convolution layer?</strong>
+ <br />
+<details><summary>Answer</summary>The parameters stay the same, because the kernels are shared across positions. The compute per layer rises about four times, because the number of positions quadruples. Activation memory rises about four times too. Price the change before approving it. (<a href="how-a-convolution-sees.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Torchvision lists ResNet-50 at 4.089 "GFLOPS". TensorFlow's MobileNet page lists MobileNetV3-Large at 217 million MACs. Can you divide one by the other to say how much cheaper MobileNet is?</strong>
+ <br />
+<details><summary>Answer</summary>No, not safely. The labels differ, "GFLOPS" against MACs, yet for MobileNetV3-Large the two sources give the same number: torchvision lists 0.217 "GFLOPS" and the MobileNet page 217 million MACs. So a label may not mean what you assume. Find out how each source counts before you compare or convert. A count that treats a multiply and an add as two FLOPs is twice a MAC count. Then measure latency on your own hardware, which is the number that matters. (<a href="how-a-convolution-sees.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Your images are X-ray scans, nothing like everyday photos. Your team uses features from the last layer of an ImageNet model and accuracy stalls. What should it try?</strong>
+ <br />
+<details><summary>Answer</summary>Features from an earlier layer. Early layers hold more generic patterns, such as edges, that are useful for many tasks. For a small, very different dataset, the CS231n notes suggest training on activations from earlier in the network. The last layers are tuned to the original dataset's classes. Compare both on a held-out set. (<a href="from-edges-to-objects.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>You have 800 labelled images in 3 classes that look like everyday photos. What is the first model to try?</strong>
+ <br />
+<details><summary>Answer</summary>A frozen pre-trained backbone with a simple linear classifier on its features. With a small, similar dataset, fine-tuning risks overfitting. Fund fine-tuning or more labels only if this baseline misses the bar. (<a href="transfer-learning-and-labels.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>Why can a ViT's cost rise more than a CNN's when you double the image side?</strong>
+ <br />
+<details><summary>Answer</summary>Doubling the side quadruples the number of patches, so the token count rises about four times. Attention scores every token against every token, so that part grows about sixteen times. A convolution layer grows only with the pixel count, about four times. (<a href="cnns-vs-vision-transformers.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>A team wants a ViT trained from scratch on 3,000 images for a phone app. What concerns do you raise?</strong>
+ <br />
+<details><summary>Answer</summary>A ViT lacks a CNN's built-in locality, and the ViT authors' recommended checkpoints are pre-trained on ImageNet-21k rather than trained from scratch on a small set. It also costs more compute per image than a small CNN such as MobileNetV3. Start from pre-trained weights, and compare against a mobile CNN on the target phone. (<a href="cnns-vs-vision-transformers.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>A zero-shot CLIP prototype reports 98% probability on most images. Is the model 98% accurate?</strong>
+ <br />
+<details><summary>Answer</summary>No. CLIP's softmax scales small differences in similarity by 100, so it can look very sure while being wrong. Measure accuracy on a labelled test set from your own images, and set a threshold below which a person decides. (<a href="vision-foundation-models.html">Lesson 6</a>)</details></p>
+</li>
+<li>
+<p><strong>Before shipping a feature built on a pre-trained vision model, what two documents do you read?</strong>
+    <details><summary>Answer</summary>The licence for the exact weights, and the vendor's intended-use statement or model card. Licences can differ even inside one repository. As of 2026-10, the DINOv2 README releases its main code and weights under Apache License 2.0, and its XRay-DINO and Cell-DINO weights under the FAIR Noncommercial Research License. Some model cards also rule out deployment. (<a href="vision-foundation-models.html">Lesson 6</a>)</details></p>
+</li>
+<li><strong>After a camera upgrade, accuracy drops but there are no errors and latency is normal. What do you check first?</strong>
+    <details><summary>Answer</summary>The preprocessing contract: colour order, resize and crop, normalisation, orientation and channel layout. Compare the model inputs from the new cameras with the training pipeline's inputs. Then check image statistics such as brightness and blur for a shift. (<a href="shipping-vision-in-production.html">Lesson 7</a>)</details></li>
+<li><strong>Eight cameras at 10 frames per second, batches of 8, and 20 ms per batch. How many cameras can one GPU serve, as a first estimate?</strong>
+    <details><summary>Answer</summary>The GPU can run 1,000 ÷ 20 = 50 batches a second, which is 400 images a second. At 10 frames per second per camera, that is 40 cameras. Confirm with a load test, because latency does not always scale with load. (<a href="shipping-vision-in-production.html">Lesson 7</a>)</details></li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>CS231n course notes, <em>Convolutional Neural Networks</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/convolutional-networks.md">GitHub source, master branch</a>): the AlexNet first-layer counts with and without sharing; ResNet as the ILSVRC 2015 winner, with skip connections. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/resnet.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py">GitHub, main branch</a>): <code>out += identity</code> in each block; ResNet-50 <code>IMAGENET1K_V2</code> lists <code>_ops</code> of 4.089, which torchvision's documentation build (<code>docs/source/conf.py</code>) labels "GFLOPS". Read 2026-10.</li>
+<li>Meta AI Research (FAIR), <em>DINOv2</em> README (<a href="https://github.com/facebookresearch/dinov2/blob/main/README.md">GitHub, main branch</a>): code and weights under the Apache License 2.0; XRay-DINO and Cell-DINO weights under the FAIR Noncommercial Research License. Read 2026-10.</li>
+<li>OpenAI, <em>CLIP</em> README and model card (<a href="https://github.com/openai/CLIP/blob/main/README.md">README</a>, <a href="https://github.com/openai/CLIP/blob/main/model-card.md">model card</a>, GitHub, main branch): zero-shot ImageNet performance matching the original ResNet-50; deployed use out of scope. Read 2026-10.</li>
+<li>Hendrycks and Dietterich, <em>robustness</em> README (<a href="https://github.com/hendrycks/robustness/blob/master/README.md">GitHub, master branch</a>): ImageNet-C's 15 corruptions and ImageNet-A. Read 2026-10.</li>
+<li>COCO API source, <code>PythonAPI/pycocotools/cocoeval.py</code> (<a href="https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/cocoeval.py">GitHub, master branch</a>): IoU thresholds from 0.50 to 0.95 in steps of 0.05. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/mobilenetv3.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv3.py">GitHub, main branch</a>): MobileNetV3-Large lists <code>_ops</code> of 0.217, labelled "GFLOPS" in torchvision's <code>docs/source/conf.py</code>. Read 2026-10.</li>
+<li>TensorFlow Models, <em>MobileNet</em> README (<a href="https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/README.md">GitHub, master branch</a>): MobileNetV3-Large latency and accuracy, float and 8-bit, on a Pixel 1; 217 million MACs for MobileNetV3-Large in its checkpoint table ("Large dm=1 (float)"). Read 2026-10.</li>
+<li>The two illustrations are invented. Their numbers come from the worked examples in lessons 1 and 7.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="shipping-vision-in-production.html"><span class="lbl">← Previous</span><span class="ttl">Shipping vision in production</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

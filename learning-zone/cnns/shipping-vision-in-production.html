@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Shipping vision in production — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink active" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 07</span>
+    <h1>Shipping vision in production</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A vision model that scores well in a notebook can fail on the first real camera. Most of the failures are not in the model. They are in what happens to the image before the model sees it, and in how the world in front of the camera changes after launch.</p>
+<p>Three things are specific to vision. First, the <strong>preprocessing contract</strong>: every pre-trained model expects a precise resize, crop, colour order and normalisation. Break it and accuracy drops with no error. Second, <strong>resolution and hardware</strong> set the cost per image, and an edge device changes the model you can afford. Third, <strong>image shift</strong>: lighting, blur, compression, new cameras and new products move the inputs away from the training set.</p>
+<p>The general machinery is covered elsewhere. <a href="../machine-learning/ml-in-production.html">ML in production</a> covers training-serving skew, drift and monitors. <a href="../tensors/batching-memory-and-precision.html">Batching, memory and precision</a> and <a href="../tensors/matrix-multiplication.html">Matrix multiplication</a> cover why batching pays and what number formats trade. This lesson adds only the vision-specific part.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — A vision feature's quality is set at the camera and the preprocessing code as much as in the model. Its cost is set by resolution, frame rate and the hardware it runs on.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the preprocessing contract as a tested artifact. You size hardware from cameras, frames per second and measured latency. You fund a test set of hard and corrupted images, not only clean ones.</p>
+<p><strong>Ask your eng team</strong> — <em>"Is there a test that fails if serving preprocessing differs from training, and what does our model score on blurred, dark and compressed versions of our test images?"</em></p>
+<p><strong>Risk if ignored</strong> — A new camera vendor sends images in a different colour order. Accuracy falls overnight. The dashboard shows normal latency and no errors, so nobody notices for weeks.</p>
+</blockquote>
+<h2 id="the-mental-model-the-images-journey">The mental model: the image's journey</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-warning-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-warning-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-warning-surface);color:var(--color-text-warning)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Production</span>
+<h4>The image's journey</h4>
+<p class="cn-sub">Most vision failures happen before or after the model.</p>
+<div class="cn-row cn-c4"><div class="cn-card "><h5>Camera</h5><p>sensor · compression<br>orientation tag</p></div><div class="cn-card cn-warn"><span class="cn-tag">the contract</span><h5>Preprocessing</h5><p>resize · crop · colour order<br>normalise</p></div><div class="cn-card cn-info"><h5>Model</h5><p>batch · precision<br>hardware</p></div><div class="cn-card cn-ok"><h5>Decision and monitor</h5><p>threshold · review<br>image stats · outcomes</p></div></div>
+<p class="cn-foot">a test that compares training and serving inputs catches silent skew</p>
+</div>
+
+<p>Think of a lab test. A blood sample is drawn, stored, transported and prepared before the machine reads it. A perfect machine gives the wrong answer if the sample was handled differently from the calibration samples.</p>
+<p>The analogy breaks at one point. A lab can reject a bad sample. A vision model scores whatever it is given, with no warning that the image was prepared wrongly.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-preprocessing-contract">The preprocessing contract</h3>
+<p>Torchvision ships each set of pre-trained weights with its own transform. For ResNet-50 <code>IMAGENET1K_V2</code>, the transform resizes to 232 pixels, centre-crops to 224, scales values to the 0 to 1 range, then normalises each channel with means <code>(0.485, 0.456, 0.406)</code> and standard deviations <code>(0.229, 0.224, 0.225)</code>. The older <code>IMAGENET1K_V1</code> weights for the same architecture use a different resize. ConvNeXt-Tiny's weights use 236. EfficientNet-B0's use 256 with bicubic resampling.</p>
+<p>So the contract belongs to the weights, not the architecture. Common ways to break it:</p>
+<ul>
+<li><strong>Colour order.</strong> OpenCV's <code>imread</code> returns blue-green-red by default. If the model was trained on red-green-blue, it now sees swapped channels.</li>
+<li><strong>Resize and crop.</strong> Serving squashes the whole image to 224 by 224 instead of resizing then cropping. Objects change shape.</li>
+<li><strong>Normalisation.</strong> Values in 0 to 255 instead of 0 to 1, or the wrong means.</li>
+<li><strong>Layout.</strong> Channels first or channels last. <a href="../tensors/what-a-tensor-is.html">What a tensor is</a> covers this. When the shapes still line up, the error is silent.</li>
+<li><strong>Orientation.</strong> Photos can carry an Exchangeable Image File Format (EXIF) orientation tag. Pillow's <code>ImageOps.exif_transpose</code> applies that tag to the pixels. If the loader never applies the tag, the image can arrive sideways.</li>
+</ul>
+<p>Each of these is a vision-specific form of the training-serving skew in <a href="../machine-learning/ml-in-production.html">ML in production</a>.</p>
+<h3 id="fixed-input-sizes">Fixed input sizes</h3>
+<p>Some models require one input size. Torchvision's ViT asserts that the height and width match the size it was built for (<a href="cnns-vs-vision-transformers.html">CNNs vs. vision transformers</a>). A CNN accepts other sizes, but its accuracy was measured at one size. Serve at the size you tested.</p>
+<h3 id="resolution-frame-rate-and-hardware">Resolution, frame rate and hardware</h3>
+<p>Cost per image grows with resolution: about four times for each doubling of the side, as <a href="how-a-convolution-sees.html">How a convolution sees</a> shows. A video feature multiplies that by frames per second and by the number of cameras.</p>
+<p>The hardware sets the menu. TensorFlow's MobileNet page lists, on a Pixel 1 phone's large core, 51.2 ms for MobileNetV3-Large in float and 44 ms in 8-bit, with ImageNet top-1 of 75.2% and 73.9%. The 8-bit model is faster and 1.3 points less accurate. <a href="../ai/01-inference-internals.html#quantization-formats">Quantization formats</a> covers that tradeoff in depth.</p>
+<h3 id="image-shift-and-robustness">Image shift and robustness</h3>
+<p>Real images get blurred, darkened, compressed and partly blocked. The ImageNet-C benchmark measures this with 15 corruption types applied to ImageNet images. Its authors also point to ImageNet-A, "real-world, unmodified natural images that cause model accuracy to substantially degrade." ImageNetV2 is a fresh ImageNet test set, built to match the original distribution as closely as possible and sampled after a decade of progress on the original. These benchmarks share one lesson. A score on one clean test set does not tell you how the model behaves on new images.</p>
+<p>For your product, the same idea is cheap. Make corrupted copies of your own test images and score them. Track simple image statistics in production, such as brightness, blur, size and aspect ratio. Feed them into the drift monitors from <a href="../machine-learning/ml-in-production.html">ML in production</a>.</p>
+<h2 id="worked-example-eight-cameras-on-a-loading-dock">Worked example: eight cameras on a loading dock</h2>
+<p><em>This example is illustrative. The camera count, frame rate, batch size and latency are assumed. The arithmetic is shown.</em></p>
+<p>A warehouse runs a damage-detection model on 8 cameras at 10 frames per second each.</p>
+<ol>
+<li><strong>Load.</strong> 8 × 10 = 80 images per second.</li>
+<li><strong>Batching.</strong> The service groups 8 images per batch, one from each camera, so it runs 80 ÷ 8 = 10 batches per second.</li>
+<li><strong>Measured latency.</strong> On the chosen graphics processing unit (GPU), one batch of 8 takes 20 ms (assumed, measured in a load test).</li>
+<li><strong>Utilisation.</strong> 10 batches × 20 ms = 200 ms of GPU time each second, so the GPU is about 20% busy.</li>
+<li><strong>Headroom.</strong> At 20 ms a batch, the GPU can run 1,000 ÷ 20 = 50 batches a second, which is 400 images a second, or 40 cameras at 10 frames per second.</li>
+<li><strong>A resolution change.</strong> The team wants to double the input side to see small dents. As a first estimate, compute per image rises about 4 times. If latency rises in proportion, capacity falls to about 10 cameras. The team re-runs the load test before it commits, because equal FLOPs do not mean equal time (<a href="../tensors/matrix-multiplication.html">Matrix multiplication</a>).</li>
+</ol>
+<p><strong>The preprocessing check.</strong> Before launch, the team runs 200 test images (assumed) through both the training pipeline and the serving pipeline and compares the model inputs value by value. The check fails. The new cameras deliver blue-green-red. The fix is one line. Without the test, the dashboard would have shown normal latency and no errors.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Edge vs. cloud.</strong> On the device, latency is low, the image stays local and no network is needed. In exchange the model must be small, and updates ship with app releases. In the cloud, models can be larger and easier to update, at the cost of network latency, bandwidth and per-image serving cost.</li>
+<li><strong>Resolution vs. cost.</strong> Higher resolution finds smaller defects and costs about four times per doubling. Crop to the region of interest when you can.</li>
+<li><strong>Frame rate vs. cost.</strong> Many products do not need every frame. Sampling 2 frames a second instead of 10 cuts load five times.</li>
+<li><strong>Lower precision vs. accuracy.</strong> An 8-bit model is faster and smaller and can be a little less accurate, as in the MobileNet figures above. Test on your images.</li>
+<li><strong>Automation vs. review.</strong> A threshold that sends uncertain images to a person lowers error and adds labour. It also creates labels for the next training round.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Silent preprocessing skew.</strong> Colour order, resize, normalisation or orientation differ between training and serving. Accuracy drops with no error.</li>
+<li><strong>A new camera or a firmware update.</strong> Colour, exposure or compression changes. Image statistics shift before accuracy visibly falls.</li>
+<li><strong>Night, rain, glare.</strong> The test set was taken in daylight. Corrupted-image tests would have shown the gap.</li>
+<li><strong>Resolution raised without a load test.</strong> Latency targets break at peak.</li>
+<li><strong>Feedback blind spots.</strong> Only images a person reviewed get labels. The model is never checked on the images it was confident about.</li>
+<li><strong>A model swapped, a contract kept.</strong> New weights arrive with a different expected resize. The serving code still uses the old one.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>A preprocessing contract as data, and a test that compares two pipelines. Standard-library Python. This sketch is not run as part of the lesson's code files.</p>
+<pre><code class="language-python">CONTRACT = {                       # torchvision ResNet50_Weights.IMAGENET1K_V2
+    &quot;resize&quot;: 232, &quot;crop&quot;: 224, &quot;channel_order&quot;: &quot;RGB&quot;,
+    &quot;scale&quot;: 1 / 255, &quot;mean&quot;: (0.485, 0.456, 0.406), &quot;std&quot;: (0.229, 0.224, 0.225),
+}
+
+def normalise(pixel_rgb, c=CONTRACT):
+    &quot;&quot;&quot;One pixel, values 0-255, in RGB order -&gt; the three numbers the model expects.&quot;&quot;&quot;
+    return tuple((v * c[&quot;scale&quot;] - m) / s for v, m, s in zip(pixel_rgb, c[&quot;mean&quot;], c[&quot;std&quot;]))
+
+def test_serving_matches_training(train_inputs, serve_inputs, tol=1e-4):
+    worst = max(abs(a - b) for a, b in zip(train_inputs, serve_inputs))
+    assert worst &lt; tol, f&quot;serving preprocessing differs from training by {worst:.4f}&quot;
+
+red = (255, 0, 0)
+assert normalise(red) != normalise(red[::-1])    # swapped colour order gives different inputs
+</code></pre>
+<p>In torchvision you can read the contract from the weights instead of writing it by hand: <code>ResNet50_Weights.IMAGENET1K_V2.transforms()</code>. Its description reads: resize to <code>resize_size</code>, centre crop to <code>crop_size</code>, rescale to <code>[0.0, 1.0]</code>, then normalise with the given mean and standard deviation.</p>
+<p>Capacity planning in one line, for the worked example: <code>cameras_supported = (1000 / batch_ms) * batch_size / fps</code>, which gives (1,000 ÷ 20) × 8 ÷ 10 = 40.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is the preprocessing contract written down per set of weights, not per architecture?</li>
+<li class="task todo">Does a test fail when serving preprocessing differs from training?</li>
+<li class="task todo">Do we handle colour order, orientation flags and channel layout explicitly?</li>
+<li class="task todo">Have we scored blurred, dark, noisy and compressed copies of our test images?</li>
+<li class="task todo">Do we monitor image statistics (brightness, blur, size) as well as scores?</li>
+<li class="task todo">Is hardware sized from cameras, frame rate and a measured load test?</li>
+<li class="task todo">Do we re-run the load test after any change in resolution, model or precision?</li>
+<li class="task todo">Is there a review path for low-confidence images, and do its labels feed retraining?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="../machine-learning/ml-in-production.html">ML in production</a> — skew, drift, monitors and retraining for any model.</li>
+<li><a href="../tensors/batching-memory-and-precision.html">Batching, memory and precision</a> — memory and number formats.</li>
+<li><a href="../tensors/matrix-multiplication.html">Matrix multiplication</a> — why one batched call beats many single ones.</li>
+<li><a href="../ai/01-inference-internals.html#quantization-formats">Quantization formats</a> — lower precision for serving, in depth.</li>
+<li><a href="how-a-convolution-sees.html">How a convolution sees</a> — why resolution sets the cost.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — what serving costs over a model's life.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>PyTorch torchvision source, <code>torchvision/transforms/_presets.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/transforms/_presets.py">GitHub, main branch</a>): <code>ImageClassification</code> resizes to <code>resize_size</code>, centre-crops to <code>crop_size</code>, rescales to <code>[0.0, 1.0]</code> and normalises with default mean <code>(0.485, 0.456, 0.406)</code> and std <code>(0.229, 0.224, 0.225)</code>. Read 2026-10.</li>
+<li>PyTorch torchvision weight tables in <code>resnet.py</code>, <code>convnext.py</code>, <code>efficientnet.py</code> and <code>vision_transformer.py</code> (<a href="https://github.com/pytorch/vision/tree/main/torchvision/models">GitHub, main branch</a>): ResNet-50 <code>IMAGENET1K_V2</code> uses <code>crop_size=224, resize_size=232</code>, while <code>IMAGENET1K_V1</code> uses <code>crop_size=224</code> with the default resize; ConvNeXt-Tiny <code>resize_size=236</code>; EfficientNet-B0 <code>resize_size=256</code> with bicubic interpolation; ViT asserts the input height and width. Read 2026-10.</li>
+<li>TensorFlow Models, <em>MobileNet</em> README (<a href="https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/README.md">GitHub, master branch</a>): MobileNetV3-Large on a Pixel 1 large core, 51.2 ms in float and 44 ms in 8-bit, with top-1 of 75.2% and 73.9%; latencies in milliseconds. Read 2026-10.</li>
+<li>Hendrycks and Dietterich, <em>robustness</em> README (<a href="https://github.com/hendrycks/robustness/blob/master/README.md">GitHub, master branch</a>): ImageNet-C and its 15 corruptions; ImageNet-A as natural images "that cause model accuracy to substantially degrade". Read 2026-10.</li>
+<li><em>ImageNetV2</em> README (<a href="https://github.com/modestyachts/ImageNetV2/blob/master/README.md">GitHub, master branch</a>): new test sets sampled after a decade of progress, built so the distribution is "as similar as possible" to the original. Read 2026-10.</li>
+<li>OpenCV source, <code>modules/imgcodecs/include/opencv2/imgcodecs.hpp</code> (<a href="https://github.com/opencv/opencv/blob/4.x/modules/imgcodecs/include/opencv2/imgcodecs.hpp">GitHub, 4.x branch</a>): <code>imread</code> defaults to <code>IMREAD_COLOR_BGR</code>, which converts to "the 3 channel BGR color image". Read 2026-10.</li>
+<li>Pillow source, <code>src/PIL/ImageOps.py</code> (<a href="https://github.com/python-pillow/Pillow/blob/main/src/PIL/ImageOps.py">GitHub, main branch</a>): <code>exif_transpose</code> transposes an image that has an EXIF Orientation tag other than 1. Read 2026-10.</li>
+<li>The warehouse example, its camera count, frame rate, batch size and latency are invented. The arithmetic is shown in the lesson.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="vision-foundation-models.html"><span class="lbl">← Previous</span><span class="ttl">Vision foundation models: CLIP, DINO and SAM</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-images-journey">The mental model: the image&#x27;s journey</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-preprocessing-contract">The preprocessing contract</a><a class="h3" href="#fixed-input-sizes">Fixed input sizes</a><a class="h3" href="#resolution-frame-rate-and-hardware">Resolution, frame rate and hardware</a><a class="h3" href="#image-shift-and-robustness">Image shift and robustness</a><a class="h2" href="#worked-example-eight-cameras-on-a-loading-dock">Worked example: eight cameras on a loading dock</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Fshipping-vision-in-production.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/shipping-vision-in-production.html"</script><script defer src="../assets/glossary.js"></script></body></html>
