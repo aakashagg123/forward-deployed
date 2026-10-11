@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>What a tensor is: shape, rank and dtype — Tensors</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Tensors</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="what-a-tensor-is.html">1 · What a tensor is: shape, rank and dtype</a><a class="modlink" href="operations-and-broadcasting.html">2 · Operations and broadcasting</a><a class="modlink" href="matrix-multiplication.html">3 · Matrix multiplication: the workhorse</a><a class="modlink" href="batching-memory-and-precision.html">4 · Batching, memory and precision</a><a class="modlink" href="automatic-differentiation.html">5 · Automatic differentiation</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
+    <h1>What a tensor is: shape, rank and dtype</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>tensor</strong> is a grid of numbers with a <strong>shape</strong>. A single number is a tensor with no axes. A list of numbers has one axis. A table has two. A batch of images has four. The number of axes is the <strong>rank</strong>. Each axis has a size, and the list of sizes is the shape.</p>
+<p>Every input, every weight and every gradient in a model is a tensor. So the size of a model, the cost of a batch and the memory of a graphics processing unit (GPU) all come from counting numbers and multiplying by bytes. The number format is the <strong>dtype</strong>. A float32 number takes 4 bytes. A float16 number takes 2.</p>
+<p>The shape is also the contract between the parts of a program. A layer expects one shape and returns another. Many framework errors are shape errors. You can read a shape the way you read a unit.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Shape and dtype turn vague claims into arithmetic. "We will process a batch of 32 images" has a size you can compute. So does "we will fit a longer context". That arithmetic decides which hardware you need and what it costs.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the shape and dtype of the big tensors, not only the parameter count. You check that a requirement such as a larger image or a longer input is paid for in memory, since memory grows with the product of the axes.</p>
+<p><strong>Ask your eng team</strong> — <em>"What are the shapes of our largest tensors, in which dtype, and how many bytes is that per request?"</em></p>
+<p><strong>Risk if ignored</strong> — A feature that works on a demo image and runs out of memory on a real one. Or a bug where two tensors with the wrong axis order still combine, and the model learns from nonsense.</p>
+</blockquote>
+<h2 id="the-mental-model-axes-stack-up">The mental model: axes stack up</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.tn-row{display:grid;gap:12px}
+.tn-5{grid-template-columns:repeat(5,1fr)}.tn-3{grid-template-columns:repeat(3,1fr)}.tn-2{grid-template-columns:1fr 1fr}
+.tn-mono{font-family:var(--font-mono);font-size:11px;color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.tn-big{font-size:15px;font-weight:700;color:var(--color-text)}
+@media (max-width:760px){.tn-5{grid-template-columns:repeat(2,1fr)}.tn-3{grid-template-columns:1fr}}
+@media (max-width:520px){.tn-5,.tn-2{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Rank by rank</span>
+<h4>Each axis multiplies the size</h4>
+<p class="dgm-ml-sub">Bytes at float32, 4 per number. At float16 each size is half.</p>
+<div class="tn-row tn-5"><div class="dgm-ml-card "><h5><span class="dgm-ml-num">rank 0</span>Scalar</h5><p><span class='tn-mono'>()</span><br>1 number<br>4 bytes</p></div><div class="dgm-ml-card "><h5><span class="dgm-ml-num">rank 1</span>Vector</h5><p><span class='tn-mono'>(4,)</span><br>one customer<br>16 bytes</p></div><div class="dgm-ml-card dgm-ml-info"><h5><span class="dgm-ml-num">rank 2</span>Table</h5><p><span class='tn-mono'>(1000, 4)</span><br>4,000 numbers<br>15.6 KiB</p></div><div class="dgm-ml-card dgm-ml-warn"><h5><span class="dgm-ml-num">rank 3</span>Text batch</h5><p><span class='tn-mono'>(8, 512, 768)</span><br>3.1 million numbers<br>12.0 MiB</p></div><div class="dgm-ml-card dgm-ml-warn"><h5><span class="dgm-ml-num">rank 4</span>Image batch</h5><p><span class='tn-mono'>(32, 3, 224, 224)</span><br>4.8 million numbers<br>18.4 MiB</p></div></div>
+<p class="dgm-ml-foot">memory = product of the axis sizes × bytes per number</p>
+</div>
+
+<p>Think of a tensor as nested lists. A table is a list of rows, and each row is a list of numbers. A batch of images is a list of images. Each image is a list of colour channels. Each channel is a list of pixel rows. Each row is a list of pixels. The shape records the length of each list, from the outside in.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="shape-rank-and-size">Shape, rank and size</h3>
+<p>The <strong>shape</strong> is the tuple of axis sizes. The <strong>rank</strong> is its length. The <strong>size</strong> is the product of the sizes, which is the count of numbers.</p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Shape</th>
+<th>Rank</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One number</td>
+<td><code>()</code></td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>One customer's four features</td>
+<td><code>(4,)</code></td>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>A table of 1,000 customers</td>
+<td><code>(1000, 4)</code></td>
+<td>2</td>
+<td>4,000</td>
+</tr>
+<tr>
+<td>A batch of 8 text snippets, 512 tokens each, with a 768-number vector per token</td>
+<td><code>(8, 512, 768)</code></td>
+<td>3</td>
+<td>3,145,728</td>
+</tr>
+<tr>
+<td>A batch of 32 colour images, 224 by 224 pixels</td>
+<td><code>(32, 3, 224, 224)</code></td>
+<td>4</td>
+<td>4,816,896</td>
+</tr>
+</tbody>
+</table>
+<p>Libraries agree on the idea and disagree on conventions. One common order for images is batch, channels, height, width. PyTorch's <code>Conv2d</code> expects it. Other libraries put the channels last. Always check which order a function expects.</p>
+<h3 id="dtype-and-bytes">dtype and bytes</h3>
+<p>The <strong>dtype</strong> is the number format. It fixes how many bytes each number takes.</p>
+<table>
+<thead>
+<tr>
+<th>dtype</th>
+<th>Bytes per number</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>float64</td>
+<td>8</td>
+<td>Double precision. Rare in deep learning.</td>
+</tr>
+<tr>
+<td>float32</td>
+<td>4</td>
+<td>The classic default for training.</td>
+</tr>
+<tr>
+<td>float16, bfloat16</td>
+<td>2</td>
+<td>Half the memory. Different range and precision, see <a href="batching-memory-and-precision.html">lesson 4</a>.</td>
+</tr>
+<tr>
+<td>int8</td>
+<td>1</td>
+<td>Used for compressed inference. See <a href="../ai/01-inference-internals.html#quantization-formats">quantization</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>The memory for a tensor is its size times the bytes per number. A batch of 32 images at float32 is 4,816,896 × 4 = 19,267,584 bytes, which is 18.4 MiB. At float16 it is half that.</p>
+<h3 id="storage-and-strides">Storage and strides</h3>
+<p>A tensor is stored as one flat list in <strong>row-major</strong> order. The last index changes fastest. The <strong>strides</strong> say how far to move in that flat list to step one place along each axis. For a <code>(1000, 4)</code> table, the strides are <code>(4, 1)</code> in numbers. One step down a row jumps over 4 numbers. One step along a row moves 1.</p>
+<p>This is why some operations are free. A <strong>reshape</strong> keeps the same numbers and changes only the shape and strides. When the layout allows it, it is a view. Reshaping <code>(12,)</code> to <code>(3, 4)</code> copies nothing. On a non-contiguous tensor, such as one just transposed, NumPy's documentation says reshape creates a view where possible or a copy otherwise. NumPy's documentation describes the same idea for arrays: views share data, so a change through one is visible through the other.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Bytes vs. precision.</strong> A smaller dtype fits more in memory and moves faster. It stores each number less exactly. <a href="batching-memory-and-precision.html">Lesson 4</a> shows where that bites.</li>
+<li><strong>Big batch vs. memory.</strong> A bigger batch adds an axis size, so every tensor that carries the batch axis grows in proportion.</li>
+<li><strong>Flexible ranks vs. clear contracts.</strong> Libraries let a layer accept any number of leading axes. That is convenient. It also lets a wrong axis slip through. Write the expected shape next to every important function.</li>
+<li><strong>View vs. copy.</strong> A view saves memory and time. It also means that a change through one name changes the other. Know which operations copy.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Axis order mix-up.</strong> The batch axis and the feature axis swap. Shapes can still line up, so nothing fails.</li>
+<li><strong>A forgotten batch axis.</strong> One example has shape <code>(4,)</code>. A batch has <code>(32, 4)</code>. Code written for one breaks on the other, or quietly does the wrong thing.</li>
+<li><strong>A giant tensor nobody sized.</strong> A change to input size multiplies memory. The job dies on the largest case.</li>
+<li><strong>Dtype surprises.</strong> Integer labels mixed with float predictions. Or float16 where the range is too small.</li>
+<li><strong>Reading a view as a copy.</strong> One edit changes two names.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>tensors/code/lesson1_shapes.py</code>. It uses a small <code>Tensor</code> class from <code>tensors/code/tensor.py</code>, written with the standard library so you can read it. A real library does the same bookkeeping in compiled code.</p>
+<pre><code class="language-python">class Tensor:
+    def __init__(self, data, shape):
+        if len(data) != prod(shape):
+            raise ValueError(f&quot;{len(data)} numbers cannot fill the shape {shape}&quot;)
+        self.data = data            # one flat list, row-major
+        self.shape = tuple(shape)
+
+    @property
+    def strides(self):              # how far to move in the flat list per step on each axis
+        return row_major_strides(self.shape)
+
+    def reshape(self, *shape):      # a view: the same list of numbers, a new shape
+        return Tensor(self.data, shape)
+</code></pre>
+<p>The example builds the churn table from the <a href="../machine-learning/what-machine-learning-is.html">machine learning module</a> as a tensor, then checks the arithmetic in the table above with <code>assert</code> lines.</p>
+<p>Habits to adopt:</p>
+<ul>
+<li><strong>Print the shape</strong> of every important tensor while you build.</li>
+<li><strong>Write the expected shape in a comment</strong> or a test next to each function.</li>
+<li><strong>Compute bytes before you run.</strong> Size times bytes per number takes one line.</li>
+</ul>
+<h2 id="worked-example-sizing-three-batches">Worked example: sizing three batches</h2>
+<p><em>This example is invented. The shapes are typical. The code is in <code>tensors/code/lesson1_shapes.py</code>.</em></p>
+<p>We size three tensors.</p>
+<table>
+<thead>
+<tr>
+<th>Tensor</th>
+<th>Shape</th>
+<th>Numbers</th>
+<th>float32</th>
+<th>float16</th>
+<th>int8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Customer table</td>
+<td><code>(1000, 4)</code></td>
+<td>4,000</td>
+<td>15.6 KiB</td>
+<td>7.8 KiB</td>
+<td>3.9 KiB</td>
+</tr>
+<tr>
+<td>Text batch</td>
+<td><code>(8, 512, 768)</code></td>
+<td>3,145,728</td>
+<td>12.0 MiB</td>
+<td>6.0 MiB</td>
+<td>3.0 MiB</td>
+</tr>
+<tr>
+<td>Image batch</td>
+<td><code>(32, 3, 224, 224)</code></td>
+<td>4,816,896</td>
+<td>18.4 MiB</td>
+<td>9.2 MiB</td>
+<td>4.6 MiB</td>
+</tr>
+</tbody>
+</table>
+<p>The customer table is tiny. The text batch is 12 MiB at float32. Now double the tokens to 1,024. The text batch doubles to 24 MiB. The size is the product of the axes, so a longer input costs memory in proportion.</p>
+<p>The example also checks reshape. A list of 12 numbers becomes a <code>(3, 4)</code> grid with strides <code>(4, 1)</code>. Reading the grid at row 1, column 2 gives the number 6. The list was never copied: the grid and the flat list share the same storage.</p>
+<p>Last, it checks the contract. Asking for a <code>(2, 2)</code> tensor from three numbers raises an error. This is the good case: the shape contract refuses a mismatch up front.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we know the shape and dtype of our largest tensors?</li>
+<li class="task todo">Have we computed the bytes for a worst-case input?</li>
+<li class="task todo">Is the axis order written down, and does every function agree on it?</li>
+<li class="task todo">Does every function state the shape it expects and returns?</li>
+<li class="task todo">Do we know which operations copy and which return a view?</li>
+<li class="task todo">Do tests cover a batch of one and a batch of many?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="operations-and-broadcasting.html">Operations and broadcasting</a> — what happens when shapes differ.</li>
+<li><a href="batching-memory-and-precision.html">Batching, memory and precision</a> — turning sizes into a memory budget.</li>
+<li><a href="../ai/01-inference-internals.html#quantization-formats">Quantization formats</a> — what fewer bits do to a served model.</li>
+<li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — where a text batch of vectors fits.</li>
+<li><a href="../machine-learning/model-families.html">Model families</a> — the models whose weights these tensors hold.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>NumPy documentation, <a href="https://numpy.org/doc/stable/user/basics.copies.html">Copies and views</a>: a view changes metadata such as strides and shares the data buffer, so a change through the view shows in the original. Read from the documentation source on GitHub, 2026-10.</li>
+<li>PyTorch source, <code>torch/nn/modules/conv.py</code> (release 2.5.0): <code>Conv2d</code> input shape <code>(N, C_in, H_in, W_in)</code>. Read 2026-10.</li>
+<li>Data type sizes are fixed by the format definitions: the Institute of Electrical and Electronics Engineers (IEEE) 754 standard for float16, float32 and float64. See the sources in <a href="batching-memory-and-precision.html">lesson 4</a> for float16 and bfloat16.</li>
+<li>The customer table, the batch shapes and every size are computed by <code>tensors/code/lesson1_shapes.py</code>. The churn data is invented.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="operations-and-broadcasting.html"><span class="lbl">→ Next</span><span class="ttl">Operations and broadcasting</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-axes-stack-up">The mental model: axes stack up</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#shape-rank-and-size">Shape, rank and size</a><a class="h3" href="#dtype-and-bytes">dtype and bytes</a><a class="h3" href="#storage-and-strides">Storage and strides</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-sizing-three-batches">Worked example: sizing three batches</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=tensors%2Fwhat-a-tensor-is.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="tensors/what-a-tensor-is.html"</script><script defer src="../assets/glossary.js"></script></body></html>

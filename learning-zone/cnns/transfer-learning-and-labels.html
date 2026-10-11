@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Transfer learning and labels: start from someone else&#x27;s model — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink active" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
+    <h1>Transfer learning and labels: start from someone else&#x27;s model</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Almost nobody trains a vision model from scratch. The CS231n course notes say very few people do, because few teams have a big enough dataset. Instead a team takes a network already trained on a large dataset such as ImageNet and reuses it. This is <strong>transfer learning</strong>.</p>
+<p>There are three ways to reuse it. Use it as a <strong>frozen feature extractor</strong> and train only a small classifier on top. <strong>Fine-tune</strong> it: keep training some or all of its layers on your data. Or train from scratch, which is rarely the right call. The choice depends on two things: how many labelled images you have, and how much they look like the pre-training images.</p>
+<p>Labels are the real budget. Transfer learning cuts how many you need. It does not remove the need for a clean, honest test set.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — The transfer choice sets the labelling budget, the training cost and the time to a first result. A frozen backbone with a small head can give a baseline in a day. A full fine-tune needs more labels, more compute and more care.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the cheapest baseline first: frozen features and a simple classifier. You fund more labels or a fine-tune only when that baseline misses the bar.</p>
+<p><strong>Ask your eng team</strong> — <em>"What did a frozen pre-trained backbone with a simple classifier score on our test set, before we decided to fine-tune?"</em></p>
+<p><strong>Risk if ignored</strong> — A team spends weeks fine-tuning a large model on 800 images. It overfits. A frozen baseline that took an afternoon would have scored better.</p>
+</blockquote>
+<h2 id="the-mental-model-a-2-by-2-grid">The mental model: a 2 by 2 grid</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Transfer</span>
+<h4>Two questions place you in the grid</h4>
+<p class="cn-sub">Rules of thumb from the CS231n transfer-learning notes. Your own test set decides.</p>
+<div class="cn-row cn-c2"><div class="cn-card cn-ok"><h5>Small · similar</h5><p>freeze the backbone<br>train a linear classifier</p></div><div class="cn-card cn-info"><h5>Large · similar</h5><p>fine-tune through<br>the whole network</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c2"><div class="cn-card cn-warn"><h5>Small · different</h5><p>freeze, but take features<br>from an earlier layer</p></div><div class="cn-card cn-disc"><h5>Large · different</h5><p>fine-tune everything,<br>still from pre-trained weights</p></div></div>
+<p class="cn-foot">the cheapest baseline first: a frozen backbone and a small head</p>
+</div>
+
+<p>The grid comes from the CS231n transfer-learning notes. Two questions place you in it: how much data, and how different it is.</p>
+<p>The grid breaks at the edges. "Small" and "similar" have no fixed thresholds. Your own test set is what places you, not a rule of thumb.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="what-frozen-means">What "frozen" means</h3>
+<p>A pre-trained classifier ends with a layer that scores the original classes, such as ImageNet's 1,000. You remove it. Everything before it now turns an image into a vector of features. You train a new small classifier on those vectors. The backbone's weights do not change.</p>
+<p>In library terms, freezing means telling the library not to compute gradients for those weights. The Tensors lesson on <a href="../tensors/automatic-differentiation.html">automatic differentiation</a> shows the accidental version of this: a cut graph that silently freezes a layer. Here you cut it on purpose, and you know which layers stopped learning.</p>
+<p>A classifier as simple as one linear layer on frozen features is called a <strong>linear probe</strong>. Meta's DINOv2 README says its features "can be directly employed with classifiers as simple as linear layers" and "perform well across domains without any requirement for fine-tuning."</p>
+<h3 id="what-fine-tuning-adds">What fine-tuning adds</h3>
+<p>Fine-tuning keeps training the backbone on your data. You can train all of it, or freeze the early layers and train the later ones. The CS231n notes give the reason to freeze early layers: they hold generic features such as edge detectors, and later layers are more specific to the original dataset. They also advise a smaller learning rate for the pre-trained weights than for the new classifier, so training does not wreck what the backbone already knows.</p>
+<h3 id="the-four-cases">The four cases</h3>
+<p>The CS231n notes give rules of thumb for the grid above:</p>
+<ol>
+<li><strong>Small and similar.</strong> Do not fine-tune, because of overfitting risk. Train a linear classifier on the features.</li>
+<li><strong>Large and similar.</strong> Fine-tune through the full network.</li>
+<li><strong>Small and very different.</strong> Train only a linear classifier, but on features from earlier in the network, since the top layers are tuned to the original data.</li>
+<li><strong>Large and very different.</strong> You could train from scratch. In practice it is still often better to start from pre-trained weights and fine-tune everything.</li>
+</ol>
+<h3 id="labels">Labels</h3>
+<p>Transfer learning cuts how many labels you need. It does not change what makes a label set good. It needs clean labels, enough examples of each class, and a test set that the model never sees in training. <a href="../machine-learning/data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> covers splits and leakage. For images, one extra rule matters: near-duplicate photos of the same item must sit on the same side of the split.</p>
+<h2 id="worked-example-the-defect-classifier">Worked example: the defect classifier</h2>
+<p><em>This example is illustrative. The image counts and the class list are assumed. The parameter counts come from torchvision's ResNet-50 and are recomputed here.</em></p>
+<p>A factory wants to sort photos of parts into 4 classes: good, scratched, dented, discoloured. It has 1,200 labelled photos, 300 per class. The photos are close-ups of metal, unlike ImageNet's everyday scenes. That is case 3: small and different.</p>
+<p><strong>Step 1: count what you would train.</strong> Torchvision lists ResNet-50 at 25,557,032 parameters. Its last layer maps 2,048 features to 1,000 classes: 2,048 × 1,000 + 1,000 = 2,049,000 parameters. Remove it and 23,508,032 remain. A new 4-class layer adds 2,048 × 4 + 4 = 8,196.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Parameters trained</th>
+<th>Share of the model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frozen backbone, new 4-class head</td>
+<td>8,196</td>
+<td>0.035% of 23,516,228</td>
+</tr>
+<tr>
+<td>Fine-tune everything</td>
+<td>23,516,228</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 2: run the cheap baseline.</strong> The team trains the 8,196-parameter head first. Following case 3, it also tries features from an earlier stage, as in <a href="from-edges-to-objects.html">From edges to objects</a>.</p>
+<p><strong>Step 3: decide.</strong> The team compares both probes on a test set of photos taken on different days from the training photos. If the best probe meets the bar, it ships. If not, the next spend is a choice. Label more photos, or fine-tune the later layers with a small learning rate. The cheaper of the two goes first.</p>
+<p><strong>Step 4: budget the labels.</strong> A class with too few examples gets few test examples too. With 300 photos a class and a 20% test split (assumed), each class has 60 test photos. One mistake moves that class's recall by about 1.7 points (1 ÷ 60). The team decides that is too coarse for the rarest defect and labels more of that class first.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Frozen vs. fine-tuned.</strong> Frozen is fast, cheap and hard to overfit, and it is capped by what the backbone already sees. Fine-tuning can fit your images better. It costs more compute, needs more labels and can overfit a small set.</li>
+<li><strong>Late vs. early features.</strong> Late features are strong when your images look like the pre-training data. Early features are more generic and useful for many tasks, and leave more for your classifier to learn.</li>
+<li><strong>More labels vs. a bigger model.</strong> Both raise accuracy. Labels also strengthen your test set. A bigger model raises your serving bill and leaves the test set as thin as before.</li>
+<li><strong>One backbone vs. many.</strong> Sharing one frozen backbone across several product features saves serving cost, and every feature then depends on its quality.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Fine-tuning a big model on a small set.</strong> It memorises the training photos and scores worse on new ones.</li>
+<li><strong>Leakage across the split.</strong> Five photos of the same part, some in training and some in test. The score is inflated.</li>
+<li><strong>A high learning rate on pre-trained weights.</strong> Early training destroys the useful features.</li>
+<li><strong>A preprocessing mismatch.</strong> The backbone expects the exact resizing and normalisation it was trained with. A different one can quietly lower accuracy. <a href="shipping-vision-in-production.html">Shipping vision in production</a> covers this.</li>
+<li><strong>A licence missed.</strong> The DINOv2 repository, for example, releases its XRay-DINO and Cell-DINO weights under the FAIR Noncommercial Research License, unlike its main Apache 2.0 weights (as of 2026-10). Check the licence of the exact weights before you build on them. <a href="vision-foundation-models.html">Vision foundation models</a> has more examples.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>A frozen backbone with a new head, sketched in PyTorch. This is a sketch of the configuration, not code this lesson runs.</p>
+<pre><code class="language-python">from torchvision.models import resnet50, ResNet50_Weights
+import torch.nn as nn
+
+model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+for p in model.parameters():
+    p.requires_grad = False                 # freeze: no gradients for the backbone
+model.fc = nn.Linear(2048, 4)               # new head; its weights train by default
+preprocess = ResNet50_Weights.IMAGENET1K_V2.transforms()   # the exact preprocessing it expects
+</code></pre>
+<p>Torchvision's <code>ResNet</code> class builds its last layer as <code>nn.Linear(512 * block.expansion, num_classes)</code>. The ResNet-50 block sets <code>expansion = 4</code>, which gives the 2,048 inputs above. The arithmetic of the table:</p>
+<pre><code class="language-python">fc_old = 2048 * 1000 + 1000          # 2,049,000
+backbone = 25_557_032 - fc_old       # 23,508,032
+head = 2048 * 4 + 4                  # 8,196
+assert backbone + head == 23_516_228
+assert round(100 * head / (backbone + head), 3) == 0.035
+</code></pre>
+<p>To fine-tune later layers only, unfreeze <code>model.layer4</code> and give its parameters a smaller learning rate than <code>model.fc</code>.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we have a frozen-backbone baseline score before any fine-tuning?</li>
+<li class="task todo">Have we placed our data in the grid: how many labels, how different from the pre-training data?</li>
+<li class="task todo">For different-looking images, did we try features from an earlier layer?</li>
+<li class="task todo">Does every class have enough test images for its score to be stable?</li>
+<li class="task todo">Are near-duplicate photos kept on one side of the split?</li>
+<li class="task todo">Do we use the exact preprocessing the pre-trained weights expect?</li>
+<li class="task todo">Have we checked the licence of the weights?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="from-edges-to-objects.html">From edges to objects</a> — why early features transfer and late ones are specific.</li>
+<li><a href="vision-foundation-models.html">Vision foundation models</a> — large pre-trained backbones, and their licences.</li>
+<li><a href="../tensors/automatic-differentiation.html">Automatic differentiation</a> — freezing as a deliberate cut in the gradient graph.</li>
+<li><a href="../machine-learning/generalization-overfitting-and-bias-variance.html">Generalization: overfitting and the bias–variance tradeoff</a> — why a small set overfits a big model.</li>
+<li><a href="../llms/prompting-vs-rag-vs-finetuning.html">Prompting vs. RAG vs. fine-tuning</a> — the same cheapest-lever-first rule for language models.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>CS231n course notes, <em>Transfer learning</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/transfer-learning.md">GitHub source, master branch</a>): few people train from scratch for lack of data; ImageNet as 1.2 million images in 1,000 categories; the fixed-feature-extractor and fine-tuning strategies; the four scenarios by dataset size and similarity; early features generic, later features specific; a smaller learning rate for pre-trained weights. Read 2026-10.</li>
+<li>Meta AI Research (FAIR), <em>DINOv2</em> README (<a href="https://github.com/facebookresearch/dinov2/blob/main/README.md">GitHub, main branch</a>): features usable "with classifiers as simple as linear layers", performing well "without any requirement for fine-tuning"; main code and weights under the Apache License 2.0; XRay-DINO and Cell-DINO weights under the FAIR Noncommercial Research License. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/resnet.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py">GitHub, main branch</a>): <code>ResNet50_Weights.IMAGENET1K_V2</code> with <code>num_params</code> 25,557,032; the final layer <code>nn.Linear(512 * block.expansion, num_classes)</code>; <code>expansion = 4</code> in the ResNet-50 block. Read 2026-10.</li>
+<li>The factory example, the class counts and the test split are invented. The arithmetic is shown in the lesson.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="from-edges-to-objects.html"><span class="lbl">← Previous</span><span class="ttl">From edges to objects: what depth buys</span></a><a class="navcard next" href="cnns-vs-vision-transformers.html"><span class="lbl">→ Next</span><span class="ttl">CNNs vs. vision transformers: picking a backbone</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-2-by-2-grid">The mental model: a 2 by 2 grid</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#what-frozen-means">What &quot;frozen&quot; means</a><a class="h3" href="#what-fine-tuning-adds">What fine-tuning adds</a><a class="h3" href="#the-four-cases">The four cases</a><a class="h3" href="#labels">Labels</a><a class="h2" href="#worked-example-the-defect-classifier">Worked example: the defect classifier</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Ftransfer-learning-and-labels.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/transfer-learning-and-labels.html"</script><script defer src="../assets/glossary.js"></script></body></html>

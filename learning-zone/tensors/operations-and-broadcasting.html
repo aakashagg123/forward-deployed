@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Operations and broadcasting — Tensors</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Tensors</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-a-tensor-is.html">1 · What a tensor is: shape, rank and dtype</a><a class="modlink active" href="operations-and-broadcasting.html">2 · Operations and broadcasting</a><a class="modlink" href="matrix-multiplication.html">3 · Matrix multiplication: the workhorse</a><a class="modlink" href="batching-memory-and-precision.html">4 · Batching, memory and precision</a><a class="modlink" href="automatic-differentiation.html">5 · Automatic differentiation</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <h1>Operations and broadcasting</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Most tensor work is three kinds of operation. <strong>Elementwise</strong> operations act on each number: add, multiply, apply a function. <strong>Reductions</strong> collapse an axis: sum, mean, maximum. <strong>Reshapes</strong> change the shape without changing the numbers.</p>
+<p>When two tensors have different shapes, <strong>broadcasting</strong> decides whether they can combine. Line the shapes up from the right. Each pair of axis sizes must be equal, or one must be 1, or one must be missing. The small tensor is then stretched to fit. A bias vector added to every row of a table is the usual case.</p>
+<p>Broadcasting is convenient and dangerous. A wrong axis can still have a legal shape. Then the code runs, the numbers are wrong, and nothing warns you. This is a common cause of silent bugs in model code.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — A shape bug does not always crash. It can produce a model that trains, scores and ships, and is wrong. The cost shows up as weak quality that no one can explain.</p>
+<p><strong>What it changes in your decisions</strong> — You ask how the team guards against shape errors: shape checks in tests, a batch of one and a batch of many, and a comparison to a slow reference on a small input. You treat "it ran without errors" as weak evidence.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which of our tensor operations rely on broadcasting, and what test would fail if an axis were wrong?"</em></p>
+<p><strong>Risk if ignored</strong> — A loss function that quietly averages over the wrong axis. The loss looks plausible and the model never improves.</p>
+</blockquote>
+<h2 id="the-mental-model-stretch-the-small-one">The mental model: stretch the small one</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.tn-row{display:grid;gap:12px}
+.tn-5{grid-template-columns:repeat(5,1fr)}.tn-3{grid-template-columns:repeat(3,1fr)}.tn-2{grid-template-columns:1fr 1fr}
+.tn-mono{font-family:var(--font-mono);font-size:11px;color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.tn-big{font-size:15px;font-weight:700;color:var(--color-text)}
+@media (max-width:760px){.tn-5{grid-template-columns:repeat(2,1fr)}.tn-3{grid-template-columns:1fr}}
+@media (max-width:520px){.tn-5,.tn-2{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Shape rule</span>
+<h4>Stretch the small one, or refuse</h4>
+<p class="dgm-ml-sub">The same rule gives a convenient bias add and a silent loss bug.</p>
+<div class="tn-row tn-3"><div class="dgm-ml-card dgm-ml-ok"><h5><span class="dgm-ml-num">ok</span>Works</h5><p><span class='tn-mono'>(1000, 4)</span> − <span class='tn-mono'>(4,)</span><br>→ <span class='tn-mono'>(1000, 4)</span><br>The vector is stretched down the rows. No copy: stride 0.</p></div><div class="dgm-ml-card dgm-ml-warn"><h5><span class="dgm-ml-num">!</span>Legal, usually wrong</h5><p><span class='tn-mono'>(300, 1)</span> − <span class='tn-mono'>(300,)</span><br>→ <span class='tn-mono'>(300, 300)</span><br>90,000 numbers instead of 300. The loss averages every pair.</p></div><div class="dgm-ml-card dgm-ml-bad"><h5><span class="dgm-ml-num">x</span>Refused</h5><p><span class='tn-mono'>(3,)</span> + <span class='tn-mono'>(4,)</span><br>→ error<br>3 and 4 are not equal, and neither is 1. The good case.</p></div></div>
+<div class="dgm-ml-card dgm-ml-info" style="margin-top:12px"><h5>The rule</h5><p>Line the shapes up from the right. Each pair of sizes must be equal, or one must be 1, or one must be missing. The result takes the larger size.</p></div>
+<p class="dgm-ml-foot">test with a non-square input: on a 4 × 4 table the wrong axis is also legal</p>
+</div>
+
+<p>Write the two shapes one above the other, right-aligned. Compare column by column. A column passes if the sizes are equal or one is 1. A missing size counts as 1. The result takes the larger size in each column. If any column fails, the operation raises an error.</p>
+<pre><code class="language-text">Table         (1000, 4)
+Column means          (4,)    -&gt;  works, result (1000, 4)
+
+Predictions   (300, 1)
+Labels             (300,)     -&gt;  works, but the result is (300, 300)
+</code></pre>
+<p>The second pair is legal. It is almost never what you meant.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="elementwise-operations">Elementwise operations</h3>
+<p>Add, subtract, multiply and divide act on matching positions. If the shapes match, there is nothing to decide. A function such as tanh applies to each number on its own.</p>
+<h3 id="reductions">Reductions</h3>
+<p>A reduction removes an axis by combining its numbers. <code>sum(axis=0)</code> on a <code>(1000, 4)</code> table gives 4 numbers, one per column. <code>sum(axis=1)</code> gives 1,000 numbers, one per row. Choosing the axis is choosing what to combine.</p>
+<p>Most libraries offer <strong>keepdims</strong>: keep the reduced axis with size 1. A <code>(1000, 4)</code> table averaged over axis 1 with keepdims has shape <code>(1000, 1)</code>. That shape broadcasts back against the table in the way you want, one mean per row. Without keepdims the shape is <code>(1000,)</code>, which does not.</p>
+<h3 id="the-broadcasting-rule">The broadcasting rule</h3>
+<p>The rule is in the NumPy documentation. It compares shapes starting with the trailing dimension and works left. Two dimensions are compatible when they are equal or one of them is 1. Missing dimensions count as size 1. The documentation's own example: shapes <code>8 × 1 × 6 × 1</code> and <code>7 × 1 × 5</code> give <code>8 × 7 × 6 × 5</code>. PyTorch follows the same rules.</p>
+<h3 id="stretching-without-copying">Stretching without copying</h3>
+<p>The documentation says the stretching is conceptual. NumPy uses the original data without making copies. One way to do that is a stride of 0, and the code below uses it. A stride says how far to step in memory along an axis. A stride of 0 steps nowhere, so the same number is read again for each position along that axis. A <code>(4,)</code> vector stretched to <code>(1000, 4)</code> has strides <code>(0, 1)</code>.</p>
+<p>The documentation also warns that broadcasting can be a bad idea when it leads to inefficient use of memory. The <code>(300, 300)</code> result above is a real array of 90,000 numbers.</p>
+<h3 id="reshape">Reshape</h3>
+<p>A reshape reads the same numbers with a new shape. One size can be left as -1 for the library to work out. A reshape returns a view when the layout allows it, so it usually costs nothing. The numbers must fill the new shape exactly.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Convenience vs. explicit shapes.</strong> Relying on broadcasting keeps code short. Writing the shapes out, or adding axes with size 1 by hand, makes the intent visible.</li>
+<li><strong>Stretched views vs. real copies.</strong> A view saves memory. Some operations still create the full-size result, as with the <code>(300, 300)</code> difference.</li>
+<li><strong>Strictness vs. speed of development.</strong> Shape assertions cost a few lines. A silent shape bug can cost weeks.</li>
+<li><strong>Reduce first vs. reduce last.</strong> The axis you reduce changes the meaning of the result, not only its shape.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The wrong axis on a square table.</strong> On a <code>4 × 4</code> table, a mean over rows and a mean over columns both have shape <code>(4,)</code>. Either one subtracts without complaint.</li>
+<li><strong>A column against a row.</strong> Predictions of shape <code>(n, 1)</code> against labels of shape <code>(n,)</code> produce an <code>n × n</code> difference. The loss averages over all pairs.</li>
+<li><strong>A forgotten keepdims.</strong> A row mean without keepdims broadcasts along the wrong axis.</li>
+<li><strong>Memory blow-up.</strong> An intended <code>(n,)</code> result becomes <code>(n, n)</code>, and memory grows with the square.</li>
+<li><strong>A bug that shows only on one size.</strong> The same slip raises an error on a <code>5 × 4</code> table and passes on <code>4 × 4</code>. Tests that use a square toy input miss it.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>tensors/code/lesson2_broadcasting.py</code>. The rule is a short function.</p>
+<pre><code class="language-python">def broadcast_shapes(a, b):
+    out = []
+    for i in range(1, max(len(a), len(b)) + 1):
+        x = a[-i] if i &lt;= len(a) else 1          # a missing size counts as 1
+        y = b[-i] if i &lt;= len(b) else 1
+        if x != y and x != 1 and y != 1:
+            raise ValueError(f&quot;shapes {tuple(a)} and {tuple(b)} cannot be broadcast together&quot;)
+        out.append(max(x, y) if x != 1 and y != 1 else (y if x == 1 else x))
+    return tuple(reversed(out))
+</code></pre>
+<p>The stride trick is a one-line change to the strides.</p>
+<pre><code class="language-python">def broadcast_strides(self, shape):
+    pad = (1,) * (len(shape) - self.rank) + self.shape
+    own = (0,) * (len(shape) - self.rank) + self.strides
+    return tuple(0 if p == 1 and s != 1 else st for p, st, s in zip(pad, own, shape))
+</code></pre>
+<p>If NumPy is installed, <code>tensors/code/numpy_check.py</code> compares this code with NumPy on matrix products, reductions, reshapes, strides and broadcast shapes. It prints a skip message if NumPy is missing.</p>
+<p>Habits to adopt:</p>
+<ul>
+<li><strong>Assert shapes</strong> at the entry and exit of every important function.</li>
+<li><strong>Test with a non-square input.</strong> A shape bug hides on a square one.</li>
+<li><strong>Use keepdims</strong> when you plan to broadcast a reduction back.</li>
+<li><strong>Check the output size</strong> of any operation that mixes a column and a row.</li>
+</ul>
+<h2 id="worked-example-two-silent-bugs-and-one-loud-one">Worked example: two silent bugs and one loud one</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed. The code is in <code>tensors/code/lesson2_broadcasting.py</code>.</em></p>
+<p><strong>The rule works.</strong> Shapes <code>(8, 1, 6, 1)</code> and <code>(7, 1, 5)</code> broadcast to <code>(8, 7, 6, 5)</code>, as in the NumPy documentation. We standardize the churn table from the <a href="../machine-learning/data-features-labels-and-leakage.html">machine learning module</a>. We subtract a <code>(4,)</code> vector of column means from a <code>(1000, 4)</code> table. The result has shape <code>(1000, 4)</code>. Its column means are zero to within rounding. The vector was read with strides <code>(0, 1)</code>: the row axis was re-read, not copied.</p>
+<p><strong>Silent bug 1: the wrong axis.</strong> Take a <code>4 × 4</code> table. To center each row, we subtract the row means with keepdims, shape <code>(4, 1)</code>. The row means of the result are all zero. Now forget keepdims. The row means have shape <code>(4,)</code>, which lines up with the columns. The code runs. The row means of the result are −5.6, −3.1, −8.1 and 16.9. Nothing is centered. Try the same slip on a <code>5 × 4</code> table and the library raises an error. The error is a lucky accident of the shape.</p>
+<p><strong>Silent bug 2: the loss that averages over the wrong thing.</strong> We have 300 predictions of shape <code>(300, 1)</code> and 300 labels of shape <code>(300,)</code>. The difference is <code>(300, 300)</code>, which is 90,000 numbers instead of 300. The squared-error loss is 0.188. The correct loss, with the predictions reshaped to <code>(300,)</code>, is 0.041. The wrong version averages every prediction against every label. Even a perfect model, whose predictions equal the labels, scores 0.295 under this loss. The loss has a high floor, so it hides progress. We chose predictions that carry signal on purpose. If every prediction were the same number, the two averages would match and the bug would hide.</p>
+<p><strong>The loud one.</strong> Adding a <code>(3,)</code> tensor to a <code>(4,)</code> tensor raises an error. This is the good case: the shapes cannot be broadcast, and the library says so.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Does each important function assert the shapes it expects and returns?</li>
+<li class="task todo">Do tests include a non-square input and a batch of one?</li>
+<li class="task todo">Do we use keepdims when broadcasting a reduction back?</li>
+<li class="task todo">Have we checked the shape of every loss before it is averaged?</li>
+<li class="task todo">Do we compare against a slow reference on a tiny input?</li>
+<li class="task todo">Do we know which operations create a full-size result from stretched inputs?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="what-a-tensor-is.html">What a tensor is</a> — shape, rank and strides.</li>
+<li><a href="matrix-multiplication.html">Matrix multiplication</a> — the operation with its own shape rule.</li>
+<li><a href="automatic-differentiation.html">Automatic differentiation</a> — the backward pass must undo each broadcast.</li>
+<li><a href="../machine-learning/measuring-a-model.html">Measuring a model</a> — why a loss number needs a sanity check.</li>
+<li><a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">Learning and doing ML with Claude Code</a> — checks an agent can run for you.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>NumPy documentation, <a href="https://numpy.org/doc/stable/user/basics.broadcasting.html">Broadcasting</a>: the rule (trailing dimensions equal or one of them 1, missing dimensions count as 1), the <code>8 × 1 × 6 × 1</code> and <code>7 × 1 × 5</code> example, that stretching is conceptual and avoids copies, and that broadcasting can use memory inefficiently. Read from the documentation source on GitHub, 2026-10.</li>
+<li>PyTorch documentation, <a href="https://pytorch.org/docs/stable/notes/broadcasting.html">Broadcasting semantics</a>: the same rules for PyTorch tensors, with "without making copies of the data". Read from the documentation source on GitHub (release 2.5.0), 2026-10.</li>
+<li>The churn data, the tables and every number are invented. They come from <code>tensors/code/lesson2_broadcasting.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="what-a-tensor-is.html"><span class="lbl">← Previous</span><span class="ttl">What a tensor is: shape, rank and dtype</span></a><a class="navcard next" href="matrix-multiplication.html"><span class="lbl">→ Next</span><span class="ttl">Matrix multiplication: the workhorse</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-stretch-the-small-one">The mental model: stretch the small one</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#elementwise-operations">Elementwise operations</a><a class="h3" href="#reductions">Reductions</a><a class="h3" href="#the-broadcasting-rule">The broadcasting rule</a><a class="h3" href="#stretching-without-copying">Stretching without copying</a><a class="h3" href="#reshape">Reshape</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-two-silent-bugs-and-one-loud-one">Worked example: two silent bugs and one loud one</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=tensors%2Foperations-and-broadcasting.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="tensors/operations-and-broadcasting.html"</script><script defer src="../assets/glossary.js"></script></body></html>

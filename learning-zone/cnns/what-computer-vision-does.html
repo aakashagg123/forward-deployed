@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>What computer vision does: the four jobs — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
+    <h1>What computer vision does: the four jobs</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Computer vision turns pixels into a decision. Most products ask one of four questions about an image. <strong>What is in it?</strong> That is classification. <strong>Where is each thing?</strong> That is detection, which draws a box around each object. <strong>Which pixels belong to what?</strong> That is segmentation, which colours every pixel. <strong>What is it similar to?</strong> That is an embedding, a list of numbers you can search and compare.</p>
+<p>The four jobs differ in what they cost to label, how you measure them and how fast they run. A box costs more to draw than a label. A mask costs more than a box. So the first product decision is the framing: pick the least detailed output that still answers the product question.</p>
+<p>This lesson is about that choice. It does not explain how an image becomes numbers. <a href="../tensors/what-a-tensor-is.html">What a tensor is</a> covers that: an image batch is a grid of shape (batch, channels, height, width).</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — The framing sets the labelling budget, the metric and the latency. A team that asks for masks when a yes-or-no label would do can spend many times the labelling money for no product gain.</p>
+<p><strong>What it changes in your decisions</strong> — You write the product question first, then pick the job. You ask what each output costs to label, and which metric will decide launch.</p>
+<p><strong>Ask your eng team</strong> — <em>"What is the simplest output that answers our product question, and what would it cost us to label 5,000 images for it?"</em></p>
+<p><strong>Risk if ignored</strong> — A detection project that should have been a classifier. Months go into drawing boxes. The product only ever needed to know whether a shelf was empty.</p>
+</blockquote>
+<h2 id="the-mental-model-four-questions-four-outputs">The mental model: four questions, four outputs</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-info-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-info-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-info-surface);color:var(--color-text-info)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Four jobs</span>
+<h4>Four questions, four outputs</h4>
+<p class="cn-sub">Each step adds detail, and labelling cost. The embedding sits beside the ladder.</p>
+<div class="cn-row cn-c4"><div class="cn-card cn-ok"><span class="cn-tag">least detail</span><h5>Classification</h5><p>What is in it?<br><span class="cn-mono">(N, classes)</span><br>one label per image</p></div><div class="cn-card cn-info"><h5>Detection</h5><p>Where is each thing?<br><span class="cn-mono">boxes (K, 4)</span><br>a box, label and score each</p></div><div class="cn-card cn-warn"><span class="cn-tag">most detail</span><h5>Segmentation</h5><p>Which pixels?<br><span class="cn-mono">masks (K, 1, H, W)</span><br>a mask per object</p></div><div class="cn-card cn-disc"><h5>Embedding</h5><p>What is it like?<br><span class="cn-mono">vectors (N, D)</span><br>compare and search</p></div></div>
+<p class="cn-foot">pick the least detailed output that answers the product question</p>
+</div>
+
+<p>Read the four jobs as a ladder of detail. Each step down tells you more about the image, and each step costs more to label and to run. The embedding sits beside the ladder. It needs no labels for the answer itself, only for testing.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="classification">Classification</h3>
+<p>The model returns one score per class. The highest score wins. A classifier trained on ImageNet, the standard benchmark, scores 1,000 classes. A product classifier might score three: "shelf full", "shelf partly empty", "shelf empty".</p>
+<p>You measure it with accuracy, or better, with precision and recall per class. <a href="../machine-learning/measuring-a-model.html">Measuring a model</a> covers both, and how to pick a threshold from the cost of each error.</p>
+<h3 id="detection">Detection</h3>
+<p>The model returns a list of boxes. Each box has four corner coordinates, a label and a score. Torchvision's detection models document this output: <code>boxes</code> as <code>[x1, y1, x2, y2]</code>, plus <code>labels</code> and <code>scores</code>, one entry per object found.</p>
+<p>A predicted box rarely matches the true box exactly. So detection is measured with <strong>intersection over union (IoU)</strong>: the overlap of the two boxes divided by the area they cover together. A box counts as correct when its IoU passes a threshold. The usual summary is <strong>mean average precision (mAP)</strong>. The Common Objects in Context (COCO) benchmark's evaluation code averages it over ten IoU thresholds, from 0.50 to 0.95 in steps of 0.05. Model tables often label this "mAP 50-95".</p>
+<h3 id="segmentation">Segmentation</h3>
+<p>The model returns a mask: a label for every pixel. <strong>Semantic</strong> segmentation labels each pixel with a class, such as "road". <strong>Instance</strong> segmentation also separates objects, such as car 1 and car 2. Torchvision's Mask R-CNN returns one mask per detected object, as a grid of values between 0 and 1 that you threshold, usually at 0.5.</p>
+<h3 id="embeddings">Embeddings</h3>
+<p>The model returns a vector, often hundreds or thousands of numbers long. A ResNet-50's last layer before its classifier, for example, holds 2,048. Similar images get nearby vectors. You can then search a catalogue for look-alikes, group photos, or find duplicates. The search side is the same as for text: see <a href="../rag-vector-databases/embeddings-and-semantic-search.html">Embeddings and semantic search</a>. <a href="vision-foundation-models.html">Vision foundation models</a> covers models that produce good image vectors with no labels.</p>
+<h2 id="worked-example-the-shelf-monitor">Worked example: the shelf monitor</h2>
+<p><em>This example is illustrative. The labelling times and the hourly rate are assumed, not measured.</em></p>
+<p>A retailer wants to know when a shelf needs restocking. The team has 5,000 shelf photos to label. Three framings are on the table.</p>
+<table>
+<thead>
+<tr>
+<th>Framing</th>
+<th>What a labeller does</th>
+<th>Assumed time per image</th>
+<th>Hours for 5,000 images</th>
+<th>Cost at an assumed $30 an hour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classification</td>
+<td>Pick one of three labels</td>
+<td>3 seconds</td>
+<td>4.2</td>
+<td>$125</td>
+</tr>
+<tr>
+<td>Detection</td>
+<td>Draw about 10 boxes, about 7 seconds each</td>
+<td>70 seconds</td>
+<td>97.2</td>
+<td>$2,917</td>
+</tr>
+<tr>
+<td>Segmentation</td>
+<td>Trace about 10 masks, about 30 seconds each</td>
+<td>300 seconds</td>
+<td>416.7</td>
+<td>$12,500</td>
+</tr>
+</tbody>
+</table>
+<p>The arithmetic is seconds times 5,000, divided by 3,600 for hours, then times $30.</p>
+<p>Now ask the product question. "Does this shelf need restocking?" Classification answers it. "Which product is missing?" needs detection, with a box per product. "How much shelf area is empty?" needs segmentation.</p>
+<p>The team ships classification first. It labels in an afternoon and tells the store when to act. Detection waits until the product question changes.</p>
+<p><strong>A check on the metric.</strong> Two boxes, each 10 by 10 pixels, overlap in a 5 by 5 corner. The overlap is 25 square pixels. Together they cover 100 + 100 − 25 = 175. The IoU is 25 ÷ 175 = 0.143. At a threshold of 0.5, this prediction counts as a miss, even though it touches the object.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Detail vs. labelling cost.</strong> Each step down the ladder adds information and multiplies labelling time. You pay that cost again every time you relabel.</li>
+<li><strong>Detail vs. speed.</strong> Detail costs compute. In the Ultralytics tables (as of 2026-10), the smallest YOLO26 classifier runs at 224 pixels in about 5.0 ms on a central processing unit (CPU). The smallest detector runs at 640 pixels in about 38.9 ms, and the smallest instance-segmentation model in about 53.3 ms. Part of that gap is the larger input. Check the latency on your own hardware before you promise a real-time feature.</li>
+<li><strong>A fixed class list vs. an embedding.</strong> A classifier knows only its classes. An embedding can match new products without retraining, but someone must still decide what "similar enough" means.</li>
+<li><strong>One model vs. two stages.</strong> A cheap classifier can filter images before a costly detector runs. You save compute and add a second place to fail.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Over-framing.</strong> The team builds detection when the product needed a label. The labelling budget runs out first.</li>
+<li><strong>Under-framing.</strong> A classifier says "damaged", but the repair team needs to know where. The product sends people to search by eye.</li>
+<li><strong>The wrong metric.</strong> Accuracy looks high on a set where 95% of shelves are full. A model that always says "full" scores 95%.</li>
+<li><strong>A loose IoU threshold.</strong> A threshold of 0.5 counts sloppy boxes as hits. Counting by box then looks fine and measuring by box fails.</li>
+<li><strong>Labels that disagree.</strong> Two labellers draw different boxes for the same item. The model learns the noise. Measure agreement before you scale.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The four jobs return four output shapes. For a batch of <code>N</code> images:</p>
+<pre><code class="language-text">classification   scores  (N, num_classes)            one row of class scores per image
+detection        per image: boxes (K, 4), labels (K,), scores (K,)     K varies per image
+segmentation     per image: masks (K, 1, H, W), one soft mask per instance (Mask R-CNN)
+embedding        vectors (N, D)                       D numbers per image
+</code></pre>
+<p>Intersection over union for two boxes in <code>[x1, y1, x2, y2]</code> form:</p>
+<pre><code class="language-python">def iou(a, b):
+    w = max(0, min(a[2], b[2]) - max(a[0], b[0]))
+    h = max(0, min(a[3], b[3]) - max(a[1], b[1]))
+    inter = w * h
+    union = (a[2] - a[0]) * (a[3] - a[1]) + (b[2] - b[0]) * (b[3] - b[1]) - inter
+    return inter / union
+
+assert round(iou([0, 0, 10, 10], [5, 5, 15, 15]), 3) == 0.143
+</code></pre>
+<p>The COCO evaluation code sets its IoU thresholds with
+<code>np.linspace(.5, 0.95, int(np.round((0.95 - .5) / .05)) + 1, endpoint=True)</code>, which gives ten values from 0.50 to 0.95.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have we written the product question before choosing the job?</li>
+<li class="task todo">Is our framing the least detailed output that answers it?</li>
+<li class="task todo">Do we know the labelling time per image for that framing, measured on a sample?</li>
+<li class="task todo">Have we named the launch metric, and is it right for an imbalanced set?</li>
+<li class="task todo">For detection, have we fixed the IoU threshold the metric uses?</li>
+<li class="task todo">Have two labellers labelled the same sample, and do they agree?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="how-a-convolution-sees.html">How a convolution sees</a> — how the model turns pixels into these outputs.</li>
+<li><a href="../tensors/what-a-tensor-is.html">What a tensor is</a> — the shape and size of an image batch.</li>
+<li><a href="../machine-learning/measuring-a-model.html">Measuring a model</a> — precision, recall and thresholds for any classifier.</li>
+<li><a href="../machine-learning/data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a> — labels and honest test sets.</li>
+<li><a href="../generative-ai/the-modalities.html">The modalities</a> — making images rather than reading them.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>PyTorch torchvision source, <code>torchvision/models/detection/faster_rcnn.py</code> and <code>mask_rcnn.py</code> (<a href="https://github.com/pytorch/vision/tree/main/torchvision/models/detection">GitHub, main branch</a>): detection output as <code>boxes</code> in <code>[x1, y1, x2, y2]</code> format with <code>labels</code> and <code>scores</code>; Mask R-CNN <code>masks</code> as one soft mask per instance, in the 0 to 1 range, "generally" thresholded at 0.5. Read 2026-10.</li>
+<li>COCO API source, <code>PythonAPI/pycocotools/cocoeval.py</code> (<a href="https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/cocoeval.py">GitHub, master branch</a>): IoU thresholds from 0.50 to 0.95 in ten steps. Read 2026-10.</li>
+<li>Ultralytics README (<a href="https://github.com/ultralytics/ultralytics/blob/main/README.md">GitHub, main branch</a>): model tables report "mAP val 50-95" on COCO val2017; the same library offers detection, segmentation, classification and pose models; CPU speeds, measured with an Open Neural Network Exchange (ONNX) export, of 5.0 ms for YOLO26n-cls at 224 pixels, 38.9 ms for YOLO26n at 640 pixels and 53.3 ms for YOLO26n-seg at 640 pixels. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/resnet.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py">GitHub, main branch</a>): the final layer is <code>nn.Linear(512 * block.expansion, num_classes)</code>, with <code>expansion = 4</code> for the ResNet-50 block, so 2,048 features. Read 2026-10.</li>
+<li>CS231n course notes, <em>Transfer learning</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/transfer-learning.md">GitHub source</a>): ImageNet as "1.2 million images with 1000 categories". Read 2026-10.</li>
+<li>The shelf example, the labelling times and the hourly rate are invented. The arithmetic is shown in the lesson.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="how-a-convolution-sees.html"><span class="lbl">→ Next</span><span class="ttl">How a convolution sees: one small grid, used everywhere</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-four-questions-four-outputs">The mental model: four questions, four outputs</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#classification">Classification</a><a class="h3" href="#detection">Detection</a><a class="h3" href="#segmentation">Segmentation</a><a class="h3" href="#embeddings">Embeddings</a><a class="h2" href="#worked-example-the-shelf-monitor">Worked example: the shelf monitor</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Fwhat-computer-vision-does.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/what-computer-vision-does.html"</script><script defer src="../assets/glossary.js"></script></body></html>

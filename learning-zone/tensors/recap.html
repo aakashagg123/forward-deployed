@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Tensors — recap &amp; real-world examples — Tensors</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Tensors</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-a-tensor-is.html">1 · What a tensor is: shape, rank and dtype</a><a class="modlink" href="operations-and-broadcasting.html">2 · Operations and broadcasting</a><a class="modlink" href="matrix-multiplication.html">3 · Matrix multiplication: the workhorse</a><a class="modlink" href="batching-memory-and-precision.html">4 · Batching, memory and precision</a><a class="modlink" href="automatic-differentiation.html">5 · Automatic differentiation</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
+    <h1>Tensors — recap &amp; real-world examples</h1>
+  </div>
+  <div class="MarkdownContent"><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
+<p>These are documented practices from the sources, not incidents. Where a story is invented to show a failure, it says so.</p>
+<p><strong>NumPy's own warning about broadcasting.</strong> The NumPy documentation praises broadcasting for vectorizing array operations "without making needless copies of data". It also says there are cases where broadcasting is a bad idea, because it leads to inefficient use of memory that slows computation. 🎯 <em>Takeaway:</em> the feature that makes code short can make a result much larger than you meant. Check the output shape of any operation that mixes a column and a row. This is <a href="operations-and-broadcasting.html">lesson 2</a>.</p>
+<p><strong>Why mixed-precision training keeps a float32 copy.</strong> The 2018 <em>Mixed Precision Training</em> paper trains with float16 for the forward and backward passes. It keeps a float32 master copy of the weights for the update, and it scales the loss so small gradients survive float16's limited range. 🎯 <em>Takeaway:</em> a smaller number format is a tradeoff with a known repair, not a free saving. Ask which parts of training stay in float32. This is <a href="batching-memory-and-precision.html">lesson 4</a>.</p>
+<p><strong>A format chosen for range.</strong> Google describes bfloat16 as a 16-bit format with the same dynamic range as float32, which it uses for its TPU hardware. A study by Kalamkar and colleagues found that training with bfloat16 matched float32 results without hyper-parameter changes. 🎯 <em>Takeaway:</em> two 16-bit formats are not interchangeable. One keeps precision, and the other keeps range. <a href="batching-memory-and-precision.html">Lesson 4</a> shows the difference in numbers.</p>
+<p><strong>Memory, counted by pile.</strong> The ZeRO paper starts from an accounting: for mixed-precision training with the Adam optimizer, each parameter needs 2 bytes for its float16 weight, 2 for its float16 gradient and 12 for optimizer state. Memory for the model state is therefore about 16 bytes per parameter, before activations. 🎯 <em>Takeaway:</em> the file size of a model understates what it takes to train it by a large factor. Ask for the budget by pile.</p>
+<p><strong>One input at a time is memory bound.</strong> NVIDIA's matrix multiplication guide notes that a matrix-vector product, where one of the sizes is 1, has an arithmetic intensity below 1 for numbers of 2 or 4 bytes. It is limited by memory, not compute. 🎯 <em>Takeaway:</em> serving single requests wastes most of a modern accelerator. Batching is the lever. This is <a href="matrix-multiplication.html">lesson 3</a>.</p>
+<p><strong>The loss that averaged over the wrong axis (an illustration).</strong> A team computes the squared error between predictions of shape <code>(n, 1)</code> and labels of shape <code>(n,)</code>. The code runs. The loss is 4.6 times the right value on the example data, and even a perfect model would score 0.295 under it, so progress is hidden. The story is invented, and the <a href="operations-and-broadcasting.html">numbers come from the lesson-2 code</a>. 🎯 <em>Takeaway:</em> a shape bug can look like a hard problem. Assert shapes, and test on a non-square input.</p>
+<p><strong>The layer that never trained (an illustration).</strong> A team copies a hidden layer's output out of the autograd graph. Training loss falls, because the output layer learns. The hidden layer's gradient is zero, so it cannot change. The story is invented, and the <a href="automatic-differentiation.html">numbers come from the lesson-5 code</a>. 🎯 <em>Takeaway:</em> log the gradient size per layer, and alarm on a zero.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The question it makes you ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="what-a-tensor-is.html">What a tensor is</a></td>
+<td>A tensor is a grid of numbers with a shape. Size times bytes per number is its memory.</td>
+<td>What are the shapes and dtypes of our biggest tensors, and what do they cost in bytes?</td>
+</tr>
+<tr>
+<td><a href="operations-and-broadcasting.html">Operations and broadcasting</a></td>
+<td>Shapes line up from the right. A wrong axis can still be legal, and then the bug is silent.</td>
+<td>Which operations rely on broadcasting, and what test fails if an axis is wrong?</td>
+</tr>
+<tr>
+<td><a href="matrix-multiplication.html">Matrix multiplication</a></td>
+<td>A layer is one multiply and a bias. It costs 2 FLOPs per weight per input. A batch reuses the weights.</td>
+<td>What is our batch size, and how much of the hardware does it use?</td>
+</tr>
+<tr>
+<td><a href="batching-memory-and-precision.html">Batching, memory and precision</a></td>
+<td>Training keeps weights, gradients, optimizer state and activations. Smaller formats trade range or precision for bytes.</td>
+<td>What is the memory budget by pile, and which format does each part use?</td>
+</tr>
+<tr>
+<td><a href="automatic-differentiation.html">Automatic differentiation</a></td>
+<td>The library records the forward pass and replays it backward. It costs memory and fails quietly when the graph is cut.</td>
+<td>How do we know every parameter gets a gradient?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> a model is arithmetic on tensors, so most questions about it are counting questions. How many numbers? How many bytes each? How many multiplies? How many of them do we keep for the backward pass? Shape errors and graph errors do not crash. They produce a model that is wrong in a way no log shows. Counting, asserting shapes and checking gradients are the habits that catch them.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"For our biggest model: what are the shapes and formats of the large tensors, what is the memory budget by pile for training and for serving, what is the batch size and what does it buy, and how do we know every part of the model receives a gradient?"</em></p>
+</blockquote>
+<p>If you can answer all four, you can steer the work. If not, you know which lesson to reread.</p>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>A batch of 16 images, 3 colour channels, 256 by 256 pixels, is stored as float32. How many bytes is it?</strong>
+ <br />
+<details><summary>Answer</summary>Shape (16, 3, 256, 256) has 16 × 3 × 256 × 256 = 3,145,728 numbers. At 4 bytes each that is 12,582,912 bytes, which is 12 MiB. At float16 it is 6 MiB. (<a href="what-a-tensor-is.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>What is the difference between reshaping a tensor and copying it?</strong>
+ <br />
+<details><summary>Answer</summary>A reshape is a view when the layout allows it. It reads the same flat list of numbers with a new shape and strides, so it copies nothing, and a change through one name shows in the other. If the layout does not allow it, the library makes a copy. A copy duplicates the numbers. (<a href="what-a-tensor-is.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>State the broadcasting rule.</strong>
+ <br />
+<details><summary>Answer</summary>Line the shapes up from the right. Each pair of sizes must be equal, or one must be 1, or one must be missing. The result takes the larger size. If any pair fails, the operation raises an error. (<a href="operations-and-broadcasting.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Predictions of shape (n, 1) are subtracted from labels of shape (n,). What shape results, and why is that a problem?</strong>
+ <br />
+<details><summary>Answer</summary>The result is (n, n). Each prediction is compared with every label. A loss averaged over it is wrong, and memory grows with n squared. Reshape the predictions to (n,) first. (<a href="operations-and-broadcasting.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Why does a shape bug often hide on a square table?</strong>
+ <br />
+<details><summary>Answer</summary>On a 4 by 4 table, a mean over rows and a mean over columns both have shape (4,). Subtracting either is legal, so a wrong axis raises no error. On a 5 by 4 table the same slip fails. Test with non-square inputs. (<a href="operations-and-broadcasting.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>How many FLOPs does a layer with 4,096 inputs and 4,096 outputs need for a batch of 8?</strong>
+ <br />
+<details><summary>Answer</summary>2 × 8 × 4,096 × 4,096 = 268,435,456 FLOPs, about 0.27 billion. That is two FLOPs per weight per input. (<a href="matrix-multiplication.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>Why is one batched multiply cheaper than many single-input multiplies, if the FLOPs are the same?</strong>
+ <br />
+<details><summary>Answer</summary>The weights are read from memory once for the whole batch, not once per input. The FLOPs per byte moved go up, so the hardware spends less time waiting on memory. A single input has an intensity below 1, so it is memory limited. (<a href="matrix-multiplication.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>A 1.5 billion parameter model is trained in mixed precision with Adam. About how much memory does the model state take?</strong>
+ <br />
+<details><summary>Answer</summary>About 16 bytes per parameter: 2 for the float16 weight, 2 for the float16 gradient and 12 for optimizer state. That is about 24 GB, before activations. The weights alone at float16 are 3 GB. (<a href="batching-memory-and-precision.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>Which memory pile grows with the batch size, and which do not?</strong>
+ <br />
+<details><summary>Answer</summary>Activations grow with the batch. Weights, gradients and optimizer state depend on the number of parameters only. Halving the batch frees activation memory and leaves the other three unchanged. (<a href="batching-memory-and-precision.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>How do float16 and bfloat16 differ, and what goes wrong with float16 in training?</strong>
+    <details><summary>Answer</summary>float16 has 5 exponent bits and 10 fraction bits: a small range and more precision. bfloat16 has 8 exponent bits and 7 fraction bits: the range of float32 and less precision. In float16, values above 65,504 overflow and tiny values round to zero, so gradients vanish. Loss scaling and a float32 master copy of the weights are the usual repairs. (<a href="batching-memory-and-precision.html">Lesson 4</a>)</details></p>
+</li>
+<li><strong>What does automatic differentiation record, and what does the backward pass do?</strong>
+    <details><summary>Answer</summary>It records each operation during the forward pass, and saves the values the backward rules will need. The backward pass starts at the loss with a gradient of 1 and passes gradients back through the operations in reverse order, using one small rule per operation. (<a href="automatic-differentiation.html">Lesson 5</a>)</details></li>
+<li><strong>Training loss falls, but one layer's gradient is exactly zero at every step. What is the likely cause?</strong>
+    <details><summary>Answer</summary>The autograd graph is cut before that layer, for example by copying a value out of the graph. The layers after the cut learn, so the loss falls. The layers before it never change. Log the gradient size per layer and alarm on a zero. (<a href="automatic-differentiation.html">Lesson 5</a>)</details></li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>NumPy documentation, <a href="https://numpy.org/doc/stable/user/basics.broadcasting.html">Broadcasting</a>: vectorizing "without making needless copies of data", and the warning that broadcasting can lead to inefficient use of memory. Read from the documentation source on GitHub, 2026-10.</li>
+<li>Micikevicius et al., <em>Mixed Precision Training</em>, ICLR 2018 (<a href="https://arxiv.org/abs/1710.03740">arxiv.org/abs/1710.03740</a>): float16 forward and backward passes, a float32 master copy of the weights, and loss scaling. Checked through search-result excerpts, 2026-10.</li>
+<li>Google Cloud, <a href="https://cloud.google.com/blog/products/ai-machine-learning/bfloat16-the-secret-to-high-performance-on-cloud-tpus">bfloat16: the secret to high performance on Cloud TPUs</a>, and Kalamkar et al., <em>A Study of BFLOAT16 for Deep Learning Training</em>, 2019 (<a href="https://arxiv.org/abs/1905.12322">arxiv.org/abs/1905.12322</a>): range equal to float32, and training that matched float32 without hyper-parameter changes. Checked through search-result excerpts, 2026-10.</li>
+<li>Rajbhandari et al., <em>ZeRO: Memory Optimizations Toward Training Trillion Parameter Models</em>, 2020 (<a href="https://arxiv.org/abs/1910.02054">arxiv.org/abs/1910.02054</a>): the 2 + 2 + 12 byte accounting for mixed-precision Adam. Checked through search-result excerpts, 2026-10.</li>
+<li>NVIDIA, <a href="https://docs.nvidia.com/deeplearning/performance/dl-performance-matrix-multiplication/index.html">Matrix Multiplication Background User's Guide</a>: matrix-vector products always have an arithmetic intensity below 1. Checked through search-result excerpts, 2026-10.</li>
+<li>The two illustrations are invented. All figures from the example data come from <code>tensors/code/</code>.</li>
+</ul>
+<hr /></div>
+  <div class="pagenav"><a class="navcard prev" href="automatic-differentiation.html"><span class="lbl">← Previous</span><span class="ttl">Automatic differentiation</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=tensors%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="tensors/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Convolutional networks for the product and technology leader</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><main class="content index" id="top">
+  <div class="index-hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">A standalone module</span>
+    <h1>Convolutional networks for the product and technology leader</h1>
+    <p class="lede">How a vision model sees, what resolution and depth cost, when to reuse a pre-trained or foundation model, and why vision features break in production.</p>
+    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">7 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">runnable code</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">knowledge graph</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
+  </div>
+  <div class="intro MarkdownContent"><p>Computer vision is the part of AI that reads images. It counts stock on shelves, checks parts on a production line, sorts uploaded photos and reads documents. Much of it runs on the <strong>convolutional neural network (CNN)</strong>. The CS231n course notes credit AlexNet, entered in the 2012 ImageNet challenge, as the first work that popularized CNNs in computer vision. Vision transformers and large pre-trained "foundation" models now sit beside them.</p>
+<p>Product and technology leaders make vision decisions often. What should the model output: a label, a box or a mask? What resolution do we need, and what does it cost? Do we label thousands of images, or start from someone else's model? CNN or transformer? Can we ship this pre-trained model under its licence? Why did accuracy drop when we changed cameras? These decisions do not need the mathematics. They need a clear picture of what a convolution does, what depth buys, how transfer works and where vision systems break.</p>
+<p>This module gives that picture. Every lesson has two layers. The body is for the leader who decides. A short <strong>Under the hood</strong> section is for the engineer who builds. Lessons 2, 3 and 5 include code that runs on the Python standard library alone and ends in <code>assert</code> lines, so their numbers are checked.</p>
+<p><strong>A note on scope.</strong> This module does not teach tensors, shapes, matrix multiplication, broadcasting or automatic differentiation. The <a href="../tensors/index.html">Tensors module</a> does, and these lessons link to it. It does not teach attention either. <a href="../llms/what-is-an-llm.html#inside-the-model-attention">Inside the model: attention</a> in the LLMs track does, and the lesson on vision transformers adds only the image-specific part. Image generation is covered in <a href="../generative-ai/the-modalities.html">The modalities</a>.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarizes an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How an image batch is stored: shape, channel order, bytes</td>
+<td><a href="../tensors/what-a-tensor-is.html">What a tensor is</a></td>
+</tr>
+<tr>
+<td>Why a convolution becomes a matrix multiplication, and how to count its cost</td>
+<td><a href="../tensors/matrix-multiplication.html">Matrix multiplication</a></td>
+</tr>
+<tr>
+<td>Memory for training and the number formats a model can use</td>
+<td><a href="../tensors/batching-memory-and-precision.html">Batching, memory and precision</a></td>
+</tr>
+<tr>
+<td>How the kernels' weights get their gradients, and what freezing a layer means</td>
+<td><a href="../tensors/automatic-differentiation.html">Automatic differentiation</a></td>
+</tr>
+<tr>
+<td>How attention works, and why its cost grows with the square of the length</td>
+<td><a href="../llms/what-is-an-llm.html#inside-the-model-attention">Inside the model: attention</a></td>
+</tr>
+<tr>
+<td>Labels, splits and leakage for any model</td>
+<td><a href="../machine-learning/data-features-labels-and-leakage.html">Data: features, labels, splits and leakage</a></td>
+</tr>
+<tr>
+<td>Precision, recall and thresholds for any classifier</td>
+<td><a href="../machine-learning/measuring-a-model.html">Measuring a model</a></td>
+</tr>
+<tr>
+<td>Training-serving skew, drift and monitoring for any model</td>
+<td><a href="../machine-learning/ml-in-production.html">ML in production</a></td>
+</tr>
+<tr>
+<td>Lower-precision formats for serving</td>
+<td><a href="../ai/01-inference-internals.html#quantization-formats">Quantization formats</a></td>
+</tr>
+<tr>
+<td>Searching by vector similarity</td>
+<td><a href="../rag-vector-databases/embeddings-and-semantic-search.html">Embeddings and semantic search</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-knowledge-graph">The knowledge graph</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Module map</span>
+<h4>From product question to production</h4>
+<p class="cn-sub">Seven lessons in four steps. Each step links to the Tensors and LLMs lessons it builds on.</p>
+<div class="cn-row cn-c1"><div class="cn-card cn-info"><span class="cn-tag">Frame it</span><h5>1 · What computer vision does</h5><p>classify · detect · segment · embed</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c2"><div class="cn-card "><span class="cn-tag">See it</span><h5>2 · How a convolution sees</h5><p>kernel · stride · weight sharing</p></div><div class="cn-card "><span class="cn-tag">See it</span><h5>3 · From edges to objects</h5><p>receptive field · depth · residuals</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c3"><div class="cn-card cn-disc"><span class="cn-tag">Reuse it</span><h5>4 · Transfer learning and labels</h5><p>freeze · fine-tune · linear probe</p></div><div class="cn-card cn-disc"><span class="cn-tag">Reuse it</span><h5>5 · CNNs vs. vision transformers</h5><p>patches as tokens · backbone cost</p></div><div class="cn-card cn-disc"><span class="cn-tag">Reuse it</span><h5>6 · Vision foundation models</h5><p>CLIP · DINO · SAM · licences</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c1"><div class="cn-card cn-warn"><span class="cn-tag">Ship it</span><h5>7 · Shipping vision in production</h5><p>preprocessing contract · hardware · image shift</p></div></div>
+<p class="cn-foot">resolution, chosen in lesson 2, sets the cost you meet again in lesson 7</p>
+</div>
+
+<p>Read it as a path from question to production. You <strong>frame</strong> the product question as one of four vision jobs. You learn how a network <strong>sees</strong>: one small kernel, then many layers. You <strong>reuse</strong> someone else's model instead of training from scratch, and pick a backbone family and a foundation model. Then you <strong>ship</strong> it, where preprocessing, hardware and changing images decide whether it keeps working.</p>
+<h2 id="the-lessons">The lessons</h2>
+<ol>
+<li><a href="what-computer-vision-does.html">What computer vision does: the four jobs</a> — classification, detection, segmentation and embeddings, and what each costs to label and measure.</li>
+<li><a href="how-a-convolution-sees.html">How a convolution sees: one small grid, used everywhere</a> — kernels, stride, padding, weight sharing, and why resolution sets the cost.</li>
+<li><a href="from-edges-to-objects.html">From edges to objects: what depth buys</a> — receptive fields, what layers learn, residual connections, and which layer to reuse.</li>
+<li><a href="transfer-learning-and-labels.html">Transfer learning and labels: start from someone else's model</a> — frozen features, fine-tuning, linear probes and the labelling budget.</li>
+<li><a href="cnns-vs-vision-transformers.html">CNNs vs. vision transformers: picking a backbone</a> — patches as tokens, built-in assumptions, and a backbone table.</li>
+<li><a href="vision-foundation-models.html">Vision foundation models: CLIP, DINO and SAM</a> — zero-shot classification, reusable pre-trained features, promptable segmentation, and licences.</li>
+<li><a href="shipping-vision-in-production.html">Shipping vision in production</a> — the preprocessing contract, hardware sizing and image shift.</li>
+</ol>
+<p>Then the <a href="recap.html">recap and real-world examples</a>, with a self-test.</p>
+<h2 id="run-the-code">Run the code</h2>
+<p>The examples for lessons 2, 3 and 5 are in <code>cnns/code/</code>. Run them all with one command.</p>
+<pre><code class="language-bash">python3 cnns/code/test_examples.py
+</code></pre>
+<p>The files are <code>lesson2_convolution.py</code>, <code>lesson3_receptive_field.py</code> and <code>lesson5_patches.py</code>. Each ends in <code>assert</code> lines that check the numbers quoted in its lesson. Run a file on its own to see the numbers printed.</p>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>CS231n course notes, <em>Convolutional Neural Networks</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/convolutional-networks.md">GitHub source, master branch</a>): AlexNet as "the first work that popularized Convolutional Networks in Computer Vision", submitted to the ImageNet ILSVRC challenge in 2012. Read 2026-10.</li>
+</ul></div>
+  <h2 class="sec">The lessons</h2>
+  <div class="cards"><a class="card" href="what-computer-vision-does.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>What computer vision does: the four jobs</h3><span class="card-go">Read lesson →</span></a><a class="card" href="how-a-convolution-sees.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>How a convolution sees: one small grid, used everywhere</h3><span class="card-go">Read lesson →</span></a><a class="card" href="from-edges-to-objects.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>From edges to objects: what depth buys</h3><span class="card-go">Read lesson →</span></a><a class="card" href="transfer-learning-and-labels.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Transfer learning and labels: start from someone else&#x27;s model</h3><span class="card-go">Read lesson →</span></a><a class="card" href="cnns-vs-vision-transformers.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>CNNs vs. vision transformers: picking a backbone</h3><span class="card-go">Read lesson →</span></a><a class="card" href="vision-foundation-models.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Vision foundation models: CLIP, DINO and SAM</h3><span class="card-go">Read lesson →</span></a><a class="card" href="shipping-vision-in-production.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>Shipping vision in production</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
+  </main>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/index.html"</script><script defer src="../assets/glossary.js"></script></body></html>

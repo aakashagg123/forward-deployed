@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Automatic differentiation — Tensors</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Tensors</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-a-tensor-is.html">1 · What a tensor is: shape, rank and dtype</a><a class="modlink" href="operations-and-broadcasting.html">2 · Operations and broadcasting</a><a class="modlink" href="matrix-multiplication.html">3 · Matrix multiplication: the workhorse</a><a class="modlink" href="batching-memory-and-precision.html">4 · Batching, memory and precision</a><a class="modlink active" href="automatic-differentiation.html">5 · Automatic differentiation</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
+    <h1>Automatic differentiation</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Training needs the gradient: the slope of the loss for every parameter. In the <a href="../machine-learning/model-families.html">machine learning module</a> we wrote it by hand for a tiny network. Nobody does that for a real model. A library does it, and the method is <strong>automatic differentiation</strong>, often called autograd.</p>
+<p>The library records each operation as the forward pass runs. That record is a graph. Then it walks the graph backward from the loss. Each operation knows one small rule for passing a gradient back. The chain rule joins the small rules into the full gradient. Backpropagation is this method applied to a neural network.</p>
+<p>You do not need to write the rules. You do need to know what the machine does. It keeps the intermediate values the backward rules need, so it costs memory. It adds gradients together, so it needs resetting. It follows only the operations it recorded, so a cut in the graph silently freezes part of the model.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Autograd is why a team can try a new architecture in days. It is also why a model can train without error and never learn in part of the network. The failure leaves no trace in the logs.</p>
+<p><strong>What it changes in your decisions</strong> — You ask how the team knows that gradients reach every part of the model, and how new layers are checked. You see memory for activations as the price of automatic gradients.</p>
+<p><strong>Ask your eng team</strong> — <em>"How do we check that every parameter receives a gradient, and how do we test a new layer's gradient against a slow reference?"</em></p>
+<p><strong>Risk if ignored</strong> — A frozen layer. Training loss falls, because the other layers learn. The team ships a model with a part that never trained, and no alarm fires.</p>
+</blockquote>
+<h2 id="the-mental-model-record-forward-replay-backward">The mental model: record forward, replay backward</h2>
+<style>
+.dgm-ml{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ml-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ml h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ml-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ml-grid{display:grid;gap:12px}
+.dgm-ml-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);position:relative}
+.dgm-ml-card h5{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--color-text)}
+.dgm-ml-card p{margin:0;font-size:11.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ml-num{display:inline-block;min-width:20px;height:20px;line-height:20px;text-align:center;border-radius:10px;margin-right:6px;
+  font-size:10.5px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-ml-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ml-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ml-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ml-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.dgm-ml-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:16px}
+.dgm-ml-foot{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-ml{padding:22px 16px 18px}}
+.tn-row{display:grid;gap:12px}
+.tn-5{grid-template-columns:repeat(5,1fr)}.tn-3{grid-template-columns:repeat(3,1fr)}.tn-2{grid-template-columns:1fr 1fr}
+.tn-mono{font-family:var(--font-mono);font-size:11px;color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.tn-big{font-size:15px;font-weight:700;color:var(--color-text)}
+@media (max-width:760px){.tn-5{grid-template-columns:repeat(2,1fr)}.tn-3{grid-template-columns:1fr}}
+@media (max-width:520px){.tn-5,.tn-2{grid-template-columns:1fr}}
+.tn-seq{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.tn-seq .dgm-ml-card{padding:8px 6px;text-align:center}.tn-seq h5{font-size:11px;margin:0}.tn-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary);margin:0 0 6px}@media (max-width:640px){.tn-seq{grid-template-columns:repeat(4,1fr)}}</style>
+<div class="dgm-ml"><span class="dgm-ml-chip">Record, then replay</span>
+<h4>Autograd walks the forward pass backward</h4>
+<p class="dgm-ml-sub">Each operation knows one rule. The chain rule joins them.</p>
+<div class="tn-fb"><div class="tn-lbl">FORWARD: record each operation, save its inputs</div><div class="tn-seq"><div class="dgm-ml-card"><h5>inputs</h5></div><div class="dgm-ml-card"><h5>matmul</h5></div><div class="dgm-ml-card"><h5>+ bias</h5></div><div class="dgm-ml-card"><h5>tanh</h5></div><div class="dgm-ml-card"><h5>matmul</h5></div><div class="dgm-ml-card"><h5>sigmoid</h5></div><div class="dgm-ml-card"><h5>loss</h5></div></div><div class="tn-lbl" style="margin-top:12px">BACKWARD: start at the loss with gradient 1, apply one small rule per operation, in reverse</div><div class="tn-seq"><div class="dgm-ml-card"><h5>loss</h5></div><div class="dgm-ml-card"><h5>sigmoid</h5></div><div class="dgm-ml-card"><h5>matmul</h5></div><div class="dgm-ml-card"><h5>tanh</h5></div><div class="dgm-ml-card"><h5>+ bias</h5></div><div class="dgm-ml-card"><h5>matmul</h5></div><div class="dgm-ml-card"><h5>inputs</h5></div></div></div>
+<div class="tn-row tn-2" style="margin-top:12px"><div class="dgm-ml-card dgm-ml-warn"><h5>It costs memory</h5><p>The saved values are the activations. They grow with the batch.</p></div><div class="dgm-ml-card dgm-ml-bad"><h5>A cut graph freezes a layer</h5><p>Copy a value out of the graph and the layers before it get gradient 0.</p></div></div>
+<p class="dgm-ml-foot">gradients add up across passes, so clear them every step</p>
+</div>
+
+<p>The solid arrows are the forward pass. The library notes each operation and saves what the backward rule will need. The dotted arrows are the backward pass. It starts at the loss with a gradient of 1 and passes a gradient back through each operation in reverse order.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="one-small-rule-per-operation">One small rule per operation</h3>
+<p>Each operation has a backward rule. Given the gradient arriving from above, it says what gradient to send to each input.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Forward</th>
+<th>Backward, given the gradient <code>g</code> from above</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Matrix multiply</td>
+<td><code>Y = A B</code></td>
+<td><code>A</code> gets <code>g Bᵀ</code>. <code>B</code> gets <code>Aᵀ g</code>.</td>
+</tr>
+<tr>
+<td>Add with broadcasting</td>
+<td><code>Y = A + b</code></td>
+<td>Each input gets <code>g</code>, summed over any axis that was stretched.</td>
+</tr>
+<tr>
+<td>tanh</td>
+<td><code>y = tanh(a)</code></td>
+<td><code>a</code> gets <code>g × (1 − y²)</code>.</td>
+</tr>
+<tr>
+<td>Sigmoid</td>
+<td><code>p = σ(a)</code></td>
+<td><code>a</code> gets <code>g × p × (1 − p)</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>The broadcasting row connects to <a href="operations-and-broadcasting.html">lesson 2</a>. A bias of shape <code>(6,)</code> was stretched over 200 rows in the forward pass. In the backward pass, the 200 rows of gradient are summed back into 6 numbers.</p>
+<p>The matrix-multiply row connects to <a href="matrix-multiplication.html">lesson 3</a>. The backward pass is two more matrix multiplies, so it costs about twice the forward pass. That is where the common estimate of 6 FLOPs per non-embedding parameter per token for training comes from: 2 for the forward pass and about 4 for the backward pass.</p>
+<h3 id="the-graph-and-the-saved-values">The graph and the saved values</h3>
+<p>The forward pass builds the graph as it runs. PyTorch's documentation says the graph is recreated from scratch at every iteration, which is why ordinary Python control flow works: "what you run is what you differentiate". The backward rules need values from the forward pass. The documentation says some operations "need intermediary results to be saved during the forward pass". Those saved values are the activations from <a href="batching-memory-and-precision.html">lesson 4</a>.</p>
+<h3 id="reverse-mode-and-forward-mode">Reverse mode and forward mode</h3>
+<p>There are two ways to apply the chain rule. <strong>Reverse mode</strong> starts at the output and works back. <strong>Forward mode</strong> starts at the inputs and works forward. Reverse mode gives the slope of one output with respect to all inputs in one backward pass. A loss is one number and the parameters are millions, so reverse mode is the one for training. Rumelhart, Hinton and Williams described the back-propagation procedure for neural networks in 1986. The survey by Baydin and colleagues places it within reverse-mode automatic differentiation.</p>
+<h3 id="gradients-accumulate">Gradients accumulate</h3>
+<p>A gradient is added into a parameter's slot, not written over it. PyTorch's documentation says that during the backward pass, leaf tensors that require gradients have gradients "accumulated into their <code>.grad</code> fields". So you must clear the gradients between steps. The same rule applies inside the graph: a value used twice receives the sum of two gradients.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Memory vs. recompute.</strong> Keeping every activation makes the backward pass fast and uses memory. Recomputing some activations on the way back saves memory and costs compute.</li>
+<li><strong>Automatic vs. hand-written.</strong> Autograd is general and slightly slower than a hand-tuned rule for a hot operation. Libraries let you supply your own rule for a custom operation. You must then test it.</li>
+<li><strong>Reverse vs. forward mode.</strong> Reverse mode suits many parameters and one loss. Forward mode suits few inputs and many outputs.</li>
+<li><strong>A graph per step vs. a fixed graph.</strong> Rebuilding the graph each step gives flexibility. A fixed graph can be optimized ahead of time.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>A cut graph.</strong> A value is copied out of the graph, and the layers before it get no gradient. They never learn. Training loss still falls, as the other layers adapt.</li>
+<li><strong>Gradients that are never cleared.</strong> Each step adds to the last. Updates grow with every step.</li>
+<li><strong>A changed saved value.</strong> Changing a tensor in place after the forward pass used it can corrupt the gradient. PyTorch checks a version counter and raises an error when it detects this.</li>
+<li><strong>A wrong custom rule.</strong> A hand-written backward rule that is off gives plausible, wrong updates.</li>
+<li><strong>Overflow and underflow.</strong> In low precision, small gradients vanish and large ones overflow. See <a href="batching-memory-and-precision.html">lesson 4</a>.</li>
+<li><strong>A missing reduction.</strong> A broadcast bias whose gradient is not summed back.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>tensors/code/lesson5_autograd.py</code>. It is a small reverse-mode autograd on the tensors from this module. A <code>Var</code> holds a value, the variables it came from, and a function that passes a gradient back.</p>
+<pre><code class="language-python">class Var:
+    def __init__(self, value, parents=(), backward=None):
+        self.value, self.parents, self._backward = value, parents, backward
+        self.grad = Tensor.full(value.shape, 0.0)
+
+    def _accumulate(self, g):
+        self.grad = self.grad + g                       # gradients add up, they are not overwritten
+
+def matmul(a, b):
+    def back(g):
+        a._accumulate(g.matmul(b.value.transpose()))    # A gets g Bᵀ
+        b._accumulate(a.value.transpose().matmul(g))    # B gets Aᵀ g
+    return Var(a.value.matmul(b.value), (a, b), back)
+
+def add(a, b):
+    def back(g):
+        a._accumulate(unbroadcast(g, a.value.shape))    # sum over every stretched axis
+        b._accumulate(unbroadcast(g, b.value.shape))
+    return Var(a.value + b.value, (a, b), back)
+</code></pre>
+<p><code>backward()</code> visits the graph in reverse order and calls each variable's rule. The network is the machine learning module's <code>TinyNet</code>, built from these operations. The example compares its gradients with the hand-written ones, and with a slow numerical slope.</p>
+<p>Habits to adopt:</p>
+<ul>
+<li><strong>Gradient-check any new layer.</strong> Nudge a weight, measure the loss, compare with the autograd gradient.</li>
+<li><strong>Watch the gradient size per layer</strong> during training. A zero is a frozen layer.</li>
+<li><strong>Clear gradients every step.</strong></li>
+<li><strong>Be careful with in-place changes</strong> to tensors the backward pass needs.</li>
+</ul>
+<h2 id="worked-example-autograd-against-the-hand-written-gradient">Worked example: autograd against the hand-written gradient</h2>
+<p><em>This example is invented. The data is generated by code with a fixed seed. The code is in <code>tensors/code/lesson5_autograd.py</code>.</em></p>
+<p><strong>It matches.</strong> We build <code>TinyNet</code> (2 inputs, 6 hidden units, 1 output) from <code>matmul</code>, <code>add</code>, <code>tanh</code> and <code>sigmoid</code>, on 200 customers. We call <code>backward()</code> once. The largest gap between autograd and the hand-written gradients of the machine learning module is 5.6 × 10⁻¹⁷. That is rounding. A slow numerical check on four parameters, nudged up and down by 10⁻⁶, agrees to 3 × 10⁻¹⁰.</p>
+<p><strong>It costs memory.</strong> The graph keeps 4,201 numbers alive for the backward pass. That is three tensors of shape <code>(200, 6)</code>, three of shape <code>(200, 1)</code> and the loss. This is the activation memory of <a href="batching-memory-and-precision.html">lesson 4</a>, in a tiny case. Double the batch and it doubles.</p>
+<p><strong>Gradients accumulate.</strong> A second forward and backward pass without clearing doubles the gradients. We check that the output-layer gradient is twice the first, to within rounding.</p>
+<p><strong>A cut graph freezes a layer.</strong> We copy the hidden layer's output out of the graph and call <code>backward()</code> again. The hidden weights get a gradient of exactly 0. The output weights still get a gradient, with a largest value of 0.228. The hidden layer receives no gradient, so training could not change it. The output layer would still learn, which is why the loss can fall and hide the problem.</p>
+<p><strong>Training works.</strong> Using autograd gradients with a learning rate of 0.8, the loss falls from 0.816 to 0.385 in 300 steps, and never rises between steps.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is every new layer gradient-checked against a slow reference?</li>
+<li class="task todo">Do we log gradient size per layer and alarm on zeros?</li>
+<li class="task todo">Are gradients cleared every step?</li>
+<li class="task todo">Do we know how much memory the saved activations take?</li>
+<li class="task todo">Do we avoid copying values out of the graph by accident?</li>
+<li class="task todo">Is any custom backward rule tested against a numerical slope?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="../machine-learning/training-loss-and-gradient-descent.html">Training: loss and gradient descent</a> — the loop that needs the gradient.</li>
+<li><a href="../machine-learning/model-families.html">Model families</a> — backpropagation by hand on a tiny network.</li>
+<li><a href="operations-and-broadcasting.html">Operations and broadcasting</a> — why the backward pass sums over stretched axes.</li>
+<li><a href="batching-memory-and-precision.html">Batching, memory and precision</a> — the memory the graph keeps alive.</li>
+<li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — the same training loop at a very large scale.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Baydin, Pearlmutter, Radul and Siskind, <em>Automatic differentiation in machine learning: a survey</em>, Journal of Machine Learning Research 18(153), 1–43, 2018 (<a href="https://www.jmlr.org/papers/v18/17-468.html">jmlr.org/papers/v18/17-468.html</a>): reverse accumulation as generalized backpropagation. Checked through search-result excerpts, 2026-10.</li>
+<li>PyTorch documentation, <a href="https://pytorch.org/docs/stable/notes/autograd.html">Autograd mechanics</a>: the graph recreated at every iteration, "what you run is what you differentiate", intermediary results saved for the backward pass, leaf gradients "accumulated into their <code>.grad</code> fields", and the version counter on saved tensors. Read from the documentation source on GitHub (release 2.5.0), 2026-10.</li>
+<li>Kaplan et al., <em>Scaling Laws for Neural Language Models</em>, 2020 (<a href="https://arxiv.org/abs/2001.08361">arxiv.org/abs/2001.08361</a>): a forward pass costs about <code>2N</code> FLOPs per token. Kaplan and colleagues also state that the backward pass is about twice the forward pass, which gives about <code>6N</code> per training token. <code>N</code> excludes embedding parameters, and the figure leaves out the attention term. Checked through search-result excerpts, 2026-10.</li>
+<li>Rumelhart, Hinton and Williams, <em>Learning representations by back-propagating errors</em>, Nature 323, 533–536, 1986. <a href="https://doi.org/10.1038/323533a0">doi.org/10.1038/323533a0</a>.</li>
+<li>Goodfellow, Bengio and Courville, <em>Deep Learning</em> (2016), chapter 6: back-propagation and the computational graph.</li>
+<li>The data, the network and every number are invented. They come from <code>tensors/code/lesson5_autograd.py</code> and can be reproduced with it.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="batching-memory-and-precision.html"><span class="lbl">← Previous</span><span class="ttl">Batching, memory and precision</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-record-forward-replay-backward">The mental model: record forward, replay backward</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#one-small-rule-per-operation">One small rule per operation</a><a class="h3" href="#the-graph-and-the-saved-values">The graph and the saved values</a><a class="h3" href="#reverse-mode-and-forward-mode">Reverse mode and forward mode</a><a class="h3" href="#gradients-accumulate">Gradients accumulate</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-autograd-against-the-hand-written-gradient">Worked example: autograd against the hand-written gradient</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=tensors%2Fautomatic-differentiation.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="tensors/automatic-differentiation.html"</script><script defer src="../assets/glossary.js"></script></body></html>

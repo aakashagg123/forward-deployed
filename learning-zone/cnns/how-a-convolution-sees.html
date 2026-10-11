@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>How a convolution sees: one small grid, used everywhere — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink active" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <h1>How a convolution sees: one small grid, used everywhere</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>convolution</strong> slides one small grid of weights across an image. The grid is the <strong>kernel</strong>, often 3 by 3 pixels. At each position it multiplies the pixels under it by its weights and adds them up. The result is one number per position: a new grid called a <strong>feature map</strong>. A kernel that has learned "dark on the left, bright on the right" lights up wherever a vertical edge is.</p>
+<p>Two ideas make this work. Each output looks only at a small local window. And the same weights are used at every position, so a detector learned in one corner works in every corner. Together they cut the number of weights by a huge factor compared with connecting every pixel to every output.</p>
+<p>The cost is compute. A few weights are reused at every pixel, so the work grows with the image area. Double the width and height of the input and a convolution layer does four times the work, with the same weights. That makes input resolution one of the biggest cost levers in a vision product.</p>
+<p>This lesson does not re-teach tensors, shapes, matrix multiplication or broadcasting. The <a href="../tensors/index.html">Tensors module</a> covers them. Here we add only what a convolution changes.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Resolution decides cost. A request to "use the full-resolution photo" can multiply compute per image. Weight sharing is also why a convolution layer needs so few weights.</p>
+<p><strong>What it changes in your decisions</strong> — You treat input resolution as a product decision with a price. You ask for the smallest resolution that still shows the detail the product needs.</p>
+<p><strong>Ask your eng team</strong> — <em>"What input resolution do we run at, what is the smallest detail we must see at that resolution, and what would doubling it cost per image?"</em></p>
+<p><strong>Risk if ignored</strong> — A team raises resolution to catch small defects and the serving bill quadruples. Or it lowers resolution to save money and the defects shrink below one pixel, so the model cannot see them.</p>
+</blockquote>
+<h2 id="the-mental-model-a-stamp-moved-across-a-page">The mental model: a stamp moved across a page</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-info-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-info-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-info-surface);color:var(--color-text-info)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">One layer</span>
+<h4>One small grid, used everywhere</h4>
+<p class="cn-sub">Illustrative layer from the worked example. Same 3 x 3 x 3 weights at every position.</p>
+<div class="cn-row cn-c3"><div class="cn-card "><h5>Input</h5><p><span class="cn-mono">224 x 224 x 3</span><br>150,528 numbers</p></div><div class="cn-card cn-info"><h5>64 kernels</h5><p><span class="cn-mono">3 x 3 x 3</span> each<br>1,792 parameters in all</p></div><div class="cn-card cn-ok"><h5>Feature maps</h5><p><span class="cn-mono">224 x 224 x 64</span><br>173,408,256 FLOPs</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c1"><div class="cn-card cn-warn"><h5>Double the side to 448</h5><p>parameters: still 1,792<br>compute: 4 times as much</p></div></div>
+<p class="cn-foot">parameters understate compute: each weight is reused at all 50,176 positions</p>
+</div>
+
+<p>Picture a rubber stamp with a small pattern cut into it. You press it on every spot of the page and note how well the page matches the pattern there. The stamp never changes as it moves. That is weight sharing.</p>
+<p>The analogy breaks in two places. A real layer uses many stamps at once, one per output channel, and the model learns their patterns from data. Nobody carves them by hand. And each stamp spans every colour channel of the input, not one flat page.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-window-the-stride-and-the-padding">The window, the stride and the padding</h3>
+<p>A kernel of size F covers an F by F window. The <strong>stride</strong> S is how far the window moves between positions. <strong>Padding</strong> P adds a border of zeros so the window can sit on the edge pixels. The CS231n course notes give the output width as:</p>
+<p><code>(W − F + 2P) / S + 1</code></p>
+<p>For a 7 by 7 input and a 3 by 3 kernel with no padding, stride 1 gives a 5 by 5 output and stride 2 gives 3 by 3. A 3 by 3 kernel with padding 1 and stride 1 keeps the size: 224 in, 224 out. A stride of 2 roughly halves each side, which cuts the work for every layer after it.</p>
+<h3 id="channels-and-filters">Channels and filters</h3>
+<p>A colour image has 3 channels: red, green and blue. A kernel spans all of them, so a 3 by 3 kernel on a colour image has 3 × 3 × 3 = 27 weights plus 1 bias. A layer runs many kernels side by side. Each kernel makes one feature map. 64 kernels give 64 maps, so the output has 64 channels. The next layer's kernels then span those 64 channels.</p>
+<h3 id="weight-sharing">Weight sharing</h3>
+<p>Without sharing, every output position would need its own weights. The CS231n notes work this out for the first layer of AlexNet, which the notes say "significantly outperformed the second runner-up" in the 2012 ImageNet challenge. It has 55 × 55 × 96 = 290,400 outputs, each with 363 weights and 1 bias. Without sharing that is 105,705,600 parameters. With sharing, each of the 96 kernels is used everywhere. The layer has 34,944 parameters.</p>
+<p>Sharing rests on one assumption: a pattern worth detecting in one place is worth detecting everywhere. It also means a shifted input gives a shifted output. The CS231n notes point out where the assumption is weak, for example on centred faces where different positions should learn different features.</p>
+<h3 id="pooling">Pooling</h3>
+<p>A pooling layer shrinks a feature map without weights. Max pooling with a 2 by 2 window and stride 2 keeps the largest value in each window. The CS231n notes say this setting discards 75% of the values and is the most common. Torchvision's ResNet uses one max pool near the input and strided convolutions after that.</p>
+<h3 id="where-the-weights-come-from">Where the weights come from</h3>
+<p>Nobody writes the kernels. They start random and training adjusts them with the gradient, as with any layer. The Tensors lesson on <a href="../tensors/automatic-differentiation.html">automatic differentiation</a> covers how a library computes that gradient. Because one kernel is used at every position, its gradient is the sum of the gradients from every position.</p>
+<h2 id="worked-example-one-layer-counted">Worked example: one layer, counted</h2>
+<p><em>This example is illustrative. The layer sizes are a common choice, not a specific product. The code is in <code>cnns/code/lesson2_convolution.py</code>.</em></p>
+<p>The input is a 224 by 224 colour image. The layer has 64 kernels of size 3 by 3, stride 1, padding 1.</p>
+<ol>
+<li><strong>Output size.</strong> (224 − 3 + 2 × 1) ÷ 1 + 1 = 224. The output is 224 × 224 × 64.</li>
+<li><strong>Parameters.</strong> Each kernel has 3 × 3 × 3 = 27 weights. 64 kernels give 1,728 weights, plus 64 biases: <strong>1,792 parameters</strong>.</li>
+<li><strong>Compute.</strong> Each output value needs 27 multiplies and 27 adds. There are 224 × 224 × 64 = 3,211,264 output values. That is 2 × 3,211,264 × 27 = <strong>173,408,256 FLOPs</strong>, about 0.17 billion, with the bias ignored.</li>
+<li><strong>The dense alternative.</strong> A fully connected layer with the same input and output would join 150,528 inputs to 3,211,264 outputs. That is <strong>483,385,147,392 weights</strong>. It is 269,746,176 times the convolution's 1,792 parameters.</li>
+<li><strong>Double the resolution.</strong> At 448 by 448 the same layer still has 1,792 parameters. The compute is four times as much: 2 × 448 × 448 × 64 × 27 = 693,633,024 FLOPs.</li>
+</ol>
+<p>Step 5 is the product lesson. The Tensors module says that <a href="../tensors/matrix-multiplication.html">parameters understate compute</a> for a convolution. Here is by how much. Each of the 1,728 weights is used once per output position, 224 × 224 = 50,176 times, at 2 FLOPs per use: 1,728 × 50,176 × 2 = 173,408,256.</p>
+<p><strong>A note on counting.</strong> This lesson counts a multiply and an add as two FLOPs. A multiply-accumulate (MAC) is one multiply plus one add, so on this lesson's count one MAC is two FLOPs, and the 173,408,256 FLOPs above are 86,704,128 MACs. Model tables label compute in different ways. The TensorFlow MobileNet page reports multiply-accumulates (MACs). Torchvision's tables label their column "GFLOPS". For MobileNetV3-Large the two sources give the same number: torchvision lists 0.217 "GFLOPS" and the MobileNet page lists 217 million MACs. So torchvision's figure may be a multiply-accumulate count, whatever its label says. Do not set this lesson's FLOPs next to a torchvision "GFLOPS" figure as if they were on the same scale. Find out how each source counts before you compare or convert.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Resolution vs. cost.</strong> Doubling width and height costs about four times the compute per layer and four times the activation memory. Halving them saves the same, and small details may vanish.</li>
+<li><strong>Local view vs. global view.</strong> One 3 by 3 kernel sees only its neighbours. The network needs depth to relate distant parts of the image. <a href="from-edges-to-objects.html">From edges to objects</a> shows how depth grows the view.</li>
+<li><strong>Built-in assumptions vs. flexibility.</strong> Weight sharing is an assumption about images. It saves data when it holds. When position matters, such as on centred faces or fixed forms, the assumption costs accuracy.</li>
+<li><strong>Stride vs. detail.</strong> A stride of 2 cuts later work by about four times and discards fine detail early.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Detail smaller than one pixel.</strong> A crack two pixels wide on a photo 4,000 pixels wide (assumed) is shrunk to 224 pixels. It becomes 2 × 224 ÷ 4,000 = 0.112 pixels wide. No kernel can find it.</li>
+<li><strong>Resolution changed late.</strong> A team trains at 224 and serves at 512 to "see more". The cost per image rises about five times and accuracy may fall, because the model never saw objects at that scale.</li>
+<li><strong>Parameter count used as a cost proxy.</strong> A small model with large inputs can cost more per image than a bigger model on small inputs. Ask for FLOPs at your resolution.</li>
+<li><strong>Mixed compute labels.</strong> One table reports MACs, another reports "GFLOPS", and someone compares them directly. The labels may hide the same count, or a count that differs by two. Without knowing how each source counts, the comparison can be off by a factor of two.</li>
+<li><strong>Padding at the border.</strong> At the edge, the window sees a border of padded zeros that is not in the scene. Objects cut by the frame edge are a separate case. Test them on their own.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>cnns/code/lesson2_convolution.py</code>. The core is four loops: slide, multiply, add.</p>
+<pre><code class="language-python">def conv2d(img, kernel, stride=1, padding=0, bias=0.0):
+    x = pad(img, padding) if padding else img
+    f = len(kernel)
+    oh = out_size(len(img), f, stride, padding)
+    ow = out_size(len(img[0]), f, stride, padding)
+    out = []
+    for i in range(oh):
+        row = []
+        for j in range(ow):
+            total = bias
+            for a in range(f):
+                for b in range(f):
+                    total += kernel[a][b] * x[i * stride + a][j * stride + b]
+            row.append(total)
+        out.append(row)
+    return out
+</code></pre>
+<p>A common way to implement it, which the CS231n notes describe, is <strong>im2col</strong>. Stretch every window into one column, then do one large matrix multiplication of the kernel weights against all the columns. The file checks that both give the same answer to within 10⁻¹². From there, the cost is the matrix-multiplication cost covered in <a href="../tensors/matrix-multiplication.html">Tensors lesson 3</a>.</p>
+<p>The file also checks the edge detector. A 6 by 6 image, dark on the left and bright on the right, under the kernel <code>[-1, 0, 1]</code> in each row, gives the row <code>[0, 3, 3, 0]</code>. It fires only at the edge. Shift the image one pixel right and the response shifts one place right. The weights did not change.</p>
+<p>In PyTorch the worked example layer is one line: <code>nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1)</code>. PyTorch's <code>Conv2d</code> documents its input shape as <code>(N, C_in, H_in, W_in)</code>, here <code>(N, 3, 224, 224)</code>, as covered in <a href="../tensors/what-a-tensor-is.html">What a tensor is</a>.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we know our input resolution, and the smallest detail the product must see at it?</li>
+<li class="task todo">Have we priced a change in resolution as roughly the square of the change in side length?</li>
+<li class="task todo">Do we compare models by FLOPs at our resolution, not by parameter count?</li>
+<li class="task todo">When we compare vendor tables, do we know how each one counts compute, whatever its label says?</li>
+<li class="task todo">Do we train and serve at the same resolution?</li>
+<li class="task todo">Do we test objects at the edge of the frame?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="what-computer-vision-does.html">What computer vision does</a> — the four jobs these layers serve.</li>
+<li><a href="from-edges-to-objects.html">From edges to objects</a> — what stacking these layers builds.</li>
+<li><a href="../tensors/matrix-multiplication.html">Matrix multiplication</a> — the operation a convolution becomes, and how to count it.</li>
+<li><a href="../tensors/what-a-tensor-is.html">What a tensor is</a> — image shapes and bytes.</li>
+<li><a href="../machine-learning/model-families.html">Model families</a> — where convolutional networks sit among other models.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>CS231n course notes, <em>Convolutional Neural Networks</em> (<a href="https://github.com/cs231n/cs231n.github.io/blob/master/convolutional-networks.md">GitHub source, master branch</a>): the output-size formula <code>(W − F + 2P)/S + 1</code> with the 7 by 7 examples; parameter sharing with the AlexNet figures (290,400 neurons, 363 weights and 1 bias each, 105,705,600 parameters without sharing, 34,944 with); where sharing does not make sense; max pooling at 2 by 2 and stride 2 discarding 75% of activations; im2col turning a convolution into one matrix multiply; relaxing sharing for centred faces; AlexNet, submitted to the ImageNet challenge in 2012, "significantly outperformed the second runner-up". Read 2026-10.</li>
+<li>PyTorch source, <code>torch/nn/modules/conv.py</code> (<a href="https://github.com/pytorch/pytorch/blob/main/torch/nn/modules/conv.py">GitHub, main branch</a>): <code>Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, ...)</code>, with input shape <code>(N, C_in, H_in, W_in)</code> and output size rounded down. Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/resnet.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py">GitHub, main branch</a>): one <code>MaxPool2d(kernel_size=3, stride=2, padding=1)</code> after the first convolution, and <code>stride=2</code> at the start of <code>layer2</code>, <code>layer3</code> and <code>layer4</code>. Read 2026-10.</li>
+<li>TensorFlow Models, <em>MobileNet</em> README (<a href="https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/README.md">GitHub, master branch</a>): efficiency reported in MACs, the number of multiply-accumulates needed for one image; 217 million MACs for MobileNetV3-Large ("Large dm=1 (float)"). Read 2026-10.</li>
+<li>PyTorch torchvision source, <code>torchvision/models/mobilenetv3.py</code> (<a href="https://github.com/pytorch/vision/blob/main/torchvision/models/mobilenetv3.py">GitHub, main branch</a>): MobileNetV3-Large <code>IMAGENET1K_V1</code> and <code>IMAGENET1K_V2</code> list <code>_ops</code> of 0.217, which torchvision's <code>docs/source/conf.py</code> labels "GFLOPS". Read 2026-10.</li>
+<li>The layer sizes, the edge image and every computed figure are illustrative. They come from <code>cnns/code/lesson2_convolution.py</code>, which ends in <code>assert</code> lines.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="what-computer-vision-does.html"><span class="lbl">← Previous</span><span class="ttl">What computer vision does: the four jobs</span></a><a class="navcard next" href="from-edges-to-objects.html"><span class="lbl">→ Next</span><span class="ttl">From edges to objects: what depth buys</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-stamp-moved-across-a-page">The mental model: a stamp moved across a page</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-window-the-stride-and-the-padding">The window, the stride and the padding</a><a class="h3" href="#channels-and-filters">Channels and filters</a><a class="h3" href="#weight-sharing">Weight sharing</a><a class="h3" href="#pooling">Pooling</a><a class="h3" href="#where-the-weights-come-from">Where the weights come from</a><a class="h2" href="#worked-example-one-layer-counted">Worked example: one layer, counted</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Fhow-a-convolution-sees.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/how-a-convolution-sees.html"</script><script defer src="../assets/glossary.js"></script></body></html>

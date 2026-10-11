@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Vision foundation models: CLIP, DINO and SAM — Convolutional networks</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Convolutional networks</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-computer-vision-does.html">1 · What computer vision does: the four jobs</a><a class="modlink" href="how-a-convolution-sees.html">2 · How a convolution sees: one small grid, used everywhere</a><a class="modlink" href="from-edges-to-objects.html">3 · From edges to objects: what depth buys</a><a class="modlink" href="transfer-learning-and-labels.html">4 · Transfer learning and labels: start from someone else&#x27;s model</a><a class="modlink" href="cnns-vs-vision-transformers.html">5 · CNNs vs. vision transformers: picking a backbone</a><a class="modlink active" href="vision-foundation-models.html">6 · Vision foundation models: CLIP, DINO and SAM</a><a class="modlink" href="shipping-vision-in-production.html">7 · Shipping vision in production</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
+    <h1>Vision foundation models: CLIP, DINO and SAM</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>vision foundation model</strong> is a large model pre-trained on a very large image collection, often without hand-made labels, and meant to be reused for many tasks. This lesson covers three families.</p>
+<ul>
+<li><strong>CLIP</strong> (OpenAI) learns from images paired with captions. You can classify an image by comparing it with text labels you write, with no training. This is <strong>zero-shot</strong> classification.</li>
+<li><strong>DINOv2</strong> (Meta) learns image features with no labels. You put a small classifier on top, often a single linear layer. <strong>DINOv3</strong> continues the line with more backbones.</li>
+<li><strong>SAM 3</strong> (Meta) segments objects from a prompt: points, boxes, masks, or a short text phrase such as "a player in white".</li>
+</ul>
+<p>These models change the first question. It is no longer "how many images must we label to train?" It is "can a foundation model do this with few labels or none, and are we allowed to ship it?" The licence and the vendor's stated intended use are now part of the technical choice.</p>
+<p>This field moves fast. Every model name, licence and figure here is as of 2026-10. Check the source before you build.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — A foundation model can let a team prototype a vision feature before it labels a training set. It can also carry a licence that forbids your use, or a vendor note that says it is not meant for deployment.</p>
+<p><strong>What it changes in your decisions</strong> — You try zero-shot or a linear probe before you fund labelling. You check the licence, the access terms and the intended-use statement before the prototype becomes the plan.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which foundation model did we try first, what did it score on our test set with no training, and does its licence allow our commercial use?"</em></p>
+<p><strong>Risk if ignored</strong> — A team ships a feature on weights released for non-commercial research. Or it trusts a zero-shot score that looks confident and was never tested on its own images.</p>
+</blockquote>
+<h2 id="the-mental-model-three-ways-to-reuse-a-big-model">The mental model: three ways to reuse a big model</h2>
+<style>
+.cn{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-caution-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.cn-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-caution-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.cn h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cn-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.cn-row{display:grid;gap:12px;align-items:stretch}
+.cn-c2{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:repeat(3,1fr)}.cn-c4{grid-template-columns:repeat(4,1fr)}
+.cn-card{border-radius:13px;padding:13px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.cn-card h5{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.cn-card p{margin:0;font-size:var(--font-text-xs-size);line-height:1.4;color:var(--color-text-secondary)}
+.cn-tag{display:inline-block;border-radius:10px;padding:1px 8px;margin-bottom:6px;font-size:var(--font-text-3xs-size);font-weight:700;
+  background:var(--color-background-caution-surface);color:var(--color-text-caution)}
+.cn-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.cn-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.cn-warn{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.cn-disc{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.cn-mono{font-family:var(--font-mono);font-size:var(--font-text-2xs-size);color:var(--color-text);background:var(--color-surface-tertiary);border-radius:6px;padding:1px 6px;display:inline-block;margin:2px 0}
+.cn-arrow{text-align:center;color:var(--color-text-tertiary);margin:8px 0;font-size:var(--font-text-sm-size)}
+.cn-foot{margin:14px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.cn-c4{grid-template-columns:repeat(2,1fr)}.cn-c3{grid-template-columns:1fr}}
+@media (max-width:520px){.cn-c4,.cn-c2{grid-template-columns:1fr}.cn{padding:22px 16px 18px}}
+</style>
+<div class="cn"><span class="cn-chip">Reuse</span>
+<h4>Three ways to reuse a big model</h4>
+<p class="cn-sub">Every route ends in the same two checks. Licences as of 2026-10.</p>
+<div class="cn-row cn-c3"><div class="cn-card cn-info"><span class="cn-tag">MIT</span><h5>CLIP</h5><p>describe classes in words<br>zero-shot, no training</p></div><div class="cn-card cn-disc"><span class="cn-tag">Apache 2.0 / DINOv3 Licence</span><h5>DINOv2 / DINOv3</h5><p>reuse pre-trained features<br>train a small head</p></div><div class="cn-card cn-ok"><span class="cn-tag">SAM Licence</span><h5>SAM 3</h5><p>prompt with points, boxes<br>or a short phrase</p></div></div>
+<div class="cn-arrow">↓</div>
+<div class="cn-row cn-c1"><div class="cn-card cn-warn"><h5>Before you build</h5><p>test on your own images · read the licence and the intended-use note</p></div></div>
+<p class="cn-foot">capability and permission are separate questions</p>
+</div>
+
+<p>Think of hiring a contractor who has already seen millions of buildings. You can describe the job in words (zero-shot). You can give a short briefing and a few examples (a small head on frozen features). Or you can point at the parts of a drawing you want traced (prompted segmentation).</p>
+<p>The analogy breaks because the contractor's experience is its training data, and you cannot interview it. The CLIP model card says the data is "more representative of people and societies most connected to the internet." Your images may sit outside that experience.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="clip-compare-an-image-with-text">CLIP: compare an image with text</h3>
+<p>CLIP has two encoders, one for images and one for text. Training pulls matching image and caption pairs together. To classify, you write one prompt per class, such as "a photo of a {label}". CLIP encodes the image and each prompt. The class whose text vector is most similar to the image vector wins. The README's example multiplies the similarities by 100 and applies a softmax to get probabilities.</p>
+<p>The README reports that CLIP "matches the performance of the original ResNet50 on ImageNet 'zero-shot' without using any of the original 1.28M labeled examples." The model card lists limits. CLIP struggles with fine-grained classification and counting objects. Its performance and biases depend on how the classes are worded and chosen.</p>
+<h3 id="dinov2-and-dinov3-reusable-features">DINOv2 and DINOv3: reusable features</h3>
+<p>DINOv2 was "pretrained on a dataset of 142 M images without using any labels or annotations." Its README says the features work "with classifiers as simple as linear layers" across many tasks "without any requirement for fine-tuning." That makes it a strong frozen backbone for <a href="transfer-learning-and-labels.html">transfer learning</a>. The DINOv2 README describes DINOv3 as "continuing this line of work." The DINOv3 README offers ViT and ConvNeXt backbones pre-trained on a web dataset, plus ViT backbones pre-trained on satellite imagery.</p>
+<h3 id="sam-3-segment-from-a-prompt">SAM 3: segment from a prompt</h3>
+<p>SAM 3 is "a unified foundation model for promptable segmentation in images and videos." It can "detect, segment, and track objects using text or visual prompts such as points, boxes, and masks." Compared with SAM 2, it adds the ability to segment every instance of a concept given by a short text phrase. Meta reports that it reaches 75 to 80% of human performance on a new benchmark it built. The README's image example returns masks, boxes and scores for a text prompt.</p>
+<h3 id="licences-access-and-intended-use-as-of-2026-10">Licences, access and intended use (as of 2026-10)</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Code and weights licence</th>
+<th>Access</th>
+<th>Vendor's note on use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLIP</td>
+<td>MIT licence in the repository</td>
+<td>Open download</td>
+<td>The model card says "any deployed use case of the model … is currently out of scope", and certain surveillance and facial-recognition uses always are</td>
+</tr>
+<tr>
+<td>DINOv2</td>
+<td>Apache License 2.0 for code and weights</td>
+<td>Open download</td>
+<td>Some later variants in the same repository, such as XRay-DINO, carry the FAIR Noncommercial Research License</td>
+</tr>
+<tr>
+<td>DINOv3</td>
+<td>The DINOv3 License</td>
+<td>Request access; links sent by e-mail once accepted</td>
+<td>Read the licence terms for your use</td>
+</tr>
+<tr>
+<td>SAM 3</td>
+<td>The SAM License</td>
+<td>Request access on Hugging Face, then authenticate</td>
+<td>Read the licence terms for your use</td>
+</tr>
+</tbody>
+</table>
+<p>The point of the table is not the rows. It is the habit of making one. Two models in one repository can carry different licences.</p>
+<h2 id="worked-example-a-zero-shot-score-that-looks-too-sure">Worked example: a zero-shot score that looks too sure</h2>
+<p><em>This example is illustrative. The similarity values are assumed, not produced by a real model. The method follows CLIP's README.</em></p>
+<p>A marketplace wants to route product photos to three teams: shoes, bags and watches. Before labelling anything, the team tries CLIP zero-shot with the prompts "a photo of a shoe", "a photo of a bag" and "a photo of a watch".</p>
+<p><strong>Case A.</strong> For one photo the assumed similarities are 0.31, 0.27 and 0.22.</p>
+<ol>
+<li>Multiply by 100: 31, 27 and 22.</li>
+<li>Softmax. Subtract the largest, giving 0, −4 and −9. Raise e to each: 1, 0.0183 and 0.0001.</li>
+<li>Divide by their sum. The probabilities are <strong>0.982, 0.018 and 0.0001</strong>.</li>
+</ol>
+<p>The model looks 98% sure. The raw similarities differed by only 0.04. The factor of 100 turns small gaps into near-certainty.</p>
+<p><strong>Case B.</strong> Another photo scores 0.29, 0.28 and 0.27. The same steps give <strong>0.665, 0.245 and 0.090</strong>. This time the model hedges.</p>
+<p><strong>The decision.</strong> The team does not route on the probability alone. It labels 300 photos as a test set (assumed), measures accuracy per class, and picks a threshold below which a person decides. It then checks the CLIP model card. Deployment is out of scope there, so for production the team compares a model whose licence and stated use fit, such as a DINOv2 backbone with a linear probe trained on the same 300 photos plus more.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Zero-shot vs. a trained head.</strong> Zero-shot needs no labels and is fast to try. A small head on frozen features needs some labelled training images and can fit your classes better. Both need a labelled test set.</li>
+<li><strong>General vs. specialised.</strong> Foundation models know common scenes. Medical, industrial or satellite images may sit outside their training data. DINOv3's satellite backbones exist for this reason.</li>
+<li><strong>Capability vs. licence.</strong> The most capable checkpoint may have the most restrictive terms. A permissive, slightly weaker model can be the better product choice.</li>
+<li><strong>Size vs. serving cost.</strong> Foundation backbones range from small to very large. DINOv3 lists backbones from 21 million parameters (ViT-S/16 distilled) to 6,716 million (ViT-7B/16). Size up only when a smaller one misses the bar.</li>
+<li><strong>Prompt wording vs. stability.</strong> Zero-shot results shift with how the classes are worded. That makes them easy to tune and easy to break.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>A licence found at launch.</strong> The prototype used weights the company may not ship. The work restarts.</li>
+<li><strong>Confident zero-shot scores trusted.</strong> The softmax makes small gaps look certain. Errors pass with 98% "confidence".</li>
+<li><strong>Wording drift.</strong> Someone edits a class prompt. Results change across the board, and no test catches it.</li>
+<li><strong>Bias in the classes.</strong> The CLIP model card reports that its performance and biases "can depend significantly on class design." A product that classifies people inherits this.</li>
+<li><strong>Fine detail and counting.</strong> The CLIP model card names fine-grained classification and counting as weak spots. A feature that needs either fails quietly.</li>
+<li><strong>Domain gap.</strong> Everyday-photo features do poorly on X-rays or wafers. The team mistakes this for a labelling problem.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>CLIP zero-shot, from its README (abridged). It runs with the <code>clip</code> package installed. This lesson does not run it.</p>
+<pre><code class="language-python">model, preprocess = clip.load('ViT-B/32', device)
+text_inputs = torch.cat([clip.tokenize(f&quot;a photo of a {c}&quot;) for c in classes]).to(device)
+with torch.no_grad():
+    image_features = model.encode_image(image_input)
+    text_features = model.encode_text(text_inputs)
+image_features /= image_features.norm(dim=-1, keepdim=True)
+text_features /= text_features.norm(dim=-1, keepdim=True)
+similarity = (100.0 * image_features @ text_features.T).softmax(dim=-1)
+</code></pre>
+<p>The two <code>norm</code> lines make every vector length 1, so the matrix multiply gives cosine similarities. The worked example's arithmetic in plain Python:</p>
+<pre><code class="language-python">import math
+def probs(sims, scale=100.0):
+    logits = [scale * s for s in sims]
+    top = max(logits)
+    e = [math.exp(x - top) for x in logits]
+    return [x / sum(e) for x in e]
+
+assert [round(p, 3) for p in probs([0.31, 0.27, 0.22])] == [0.982, 0.018, 0.0]
+assert [round(p, 3) for p in probs([0.29, 0.28, 0.27])] == [0.665, 0.245, 0.09]
+</code></pre>
+<p>SAM 3 on an image, from its README: build the model, call <code>processor.set_image(image)</code>, then <code>processor.set_text_prompt(state=inference_state, prompt=...)</code>. The output holds <code>masks</code>, <code>boxes</code> and <code>scores</code>.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Did we try zero-shot or a linear probe on a foundation model before funding labels?</li>
+<li class="task todo">Do we have a labelled test set from our own images, even a small one?</li>
+<li class="task todo">Have we set a threshold below which a person decides, instead of trusting the softmax?</li>
+<li class="task todo">Have we read the licence, the access terms and the intended-use note for the exact checkpoint?</li>
+<li class="task todo">Are class prompts versioned and tested like code?</li>
+<li class="task todo">Have we checked performance across the groups our product serves?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="transfer-learning-and-labels.html">Transfer learning and labels</a> — frozen features and linear probes.</li>
+<li><a href="cnns-vs-vision-transformers.html">CNNs vs. vision transformers</a> — the backbones these models use.</li>
+<li><a href="../rag-vector-databases/embeddings-and-semantic-search.html">Embeddings and semantic search</a> — searching by vector similarity, the same idea CLIP uses.</li>
+<li><a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a> — the same decision for generative models.</li>
+<li><a href="../ai-security-and-guardrails/governance-audit-and-compliance.html">Governance, audit and compliance</a> — making licence and use checks part of the process.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>OpenAI, <em>CLIP</em> README (<a href="https://github.com/openai/CLIP/blob/main/README.md">GitHub, main branch</a>): CLIP trained on image and text pairs; matching the original ResNet-50 on ImageNet zero-shot without the 1.28M labelled examples; the zero-shot code with the "a photo of a {c}" prompt, normalised features and the factor of 100 before the softmax. The repository's LICENSE file is the MIT License. Read 2026-10.</li>
+<li>OpenAI, <em>CLIP</em> model card (<a href="https://github.com/openai/CLIP/blob/main/model-card.md">GitHub, main branch</a>): image and text encoders trained with a contrastive loss; "any deployed use case of the model … is currently out of scope"; surveillance and facial-recognition uses always out of scope; data skewed toward people "most connected to the internet"; weaknesses in fine-grained classification and counting; performance and biases depending on class design. Read 2026-10.</li>
+<li>Meta AI Research (FAIR), <em>DINOv2</em> README (<a href="https://github.com/facebookresearch/dinov2/blob/main/README.md">GitHub, main branch</a>): pre-trained on 142 M images without labels; features usable with linear classifiers without fine-tuning; DINOv3 described as "continuing this line of work"; code and weights under Apache License 2.0; XRay-DINO and Cell-DINO weights under the FAIR Noncommercial Research License. Read 2026-10.</li>
+<li>Meta AI Research, <em>DINOv3</em> README (<a href="https://github.com/facebookresearch/dinov3/blob/main/README.md">GitHub, main branch</a>): ViT and ConvNeXt backbones pre-trained on a web dataset, ViT backbones pre-trained on a satellite dataset, backbones from 21M parameters (ViT-S/16 distilled) to 6,716M (ViT-7B/16); weights by access request; code and weights under the DINOv3 License. Read 2026-10.</li>
+<li>Meta, <em>SAM 3</em> README (<a href="https://github.com/facebookresearch/sam3/blob/main/README.md">GitHub, main branch</a>): promptable segmentation in images and videos from text or visual prompts; segmenting all instances of a concept from a short phrase, with "a player in white" as an example prompt; 75 to 80% of human performance on Meta's new benchmark; access requested on Hugging Face; the SAM License; the image usage example. Read 2026-10.</li>
+<li>The marketplace example and its similarity values are invented. The arithmetic is shown and checked in the lesson.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="cnns-vs-vision-transformers.html"><span class="lbl">← Previous</span><span class="ttl">CNNs vs. vision transformers: picking a backbone</span></a><a class="navcard next" href="shipping-vision-in-production.html"><span class="lbl">→ Next</span><span class="ttl">Shipping vision in production</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-three-ways-to-reuse-a-big-model">The mental model: three ways to reuse a big model</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#clip-compare-an-image-with-text">CLIP: compare an image with text</a><a class="h3" href="#dinov2-and-dinov3-reusable-features">DINOv2 and DINOv3: reusable features</a><a class="h3" href="#sam-3-segment-from-a-prompt">SAM 3: segment from a prompt</a><a class="h3" href="#licences-access-and-intended-use-as-of-2026-10">Licences, access and intended use (as of 2026-10)</a><a class="h2" href="#worked-example-a-zero-shot-score-that-looks-too-sure">Worked example: a zero-shot score that looks too sure</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=cnns%2Fvision-foundation-models.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="cnns/vision-foundation-models.html"</script><script defer src="../assets/glossary.js"></script></body></html>
