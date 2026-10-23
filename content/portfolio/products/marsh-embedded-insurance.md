@@ -10,28 +10,29 @@ description: "Case study: BenefitsCircle and QoverPro at Marsh. Embedded insuran
 
 ## 1. System context & business scale
 
-I was lead product manager and roadmap owner for two Marsh platforms. BenefitsCircle delivers voluntary employee benefits, and it reaches 5M lives across the employer-employee network. QoverPro is Marsh's embedded insurance platform. Together they powered programs for Amazon, Ashok Leyland, Cleartrip, Bridgestone, and Shiprocket.
+I was lead product manager and roadmap owner for two Marsh platforms. BenefitsCircle delivers voluntary employee benefits, and it reaches 5M lives across the employer-employee network. QoverPro is Marsh's embedded insurance platform. Together they powered programs for Ashok Leyland, Cleartrip, Bridgestone, and Shiprocket. I also led the Amazon DSP program, which ran on an in-house platform.
 
 ## 2. Architecture & integration topology
 
 ![Marsh platform topology](../assets/marsh-platform-topology.svg)
 
-*Figure 1 — partner programs reach customers through QoverPro, and employers reach employees through BenefitsCircle. Three productised chatbot use-cases span both.*
+*Figure 1 — partner programs reach customers through QoverPro, and employers reach employees through BenefitsCircle. Three productised chatbot use-cases span both. The Amazon DSP program ran on an in-house platform.*
 
-I owned the platform stack and the UI/UX of BenefitsCircle's customer-facing e-insurance website. QoverPro carried the partner programs:
+I owned the platform stack and the UI/UX of BenefitsCircle's customer-facing e-insurance website. QoverPro carried four of the partner programs:
 
 - Ashok Leyland
 - Cleartrip (EzCancel)
 - Shiprocket (Secure Shipment)
 - Bridgestone (BridgeCare)
-- Amazon (Amazon DSP)
 
-<!-- TODO(Aakash): confirm which platform (QoverPro or BenefitsCircle) carried each of the five programs, especially Amazon DSP; add the integration pattern with partners and the insurer-side systems. -->
+The fifth, Amazon (Amazon DSP), ran on an in-house platform.
+
+<!-- TODO(Aakash): add the integration pattern with partners and the insurer-side systems. -->
 
 ## 3. Key product & technical tradeoffs
 
 - **Embedded cover vs. a standalone insurance site.** QoverPro sells cover inside the partner's own product, such as EzCancel in Cleartrip and Secure Shipment in Shiprocket. BenefitsCircle sells through a customer-facing e-insurance website.
-- **One platform stack, many programs.** Five large client programs ran on the platform stack I owned.
+- **One platform stack, many programs.** Four large client programs ran on QoverPro, and Amazon DSP ran on an in-house platform.
 - **Chatbots as product.** I productised three chatbot use-cases across digital insurance affinity and voluntary benefits.
 
 <!-- TODO(Aakash): add the build-vs-buy call on the chatbot stack and the configuration limits of QoverPro per client. -->
@@ -48,7 +49,7 @@ I owned the platform stack and the UI/UX of BenefitsCircle's customer-facing e-i
 ## 5. Impact & telemetry
 
 - BenefitsCircle reached 5M lives across the employer-employee network.
-- Five named partner programs live on QoverPro.
+- Four named partner programs live on QoverPro, plus the Amazon DSP program on an in-house platform.
 
 <!-- TODO(Aakash): premium / GWP written through the embedded programs. -->
 <!-- TODO(Aakash): attach rate and conversion for EzCancel, Secure Shipment, BridgeCare, and Amazon DSP. -->

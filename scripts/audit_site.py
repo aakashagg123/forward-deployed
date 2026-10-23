@@ -258,7 +258,17 @@ def main():
     sm_problems += [f"redirect stub in sitemap: {u}" for u in locs if u in stub_urls][:10]
     sm_problems += [f"sitemap URL has no file: {u}" for u in locs if (url_to_file(u) is None or not url_to_file(u).exists())][:10]
     sm_problems += [f"duplicate sitemap URL: {u}" for u, n in Counter(locs).items() if n > 1][:10]
-    print(f"[6] sitemap URLs: {len(locs)}, problems: {len(sm_problems)}")
+    # lastmod is optional (omitted on shallow clones), but when present it must be a past date.
+    import datetime
+    today = datetime.date.today()
+    lastmods = re.findall(r"<lastmod>([^<]+)</lastmod>", sitemap_path.read_text(encoding="utf-8")) if sitemap_path.exists() else []
+    for lm in lastmods:
+        try:
+            if datetime.date.fromisoformat(lm) > today:
+                sm_problems.append(f"lastmod in the future: {lm}")
+        except ValueError:
+            sm_problems.append(f"invalid lastmod: {lm}")
+    print(f"[6] sitemap URLs: {len(locs)} ({len(lastmods)} with lastmod), problems: {len(sm_problems)}")
     for p in sm_problems:
         print(f"    {p}")
     if sm_problems:

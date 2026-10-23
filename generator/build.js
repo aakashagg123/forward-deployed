@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
@@ -150,6 +151,33 @@ const PRODUCTS = [
     href: '/portfolio/products/autoo2-claims-saas.html',
   },
 ];
+
+// Sitemap <lastmod>: the date of the last git commit that touched a file.
+// A shallow clone (the default for CI checkouts) gives every file the same
+// date, so lastmod is omitted there rather than published wrong; the deploy
+// workflow fetches full history. Untracked files have no date either.
+const IS_SHALLOW = (() => {
+  try {
+    return execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: ROOT, encoding: 'utf8' }).trim() !== 'false';
+  } catch {
+    return true;
+  }
+})();
+
+function lastModified(...files) {
+  if (IS_SHALLOW) return null;
+  const dates = files
+    .filter((f) => f && fs.existsSync(f))
+    .map((f) => {
+      try {
+        return execFileSync('git', ['log', '-1', '--format=%cI', '--', f], { cwd: ROOT, encoding: 'utf8' }).trim().slice(0, 10);
+      } catch {
+        return '';
+      }
+    })
+    .filter(Boolean);
+  return dates.length ? dates.sort().at(-1) : null;
+}
 
 function readTitleFromMarkdown(md, fallback) {
   const match = md.match(/^#\s+(.+)$/m);
@@ -342,16 +370,21 @@ function fixLearningZoneLinks(html, pageDir) {
   });
 }
 
-function prerenderLearningZoneMarkdown(html, fullPath, md) {
+function learningZoneMarkdownPath(html, fullPath) {
   const fetched = html.match(/fetch\('([^']+\.md)'\)/);
-  if (!fetched || !/<main[^>]*>\s*Loading…\s*<\/main>/.test(html)) return html;
+  if (!fetched || !/<main[^>]*>\s*Loading…\s*<\/main>/.test(html)) return null;
   const mdPath = path.resolve(path.dirname(fullPath), fetched[1]);
-  if (!fs.existsSync(mdPath)) return html;
+  return fs.existsSync(mdPath) ? mdPath : null;
+}
+
+function prerenderLearningZoneMarkdown(html, fullPath, md) {
+  const mdPath = learningZoneMarkdownPath(html, fullPath);
+  if (!mdPath) return html;
   const rendered = fixLearningZoneLinks(md.render(matter(fs.readFileSync(mdPath, 'utf8')).content), path.dirname(fullPath));
   return html.replace(/(<main[^>]*>)\s*Loading…\s*(<\/main>)/, (_m, open, close) => `${open}${rendered}${close}`);
 }
 
-function themeLearningZone(dir, { cssHref, jsHref, md }) {
+function themeLearningZone(dir, { cssHref, jsHref, md, sourceDir }) {
   const bar = `<div id="fd-lz-bar" class="fd-lz-bar">
   <a class="fd-lz-brand" href="/"><img src="/mark-64.png" alt=""><span>Forward-deployed</span></a>
   <span class="fd-lz-sep">/</span>
@@ -379,7 +412,10 @@ function themeLearningZone(dir, { cssHref, jsHref, md }) {
       const duplicateOfIndex = entry.name === 'README.html' && fs.existsSync(path.join(d, 'index.html'));
       const seo = addLearningZoneSeo(html, rel, { duplicateOfIndex });
       html = seo.html;
-      if (seo.indexable && !duplicateOfIndex) urls.push(seo.url);
+      if (seo.indexable && !duplicateOfIndex) {
+        const src = path.join(sourceDir, rel);
+        urls.push({ loc: seo.url, lastmod: lastModified(src, learningZoneMarkdownPath(fs.readFileSync(src, 'utf8'), src)) });
+      }
       html = html.replace(/<\/head>/i, `${headTags}</head>`);
       html = html.replace(/<body[^>]*>/i, (m) => `${m}\n${bar}`);
       if (path.relative(dir, full) === path.join('graph', 'index.html')) {
@@ -857,7 +893,7 @@ async function build() {
       // A clean markdown mirror of every page, for agents/crawlers that
       // prefer fetching source content over HTML-with-chrome.
       fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), stripComments(raw));
-      if (!page.unlisted) sitemapUrls.push({ loc: SITE.baseUrl + page.href });
+      if (!page.unlisted) sitemapUrls.push({ loc: SITE.baseUrl + page.href, lastmod: lastModified(abs) });
     }
 
     copyNestedAssetDirs(spaceDir, path.join(DIST_DIR, spaceId));
@@ -873,13 +909,18 @@ async function build() {
   // through the markdown pipeline) copied wholesale into dist/learning-zone/.
   if (fs.existsSync(LEARNING_ZONE_DIR)) {
     copyDir(LEARNING_ZONE_DIR, path.join(DIST_DIR, 'learning-zone'));
-    const lz = themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref, md: createRenderer({ highlighter, readmeIndex: false }) });
-    for (const loc of lz.urls.sort()) sitemapUrls.push({ loc });
+    const lz = themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref, md: createRenderer({ highlighter, readmeIndex: false }), sourceDir: LEARNING_ZONE_DIR });
+    for (const u of lz.urls.sort((a, b) => (a.loc < b.loc ? -1 : 1))) sitemapUrls.push(u);
   }
+
+  // The homepage changes whenever any page does (it links them all), so it
+  // takes the newest date in the sitemap.
+  const newest = sitemapUrls.map((u) => u.lastmod).filter(Boolean).sort().at(-1);
+  if (newest) sitemapUrls[0].lastmod = newest;
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapUrls.map((u) => `  <url><loc>${u.loc}</loc></url>`).join('\n')}
+${sitemapUrls.map((u) => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n')}
 </urlset>
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemap);
