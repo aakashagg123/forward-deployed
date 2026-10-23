@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture, THEME_TOGGLE_ICONS } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture, renderCtaFooter, renderTopNav, THEME_TOGGLE_ICONS } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -17,7 +17,7 @@ const SITE = {
   title: 'Forward-deployed',
   baseUrl: 'https://forward-deployed.in',
   author: 'Aakash Aggarwal',
-  thesis: 'Product leader & builder, working where AI, fintech, and real-world success meet',
+  thesis: 'AI-native product leader and 0→1 fintech builder. Leading lending origination, CRM, and the AI charter at JSW One Finance.',
 };
 
 const LINKEDIN_URL = 'https://in.linkedin.com/in/aakash-aggarwal-1010';
@@ -28,50 +28,91 @@ const GITHUB_USERNAME = 'aakashagg123';
 const HIDDEN_SPACES = new Set();
 
 const SPACE_META = {
-  books: { title: 'Books', blurb: 'A small digital library — two long-reads, free to read here.' },
+  books: { title: 'Books', blurb: 'Forward-deployed: the flagship book, free to read here.' },
   about: { title: 'About me', blurb: 'Who I am, what I do, and what I’m building right now.' },
   portfolio: { title: 'Portfolio & experience', blurb: 'A decade of shipping — one founder run, three product leadership roles.' },
-  musings: { title: 'Musings & side projects', blurb: 'Running notes on AI, product ideas, and prototypes worth poking at.' },
+  musings: { title: 'Essays & Built Systems', blurb: 'One essay and two documented systems: astack and gatsby.' },
 };
 
-// Landing page copy — About-first, short founder-energy framing; the full
-// detailed narrative lives on the About page, reached via "Read the full
-// story".
+// Pages kept live (so inbound links never 404) but removed from the Books
+// index, the sidebar, the homepage, the sitemap and llms.txt, and marked
+// noindex. Matched against the page's source path within its space.
+const UNLISTED = [{ space: 'books', prefix: 'prompt-engineering-guide/' }];
+function isUnlisted(spaceId, sourcePath) {
+  return UNLISTED.some((u) => u.space === spaceId && sourcePath && sourcePath.startsWith(u.prefix));
+}
+
+// Same tree, minus unlisted pages and any heading left empty by that.
+function listedTree(node, spaceId) {
+  const children = node.children
+    .filter((c) => !(c.type === 'link' && isUnlisted(spaceId, c.sourcePath)))
+    .map((c) => ({ ...c, children: listedTree(c, spaceId).children }))
+    .filter((c) => c.type !== 'heading' || c.children.length > 0);
+  return { ...node, children };
+}
+
+// Landing page copy. The hero identity is the person; Forward-deployed is
+// the operating doctrine and flagship book, shown right under the bio.
 const LANDING = {
-  headline: 'Product leader & builder, working where AI, fintech, and real-world success meet.',
+  eyebrow: 'Mumbai, India',
+  role: 'AI-Native Product Leader & 0→1 Fintech Builder',
   lede:
-    "Hi, I'm Aakash — based in Mumbai, leading lending origination, CRM, and the AI charter at JSW One Finance. I've got founder-shaped energy and I'm most natural at 0→1 work — right now that means building a defensible credit platform from vision through AI-native execution.",
+    'Leading Lending Origination (LOS), CRM, and the AI Charter at JSW One Finance. Previously built B2B commerce to a $1B GMV run-rate at JSW One MSME, scaled embedded insurance to 5M+ lives at Marsh, and co-founded AutoO2.',
   pillars: [
     {
       label: 'What I do',
-      body: "Take an ambiguous, complex problem statement — design product, process and people systems around it, then drive adoption until it's completely weaved into the organisation.",
+      body: 'Take an ambiguous, complex problem statement, design the product, process and people systems around it, and drive adoption until it runs inside the organisation.',
     },
     {
       label: "What I'm doing now",
-      body: "I'm practically breaking boundaries in product management. Leading product for LOS, CRM, and the AI charter at JSW One Finance — genuinely at the core of industry-first commercial lending product systems.",
+      body: 'Leading product for LOS, CRM, and the AI charter at JSW One Finance, a digital-first NBFC where commercial lending runs 100% digital, lead to disbursement.',
     },
     {
       label: 'How I think',
-      body: 'A systems thinker first, grounded in business fundamentals — thanks to a background in physics, engineering, and an MBA. I prefer structure over opinions.',
+      body: 'A systems thinker grounded in business fundamentals, with a background in physics, engineering, and an MBA. I prefer structure over opinions.',
     },
   ],
+  doctrine:
+    'Put a small team of engineers and AI inside the workflow that is failing, with the authority to rewire it. Sixteen chapters on why transformation stalls inside incumbents and what to do instead.',
+  // TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
+  learningZoneBlurb:
+    'An open-source, 405-node AI & Systems Engineering reference graph (1,550 cross-references across 19 tracks), compiled by gatsby, a pure-Python + Claude Code knowledge pipeline.',
 };
 
-// The library's two books, each rendered as a cover card on the Books index.
+const ASTACK_URL = 'https://github.com/aakashagg123/astack';
+const GATSBY_URL = 'https://github.com/aakashagg123/gatsby';
+
+// Homepage "Open-Source & Builder Stack" cards: shipped artifacts, not telemetry.
+// TODO(Aakash): verify 405 nodes / 1,550 cross-references against the latest gatsby build
+const BUILDER_STACK = [
+  {
+    name: 'astack',
+    kind: 'Claude Code skill router',
+    body: '44 slash commands across discovery, spec, TDD, security review, and staged shipping, dispatched through a single /astack router.',
+    links: [
+      { label: 'Repo & architecture →', href: ASTACK_URL },
+      { label: 'Essays & Projects →', href: '/musings/' },
+    ],
+  },
+  {
+    name: 'gatsby',
+    kind: 'AI Knowledge Engine',
+    body: 'A pure-Python static compiler and knowledge-graph generator behind the 405-node AI Engineering curriculum, with 1,550 cross-references.',
+    links: [
+      { label: 'Repo & architecture →', href: GATSBY_URL },
+      { label: 'Browse the graph →', href: '/learning-zone/' },
+    ],
+  },
+];
+
+// The Books index spotlights one flagship monograph.
 const BOOKS = [
   {
     title: 'Forward-deployed',
-    tagline: 'Why transformation fails inside incumbents, and the operating model that fixes it.',
+    tagline: 'Putting engineers and AI inside the companies too slow to save themselves.',
     cover: '/books/forward-deployed/covers/cover.jpg',
-    href: '/books/forward-deployed/README.html',
+    href: '/books/forward-deployed/',
     status: 'Draft · 16 chapters',
-  },
-  {
-    title: 'Prompt engineering guide for product managers',
-    tagline: 'A practical guidebook for turning AI into daily leverage as a product leader.',
-    cover: '/books/prompt-engineering-guide/covers/cover.jpg',
-    href: '/books/prompt-engineering-guide/README.html',
-    status: 'Published · 10 chapters',
   },
 ];
 
@@ -152,16 +193,44 @@ function hashAndRename(distDir, filename) {
 // design language, adds the site bar (with the theme toggle) and a script
 // that applies the saved theme before first paint. Idempotent: any bar a
 // previous sync left in the committed copy is replaced, not doubled.
+// The Learning Zone is a compiled artifact, so its landing page says so:
+// the hero is reframed as an automated knowledge-engineering system, with a
+// "How this was built" banner pointing at the gatsby pipeline that produces
+// it. Done here, at build time, so it survives every re-sync from gatsby.
+// Returns a transform for the landing page's HTML, or null if the page is
+// missing (the transform itself warns when the expected hero is not found).
+const LZ_HERO_RE = /<h1>[^<]*<\/h1>\s*<p class="lede">[^<]*<\/p>/;
+// TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
+const LZ_HERO = `<h1>AI &amp; Systems Engineering Knowledge Graph</h1>
+  <p class="lede">An open-source, 405-node AI &amp; Systems Engineering reference graph (1,550 cross-references across 19 tracks)—compiled, cross-linked, and maintained via <code>gatsby</code>, a pure-Python + Claude Code knowledge pipeline built for Product Builders.</p>
+  <aside class="fd-lz-built" aria-label="How this was built">
+    <p class="fd-lz-built-label">How this was built</p>
+    <p>The pages in this graph are generated. <code>gatsby</code> compiles them from source content, cross-links every concept, and builds the knowledge graph. The source and architecture are public, so you can judge the pipeline.</p>
+    <p><a href="${GATSBY_URL}" target="_blank" rel="noopener">Read the gatsby architecture →</a></p>
+  </aside>`;
+function applyLearningZoneFraming(indexPath) {
+  if (!fs.existsSync(indexPath)) return null;
+  return (html) => {
+    if (!LZ_HERO_RE.test(html)) {
+      console.warn('Learning Zone: hero <h1>/lede not found in index.html; framing not applied');
+      return html;
+    }
+    return html.replace(LZ_HERO_RE, LZ_HERO);
+  };
+}
+
 function themeLearningZone(dir, { cssHref, jsHref }) {
   const bar = `<div id="fd-lz-bar" class="fd-lz-bar">
   <a class="fd-lz-brand" href="/"><img src="/mark-64.png" alt=""><span>Forward-deployed</span></a>
   <span class="fd-lz-sep">/</span>
-  <a class="fd-lz-crumb" href="/learning-zone/">Learning zone</a>
+  <a class="fd-lz-crumb" href="/learning-zone/">AI Knowledge Graph</a>
+  ${renderTopNav('learning-zone', 'fd-lz-nav')}
   <button class="fd-lz-theme" id="fdLzTheme" type="button" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
 </div>
 `;
   const headTags = `<script src="${jsHref}"></script>\n<link rel="stylesheet" href="${cssHref}">\n`;
   let count = 0;
+  const framed = applyLearningZoneFraming(path.join(dir, 'index.html'));
   const walk = (d) => {
     for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
       const full = path.join(d, entry.name);
@@ -171,6 +240,7 @@ function themeLearningZone(dir, { cssHref, jsHref }) {
       html = html.replace(/<div id="fd-lz-bar"[\s\S]*?<\/div>\s*/, '');
       html = html.replace(/<style>\s*\.bar\{ top:44px !important; \}[\s\S]*?<\/style>\s*/, '');
       if (!/<\/head>/i.test(html) || !/<body[^>]*>/i.test(html)) continue;
+      if (path.relative(dir, full) === 'index.html' && framed) html = framed(html);
       html = html.replace(/<\/head>/i, `${headTags}</head>`);
       html = html.replace(/<body[^>]*>/i, (m) => `${m}\n${bar}`);
       if (path.relative(dir, full) === path.join('graph', 'index.html')) {
@@ -263,7 +333,14 @@ function extractOutline(html) {
   const seen = new Set();
   const outline = [];
   const updated = html.replace(/<(h[23])>(.*?)<\/\1>/gs, (match, tag, inner) => {
-    const text = inner.replace(/<[^>]+>/g, '').trim();
+    // The rail re-escapes titles, so decode the entities markdown-it emitted.
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .trim();
     const id = slugify(text, seen);
     outline.push({ level: tag === 'h2' ? 2 : 3, id, title: text });
     return `<${tag} id="${id}">${inner}</${tag}>`;
@@ -288,6 +365,24 @@ function injectPostDate(html, date) {
     timeZone: 'UTC',
   });
   return injectAfterH1(html, `<p class="fd-post-date">${formatted}</p>`);
+}
+
+// Legacy "<dir>/README.html" URLs: a canonical + meta-refresh stub pointing
+// at the directory index ("./" from README.html is the same directory).
+function renderRedirectStub() {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<link rel="canonical" href="./">
+<meta http-equiv="refresh" content="0; url=./">
+</head>
+<body>
+<p>This page moved. <a href="./">Continue</a>.</p>
+</body>
+</html>
+`;
 }
 
 function renderLinkedinCta(linkedinUrl) {
@@ -387,7 +482,7 @@ function writeLlmsTxt({ spaces, spaceData }) {
     lines.push(`## ${space.title}`);
     fullParts.push(`\n## ${space.title}\n`);
     for (const page of data.pages) {
-      if (page.external) continue;
+      if (page.external || page.unlisted) continue;
       lines.push(`- [${page.title}](${SITE.baseUrl}${page.href}): ${page.description || space.blurb}`);
       const abs = path.join(data.spaceDir, page.sourcePath);
       const raw = fs.readFileSync(abs, 'utf8');
@@ -434,6 +529,7 @@ async function build() {
     }
     const tree = parseSummary(fs.readFileSync(summaryPath, 'utf8'), { spaceDir, spaceId });
     const pages = flattenPages(tree);
+    for (const page of pages) page.unlisted = isUnlisted(spaceId, page.sourcePath);
     if (pages.length === 0) {
       throw new Error(`Space "${spaceId}" SUMMARY.md defines no pages`);
     }
@@ -459,12 +555,12 @@ async function build() {
       status: meta.status || null,
       pageCount: pages.length,
     });
-    spaceData.push({ spaceId, spaceDir, tree, pages });
+    spaceData.push({ spaceId, spaceDir, tree, navTreeListed: listedTree(tree, spaceId), pages });
   }
 
   const sitemapUrls = [{ loc: SITE.baseUrl + '/' }];
 
-  for (const { spaceId, spaceDir, tree, pages } of spaceData) {
+  for (const { spaceId, spaceDir, tree, navTreeListed, pages } of spaceData) {
     const prevNext = computePrevNext(pages);
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i];
@@ -479,28 +575,36 @@ async function build() {
       }
       if (spaceId === 'about' && page.sourcePath === 'README.md') {
         contentHtml = injectAfterH1(contentHtml, renderLinkedinCta(LINKEDIN_URL));
+        contentHtml += renderCtaFooter({ linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME });
       }
       if (spaceId === 'portfolio' && page.sourcePath === 'README.md') {
         contentHtml += renderProductGrid(PRODUCTS);
+        contentHtml += renderCtaFooter({ linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME });
       }
       if (spaceId === 'books' && page.sourcePath === 'README.md') {
         contentHtml += renderBookGrid(BOOKS);
       }
       if (spaceId === 'portfolio' && page.sourcePath === 'products/jsw-one-msme-marketplace.md') {
-        contentHtml += renderJswArchitecture();
+        // The interactive stack figure sits at the marker when the page has
+        // one (inside its architecture section); otherwise it goes last.
+        const STACK_MARKER = '<!--fd:jsw-stack-->';
+        contentHtml = contentHtml.includes(STACK_MARKER)
+          ? contentHtml.replace(STACK_MARKER, renderJswArchitecture())
+          : contentHtml + renderJswArchitecture();
       }
       const description = extractDescription(body, SITE.thesis);
       page.description = description;
 
       const { prev, next } = prevNext.get(i);
-      const markdownUrl = page.href.replace(/\.html$/, '.md');
+      // The markdown mirror always sits at the source path ("/about/README.md").
+      const markdownUrl = `/${spaceId}/${page.sourcePath}`;
       const extraJsonLd = buildExtraJsonLd(spaceId, page);
 
       const html = renderPage({
         site: SITE,
         space: { id: spaceId, title: spaceTitle(spaceId) },
         spaces,
-        navTree: tree,
+        navTree: page.unlisted ? tree : navTreeListed,
         page: { title: page.title, href: page.href, breadcrumb: page.breadcrumb },
         prev,
         next,
@@ -509,15 +613,22 @@ async function build() {
         description,
         extraJsonLd,
         markdownUrl,
+        noindex: page.unlisted,
       });
 
-      const outPath = path.join(DIST_DIR, page.href.replace(/^\//, ''));
+      // A directory index ("/about/") is written as <dir>/index.html.
+      const outRel = page.href.endsWith('/') ? `${page.href}index.html` : page.href;
+      const outPath = path.join(DIST_DIR, outRel.replace(/^\//, ''));
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html);
+      // The old "<dir>/README.html" URL keeps working as a redirect stub.
+      if (page.href.endsWith('/')) {
+        fs.writeFileSync(path.join(path.dirname(outPath), 'README.html'), renderRedirectStub());
+      }
       // A clean markdown mirror of every page, for agents/crawlers that
       // prefer fetching source content over HTML-with-chrome.
       fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), raw);
-      sitemapUrls.push({ loc: SITE.baseUrl + page.href });
+      if (!page.unlisted) sitemapUrls.push({ loc: SITE.baseUrl + page.href });
     }
 
     copyNestedAssetDirs(spaceDir, path.join(DIST_DIR, spaceId));
@@ -525,7 +636,7 @@ async function build() {
 
   fs.writeFileSync(
     path.join(DIST_DIR, 'index.html'),
-    renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0], linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME }),
+    renderLanding({ site: SITE, spaces, landing: LANDING, flagshipBook: BOOKS[0], builderStack: BUILDER_STACK, linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME }),
   );
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
 

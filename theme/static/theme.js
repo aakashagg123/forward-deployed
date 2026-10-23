@@ -49,19 +49,6 @@
     });
   }
 
-  var feedback = document.getElementById('fdFeedback');
-  if (feedback) {
-    var faces = feedback.querySelectorAll('.fd-face');
-    var thanks = document.getElementById('fdFeedbackThanks');
-    faces.forEach(function (f) {
-      f.addEventListener('click', function () {
-        faces.forEach(function (x) { x.classList.remove('picked'); });
-        f.classList.add('picked');
-        if (thanks) thanks.hidden = false;
-      });
-    });
-  }
-
   var outlineLinks = document.querySelectorAll('.fd-outline-link');
   if (outlineLinks.length) {
     var targets = Array.prototype.map.call(outlineLinks, function (l) {
@@ -125,88 +112,6 @@
     stackBtns.forEach(function (b) { b.addEventListener('click', function () { setStackPhase(b.dataset.phase); }); });
     setStackPhase('pre');
   }
-
-  var ghRoot = document.getElementById('fdGh');
-  if (ghRoot) {
-    var ghUser = ghRoot.dataset.username;
-    var ghWrap = document.getElementById('fdGhWrap');
-    var ghGrid = document.getElementById('fdGhGrid');
-    var ghStatus = document.getElementById('fdGhStatus');
-    var ghSync = document.getElementById('fdGhSync');
-    var ghImgDark = document.getElementById('fdGhImgDark');
-    var ghImgLight = document.getElementById('fdGhImgLight');
-    var ghLoading = false;
-
-    // Primary: real per-day data, fetched client-side — gives a hoverable
-    // count+date per cell and a real total, which a static image can't.
-    var ghRenderGrid = function (contributions) {
-      // Not innerHTML = '' — this page's CSP requires a Trusted Types
-      // policy for any innerHTML assignment, even clearing to an empty
-      // string, and none is registered. replaceChildren() is a plain DOM
-      // method, not a Trusted Types sink, so it needs no policy.
-      ghGrid.replaceChildren();
-      var frag = document.createDocumentFragment();
-      contributions.forEach(function (day) {
-        var cell = document.createElement('div');
-        cell.className = 'fd-gh-cell';
-        cell.setAttribute('data-level', day.level || 0);
-        cell.title = day.date + ': ' + day.count + ' contribution' + (day.count === 1 ? '' : 's');
-        frag.appendChild(cell);
-      });
-      ghGrid.appendChild(frag);
-      ghGrid.hidden = false;
-      if (ghWrap) ghWrap.classList.add('fd-gh-has-grid');
-    };
-
-    // Fallback: a static heatmap image, kicked off unconditionally in
-    // parallel with the fetch below and left showing only if that fetch
-    // fails. No hover/total, but a real picture of the data either way —
-    // and since an <img> isn't subject to CORS, it can't fail the same way.
-    var ghLoadFallbackImages = function (cacheBust) {
-      var base = 'https://ghchart.rshah.org/';
-      ghImgDark.src = base + 'F4F4F2/' + encodeURIComponent(ghUser) + '?t=' + cacheBust;
-      ghImgLight.src = base + '000000/' + encodeURIComponent(ghUser) + '?t=' + cacheBust;
-    };
-
-    var ghLoad = function () {
-      if (ghLoading) return;
-      ghLoading = true;
-      if (ghSync) ghSync.classList.add('syncing');
-      ghStatus.textContent = 'Syncing…';
-      if (ghWrap) ghWrap.classList.remove('fd-gh-has-grid');
-      ghGrid.hidden = true;
-
-      ghLoadFallbackImages(Date.now());
-
-      fetch('https://github-contributions-api.jogruber.de/v4/' + encodeURIComponent(ghUser) + '?y=last', { cache: 'no-store' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('bad response: ' + res.status);
-          return res.json();
-        })
-        .then(function (data) {
-          var contributions = data.contributions || [];
-          if (!contributions.length) throw new Error('empty contributions');
-          ghRenderGrid(contributions);
-          var total = contributions.reduce(function (sum, d) { return sum + (d.count || 0); }, 0);
-          var now = new Date();
-          ghStatus.textContent = total + ' contributions in the last year · synced ' +
-            now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        })
-        .catch(function () {
-          var now = new Date();
-          ghStatus.textContent = 'Showing GitHub activity (detailed counts unavailable right now) · synced ' +
-            now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        })
-        .then(function () {
-          ghLoading = false;
-          if (ghSync) ghSync.classList.remove('syncing');
-        });
-    };
-
-    if (ghSync) ghSync.addEventListener('click', ghLoad);
-    ghLoad();
-  }
-
 
   // Phones: tap a book figure to open it near full size in a pannable overlay.
   document.addEventListener('click', function (e) {

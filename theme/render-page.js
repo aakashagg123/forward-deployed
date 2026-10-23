@@ -66,9 +66,68 @@ function renderBreadcrumb(breadcrumb, title) {
   return trail.join(' <span aria-hidden="true">/</span> ');
 }
 
+// The one top-level navigation, rendered identically in the header of every
+// page (landing, docs pages, 404) and mirrored in the Learning Zone bar.
+export const NAV_ITEMS = [
+  { key: 'about', label: 'About', href: '/about/' },
+  { key: 'portfolio', label: 'Portfolio', href: '/portfolio/' },
+  { key: 'book', label: 'Forward-Deployed (Book)', href: '/books/forward-deployed/' },
+  { key: 'musings', label: 'Essays & Projects', href: '/musings/' },
+  { key: 'learning-zone', label: 'AI Knowledge Graph', href: '/learning-zone/' },
+];
+
+// Which nav item a page belongs to. Anything under /books/ other than the
+// retired guide counts as the book; the guide itself highlights nothing.
+export function navKeyFor(href) {
+  if (href.startsWith('/about/')) return 'about';
+  if (href.startsWith('/portfolio/')) return 'portfolio';
+  if (href.startsWith('/books/forward-deployed/')) return 'book';
+  if (href.startsWith('/musings/')) return 'musings';
+  if (href.startsWith('/learning-zone/')) return 'learning-zone';
+  return null;
+}
+
+export function renderTopNav(activeKey, className = 'fd-topnav') {
+  const links = NAV_ITEMS.map(
+    (n) => `<a href="${n.href}"${n.key === activeKey ? ' class="on" aria-current="page"' : ''}>${escapeHtml(n.label)}</a>`,
+  ).join('');
+  return `<nav class="${className}" aria-label="Primary">${links}</nav>`;
+}
+
+// "Where I can help" block: appended to the homepage, About, and Portfolio.
+export function renderCtaFooter({ linkedinUrl, githubUsername }) {
+  const areas = [
+    {
+      title: '0→1 AI-native fintech & credit architecture',
+      body: 'Lending origination, CRM, and an AI charter for digital-first lenders. The work I lead at JSW One Finance.',
+    },
+    {
+      title: 'B2B marketplace systems',
+      body: 'Order booking, pricing, credit, and CRM/ERP integration. The work behind JSW One MSME’s run to a $1B GMV exit rate.',
+    },
+    {
+      title: 'Forward-deployed AI transformation inside incumbents',
+      body: 'A small team of engineers and AI placed in one workflow, with authority to rewire it. The subject of the book.',
+    },
+  ]
+    .map((a) => `<div class="fd-talk-area"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p></div>`)
+    .join('');
+  return `
+    <section class="fd-talk" id="lets-talk" aria-labelledby="fdTalkTitle">
+      <h2 class="fd-talk-title" id="fdTalkTitle">Where I Can Help / Let’s Talk</h2>
+      <div class="fd-talk-areas">${areas}</div>
+      <div class="fd-talk-ctas">
+        <a class="fd-cta" href="${escapeAttr(linkedinUrl)}" target="_blank" rel="noopener">Connect on LinkedIn →</a>
+        <a class="fd-cta" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">@${escapeHtml(githubUsername)} on GitHub →</a>
+        <a class="fd-cta" href="${escapeAttr(linkedinUrl)}" target="_blank" rel="noopener">Message me →</a>
+      </div>
+    </section>`;
+}
+
 function renderSpaceSwitcher(space, spaces) {
   const options = spaces
     .map((s) => `<a href="/${s.id}/${s.indexHref}" class="${s.id === space.id ? 'on' : ''}">${escapeHtml(s.title)}</a>`)
+    .concat('<a href="/learning-zone/">AI Knowledge Graph</a>')
     .join('');
   return `
     <div class="fd-switch" id="fdSwitch">
@@ -119,8 +178,8 @@ const CSP = [
   "default-src 'none'",
   `script-src 'self' https://www.googletagmanager.com '${GA_INLINE_SCRIPT_HASH}'`,
   "style-src 'self'",
-  "img-src 'self' https://ghchart.rshah.org",
-  'connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de',
+  "img-src 'self'",
+  "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
   "font-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -129,8 +188,8 @@ const CSP = [
   "require-trusted-types-for 'script'",
 ].join('; ');
 
-function renderHead({ site, title, description, canonicalUrl, image, jsonLd, markdownUrl }) {
-  const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
+function renderHead({ site, title, rawTitle, description, canonicalUrl, image, jsonLd, markdownUrl }) {
+  const fullTitle = rawTitle || (title === site.title ? title : `${title} · ${site.title}`);
   const ld = (jsonLd || [])
     .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
     .join('\n');
@@ -164,7 +223,7 @@ ${ld}
 ${GA_TAG}`;
 }
 
-export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description, extraJsonLd, markdownUrl }) {
+export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description, extraJsonLd, markdownUrl, noindex }) {
   const pagenav = `
     <nav class="fd-pagenav">
       ${prev ? `<a class="fd-pn-prev" href="${prev.href}"><span class="fd-pn-label">Previous</span>${escapeHtml(prev.title)}</a>` : '<span></span>'}
@@ -200,16 +259,18 @@ export function renderPage({ site, space, spaces, navTree, page, prev, next, con
 <html lang="en">
 <head>
 ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd, markdownUrl })}
+${noindex ? '<meta name="robots" content="noindex">' : ''}
 </head>
 <body>
 <header class="fd-header">
   <button class="fd-mobile-toggle" id="fdMobileToggle" aria-label="Toggle navigation">☰</button>
   <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
-  <a class="fd-toplink" href="/">Home</a>
+  ${renderTopNav(navKeyFor(page.href))}
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
 </header>
 <div class="fd-layout">
   <aside class="fd-sidebar" id="fdSidebar">
+    ${renderTopNav(navKeyFor(page.href), 'fd-sidenav-primary')}
     ${renderSpaceSwitcher(space, spaces)}
     <nav class="fd-nav">${renderNavTree(navTree, page.href)}</nav>
   </aside>
@@ -217,13 +278,6 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
     <p class="fd-breadcrumb">${renderBreadcrumb(page.breadcrumb, page.title)}</p>
     <article class="fd-content" id="fdContent">${contentHtml}</article>
     ${pagenav}
-    <div class="fd-feedback" id="fdFeedback">
-      <span>Was this helpful?</span>
-      <button class="fd-face" data-val="good" aria-label="Yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg></button>
-      <button class="fd-face" data-val="ok" aria-label="Somewhat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14h8"/></svg></button>
-      <button class="fd-face" data-val="bad" aria-label="No"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 16s1.5-2 4-2 4 2 4 2"/></svg></button>
-      <span class="fd-feedback-thanks" id="fdFeedbackThanks" hidden>Thanks.</span>
-    </div>
   </main>
   ${renderOutline(outline)}
 </div>
@@ -232,29 +286,34 @@ ${renderHead({ site, title: page.title, description, canonicalUrl, image: `${sit
 </html>`;
 }
 
-const GH_SYNC_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>`;
+// "Open-source & builder stack": concrete shipped artifacts in place of a
+// contribution counter. Each card is { name, kind, body, links:[{label,href}] }.
+export function renderBuilderStack(items) {
+  const cards = items
+    .map(
+      (it) => `
+        <article class="fd-build-card">
+          <p class="fd-build-kind">${escapeHtml(it.kind)}</p>
+          <h4><code>${escapeHtml(it.name)}</code></h4>
+          <p class="fd-build-body">${escapeHtml(it.body)}</p>
+          <p class="fd-build-links">${it.links
+            .map((l) => `<a href="${escapeAttr(l.href)}"${/^https?:/.test(l.href) ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(l.label)}</a>`)
+            .join('')}</p>
+        </article>`,
+    )
+    .join('');
+  return `
+  <section class="fd-build" aria-labelledby="fdBuildTitle">
+    <h3 class="fd-section-label" id="fdBuildTitle">Open-Source &amp; Builder Stack</h3>
+    <!-- TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build -->
+    <div class="fd-build-grid">${cards}</div>
+  </section>`;
+}
 
-export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, githubUsername }) {
+export function renderLanding({ site, spaces, landing, flagshipBook, builderStack, linkedinUrl, githubUsername }) {
   const about = spaces.find((s) => s.id === 'about');
   const linkedinCta = linkedinUrl
     ? `<a class="fd-cta" href="${escapeAttr(linkedinUrl)}" target="_blank" rel="noopener">Connect on LinkedIn →</a>`
-    : '';
-  const githubWidget = githubUsername
-    ? `
-  <div class="fd-gh" id="fdGh" data-username="${escapeAttr(githubUsername)}">
-    <div class="fd-gh-head">
-      <h4>GitHub activity</h4>
-      <span class="fd-gh-profile">@${escapeHtml(githubUsername)}</span>
-      <a class="fd-cta fd-gh-cta" href="https://github.com/${escapeAttr(githubUsername)}" target="_blank" rel="noopener">View GitHub →</a>
-      <button class="fd-gh-sync" id="fdGhSync" type="button" aria-label="Re-sync GitHub activity">${GH_SYNC_ICON}</button>
-    </div>
-    <div class="fd-gh-grid-wrap" id="fdGhWrap">
-      <div class="fd-gh-grid" id="fdGhGrid" hidden></div>
-      <img class="fd-gh-img fd-gh-img-dark" id="fdGhImgDark" alt="${escapeAttr(githubUsername)}'s GitHub contribution graph" width="722" height="112">
-      <img class="fd-gh-img fd-gh-img-light" id="fdGhImgLight" alt="${escapeAttr(githubUsername)}'s GitHub contribution graph" width="722" height="112">
-    </div>
-    <p class="fd-gh-status" id="fdGhStatus">Loading GitHub activity…</p>
-  </div>`
     : '';
 
   const pillars = landing.pillars
@@ -267,16 +326,16 @@ export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, 
     )
     .join('');
 
-  const release = latestBook
+  const doctrine = flagshipBook
     ? `
-    <a class="fd-release" href="${latestBook.href}">
-      <img class="fd-release-cover" src="${latestBook.cover}" alt="Cover of ${escapeAttr(latestBook.title)}" loading="lazy">
+    <a class="fd-release" href="${flagshipBook.href}">
+      <img class="fd-release-cover" src="${flagshipBook.cover}" alt="Cover of ${escapeAttr(flagshipBook.title)}" loading="lazy">
       <span class="fd-release-body">
-        <span class="fd-release-badge">Latest release</span>
-        <h5>${escapeHtml(latestBook.title)}</h5>
-        <p>${escapeHtml(latestBook.tagline)}</p>
+        <span class="fd-release-badge">My operating doctrine · flagship book</span>
+        <h5>${escapeHtml(flagshipBook.title)}</h5>
+        <p>${escapeHtml(landing.doctrine)}</p>
       </span>
-      <span class="fd-release-link">Read free →</span>
+      <span class="fd-release-link">Read the 16-chapter book →</span>
     </a>`
     : '';
 
@@ -289,9 +348,10 @@ export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, 
         </a>`,
     )
     .join('') + `
+        <!-- TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build -->
         <a href="/learning-zone/">
-          <h4>Learning zone</h4>
-          <p>A 19-track curriculum on AI engineering, built for product leaders who own AI features.</p>
+          <h4>AI Knowledge Graph</h4>
+          <p>${escapeHtml(landing.learningZoneBlurb)}</p>
         </a>`;
 
   const jsonLd = [
@@ -301,32 +361,34 @@ export function renderLanding({ site, spaces, landing, latestBook, linkedinUrl, 
       name: site.title,
       url: site.baseUrl,
       description: site.thesis,
-      author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about/README.html` },
+      author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about/` },
     },
   ];
 
   return `<!doctype html>
 <html lang="en">
 <head>
-${renderHead({ site, title: site.title, description: site.thesis, canonicalUrl: site.baseUrl + '/', image: `${site.baseUrl}/social.jpg`, jsonLd })}
+${renderHead({ site, title: site.title, rawTitle: `${site.author} — ${landing.role}`, description: site.thesis, canonicalUrl: site.baseUrl + '/', image: `${site.baseUrl}/social.jpg`, jsonLd })}
 </head>
 <body class="fd-landing-body">
 <header class="fd-header fd-header-landing">
   <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
+  ${renderTopNav(null)}
   <button class="fd-theme-toggle" id="fdThemeToggle" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
 </header>
 <div class="wrap">
   <div class="fd-hero">
     <div class="fd-glow"></div>
-    <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(site.author)}</p>
-    <h1 class="fd-hero-title">${escapeHtml(landing.headline)}</h1>
+    <p class="fd-eyebrow"><img class="fd-mark" src="/mark-64.png" alt="">${escapeHtml(landing.eyebrow)}</p>
+    <h1 class="fd-hero-title">${escapeHtml(site.author)}<span class="fd-hero-role"> — ${escapeHtml(landing.role)}</span></h1>
     <p class="fd-hero-lede">${landing.lede}${about ? ` <a class="fd-lede-link" href="/${about.id}/${about.indexHref}">Read the full story →</a>` : ''}</p>
     ${linkedinCta ? `<div class="fd-hero-ctas">${linkedinCta}</div>` : ''}
   </div>
   <div class="fd-pillars">${pillars}</div>
-  ${release}
+  ${doctrine}
+  ${renderBuilderStack(builderStack)}
   <div class="fd-spaces-row" id="spaces">${spaceRows}</div>
-  ${githubWidget}
+  ${renderCtaFooter({ linkedinUrl, githubUsername })}
 </div>
 <script src="${escapeAttr(site.jsHref || '/theme.js')}" defer></script>
 </body>
@@ -372,7 +434,7 @@ export function renderBookGrid(books) {
         </a>`,
     )
     .join('');
-  return `<div class="fd-book-grid">${cards}</div>`;
+  return `<div class="fd-book-grid${books.length === 1 ? ' fd-book-grid-single' : ''}">${cards}</div>`;
 }
 
 // A full-width interactive product-stack figure for the JSW One MSME product
@@ -428,6 +490,7 @@ ${renderHead({ site, title: 'Page not found', description: 'This page does not e
 <body class="fd-landing-body">
 <header class="fd-header fd-header-landing">
   <a class="fd-brand" href="/"><img class="fd-mark" src="/mark-64.png" alt=""><span class="fd-brand-text">${escapeHtml(site.title)}</span></a>
+  ${renderTopNav(null)}
 </header>
 <div class="wrap fd-404-wrap">
   <h1 class="fd-404-title">Page not found.</h1>

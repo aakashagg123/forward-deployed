@@ -22,6 +22,19 @@ Each top-level folder under `content/` is a "space" (its own sidebar and URL pre
 
 A build fails loudly (and does not deploy) if `SUMMARY.md` links to a file that doesn't exist.
 
+## URLs
+
+A `README.md` compiles to `index.html` in its folder, so it is served at the clean directory URL (`/about/`, `/books/forward-deployed/`). The build also writes a `README.html` redirect stub next to each one, so old links keep working.
+
+Pages listed in `UNLISTED` in `generator/build.js` stay live but are removed from indexes, the sidebar, the sitemap and `llms.txt`, and marked `noindex`.
+
+## Audit
+
+```
+npm run build
+npm run audit   # internal links, README.html stubs, removed widgets
+```
+
 ## Local development
 
 ```

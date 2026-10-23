@@ -11,7 +11,12 @@ import MarkdownIt from 'markdown-it';
 //   3. A relative link to another .md source (as authors naturally write
 //      when cross-linking pages, e.g. "[Experience](experience.md)") is
 //      rewritten to .html — the same convention SUMMARY.md links already
-//      get via normalizeHref, applied to inline content links too.
+//      get via normalizeHref, applied to inline content links too. A link to
+//      a README.md becomes the clean directory URL instead ("README.md" ->
+//      "./", "forward-deployed/README.md#x" -> "forward-deployed/#x").
+//   4. <!-- HTML comments --> pass through untouched (html:false would
+//      otherwise print them as visible text), so authors can leave
+//      TODO(Aakash) notes in the source without publishing them.
 export function createRenderer({ highlighter }) {
   const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
 
@@ -22,7 +27,9 @@ export function createRenderer({ highlighter }) {
     if (hrefIdx >= 0) {
       const href = token.attrs[hrefIdx][1];
       if (!/^[a-z][a-z0-9+.-]*:/i.test(href) && !href.startsWith('//') && /\.md(?=$|#)/.test(href)) {
-        token.attrs[hrefIdx][1] = href.replace(/\.md(?=$|#)/, '.html');
+        token.attrs[hrefIdx][1] = href
+          .replace(/(^|\/)README\.md(?=$|#)/, (_m, lead) => (lead ? lead : './'))
+          .replace(/\.md(?=$|#)/, '.html');
       }
     }
     return defaultLinkOpen(tokens, idx, options, env, self);
@@ -58,7 +65,22 @@ export function createRenderer({ highlighter }) {
     };
   }
 
-  return { render: (src) => mergeFigureCaptions(md.render(src)) };
+  return { render: (src) => restoreComments(mergeFigureCaptions(md.render(stashComments(src)))) };
+}
+
+// HTML comments are swapped for private-use markers before markdown-it sees
+// them and restored afterwards; a comment that sat alone on its line is
+// restored bare, not wrapped in an empty <p>.
+const COMMENT_RE = /<!--[\s\S]*?-->/g;
+const comments = [];
+function stashComments(src) {
+  comments.length = 0;
+  return src.replace(COMMENT_RE, (c) => `\uE000${comments.push(c) - 1}\uE001`);
+}
+function restoreComments(html) {
+  return html
+    .replace(/<p>\uE000(\d+)\uE001<\/p>/g, (_m, i) => comments[i])
+    .replace(/\uE000(\d+)\uE001/g, (_m, i) => comments[i]);
 }
 
 // String-level post-process: "<p><img ...></p>\n<p><em>Figure ...</em></p>"
