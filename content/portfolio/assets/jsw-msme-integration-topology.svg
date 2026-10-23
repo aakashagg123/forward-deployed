@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 540" width="1400" height="540" role="img" aria-label="JSW One MSME integration topology: storefront to order engine to Salesforce CRM and ERP, with discounts engine, catalogue and pricing, and notifications">
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4A4A4A"/></marker>
+</defs>
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:2.8px;fill:#8A8A8A}
+.h{font-size:26px;font-weight:700;fill:#000000}
+.n{font-size:15px;font-weight:700}
+.s{font-size:12px}
+.chip{font-size:11px;font-weight:700;letter-spacing:1.4px;fill:#8A8A8A}
+.e{font-size:11.5px;fill:#4A4A4A}
+</style>
+<rect width="1400" height="540" style="fill:#FFFFFF"/>
+<text class="t kicker" x="40" y="48">INTEGRATION TOPOLOGY</text>
+<text class="t h" x="40" y="88">The order engine sits between the storefront and two systems of record.</text>
+<line x1="40" y1="110" x2="1360" y2="110" stroke="#D8D8D8"/>
+
+<rect x="60" y="250" width="220" height="88" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="170.0" y="291" text-anchor="middle" style="fill:#000000">Storefront</text>
+<text class="t s" x="170.0" y="309" text-anchor="middle" style="fill:#4A4A4A">jswonemsme.com</text>
+<rect x="380" y="250" width="220" height="88" rx="3" style="fill:#000000"/>
+<text class="t n" x="490.0" y="291" text-anchor="middle" style="fill:#FFFFFF">Order engine</text>
+<text class="t s" x="490.0" y="309" text-anchor="middle" style="fill:#D8D8D8">booking core · OCC flow</text>
+<rect x="700" y="250" width="220" height="88" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="810.0" y="291" text-anchor="middle" style="fill:#000000">Salesforce CRM</text>
+<text class="t s" x="810.0" y="309" text-anchor="middle" style="fill:#4A4A4A">opportunity to order</text>
+<rect x="1020" y="250" width="220" height="88" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="1130.0" y="283" text-anchor="middle" style="fill:#000000">ERP</text>
+<text class="t s" x="1130.0" y="301" text-anchor="middle" style="fill:#4A4A4A">fulfilment · shipment</text>
+<text class="t s" x="1130.0" y="317" text-anchor="middle" style="fill:#4A4A4A">documents · payments</text>
+<line x1="280" y1="294.0" x2="380" y2="294.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="600" y1="294.0" x2="700" y2="294.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)" marker-start="url(#a)"/>
+<line x1="920" y1="294.0" x2="1020" y2="294.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)" marker-start="url(#a)"/>
+<text class="t chip" x="810.0" y="236" text-anchor="middle">PRE-ORDER JOURNEY</text>
+<text class="t chip" x="1130.0" y="236" text-anchor="middle">POST-ORDER JOURNEY</text>
+<rect x="300" y="130" width="180" height="60" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="390.0" y="157" text-anchor="middle" style="fill:#000000">Discounts engine</text>
+<text class="t s" x="390.0" y="175" text-anchor="middle" style="fill:#4A4A4A">deals · cashbacks</text>
+<rect x="500" y="130" width="180" height="60" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="590.0" y="157" text-anchor="middle" style="fill:#000000">Catalogue &amp; pricing</text>
+<text class="t s" x="590.0" y="175" text-anchor="middle" style="fill:#4A4A4A">seller pricing</text>
+<line x1="390" y1="190" x2="440" y2="250" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="590" y1="190" x2="520" y2="250" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<rect x="380" y="410" width="220" height="64" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="490.0" y="439" text-anchor="middle" style="fill:#000000">Notifications</text>
+<text class="t s" x="490.0" y="457" text-anchor="middle" style="fill:#4A4A4A">email · WhatsApp Business</text>
+<line x1="490.0" y1="338" x2="490.0" y2="410" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<rect x="700" y="410" width="220" height="64" rx="3" style="fill:#FFFFFF" stroke="#8A8A8A" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text class="t n" x="810.0" y="439" text-anchor="middle" style="fill:#000000">Ledger &amp; credit</text>
+<text class="t s" x="810.0" y="457" text-anchor="middle" style="fill:#4A4A4A">credit offset · payments</text>
+<line x1="810.0" y1="338" x2="810.0" y2="410" stroke="#4A4A4A" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)" marker-start="url(#a)"/>
+<text class="t chip" x="40" y="510" text-anchor="start">ASSISTED AND STRAIGHT-THROUGH ORDER BOOKING SHARE THIS PATH</text>
+</svg>

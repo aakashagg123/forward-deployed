@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 540" width="1400" height="540" role="img" aria-label="AutoO2 claims topology: vehicle owner photo self-inspection into ARAS and Claims Cloud, delivered to insurers by web app and API, with a reverse-auction to the workshop network">
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4A4A4A"/></marker>
+</defs>
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:2.8px;fill:#8A8A8A}
+.h{font-size:26px;font-weight:700;fill:#000000}
+.n{font-size:15px;font-weight:700}
+.s{font-size:12px}
+.chip{font-size:11px;font-weight:700;letter-spacing:1.4px;fill:#8A8A8A}
+.e{font-size:11.5px;fill:#4A4A4A}
+</style>
+<rect width="1400" height="540" style="fill:#FFFFFF"/>
+<text class="t kicker" x="40" y="48">CLAIMS TOPOLOGY</text>
+<text class="t h" x="40" y="88">Photos in, assessed claim out, repair job auctioned.</text>
+<line x1="40" y1="110" x2="1360" y2="110" stroke="#D8D8D8"/>
+
+<rect x="60" y="180" width="230" height="92" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="175.0" y="223" text-anchor="middle" style="fill:#000000">Vehicle owner</text>
+<text class="t s" x="175.0" y="241" text-anchor="middle" style="fill:#4A4A4A">photo self-inspection</text>
+<rect x="370" y="180" width="230" height="92" rx="3" style="fill:#000000"/>
+<text class="t n" x="485.0" y="215" text-anchor="middle" style="fill:#FFFFFF">ARAS + Claims Cloud</text>
+<text class="t s" x="485.0" y="233" text-anchor="middle" style="fill:#D8D8D8">remote damage assessment</text>
+<text class="t s" x="485.0" y="249" text-anchor="middle" style="fill:#D8D8D8">electronic notice of loss</text>
+<rect x="680" y="180" width="230" height="92" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="795.0" y="215" text-anchor="middle" style="fill:#000000">Web app + API</text>
+<text class="t s" x="795.0" y="233" text-anchor="middle" style="fill:#4A4A4A">service management</text>
+<text class="t s" x="795.0" y="249" text-anchor="middle" style="fill:#4A4A4A">insurer integration</text>
+<rect x="990" y="180" width="330" height="92" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="1155.0" y="223" text-anchor="middle" style="fill:#000000">Insurer · broker · fleet operator</text>
+<text class="t s" x="1155.0" y="241" text-anchor="middle" style="fill:#4A4A4A">replaces manual surveyor visits</text>
+<line x1="290" y1="226.0" x2="370" y2="226.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="600" y1="226.0" x2="680" y2="226.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="910" y1="226.0" x2="990" y2="226.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)" marker-start="url(#a)"/>
+<rect x="370" y="390" width="230" height="80" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="485.0" y="427" text-anchor="middle" style="fill:#000000">Repair auction</text>
+<text class="t s" x="485.0" y="445" text-anchor="middle" style="fill:#4A4A4A">minor claims, under ₹20,000</text>
+<rect x="680" y="390" width="230" height="80" rx="3" style="fill:#000000"/>
+<text class="t n" x="795.0" y="427" text-anchor="middle" style="fill:#FFFFFF">Workshop network</text>
+<text class="t s" x="795.0" y="445" text-anchor="middle" style="fill:#D8D8D8">500+ vetted and rated</text>
+<line x1="485.0" y1="272" x2="485.0" y2="390" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<text class="t e" x="539.0" y="340" text-anchor="middle">job published</text>
+<line x1="600" y1="430" x2="680" y2="430" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)" marker-start="url(#a)"/>
+<text class="t e" x="640.0" y="422" text-anchor="middle">bids</text>
+<line x1="1155" y1="272" x2="910" y2="400" stroke="#4A4A4A" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<text class="t e" x="1165" y="352" text-anchor="middle">insurer has final say</text>
+<text class="t chip" x="40" y="515" text-anchor="start">THE CONSUMER MARKETPLACE RAN ON THE SAME WORKSHOP NETWORK</text>
+</svg>

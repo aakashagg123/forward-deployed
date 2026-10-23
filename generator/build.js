@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
 import { createHighlighter } from 'shiki';
 import { parseSummary, flattenPages } from './lib/summary.js';
 import { createRenderer } from './lib/markdown.js';
-import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture, THEME_TOGGLE_ICONS } from '../theme/render-page.js';
+import { renderPage, renderLanding, render404, renderProductGrid, renderBookGrid, renderJswArchitecture, renderCtaFooter, renderTopNav, THEME_TOGGLE_ICONS } from '../theme/render-page.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -17,7 +18,7 @@ const SITE = {
   title: 'Forward-deployed',
   baseUrl: 'https://forward-deployed.in',
   author: 'Aakash Aggarwal',
-  thesis: 'Product leader & builder, working where AI, fintech, and real-world success meet',
+  thesis: 'AI-native product leader and 0→1 fintech builder. Leading lending origination, CRM, and the AI charter at JSW One Finance.',
 };
 
 const LINKEDIN_URL = 'https://in.linkedin.com/in/aakash-aggarwal-1010';
@@ -28,50 +29,92 @@ const GITHUB_USERNAME = 'aakashagg123';
 const HIDDEN_SPACES = new Set();
 
 const SPACE_META = {
-  books: { title: 'Books', blurb: 'A small digital library — two long-reads, free to read here.' },
+  books: { title: 'Books', blurb: 'Forward-deployed: the flagship book, free to read here.' },
   about: { title: 'About me', blurb: 'Who I am, what I do, and what I’m building right now.' },
   portfolio: { title: 'Portfolio & experience', blurb: 'A decade of shipping — one founder run, three product leadership roles.' },
-  musings: { title: 'Musings & side projects', blurb: 'Running notes on AI, product ideas, and prototypes worth poking at.' },
+  musings: { title: 'Essays & Built Systems', blurb: 'One essay and two documented systems: astack and gatsby.' },
 };
 
-// Landing page copy — About-first, short founder-energy framing; the full
-// detailed narrative lives on the About page, reached via "Read the full
-// story".
+// Pages kept live (so inbound links never 404) but removed from the Books
+// index, the sidebar, the homepage, the sitemap and llms.txt, and marked
+// noindex. Matched against the page's source path within its space.
+const UNLISTED = [{ space: 'books', prefix: 'prompt-engineering-guide/' }];
+function isUnlisted(spaceId, sourcePath) {
+  return UNLISTED.some((u) => u.space === spaceId && sourcePath && sourcePath.startsWith(u.prefix));
+}
+
+// Same tree, minus unlisted pages and any heading left empty by that.
+function listedTree(node, spaceId) {
+  const children = node.children
+    .filter((c) => !(c.type === 'link' && isUnlisted(spaceId, c.sourcePath)))
+    .map((c) => ({ ...c, children: listedTree(c, spaceId).children }))
+    .filter((c) => c.type !== 'heading' || c.children.length > 0);
+  return { ...node, children };
+}
+
+// Landing page copy. The hero identity is the person; Forward-deployed is
+// the operating doctrine and flagship book, shown right under the bio.
 const LANDING = {
-  headline: 'Product leader & builder, working where AI, fintech, and real-world success meet.',
+  seoTitle: 'Aakash Aggarwal — AI-Native Product Leader & Fintech Builder',
+  eyebrow: 'Mumbai, India',
+  role: 'AI-Native Product Leader & 0→1 Fintech Builder',
   lede:
-    "Hi, I'm Aakash — based in Mumbai, leading lending origination, CRM, and the AI charter at JSW One Finance. I've got founder-shaped energy and I'm most natural at 0→1 work — right now that means building a defensible credit platform from vision through AI-native execution.",
+    'Leading Lending Origination (LOS), CRM, and the AI Charter at JSW One Finance. Previously built B2B commerce to a $1B GMV run-rate at JSW One MSME, scaled embedded insurance to 5M+ lives at Marsh, and co-founded AutoO2.',
   pillars: [
     {
       label: 'What I do',
-      body: "Take an ambiguous, complex problem statement — design product, process and people systems around it, then drive adoption until it's completely weaved into the organisation.",
+      body: 'Take an ambiguous, complex problem statement, design the product, process and people systems around it, and drive adoption until it runs inside the organisation.',
     },
     {
       label: "What I'm doing now",
-      body: "I'm practically breaking boundaries in product management. Leading product for LOS, CRM, and the AI charter at JSW One Finance — genuinely at the core of industry-first commercial lending product systems.",
+      body: 'Leading product for LOS, CRM, and the AI charter at JSW One Finance, a digital-first NBFC where commercial lending runs 100% digital, lead to disbursement.',
     },
     {
       label: 'How I think',
-      body: 'A systems thinker first, grounded in business fundamentals — thanks to a background in physics, engineering, and an MBA. I prefer structure over opinions.',
+      body: 'A systems thinker grounded in business fundamentals, with a background in physics, engineering, and an MBA. I prefer structure over opinions.',
     },
   ],
+  doctrine:
+    'Put a small team of engineers and AI inside the workflow that is failing, with the authority to rewire it. Sixteen chapters on why transformation stalls inside incumbents and what to do instead.',
+  // TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
+  learningZoneBlurb:
+    'An open-source, 405-node AI & Systems Engineering reference graph (1,550 cross-references across 19 tracks), compiled by gatsby, a pure-Python + Claude Code knowledge pipeline.',
 };
 
-// The library's two books, each rendered as a cover card on the Books index.
+const ASTACK_URL = 'https://github.com/aakashagg123/astack';
+const GATSBY_URL = 'https://github.com/aakashagg123/gatsby';
+
+// Homepage "Open-Source & Builder Stack" cards: shipped artifacts, not telemetry.
+// TODO(Aakash): verify 405 nodes / 1,550 cross-references against the latest gatsby build
+const BUILDER_STACK = [
+  {
+    name: 'astack',
+    kind: 'Claude Code skill router',
+    body: '44 slash commands across discovery, spec, TDD, security review, and staged shipping, dispatched through a single /astack router.',
+    links: [
+      { label: 'Repo & architecture →', href: ASTACK_URL },
+      { label: 'Essays & Projects →', href: '/musings/' },
+    ],
+  },
+  {
+    name: 'gatsby',
+    kind: 'AI Knowledge Engine',
+    body: 'A pure-Python static compiler and knowledge-graph generator behind the 405-node AI Engineering curriculum, with 1,550 cross-references.',
+    links: [
+      { label: 'Repo & architecture →', href: GATSBY_URL },
+      { label: 'Browse the graph →', href: '/learning-zone/' },
+    ],
+  },
+];
+
+// The Books index spotlights one flagship monograph.
 const BOOKS = [
   {
     title: 'Forward-deployed',
-    tagline: 'Why transformation fails inside incumbents, and the operating model that fixes it.',
+    tagline: 'Putting engineers and AI inside the companies too slow to save themselves.',
     cover: '/books/forward-deployed/covers/cover.jpg',
-    href: '/books/forward-deployed/README.html',
+    href: '/books/forward-deployed/',
     status: 'Draft · 16 chapters',
-  },
-  {
-    title: 'Prompt engineering guide for product managers',
-    tagline: 'A practical guidebook for turning AI into daily leverage as a product leader.',
-    cover: '/books/prompt-engineering-guide/covers/cover.jpg',
-    href: '/books/prompt-engineering-guide/README.html',
-    status: 'Published · 10 chapters',
   },
 ];
 
@@ -108,6 +151,33 @@ const PRODUCTS = [
     href: '/portfolio/products/autoo2-claims-saas.html',
   },
 ];
+
+// Sitemap <lastmod>: the date of the last git commit that touched a file.
+// A shallow clone (the default for CI checkouts) gives every file the same
+// date, so lastmod is omitted there rather than published wrong; the deploy
+// workflow fetches full history. Untracked files have no date either.
+const IS_SHALLOW = (() => {
+  try {
+    return execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: ROOT, encoding: 'utf8' }).trim() !== 'false';
+  } catch {
+    return true;
+  }
+})();
+
+function lastModified(...files) {
+  if (IS_SHALLOW) return null;
+  const dates = files
+    .filter((f) => f && fs.existsSync(f))
+    .map((f) => {
+      try {
+        return execFileSync('git', ['log', '-1', '--format=%cI', '--', f], { cwd: ROOT, encoding: 'utf8' }).trim().slice(0, 10);
+      } catch {
+        return '';
+      }
+    })
+    .filter(Boolean);
+  return dates.length ? dates.sort().at(-1) : null;
+}
 
 function readTitleFromMarkdown(md, fallback) {
   const match = md.match(/^#\s+(.+)$/m);
@@ -152,16 +222,181 @@ function hashAndRename(distDir, filename) {
 // design language, adds the site bar (with the theme toggle) and a script
 // that applies the saved theme before first paint. Idempotent: any bar a
 // previous sync left in the committed copy is replaced, not doubled.
-function themeLearningZone(dir, { cssHref, jsHref }) {
+// The Learning Zone is a compiled artifact, so its landing page says so:
+// the hero is reframed as an automated knowledge-engineering system, with a
+// "How this was built" banner pointing at the gatsby pipeline that produces
+// it. Done here, at build time, so it survives every re-sync from gatsby.
+// Returns a transform for the landing page's HTML, or null if the page is
+// missing (the transform itself warns when the expected hero is not found).
+const LZ_HERO_RE = /<h1>[^<]*<\/h1>\s*<p class="lede">[^<]*<\/p>/;
+// TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
+const LZ_HERO = `<h1>AI &amp; Systems Engineering Knowledge Graph</h1>
+  <p class="lede">An open-source, 405-node AI &amp; Systems Engineering reference graph (1,550 cross-references across 19 tracks)—compiled, cross-linked, and maintained via <code>gatsby</code>, a pure-Python + Claude Code knowledge pipeline built for Product Builders.</p>
+  <aside class="fd-lz-built" aria-label="How this was built">
+    <p class="fd-lz-built-label">How this was built</p>
+    <p>The pages in this graph are generated. <code>gatsby</code> compiles them from source content, cross-links every concept, and builds the knowledge graph. The source and architecture are public, so you can judge the pipeline.</p>
+    <p><a href="${GATSBY_URL}" target="_blank" rel="noopener">Read the gatsby architecture →</a></p>
+  </aside>`;
+function applyLearningZoneFraming(indexPath) {
+  if (!fs.existsSync(indexPath)) return null;
+  return (html) => {
+    if (!LZ_HERO_RE.test(html)) {
+      console.warn('Learning Zone: hero <h1>/lede not found in index.html; framing not applied');
+      return html;
+    }
+    return html.replace(LZ_HERO_RE, LZ_HERO);
+  };
+}
+
+// The Learning Zone ships with a bare <head>: no description, canonical, or
+// social tags, and some generated titles that are just "---". The build adds
+// them to every page, so the gatsby sync stays untouched. Pages under an
+// outputs/ folder are generated artifacts (runbooks, checklists, skill files):
+// they stay reachable but are marked noindex and left out of the sitemap.
+// TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
+const LZ_TITLE = 'AI & Systems Engineering Knowledge Graph';
+const LZ_DESCRIPTION =
+  'An open-source, 405-node AI & Systems Engineering reference graph: 1,550 cross-references across 19 tracks, compiled by gatsby.';
+
+const escAttr = (t) => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Markup escaped by the markdown pass decodes back into tag-like text, so tags are stripped twice.
+const plainText = (h) => decodeEntities(h.replace(/<[^>]+>/g, ' ')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
+function humanize(file) {
+  const t = file.replace(/\.html$/, '').replace(/^\d+[-_]?/, '').replace(/[-_]+/g, ' ').trim();
+  return t ? t[0].toUpperCase() + t.slice(1) : file;
+}
+
+function truncateAtWord(text, max) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:—-]+$/, '') + '…';
+}
+
+function addLearningZoneSeo(html, rel, { duplicateOfIndex = false } = {}) {
+  const isIndex = rel === 'index.html';
+  const indexable = !/(^|\/)outputs\//.test(rel);
+  // A README.html that sits beside an identical index.html is the same page:
+  // its canonical is the directory, and it stays out of the sitemap.
+  const url = `${SITE.baseUrl}/learning-zone/${rel.replace(/(^|\/)(index|README)\.html$/, (m, lead, name) => (name === 'index' || duplicateOfIndex ? lead : m))}`;
+
+  const titleMatch = html.match(/<title>([^<]*)<\/title>/);
+  let title = titleMatch ? plainText(titleMatch[1]) : '';
+  if (isIndex) {
+    title = `${LZ_TITLE} · ${SITE.title}`;
+  } else if (!title || title.startsWith('---')) {
+    // Missing or "---" titles: use the page's first heading, with the track
+    // name taken from the sidebar brand when the old title had none.
+    const track = title.includes(' · ')
+      ? title.split(' · ').slice(1).join(' · ')
+      : plainText((html.match(/class="brand"[^>]*>[\s\S]*?<span>([^<]*)<\/span>/) || [])[1] || '') || 'AI Knowledge Graph';
+    const heading = [...html.matchAll(/<h[123][^>]*>([\s\S]*?)<\/h[123]>/g)].map((m) => plainText(m[1])).find(Boolean);
+    title = `${heading || humanize(path.basename(rel))} · ${track}`;
+  }
+
+  let description = isIndex ? LZ_DESCRIPTION : '';
+  if (!isIndex) {
+    // Skip the sidebar and top bar: read paragraphs from the end of the
+    // sidebar (or the start of <main>/<article>) onward.
+    const marks = [html.search(/<main\b/i), html.search(/<article\b/i), html.search(/<\/aside>/i), html.search(/<\/header>/i)].filter((i) => i >= 0);
+    const body = html.slice(marks.length ? Math.min(...marks) : 0);
+    const paras = [...body.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plainText(m[1]));
+    description = paras.find((p) => p.length >= 60) || '';
+  }
+  if (!description) description = `${title.split(' · ')[0]}. Part of the ${LZ_TITLE}, built with gatsby.`;
+  description = truncateAtWord(description, MAX_DESCRIPTION);
+
+  const image = `${SITE.baseUrl}/social.jpg`;
+  const tags = [
+    `<link rel="canonical" href="${escAttr(url)}">`,
+    /name="description"/.test(html) ? '' : `<meta name="description" content="${escAttr(description)}">`,
+    `<meta name="author" content="${escAttr(SITE.author)}">`,
+    indexable ? '' : '<meta name="robots" content="noindex,follow">',
+    `<meta property="og:type" content="${isIndex ? 'website' : 'article'}">`,
+    `<meta property="og:site_name" content="${escAttr(SITE.title)}">`,
+    `<meta property="og:title" content="${escAttr(title)}">`,
+    `<meta property="og:description" content="${escAttr(description)}">`,
+    `<meta property="og:url" content="${escAttr(url)}">`,
+    `<meta property="og:image" content="${image}">`,
+    '<meta name="twitter:card" content="summary_large_image">',
+    `<meta name="twitter:title" content="${escAttr(title)}">`,
+    `<meta name="twitter:description" content="${escAttr(description)}">`,
+    `<meta name="twitter:image" content="${image}">`,
+    isIndex
+      ? `<script type="application/ld+json">${JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: LZ_TITLE,
+          description: LZ_DESCRIPTION,
+          url,
+          inLanguage: 'en',
+          author: { '@type': 'Person', name: SITE.author, url: `${SITE.baseUrl}/about/` },
+          isPartOf: { '@type': 'WebSite', name: SITE.title, url: SITE.baseUrl },
+          codeRepository: GATSBY_URL,
+        })}</script>`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  html = titleMatch
+    ? html.replace(/<title>[^<]*<\/title>/, `<title>${escAttr(title)}</title>`)
+    : html.replace(/<\/head>/i, `<title>${escAttr(title)}</title>\n</head>`);
+  html = html.replace(/<\/head>/i, `${tags}\n</head>`);
+  return { html, url, indexable };
+}
+
+// About 150 Learning Zone pages (docs, READMEs, roadmaps) are empty shells:
+// <main>Loading…</main>, with the page's own script fetching and rendering a
+// sibling .md file in the browser. A crawler that does not run that script
+// sees no content and no <h1>. The build renders the same markdown into the
+// shell; the page's script still replaces it on load, so visitors see no
+// change.
+// The page's script rewrites these links in the browser; as static HTML some
+// point at files that do not exist (a README.md whose folder only has an
+// index.html, or a path from another repo layout). Each relative link is
+// resolved against the real files: kept if it exists, retried as index.html
+// for a README.html, and otherwise unwrapped to plain text so a crawler never
+// follows a 404.
+function fixLearningZoneLinks(html, pageDir) {
+  return html.replace(/<a href="([^"]*)"([^>]*)>([\s\S]*?)<\/a>/g, (whole, href, rest, text) => {
+    if (!href || /^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) return whole;
+    const [target, hash = ''] = href.split('#');
+    const exists = (t) => fs.existsSync(path.resolve(pageDir, t));
+    if (exists(target)) return whole;
+    const asIndex = target.replace(/README\.html$/, 'index.html');
+    if (asIndex !== target && exists(asIndex)) return `<a href="${asIndex}${hash ? '#' + hash : ''}"${rest}>${text}</a>`;
+    return text;
+  });
+}
+
+function learningZoneMarkdownPath(html, fullPath) {
+  const fetched = html.match(/fetch\('([^']+\.md)'\)/);
+  if (!fetched || !/<main[^>]*>\s*Loading…\s*<\/main>/.test(html)) return null;
+  const mdPath = path.resolve(path.dirname(fullPath), fetched[1]);
+  return fs.existsSync(mdPath) ? mdPath : null;
+}
+
+function prerenderLearningZoneMarkdown(html, fullPath, md) {
+  const mdPath = learningZoneMarkdownPath(html, fullPath);
+  if (!mdPath) return html;
+  const rendered = fixLearningZoneLinks(md.render(matter(fs.readFileSync(mdPath, 'utf8')).content), path.dirname(fullPath));
+  return html.replace(/(<main[^>]*>)\s*Loading…\s*(<\/main>)/, (_m, open, close) => `${open}${rendered}${close}`);
+}
+
+function themeLearningZone(dir, { cssHref, jsHref, md, sourceDir }) {
   const bar = `<div id="fd-lz-bar" class="fd-lz-bar">
   <a class="fd-lz-brand" href="/"><img src="/mark-64.png" alt=""><span>Forward-deployed</span></a>
   <span class="fd-lz-sep">/</span>
-  <a class="fd-lz-crumb" href="/learning-zone/">Learning zone</a>
+  <a class="fd-lz-crumb" href="/learning-zone/">AI Knowledge Graph</a>
+  ${renderTopNav('learning-zone', 'fd-lz-nav')}
   <button class="fd-lz-theme" id="fdLzTheme" type="button" aria-label="Toggle light or dark theme">${THEME_TOGGLE_ICONS}</button>
 </div>
 `;
   const headTags = `<script src="${jsHref}"></script>\n<link rel="stylesheet" href="${cssHref}">\n`;
   let count = 0;
+  const urls = [];
+  const framed = applyLearningZoneFraming(path.join(dir, 'index.html'));
   const walk = (d) => {
     for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
       const full = path.join(d, entry.name);
@@ -171,6 +406,16 @@ function themeLearningZone(dir, { cssHref, jsHref }) {
       html = html.replace(/<div id="fd-lz-bar"[\s\S]*?<\/div>\s*/, '');
       html = html.replace(/<style>\s*\.bar\{ top:44px !important; \}[\s\S]*?<\/style>\s*/, '');
       if (!/<\/head>/i.test(html) || !/<body[^>]*>/i.test(html)) continue;
+      const rel = path.relative(dir, full).split(path.sep).join('/');
+      html = prerenderLearningZoneMarkdown(html, full, md);
+      if (rel === 'index.html' && framed) html = framed(html);
+      const duplicateOfIndex = entry.name === 'README.html' && fs.existsSync(path.join(d, 'index.html'));
+      const seo = addLearningZoneSeo(html, rel, { duplicateOfIndex });
+      html = seo.html;
+      if (seo.indexable && !duplicateOfIndex) {
+        const src = path.join(sourceDir, rel);
+        urls.push({ loc: seo.url, lastmod: lastModified(src, learningZoneMarkdownPath(fs.readFileSync(src, 'utf8'), src)) });
+      }
       html = html.replace(/<\/head>/i, `${headTags}</head>`);
       html = html.replace(/<body[^>]*>/i, (m) => `${m}\n${bar}`);
       if (path.relative(dir, full) === path.join('graph', 'index.html')) {
@@ -181,7 +426,7 @@ function themeLearningZone(dir, { cssHref, jsHref }) {
     }
   };
   walk(dir);
-  return count;
+  return { count, urls };
 }
 
 // Recursively finds every "assets" or "covers" folder under a space
@@ -263,7 +508,14 @@ function extractOutline(html) {
   const seen = new Set();
   const outline = [];
   const updated = html.replace(/<(h[23])>(.*?)<\/\1>/gs, (match, tag, inner) => {
-    const text = inner.replace(/<[^>]+>/g, '').trim();
+    // The rail re-escapes titles, so decode the entities markdown-it emitted.
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .trim();
     const id = slugify(text, seen);
     outline.push({ level: tag === 'h2' ? 2 : 3, id, title: text });
     return `<${tag} id="${id}">${inner}</${tag}>`;
@@ -290,36 +542,67 @@ function injectPostDate(html, date) {
   return injectAfterH1(html, `<p class="fd-post-date">${formatted}</p>`);
 }
 
+// Legacy "<dir>/README.html" URLs: a canonical + meta-refresh stub pointing
+// at the directory index ("./" from README.html is the same directory).
+function renderRedirectStub() {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<link rel="canonical" href="./">
+<meta http-equiv="refresh" content="0; url=./">
+</head>
+<body>
+<p>This page moved. <a href="./">Continue</a>.</p>
+</body>
+</html>
+`;
+}
+
 function renderLinkedinCta(linkedinUrl) {
   return `<a class="fd-cta" href="${linkedinUrl}" target="_blank" rel="noopener">Connect on LinkedIn →</a>`;
 }
 
 const MAX_DESCRIPTION = 155;
+const MIN_DESCRIPTION = 110;
 
-// Meta-description source: the raw markdown's first plain paragraph — not
-// a heading, blockquote, image, or a paragraph made entirely of a ⟦slot⟧ —
-// with markdown emphasis/slot markers stripped and cut to a clean word break.
+// Meta-description source: the raw markdown's leading plain paragraphs — not
+// headings, blockquotes, images, lists, or a paragraph made entirely of a
+// ⟦slot⟧ — with markdown emphasis/slot markers stripped. A short opening
+// paragraph (or one that ends in a colon) is extended with the next one, and
+// the result is cut at a word break. A page can override all of this with a
+// `description:` field in its frontmatter.
 function extractDescription(raw, fallback) {
   const blocks = raw.split(/\n\s*\n/);
+  let text = '';
   for (const block of blocks) {
     const line = block.trim();
     if (!line) continue;
     if (/^#{1,6}\s/.test(line)) continue;
-    if (line.startsWith('>')) continue;
-    if (line.startsWith('!')) continue;
+    if (/^(>|!|-\s|\*\s|\d+\.\s|<!--)/.test(line)) continue;
     if (line === '---') continue;
     const plain = line
       .replace(/\*\*(.+?)\*\*/g, '$1')
       .replace(/\*(.+?)\*/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
       .replace(/⟦.+?⟧/g, '')
       .replace(/\s+/g, ' ')
       .trim();
     if (!plain) continue;
-    if (plain.length <= MAX_DESCRIPTION) return plain;
-    const cut = plain.slice(0, MAX_DESCRIPTION);
-    return cut.slice(0, cut.lastIndexOf(' ')) + '…';
+    text = text ? `${text} ${plain}` : plain;
+    if (text.length >= MIN_DESCRIPTION && !text.endsWith(':')) break;
   }
-  return fallback;
+  if (!text) return fallback;
+  if (text.length <= MAX_DESCRIPTION) return text;
+  const cut = text.slice(0, MAX_DESCRIPTION);
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:—-]+$/, '') + '…';
+}
+
+// HTML comments (TODO(Aakash) notes) are for the source only; the published
+// markdown mirrors and llms-full.txt drop them.
+function stripComments(md) {
+  return md.replace(/<!--[\s\S]*?-->\n?/g, '');
 }
 
 const KINDLE_URL = 'https://amzn.in/d/0c3cehuZ';
@@ -336,9 +619,10 @@ function buildExtraJsonLd(spaceId, page) {
         '@type': 'Person',
         name: SITE.author,
         url: SITE.baseUrl + page.href,
-        jobTitle: 'Product leader',
+        jobTitle: LANDING.role,
+        description: SITE.thesis,
         worksFor: { '@type': 'Organization', name: 'JSW One Finance' },
-        sameAs: [LINKEDIN_URL],
+        sameAs: [LINKEDIN_URL, `https://github.com/${GITHUB_USERNAME}`],
       },
     ];
   }
@@ -348,7 +632,10 @@ function buildExtraJsonLd(spaceId, page) {
         '@context': 'https://schema.org',
         '@type': 'Book',
         name: 'Forward-deployed',
-        author: { '@type': 'Person', name: SITE.author },
+        alternativeHeadline: BOOKS[0].tagline,
+        description: page.description,
+        image: SITE.baseUrl + BOOKS[0].cover,
+        author: { '@type': 'Person', name: SITE.author, url: `${SITE.baseUrl}/about/` },
         url: SITE.baseUrl + page.href,
         bookFormat: 'https://schema.org/EBook',
         inLanguage: 'en',
@@ -375,26 +662,98 @@ function buildExtraJsonLd(spaceId, page) {
   return [];
 }
 
-// llms.txt (the llmstxt.org convention): a compact, curated map of the site
-// for an AI agent to fetch before crawling — plus llms-full.txt, the same
-// map with every page's raw markdown inlined for one-shot ingestion.
-function writeLlmsTxt({ spaces, spaceData }) {
-  const lines = [`# ${SITE.title}`, '', `> ${SITE.thesis}`, ''];
-  const fullParts = [`# ${SITE.title}\n\n> ${SITE.thesis}\n`];
+// Entities that appear in the Learning Zone's generated HTML.
+function decodeEntities(t) {
+  return t
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&amp;/g, '&');
+}
 
-  for (const space of spaces) {
-    const data = spaceData.find((s) => s.spaceId === space.id);
-    lines.push(`## ${space.title}`);
-    fullParts.push(`\n## ${space.title}\n`);
+// The Learning Zone's landing page is a grid of cards (paths, then modules).
+// Reading them here keeps llms.txt in step with each gatsby re-sync.
+function readLearningZoneCards(indexPath) {
+  if (!fs.existsSync(indexPath)) return [];
+  const html = fs.readFileSync(indexPath, 'utf8');
+  const re = /<a class="card" href="([^"]+)">\s*<span[^>]*>([^<]*)<\/span>\s*<h3>([^<]*?)\s*(?:→)?\s*<\/h3>\s*<p>([^<]*)<\/p>/g;
+  const cards = [];
+  for (const m of html.matchAll(re)) {
+    cards.push({
+      href: m[1].replace(/index\.html$/, ''),
+      kind: decodeEntities(m[2]).trim(),
+      title: decodeEntities(m[3]).trim(),
+      body: decodeEntities(m[4]).replace(/\s+/g, ' ').trim(),
+    });
+  }
+  return cards;
+}
+
+// llms.txt (the llmstxt.org convention): H1, a one-paragraph summary in a
+// blockquote, then link lists an AI agent can follow. Page links point at
+// each page's markdown mirror; the canonical HTML URL stays in the page's own
+// <link rel="alternate">. llms-full.txt inlines every listed page's markdown.
+// Unlisted pages (the retired prompt-engineering guide) appear in neither.
+const LLMS_SECTIONS = [
+  { space: 'about', heading: 'About' },
+  { space: 'portfolio', heading: 'Portfolio and case studies' },
+  { space: 'books', heading: 'Book: Forward-deployed' },
+  { space: 'musings', heading: 'Essays & Built Systems' },
+];
+
+function writeLlmsTxt({ spaceData, lzCards }) {
+  const base = SITE.baseUrl;
+  const clean = (t) => t.replace(/\s+/g, ' ').trim();
+  const lines = [
+    `# ${SITE.author} · ${SITE.title}`,
+    '',
+    `> ${SITE.thesis}`,
+    '',
+    `This site holds a profile, four product case studies, the free book *Forward-deployed* (16 chapters), an essay, and an open-source AI & Systems Engineering knowledge graph. Every page below has a markdown version at the linked URL. The full text of all pages except the knowledge graph is in [llms-full.txt](${base}/llms-full.txt).`,
+    '',
+  ];
+  const fullParts = [`# ${SITE.author} · ${SITE.title}\n\n> ${SITE.thesis}\n`];
+
+  for (const { space, heading } of LLMS_SECTIONS) {
+    const data = spaceData.find((s) => s.spaceId === space);
+    if (!data) continue;
+    lines.push(`## ${heading}`, '');
+    fullParts.push(`\n## ${heading}\n`);
     for (const page of data.pages) {
-      if (page.external) continue;
-      lines.push(`- [${page.title}](${SITE.baseUrl}${page.href}): ${page.description || space.blurb}`);
-      const abs = path.join(data.spaceDir, page.sourcePath);
-      const raw = fs.readFileSync(abs, 'utf8');
-      fullParts.push(`\n### ${SITE.baseUrl}${page.href}\n\n${raw}\n`);
+      if (page.external || page.unlisted) continue;
+      lines.push(`- [${page.title}](${base}/${space}/${page.sourcePath}): ${clean(page.description || SITE.thesis)}`);
+      const raw = fs.readFileSync(path.join(data.spaceDir, page.sourcePath), 'utf8');
+      const { content } = matter(stripComments(raw));
+      fullParts.push(`\n### ${base}${page.href}\n\n${content.trim()}\n`);
     }
     lines.push('');
   }
+
+  lines.push('## AI Knowledge Graph', '');
+  lines.push(`- [AI & Systems Engineering Knowledge Graph](${base}/learning-zone/): ${clean(LANDING.learningZoneBlurb)}`);
+  for (const [kind, label] of [['Path', 'Learning paths'], ['Module', 'Modules']]) {
+    const cards = lzCards.filter((c) => c.kind === kind);
+    if (!cards.length) continue;
+    lines.push('', `### ${label}`, '');
+    for (const c of cards) lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
+  }
+  const other = lzCards.filter((c) => c.kind !== 'Path' && c.kind !== 'Module');
+  if (other.length) {
+    lines.push('', '### Foundations', '');
+    for (const c of other) lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
+  }
+  lines.push(
+    '',
+    '## Optional',
+    '',
+    `- [llms-full.txt](${base}/llms-full.txt): the markdown of every page above except the knowledge graph, in one file`,
+    `- [Sitemap](${base}/sitemap.xml): every indexable URL, including each knowledge-graph page`,
+    `- [astack](${ASTACK_URL}): Claude Code skill router with 44 slash commands`,
+    `- [gatsby](${GATSBY_URL}): pure-Python static compiler and knowledge-graph generator behind the knowledge graph`,
+    `- [LinkedIn](${LINKEDIN_URL}): profile and contact`,
+    '',
+  );
 
   fs.writeFileSync(path.join(DIST_DIR, 'llms.txt'), lines.join('\n'));
   fs.writeFileSync(path.join(DIST_DIR, 'llms-full.txt'), fullParts.join('\n'));
@@ -434,6 +793,7 @@ async function build() {
     }
     const tree = parseSummary(fs.readFileSync(summaryPath, 'utf8'), { spaceDir, spaceId });
     const pages = flattenPages(tree);
+    for (const page of pages) page.unlisted = isUnlisted(spaceId, page.sourcePath);
     if (pages.length === 0) {
       throw new Error(`Space "${spaceId}" SUMMARY.md defines no pages`);
     }
@@ -459,12 +819,12 @@ async function build() {
       status: meta.status || null,
       pageCount: pages.length,
     });
-    spaceData.push({ spaceId, spaceDir, tree, pages });
+    spaceData.push({ spaceId, spaceDir, tree, navTreeListed: listedTree(tree, spaceId), pages });
   }
 
   const sitemapUrls = [{ loc: SITE.baseUrl + '/' }];
 
-  for (const { spaceId, spaceDir, tree, pages } of spaceData) {
+  for (const { spaceId, spaceDir, tree, navTreeListed, pages } of spaceData) {
     const prevNext = computePrevNext(pages);
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i];
@@ -479,28 +839,36 @@ async function build() {
       }
       if (spaceId === 'about' && page.sourcePath === 'README.md') {
         contentHtml = injectAfterH1(contentHtml, renderLinkedinCta(LINKEDIN_URL));
+        contentHtml += renderCtaFooter({ linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME });
       }
       if (spaceId === 'portfolio' && page.sourcePath === 'README.md') {
         contentHtml += renderProductGrid(PRODUCTS);
+        contentHtml += renderCtaFooter({ linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME });
       }
       if (spaceId === 'books' && page.sourcePath === 'README.md') {
         contentHtml += renderBookGrid(BOOKS);
       }
       if (spaceId === 'portfolio' && page.sourcePath === 'products/jsw-one-msme-marketplace.md') {
-        contentHtml += renderJswArchitecture();
+        // The interactive stack figure sits at the marker when the page has
+        // one (inside its architecture section); otherwise it goes last.
+        const STACK_MARKER = '<!--fd:jsw-stack-->';
+        contentHtml = contentHtml.includes(STACK_MARKER)
+          ? contentHtml.replace(STACK_MARKER, renderJswArchitecture())
+          : contentHtml + renderJswArchitecture();
       }
-      const description = extractDescription(body, SITE.thesis);
+      const description = frontmatter.description || extractDescription(body, SITE.thesis);
       page.description = description;
 
       const { prev, next } = prevNext.get(i);
-      const markdownUrl = page.href.replace(/\.html$/, '.md');
+      // The markdown mirror always sits at the source path ("/about/README.md").
+      const markdownUrl = `/${spaceId}/${page.sourcePath}`;
       const extraJsonLd = buildExtraJsonLd(spaceId, page);
 
       const html = renderPage({
         site: SITE,
         space: { id: spaceId, title: spaceTitle(spaceId) },
         spaces,
-        navTree: tree,
+        navTree: page.unlisted ? tree : navTreeListed,
         page: { title: page.title, href: page.href, breadcrumb: page.breadcrumb },
         prev,
         next,
@@ -509,15 +877,23 @@ async function build() {
         description,
         extraJsonLd,
         markdownUrl,
+        noindex: page.unlisted,
+        datePublished: frontmatter.date ? new Date(frontmatter.date).toISOString().slice(0, 10) : undefined,
       });
 
-      const outPath = path.join(DIST_DIR, page.href.replace(/^\//, ''));
+      // A directory index ("/about/") is written as <dir>/index.html.
+      const outRel = page.href.endsWith('/') ? `${page.href}index.html` : page.href;
+      const outPath = path.join(DIST_DIR, outRel.replace(/^\//, ''));
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, html);
+      // The old "<dir>/README.html" URL keeps working as a redirect stub.
+      if (page.href.endsWith('/')) {
+        fs.writeFileSync(path.join(path.dirname(outPath), 'README.html'), renderRedirectStub());
+      }
       // A clean markdown mirror of every page, for agents/crawlers that
       // prefer fetching source content over HTML-with-chrome.
-      fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), raw);
-      sitemapUrls.push({ loc: SITE.baseUrl + page.href });
+      fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), stripComments(raw));
+      if (!page.unlisted) sitemapUrls.push({ loc: SITE.baseUrl + page.href, lastmod: lastModified(abs) });
     }
 
     copyNestedAssetDirs(spaceDir, path.join(DIST_DIR, spaceId));
@@ -525,7 +901,7 @@ async function build() {
 
   fs.writeFileSync(
     path.join(DIST_DIR, 'index.html'),
-    renderLanding({ site: SITE, spaces, landing: LANDING, latestBook: BOOKS[0], linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME }),
+    renderLanding({ site: SITE, spaces, landing: LANDING, flagshipBook: BOOKS[0], builderStack: BUILDER_STACK, linkedinUrl: LINKEDIN_URL, githubUsername: GITHUB_USERNAME }),
   );
   fs.writeFileSync(path.join(DIST_DIR, '404.html'), render404({ site: SITE }));
 
@@ -533,13 +909,18 @@ async function build() {
   // through the markdown pipeline) copied wholesale into dist/learning-zone/.
   if (fs.existsSync(LEARNING_ZONE_DIR)) {
     copyDir(LEARNING_ZONE_DIR, path.join(DIST_DIR, 'learning-zone'));
-    themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref });
-    sitemapUrls.push({ loc: SITE.baseUrl + '/learning-zone/' });
+    const lz = themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref, md: createRenderer({ highlighter, readmeIndex: false }), sourceDir: LEARNING_ZONE_DIR });
+    for (const u of lz.urls.sort((a, b) => (a.loc < b.loc ? -1 : 1))) sitemapUrls.push(u);
   }
+
+  // The homepage changes whenever any page does (it links them all), so it
+  // takes the newest date in the sitemap.
+  const newest = sitemapUrls.map((u) => u.lastmod).filter(Boolean).sort().at(-1);
+  if (newest) sitemapUrls[0].lastmod = newest;
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapUrls.map((u) => `  <url><loc>${u.loc}</loc></url>`).join('\n')}
+${sitemapUrls.map((u) => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n')}
 </urlset>
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemap);
@@ -569,7 +950,7 @@ Sitemap: ${SITE.baseUrl}/sitemap.xml
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'robots.txt'), robots);
 
-  writeLlmsTxt({ spaces, spaceData });
+  writeLlmsTxt({ spaceData, lzCards: readLearningZoneCards(path.join(LEARNING_ZONE_DIR, 'index.html')) });
 
   const cnamePath = path.join(ROOT, 'CNAME');
   if (fs.existsSync(cnamePath)) {

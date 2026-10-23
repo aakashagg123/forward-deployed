@@ -52,9 +52,17 @@ export function parseSummary(text, { spaceDir, spaceId }) {
   return root;
 }
 
+// README.md (at a space root or in any subfolder) is that directory's index:
+// it compiles to <dir>/index.html and links as the clean "/dir/" URL, so no
+// "/README.html" ever shows in an address bar. Every other page keeps its
+// ".html" URL.
 function normalizeHref(spaceId, spaceDir, relPath) {
-  const clean = relPath.replace(/\.md$/, '.html').replace(/^\.\//, '');
-  return `/${spaceId}/${clean}`;
+  const clean = relPath.replace(/^\.\//, '');
+  if (/(^|\/)README\.md$/.test(clean)) {
+    const dir = clean.replace(/README\.md$/, '');
+    return `/${spaceId}/${dir}`;
+  }
+  return `/${spaceId}/${clean.replace(/\.md$/, '.html')}`;
 }
 
 // Flattens the tree into document-order list of link nodes, each carrying

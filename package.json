@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node generator/build.js",
-    "serve": "npx serve dist"
+    "serve": "npx serve dist",
+    "audit": "python3 -I scripts/audit_site.py"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
