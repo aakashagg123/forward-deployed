@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 500" width="1400" height="500" role="img" aria-label="JSW One Finance integration topology: lead to digital LOS to lending API suite, customer master, and AI charter, with LMS governance">
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4A4A4A"/></marker>
+</defs>
+<style>
+.t{font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif}
+.kicker{font-size:13px;letter-spacing:2.8px;fill:#8A8A8A}
+.h{font-size:26px;font-weight:700;fill:#000000}
+.n{font-size:15px;font-weight:700}
+.s{font-size:12px}
+.chip{font-size:11px;font-weight:700;letter-spacing:1.4px;fill:#8A8A8A}
+.e{font-size:11.5px;fill:#4A4A4A}
+</style>
+<rect width="1400" height="500" style="fill:#FFFFFF"/>
+<text class="t kicker" x="40" y="48">INTEGRATION TOPOLOGY</text>
+<text class="t h" x="40" y="88">One digital path from lead to disbursement.</text>
+<line x1="40" y1="110" x2="1360" y2="110" stroke="#D8D8D8"/>
+
+<rect x="60" y="170" width="200" height="84" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="160.0" y="209" text-anchor="middle" style="fill:#000000">Lead</text>
+<text class="t s" x="160.0" y="227" text-anchor="middle" style="fill:#4A4A4A">channel · vendor · term loan</text>
+<rect x="330" y="170" width="200" height="84" rx="3" style="fill:#000000"/>
+<text class="t n" x="430.0" y="209" text-anchor="middle" style="fill:#FFFFFF">Digital LOS</text>
+<text class="t s" x="430.0" y="227" text-anchor="middle" style="fill:#D8D8D8">lending origination</text>
+<rect x="600" y="170" width="200" height="84" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="700.0" y="209" text-anchor="middle" style="fill:#000000">Lending API suite</text>
+<text class="t s" x="700.0" y="227" text-anchor="middle" style="fill:#4A4A4A">LOS–LMS governance</text>
+<rect x="870" y="170" width="200" height="84" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="970.0" y="209" text-anchor="middle" style="fill:#000000">Customer master</text>
+<text class="t s" x="970.0" y="227" text-anchor="middle" style="fill:#4A4A4A">underpins every product</text>
+<rect x="1140" y="170" width="200" height="84" rx="3" style="fill:#000000"/>
+<text class="t n" x="1240.0" y="201" text-anchor="middle" style="fill:#FFFFFF">AI charter</text>
+<text class="t s" x="1240.0" y="219" text-anchor="middle" style="fill:#D8D8D8">AI-native origination</text>
+<text class="t s" x="1240.0" y="235" text-anchor="middle" style="fill:#D8D8D8">and underwriting</text>
+<line x1="260" y1="212.0" x2="330" y2="212.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="530" y1="212.0" x2="600" y2="212.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="800" y1="212.0" x2="870" y2="212.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)" marker-start="url(#a)"/>
+<line x1="1070" y1="212.0" x2="1140" y2="212.0" stroke="#4A4A4A" stroke-width="1.4" marker-end="url(#a)" marker-start="url(#a)"/>
+<rect x="222" y="316" width="132" height="44" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="288.0" y="343" text-anchor="middle" style="fill:#000000">Channel finance</text>
+<line x1="288" y1="316" x2="390.0" y2="254" stroke="#4A4A4A" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<rect x="364" y="316" width="132" height="44" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="430.0" y="343" text-anchor="middle" style="fill:#000000">Vendor finance</text>
+<line x1="430" y1="316" x2="430.0" y2="254" stroke="#4A4A4A" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<rect x="506" y="316" width="132" height="44" rx="3" style="fill:#FFFFFF" stroke="#000000" stroke-width="1.4"/>
+<text class="t n" x="572.0" y="343" text-anchor="middle" style="fill:#000000">Term loan</text>
+<line x1="572" y1="316" x2="470.0" y2="254" stroke="#4A4A4A" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<text class="t chip" x="430.0" y="392" text-anchor="middle">THREE ORIGINATION PRODUCTS</text>
+<rect x="660" y="316" width="200" height="56" rx="3" style="fill:#FFFFFF" stroke="#8A8A8A" stroke-width="1.4" stroke-dasharray="5 4"/>
+<text class="t n" x="760.0" y="341" text-anchor="middle" style="fill:#000000">LMS</text>
+<text class="t s" x="760.0" y="359" text-anchor="middle" style="fill:#4A4A4A">loan management</text>
+<line x1="700" y1="254" x2="700" y2="316" stroke="#4A4A4A" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)" marker-start="url(#a)"/>
+<text class="t e" x="748" y="292" text-anchor="middle">governance</text>
+<text class="t chip" x="40" y="440" text-anchor="start">ALL ORIGINATION IS DIGITAL, LEAD TO DISBURSEMENT</text>
+</svg>
