@@ -1,3 +1,7 @@
+---
+description: "Ten-plus years across fintech, insurance and e-commerce. Four product case studies: JSW One Finance, JSW One MSME, Marsh and AutoO2."
+---
+
 # Portfolio & experience
 
 Ten-plus years across fintech, insurance, and e-commerce:

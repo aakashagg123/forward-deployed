@@ -32,7 +32,7 @@ Pages listed in `UNLISTED` in `generator/build.js` stay live but are removed fro
 
 ```
 npm run build
-npm run audit   # internal links, README.html stubs, removed widgets
+npm run audit   # links, README.html stubs, SEO metadata, sitemap, llms.txt
 ```
 
 ## Local development

@@ -54,6 +54,7 @@ function listedTree(node, spaceId) {
 // Landing page copy. The hero identity is the person; Forward-deployed is
 // the operating doctrine and flagship book, shown right under the bio.
 const LANDING = {
+  seoTitle: 'Aakash Aggarwal — AI-Native Product Leader & Fintech Builder',
   eyebrow: 'Mumbai, India',
   role: 'AI-Native Product Leader & 0→1 Fintech Builder',
   lede:
@@ -219,7 +220,138 @@ function applyLearningZoneFraming(indexPath) {
   };
 }
 
-function themeLearningZone(dir, { cssHref, jsHref }) {
+// The Learning Zone ships with a bare <head>: no description, canonical, or
+// social tags, and some generated titles that are just "---". The build adds
+// them to every page, so the gatsby sync stays untouched. Pages under an
+// outputs/ folder are generated artifacts (runbooks, checklists, skill files):
+// they stay reachable but are marked noindex and left out of the sitemap.
+// TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
+const LZ_TITLE = 'AI & Systems Engineering Knowledge Graph';
+const LZ_DESCRIPTION =
+  'An open-source, 405-node AI & Systems Engineering reference graph: 1,550 cross-references across 19 tracks, compiled by gatsby.';
+
+const escAttr = (t) => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Markup escaped by the markdown pass decodes back into tag-like text, so tags are stripped twice.
+const plainText = (h) => decodeEntities(h.replace(/<[^>]+>/g, ' ')).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
+function humanize(file) {
+  const t = file.replace(/\.html$/, '').replace(/^\d+[-_]?/, '').replace(/[-_]+/g, ' ').trim();
+  return t ? t[0].toUpperCase() + t.slice(1) : file;
+}
+
+function truncateAtWord(text, max) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:—-]+$/, '') + '…';
+}
+
+function addLearningZoneSeo(html, rel, { duplicateOfIndex = false } = {}) {
+  const isIndex = rel === 'index.html';
+  const indexable = !/(^|\/)outputs\//.test(rel);
+  // A README.html that sits beside an identical index.html is the same page:
+  // its canonical is the directory, and it stays out of the sitemap.
+  const url = `${SITE.baseUrl}/learning-zone/${rel.replace(/(^|\/)(index|README)\.html$/, (m, lead, name) => (name === 'index' || duplicateOfIndex ? lead : m))}`;
+
+  const titleMatch = html.match(/<title>([^<]*)<\/title>/);
+  let title = titleMatch ? plainText(titleMatch[1]) : '';
+  if (isIndex) {
+    title = `${LZ_TITLE} · ${SITE.title}`;
+  } else if (!title || title.startsWith('---')) {
+    // Missing or "---" titles: use the page's first heading, with the track
+    // name taken from the sidebar brand when the old title had none.
+    const track = title.includes(' · ')
+      ? title.split(' · ').slice(1).join(' · ')
+      : plainText((html.match(/class="brand"[^>]*>[\s\S]*?<span>([^<]*)<\/span>/) || [])[1] || '') || 'AI Knowledge Graph';
+    const heading = [...html.matchAll(/<h[123][^>]*>([\s\S]*?)<\/h[123]>/g)].map((m) => plainText(m[1])).find(Boolean);
+    title = `${heading || humanize(path.basename(rel))} · ${track}`;
+  }
+
+  let description = isIndex ? LZ_DESCRIPTION : '';
+  if (!isIndex) {
+    // Skip the sidebar and top bar: read paragraphs from the end of the
+    // sidebar (or the start of <main>/<article>) onward.
+    const marks = [html.search(/<main\b/i), html.search(/<article\b/i), html.search(/<\/aside>/i), html.search(/<\/header>/i)].filter((i) => i >= 0);
+    const body = html.slice(marks.length ? Math.min(...marks) : 0);
+    const paras = [...body.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plainText(m[1]));
+    description = paras.find((p) => p.length >= 60) || '';
+  }
+  if (!description) description = `${title.split(' · ')[0]}. Part of the ${LZ_TITLE}, built with gatsby.`;
+  description = truncateAtWord(description, MAX_DESCRIPTION);
+
+  const image = `${SITE.baseUrl}/social.jpg`;
+  const tags = [
+    `<link rel="canonical" href="${escAttr(url)}">`,
+    /name="description"/.test(html) ? '' : `<meta name="description" content="${escAttr(description)}">`,
+    `<meta name="author" content="${escAttr(SITE.author)}">`,
+    indexable ? '' : '<meta name="robots" content="noindex,follow">',
+    `<meta property="og:type" content="${isIndex ? 'website' : 'article'}">`,
+    `<meta property="og:site_name" content="${escAttr(SITE.title)}">`,
+    `<meta property="og:title" content="${escAttr(title)}">`,
+    `<meta property="og:description" content="${escAttr(description)}">`,
+    `<meta property="og:url" content="${escAttr(url)}">`,
+    `<meta property="og:image" content="${image}">`,
+    '<meta name="twitter:card" content="summary_large_image">',
+    `<meta name="twitter:title" content="${escAttr(title)}">`,
+    `<meta name="twitter:description" content="${escAttr(description)}">`,
+    `<meta name="twitter:image" content="${image}">`,
+    isIndex
+      ? `<script type="application/ld+json">${JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: LZ_TITLE,
+          description: LZ_DESCRIPTION,
+          url,
+          inLanguage: 'en',
+          author: { '@type': 'Person', name: SITE.author, url: `${SITE.baseUrl}/about/` },
+          isPartOf: { '@type': 'WebSite', name: SITE.title, url: SITE.baseUrl },
+          codeRepository: GATSBY_URL,
+        })}</script>`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  html = titleMatch
+    ? html.replace(/<title>[^<]*<\/title>/, `<title>${escAttr(title)}</title>`)
+    : html.replace(/<\/head>/i, `<title>${escAttr(title)}</title>\n</head>`);
+  html = html.replace(/<\/head>/i, `${tags}\n</head>`);
+  return { html, url, indexable };
+}
+
+// About 150 Learning Zone pages (docs, READMEs, roadmaps) are empty shells:
+// <main>Loading…</main>, with the page's own script fetching and rendering a
+// sibling .md file in the browser. A crawler that does not run that script
+// sees no content and no <h1>. The build renders the same markdown into the
+// shell; the page's script still replaces it on load, so visitors see no
+// change.
+// The page's script rewrites these links in the browser; as static HTML some
+// point at files that do not exist (a README.md whose folder only has an
+// index.html, or a path from another repo layout). Each relative link is
+// resolved against the real files: kept if it exists, retried as index.html
+// for a README.html, and otherwise unwrapped to plain text so a crawler never
+// follows a 404.
+function fixLearningZoneLinks(html, pageDir) {
+  return html.replace(/<a href="([^"]*)"([^>]*)>([\s\S]*?)<\/a>/g, (whole, href, rest, text) => {
+    if (!href || /^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) return whole;
+    const [target, hash = ''] = href.split('#');
+    const exists = (t) => fs.existsSync(path.resolve(pageDir, t));
+    if (exists(target)) return whole;
+    const asIndex = target.replace(/README\.html$/, 'index.html');
+    if (asIndex !== target && exists(asIndex)) return `<a href="${asIndex}${hash ? '#' + hash : ''}"${rest}>${text}</a>`;
+    return text;
+  });
+}
+
+function prerenderLearningZoneMarkdown(html, fullPath, md) {
+  const fetched = html.match(/fetch\('([^']+\.md)'\)/);
+  if (!fetched || !/<main[^>]*>\s*Loading…\s*<\/main>/.test(html)) return html;
+  const mdPath = path.resolve(path.dirname(fullPath), fetched[1]);
+  if (!fs.existsSync(mdPath)) return html;
+  const rendered = fixLearningZoneLinks(md.render(matter(fs.readFileSync(mdPath, 'utf8')).content), path.dirname(fullPath));
+  return html.replace(/(<main[^>]*>)\s*Loading…\s*(<\/main>)/, (_m, open, close) => `${open}${rendered}${close}`);
+}
+
+function themeLearningZone(dir, { cssHref, jsHref, md }) {
   const bar = `<div id="fd-lz-bar" class="fd-lz-bar">
   <a class="fd-lz-brand" href="/"><img src="/mark-64.png" alt=""><span>Forward-deployed</span></a>
   <span class="fd-lz-sep">/</span>
@@ -230,6 +362,7 @@ function themeLearningZone(dir, { cssHref, jsHref }) {
 `;
   const headTags = `<script src="${jsHref}"></script>\n<link rel="stylesheet" href="${cssHref}">\n`;
   let count = 0;
+  const urls = [];
   const framed = applyLearningZoneFraming(path.join(dir, 'index.html'));
   const walk = (d) => {
     for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
@@ -240,7 +373,13 @@ function themeLearningZone(dir, { cssHref, jsHref }) {
       html = html.replace(/<div id="fd-lz-bar"[\s\S]*?<\/div>\s*/, '');
       html = html.replace(/<style>\s*\.bar\{ top:44px !important; \}[\s\S]*?<\/style>\s*/, '');
       if (!/<\/head>/i.test(html) || !/<body[^>]*>/i.test(html)) continue;
-      if (path.relative(dir, full) === 'index.html' && framed) html = framed(html);
+      const rel = path.relative(dir, full).split(path.sep).join('/');
+      html = prerenderLearningZoneMarkdown(html, full, md);
+      if (rel === 'index.html' && framed) html = framed(html);
+      const duplicateOfIndex = entry.name === 'README.html' && fs.existsSync(path.join(d, 'index.html'));
+      const seo = addLearningZoneSeo(html, rel, { duplicateOfIndex });
+      html = seo.html;
+      if (seo.indexable && !duplicateOfIndex) urls.push(seo.url);
       html = html.replace(/<\/head>/i, `${headTags}</head>`);
       html = html.replace(/<body[^>]*>/i, (m) => `${m}\n${bar}`);
       if (path.relative(dir, full) === path.join('graph', 'index.html')) {
@@ -251,7 +390,7 @@ function themeLearningZone(dir, { cssHref, jsHref }) {
     }
   };
   walk(dir);
-  return count;
+  return { count, urls };
 }
 
 // Recursively finds every "assets" or "covers" folder under a space
@@ -390,31 +529,44 @@ function renderLinkedinCta(linkedinUrl) {
 }
 
 const MAX_DESCRIPTION = 155;
+const MIN_DESCRIPTION = 110;
 
-// Meta-description source: the raw markdown's first plain paragraph — not
-// a heading, blockquote, image, or a paragraph made entirely of a ⟦slot⟧ —
-// with markdown emphasis/slot markers stripped and cut to a clean word break.
+// Meta-description source: the raw markdown's leading plain paragraphs — not
+// headings, blockquotes, images, lists, or a paragraph made entirely of a
+// ⟦slot⟧ — with markdown emphasis/slot markers stripped. A short opening
+// paragraph (or one that ends in a colon) is extended with the next one, and
+// the result is cut at a word break. A page can override all of this with a
+// `description:` field in its frontmatter.
 function extractDescription(raw, fallback) {
   const blocks = raw.split(/\n\s*\n/);
+  let text = '';
   for (const block of blocks) {
     const line = block.trim();
     if (!line) continue;
     if (/^#{1,6}\s/.test(line)) continue;
-    if (line.startsWith('>')) continue;
-    if (line.startsWith('!')) continue;
+    if (/^(>|!|-\s|\*\s|\d+\.\s|<!--)/.test(line)) continue;
     if (line === '---') continue;
     const plain = line
       .replace(/\*\*(.+?)\*\*/g, '$1')
       .replace(/\*(.+?)\*/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
       .replace(/⟦.+?⟧/g, '')
       .replace(/\s+/g, ' ')
       .trim();
     if (!plain) continue;
-    if (plain.length <= MAX_DESCRIPTION) return plain;
-    const cut = plain.slice(0, MAX_DESCRIPTION);
-    return cut.slice(0, cut.lastIndexOf(' ')) + '…';
+    text = text ? `${text} ${plain}` : plain;
+    if (text.length >= MIN_DESCRIPTION && !text.endsWith(':')) break;
   }
-  return fallback;
+  if (!text) return fallback;
+  if (text.length <= MAX_DESCRIPTION) return text;
+  const cut = text.slice(0, MAX_DESCRIPTION);
+  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:—-]+$/, '') + '…';
+}
+
+// HTML comments (TODO(Aakash) notes) are for the source only; the published
+// markdown mirrors and llms-full.txt drop them.
+function stripComments(md) {
+  return md.replace(/<!--[\s\S]*?-->\n?/g, '');
 }
 
 const KINDLE_URL = 'https://amzn.in/d/0c3cehuZ';
@@ -431,9 +583,10 @@ function buildExtraJsonLd(spaceId, page) {
         '@type': 'Person',
         name: SITE.author,
         url: SITE.baseUrl + page.href,
-        jobTitle: 'Product leader',
+        jobTitle: LANDING.role,
+        description: SITE.thesis,
         worksFor: { '@type': 'Organization', name: 'JSW One Finance' },
-        sameAs: [LINKEDIN_URL],
+        sameAs: [LINKEDIN_URL, `https://github.com/${GITHUB_USERNAME}`],
       },
     ];
   }
@@ -443,7 +596,10 @@ function buildExtraJsonLd(spaceId, page) {
         '@context': 'https://schema.org',
         '@type': 'Book',
         name: 'Forward-deployed',
-        author: { '@type': 'Person', name: SITE.author },
+        alternativeHeadline: BOOKS[0].tagline,
+        description: page.description,
+        image: SITE.baseUrl + BOOKS[0].cover,
+        author: { '@type': 'Person', name: SITE.author, url: `${SITE.baseUrl}/about/` },
         url: SITE.baseUrl + page.href,
         bookFormat: 'https://schema.org/EBook',
         inLanguage: 'en',
@@ -470,26 +626,98 @@ function buildExtraJsonLd(spaceId, page) {
   return [];
 }
 
-// llms.txt (the llmstxt.org convention): a compact, curated map of the site
-// for an AI agent to fetch before crawling — plus llms-full.txt, the same
-// map with every page's raw markdown inlined for one-shot ingestion.
-function writeLlmsTxt({ spaces, spaceData }) {
-  const lines = [`# ${SITE.title}`, '', `> ${SITE.thesis}`, ''];
-  const fullParts = [`# ${SITE.title}\n\n> ${SITE.thesis}\n`];
+// Entities that appear in the Learning Zone's generated HTML.
+function decodeEntities(t) {
+  return t
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&amp;/g, '&');
+}
 
-  for (const space of spaces) {
-    const data = spaceData.find((s) => s.spaceId === space.id);
-    lines.push(`## ${space.title}`);
-    fullParts.push(`\n## ${space.title}\n`);
+// The Learning Zone's landing page is a grid of cards (paths, then modules).
+// Reading them here keeps llms.txt in step with each gatsby re-sync.
+function readLearningZoneCards(indexPath) {
+  if (!fs.existsSync(indexPath)) return [];
+  const html = fs.readFileSync(indexPath, 'utf8');
+  const re = /<a class="card" href="([^"]+)">\s*<span[^>]*>([^<]*)<\/span>\s*<h3>([^<]*?)\s*(?:→)?\s*<\/h3>\s*<p>([^<]*)<\/p>/g;
+  const cards = [];
+  for (const m of html.matchAll(re)) {
+    cards.push({
+      href: m[1].replace(/index\.html$/, ''),
+      kind: decodeEntities(m[2]).trim(),
+      title: decodeEntities(m[3]).trim(),
+      body: decodeEntities(m[4]).replace(/\s+/g, ' ').trim(),
+    });
+  }
+  return cards;
+}
+
+// llms.txt (the llmstxt.org convention): H1, a one-paragraph summary in a
+// blockquote, then link lists an AI agent can follow. Page links point at
+// each page's markdown mirror; the canonical HTML URL stays in the page's own
+// <link rel="alternate">. llms-full.txt inlines every listed page's markdown.
+// Unlisted pages (the retired prompt-engineering guide) appear in neither.
+const LLMS_SECTIONS = [
+  { space: 'about', heading: 'About' },
+  { space: 'portfolio', heading: 'Portfolio and case studies' },
+  { space: 'books', heading: 'Book: Forward-deployed' },
+  { space: 'musings', heading: 'Essays & Built Systems' },
+];
+
+function writeLlmsTxt({ spaceData, lzCards }) {
+  const base = SITE.baseUrl;
+  const clean = (t) => t.replace(/\s+/g, ' ').trim();
+  const lines = [
+    `# ${SITE.author} · ${SITE.title}`,
+    '',
+    `> ${SITE.thesis}`,
+    '',
+    `This site holds a profile, four product case studies, the free book *Forward-deployed* (16 chapters), an essay, and an open-source AI & Systems Engineering knowledge graph. Every page below has a markdown version at the linked URL. The full text of all pages except the knowledge graph is in [llms-full.txt](${base}/llms-full.txt).`,
+    '',
+  ];
+  const fullParts = [`# ${SITE.author} · ${SITE.title}\n\n> ${SITE.thesis}\n`];
+
+  for (const { space, heading } of LLMS_SECTIONS) {
+    const data = spaceData.find((s) => s.spaceId === space);
+    if (!data) continue;
+    lines.push(`## ${heading}`, '');
+    fullParts.push(`\n## ${heading}\n`);
     for (const page of data.pages) {
       if (page.external || page.unlisted) continue;
-      lines.push(`- [${page.title}](${SITE.baseUrl}${page.href}): ${page.description || space.blurb}`);
-      const abs = path.join(data.spaceDir, page.sourcePath);
-      const raw = fs.readFileSync(abs, 'utf8');
-      fullParts.push(`\n### ${SITE.baseUrl}${page.href}\n\n${raw}\n`);
+      lines.push(`- [${page.title}](${base}/${space}/${page.sourcePath}): ${clean(page.description || SITE.thesis)}`);
+      const raw = fs.readFileSync(path.join(data.spaceDir, page.sourcePath), 'utf8');
+      const { content } = matter(stripComments(raw));
+      fullParts.push(`\n### ${base}${page.href}\n\n${content.trim()}\n`);
     }
     lines.push('');
   }
+
+  lines.push('## AI Knowledge Graph', '');
+  lines.push(`- [AI & Systems Engineering Knowledge Graph](${base}/learning-zone/): ${clean(LANDING.learningZoneBlurb)}`);
+  for (const [kind, label] of [['Path', 'Learning paths'], ['Module', 'Modules']]) {
+    const cards = lzCards.filter((c) => c.kind === kind);
+    if (!cards.length) continue;
+    lines.push('', `### ${label}`, '');
+    for (const c of cards) lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
+  }
+  const other = lzCards.filter((c) => c.kind !== 'Path' && c.kind !== 'Module');
+  if (other.length) {
+    lines.push('', '### Foundations', '');
+    for (const c of other) lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
+  }
+  lines.push(
+    '',
+    '## Optional',
+    '',
+    `- [llms-full.txt](${base}/llms-full.txt): the markdown of every page above except the knowledge graph, in one file`,
+    `- [Sitemap](${base}/sitemap.xml): every indexable URL, including each knowledge-graph page`,
+    `- [astack](${ASTACK_URL}): Claude Code skill router with 44 slash commands`,
+    `- [gatsby](${GATSBY_URL}): pure-Python static compiler and knowledge-graph generator behind the knowledge graph`,
+    `- [LinkedIn](${LINKEDIN_URL}): profile and contact`,
+    '',
+  );
 
   fs.writeFileSync(path.join(DIST_DIR, 'llms.txt'), lines.join('\n'));
   fs.writeFileSync(path.join(DIST_DIR, 'llms-full.txt'), fullParts.join('\n'));
@@ -592,7 +820,7 @@ async function build() {
           ? contentHtml.replace(STACK_MARKER, renderJswArchitecture())
           : contentHtml + renderJswArchitecture();
       }
-      const description = extractDescription(body, SITE.thesis);
+      const description = frontmatter.description || extractDescription(body, SITE.thesis);
       page.description = description;
 
       const { prev, next } = prevNext.get(i);
@@ -614,6 +842,7 @@ async function build() {
         extraJsonLd,
         markdownUrl,
         noindex: page.unlisted,
+        datePublished: frontmatter.date ? new Date(frontmatter.date).toISOString().slice(0, 10) : undefined,
       });
 
       // A directory index ("/about/") is written as <dir>/index.html.
@@ -627,7 +856,7 @@ async function build() {
       }
       // A clean markdown mirror of every page, for agents/crawlers that
       // prefer fetching source content over HTML-with-chrome.
-      fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), raw);
+      fs.writeFileSync(path.join(DIST_DIR, markdownUrl.replace(/^\//, '')), stripComments(raw));
       if (!page.unlisted) sitemapUrls.push({ loc: SITE.baseUrl + page.href });
     }
 
@@ -644,8 +873,8 @@ async function build() {
   // through the markdown pipeline) copied wholesale into dist/learning-zone/.
   if (fs.existsSync(LEARNING_ZONE_DIR)) {
     copyDir(LEARNING_ZONE_DIR, path.join(DIST_DIR, 'learning-zone'));
-    themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref });
-    sitemapUrls.push({ loc: SITE.baseUrl + '/learning-zone/' });
+    const lz = themeLearningZone(path.join(DIST_DIR, 'learning-zone'), { cssHref: lzCssHref, jsHref: lzJsHref, md: createRenderer({ highlighter, readmeIndex: false }) });
+    for (const loc of lz.urls.sort()) sitemapUrls.push({ loc });
   }
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -680,7 +909,7 @@ Sitemap: ${SITE.baseUrl}/sitemap.xml
 `;
   fs.writeFileSync(path.join(DIST_DIR, 'robots.txt'), robots);
 
-  writeLlmsTxt({ spaces, spaceData });
+  writeLlmsTxt({ spaceData, lzCards: readLearningZoneCards(path.join(LEARNING_ZONE_DIR, 'index.html')) });
 
   const cnamePath = path.join(ROOT, 'CNAME');
   if (fs.existsSync(cnamePath)) {

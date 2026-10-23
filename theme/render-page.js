@@ -188,8 +188,17 @@ const CSP = [
   "require-trusted-types-for 'script'",
 ].join('; ');
 
-function renderHead({ site, title, rawTitle, description, canonicalUrl, image, jsonLd, markdownUrl }) {
-  const fullTitle = rawTitle || (title === site.title ? title : `${title} · ${site.title}`);
+// Search results cut titles at about 60 characters, so the site-name suffix
+// is dropped whenever it would push a title past that.
+const MAX_TITLE = 60;
+export function seoTitle(site, title) {
+  if (title === site.title) return title;
+  const withSuffix = `${title} · ${site.title}`;
+  return withSuffix.length <= MAX_TITLE ? withSuffix : title;
+}
+
+function renderHead({ site, title, rawTitle, description, canonicalUrl, image, jsonLd, markdownUrl, ogType = 'website', published }) {
+  const fullTitle = rawTitle || seoTitle(site, title);
   const ld = (jsonLd || [])
     .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
     .join('\n');
@@ -209,12 +218,16 @@ function renderHead({ site, title, rawTitle, description, canonicalUrl, image, j
 <link rel="canonical" href="${escapeAttr(canonicalUrl)}">
 <link rel="icon" href="/mark-64.png">
 <link rel="apple-touch-icon" href="/mark-180.png">
-${markdownUrl ? `<link rel="alternate" type="text/markdown" href="${escapeAttr(markdownUrl)}">\n` : ''}<meta property="og:type" content="website">
+${markdownUrl ? `<link rel="alternate" type="text/markdown" href="${escapeAttr(markdownUrl)}">\n` : ''}<meta name="author" content="${escapeAttr(site.author)}">
+<meta property="og:type" content="${escapeAttr(ogType)}">
+${published ? `<meta property="article:published_time" content="${escapeAttr(published)}">\n` : ''}<meta property="og:locale" content="en_IN">
 <meta property="og:site_name" content="${escapeAttr(site.title)}">
 <meta property="og:title" content="${escapeAttr(fullTitle)}">
 <meta property="og:description" content="${escapeAttr(description)}">
 <meta property="og:url" content="${escapeAttr(canonicalUrl)}">
 <meta property="og:image" content="${escapeAttr(image)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeAttr(fullTitle)}">
 <meta name="twitter:description" content="${escapeAttr(description)}">
@@ -223,7 +236,7 @@ ${ld}
 ${GA_TAG}`;
 }
 
-export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description, extraJsonLd, markdownUrl, noindex }) {
+export function renderPage({ site, space, spaces, navTree, page, prev, next, contentHtml, outline, description, extraJsonLd, markdownUrl, noindex, datePublished }) {
   const pagenav = `
     <nav class="fd-pagenav">
       ${prev ? `<a class="fd-pn-prev" href="${prev.href}"><span class="fd-pn-label">Previous</span>${escapeHtml(prev.title)}</a>` : '<span></span>'}
@@ -250,6 +263,10 @@ export function renderPage({ site, space, spaces, navTree, page, prev, next, con
       headline: page.title,
       description,
       url: canonicalUrl,
+      inLanguage: 'en',
+      mainEntityOfPage: canonicalUrl,
+      author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about/` },
+      ...(datePublished ? { datePublished } : {}),
       isPartOf: { '@type': 'WebSite', name: site.title, url: site.baseUrl },
     },
     ...(extraJsonLd || []),
@@ -258,7 +275,7 @@ export function renderPage({ site, space, spaces, navTree, page, prev, next, con
   return `<!doctype html>
 <html lang="en">
 <head>
-${renderHead({ site, title: page.title, description, canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd, markdownUrl })}
+${renderHead({ site, title: page.title, description, canonicalUrl, image: `${site.baseUrl}/social.jpg`, jsonLd, markdownUrl, ogType: 'article', published: datePublished })}
 ${noindex ? '<meta name="robots" content="noindex">' : ''}
 </head>
 <body>
@@ -363,12 +380,22 @@ export function renderLanding({ site, spaces, landing, flagshipBook, builderStac
       description: site.thesis,
       author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about/` },
     },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: site.author,
+      url: `${site.baseUrl}/about/`,
+      jobTitle: landing.role,
+      description: site.thesis,
+      worksFor: { '@type': 'Organization', name: 'JSW One Finance' },
+      sameAs: [linkedinUrl, `https://github.com/${githubUsername}`],
+    },
   ];
 
   return `<!doctype html>
 <html lang="en">
 <head>
-${renderHead({ site, title: site.title, rawTitle: `${site.author} — ${landing.role}`, description: site.thesis, canonicalUrl: site.baseUrl + '/', image: `${site.baseUrl}/social.jpg`, jsonLd })}
+${renderHead({ site, title: site.title, rawTitle: landing.seoTitle, description: site.thesis, canonicalUrl: site.baseUrl + '/', image: `${site.baseUrl}/social.jpg`, jsonLd })}
 </head>
 <body class="fd-landing-body">
 <header class="fd-header fd-header-landing">

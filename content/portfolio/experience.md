@@ -1,3 +1,7 @@
+---
+description: "Career history: JSW One Finance, JSW One Platforms, Marsh, VIP Industries and the founding of AutoO2, plus education."
+---
+
 # Experience
 
 ## JSW One Finance — SPM (AI) (November 2024 – present)

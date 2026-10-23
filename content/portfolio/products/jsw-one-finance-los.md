@@ -1,3 +1,7 @@
+---
+description: "Case study: the 100% digital commercial lending origination platform at JSW One Finance. Architecture, tradeoffs, scope and impact, lead to disbursement."
+---
+
 # JSW One Finance — lending origination platform
 
 *Commercial lending, 100% digital, lead to disbursement.*

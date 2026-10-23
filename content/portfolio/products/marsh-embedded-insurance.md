@@ -1,3 +1,7 @@
+---
+description: "Case study: BenefitsCircle and QoverPro at Marsh. Embedded insurance and voluntary benefits for Amazon, Cleartrip and more, reaching 5M lives."
+---
+
 # Marsh — BenefitsCircle & QoverPro
 
 *Voluntary employee benefits and embedded insurance, shipped for household names.*

@@ -1,3 +1,7 @@
+---
+description: "Case study: the order-booking core behind JSW One MSME, a B2B marketplace that reached a $1B annualised GMV exit rate. Architecture, tradeoffs and scope."
+---
+
 # JSW One MSME — B2B marketplace
 
 *A credit-enabled marketplace for MSMEs to purchase industrial supplies.*

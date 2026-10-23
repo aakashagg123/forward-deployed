@@ -1,3 +1,7 @@
+---
+description: "Aakash Aggarwal is an AI-native product leader and 0→1 fintech builder in Mumbai, leading lending origination, CRM and the AI charter at JSW One Finance."
+---
+
 # About me
 
 Hi, I'm Aakash — based in Mumbai, a product leader and builder with founder-shaped energy. I'm most natural at 0→1 work: taking an ambiguous, complex problem statement and building the product, process, and people systems around it until it's completely weaved into the organisation.

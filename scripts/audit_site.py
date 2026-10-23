@@ -9,10 +9,19 @@ Checks:
   3. Every README.md under content/<space>/ has a README.html redirect stub
      (canonical + meta refresh) next to its index.html in dist/.
   4. No "Was this helpful" widget anywhere in the generated pages.
+  5. SEO on every indexable page: title, description, self-referencing
+     canonical, Open Graph tags, one <h1>, no "---" titles, no duplicate
+     titles or descriptions.
+  6. sitemap.xml lists every indexable page, nothing marked noindex, no
+     README.html, and every URL resolves to a file.
+  7. llms.txt: well-formed, every link resolves, no TODO notes or unlisted
+     pages in it, llms-full.txt or any markdown mirror.
 
 Usage: python3 scripts/audit_site.py [dist_dir]   (exit code 1 on any failure)
 """
+import re
 import sys
+from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urldefrag, urlparse, unquote
@@ -21,6 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "dist"
 CONTENT = ROOT / "content"
 SITE_HOSTS = {"forward-deployed.in", "www.forward-deployed.in"}
+BASE = "https://forward-deployed.in"
 # <link rel=...> values that are not navigations/resources worth resolving.
 SKIP_LINK_RELS = {"preconnect", "dns-prefetch"}
 
@@ -37,6 +47,56 @@ class Links(HTMLParser):
         for attr in ("href", "src"):
             if a.get(attr):
                 self.found.append((tag, attr, a[attr]))
+
+
+class Head(HTMLParser):
+    """Collects the head tags and heading count the SEO checks need."""
+
+    def __init__(self):
+        super().__init__()
+        self.title, self._in_title = "", False
+        self.meta, self.canonical, self.h1 = {}, None, 0
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag == "title":
+            self._in_title = True
+        elif tag == "meta":
+            key = a.get("name") or a.get("property") or a.get("http-equiv")
+            if key:
+                self.meta[key] = a.get("content", "")
+        elif tag == "link" and a.get("rel") == "canonical":
+            self.canonical = a.get("href")
+        elif tag == "h1":
+            self.h1 += 1
+
+    def handle_endtag(self, tag):
+        if tag == "title":
+            self._in_title = False
+
+    def handle_data(self, data):
+        if self._in_title:
+            self.title += data
+
+
+def duplicate_of_index(page: Path) -> bool:
+    """A README.html beside an index.html is the same page; the directory is canonical."""
+    return page.name == "README.html" and (page.parent / "index.html").exists()
+
+
+def page_url(page: Path) -> str:
+    rel = page.relative_to(DIST).as_posix()
+    rel = re.sub(r"(^|/)(index\.html|README\.html)$", lambda m: m.group(1) if (m.group(2) == "index.html" or duplicate_of_index(page)) else m.group(0), rel)
+    return f"{BASE}/{rel}"
+
+
+def url_to_file(url: str):
+    u = urlparse(url)
+    if u.netloc not in SITE_HOSTS:
+        return None
+    path = unquote(u.path).lstrip("/")
+    target = DIST / path
+    return target / "index.html" if (u.path.endswith("/") or u.path == "") else target
 
 
 def resolve(page: Path, value: str):
@@ -72,7 +132,12 @@ def main():
 
     failures = []
     pages = sorted(DIST.rglob("*.html"))
-    stubs = {p for p in pages if p.name == "README.html"}
+    # A redirect stub is a README.html that carries a meta refresh; the
+    # Learning Zone's own README.html pages are real content.
+    stubs = {
+        p for p in pages
+        if p.name == "README.html" and 'http-equiv="refresh"' in p.read_text(encoding="utf-8", errors="replace")
+    }
 
     readme_links, lz_readme_links, missing = [], [], []
     for page in pages:
@@ -132,6 +197,99 @@ def main():
         print(f"    {p.relative_to(DIST)}")
     if helpful:
         failures.append("feedback widget")
+
+    # Checks 5-7
+    indexable, seo_problems, lz_long_titles = [], [], 0
+    for page in pages:
+        if page in stubs or page.name == "404.html":
+            continue
+        head = Head()
+        head.feed(page.read_text(encoding="utf-8", errors="replace"))
+        if "noindex" in head.meta.get("robots", ""):
+            continue
+        indexable.append((page, head))
+    unique = [(p, h) for p, h in indexable if not duplicate_of_index(p)]
+    for page, head in indexable:
+        if duplicate_of_index(page):
+            continue
+        rel = page.relative_to(DIST).as_posix()
+        in_lz = rel.startswith("learning-zone/")
+        title, desc = head.title.strip(), head.meta.get("description", "")
+        problems = []
+        if not title or title.startswith("---"):
+            problems.append(f"bad title {title!r}")
+        if not in_lz and len(title) > 60:
+            problems.append(f"title {len(title)} chars")
+        if in_lz and len(title) > 60:
+            lz_long_titles += 1
+        if not (50 if in_lz else 70) <= len(desc) <= 160:
+            problems.append(f"description {len(desc)} chars")
+        if head.canonical != page_url(page):
+            problems.append(f"canonical {head.canonical!r}")
+        for tag in ("og:title", "og:description", "og:url", "og:image", "twitter:card"):
+            if not head.meta.get(tag):
+                problems.append(f"missing {tag}")
+        if head.meta.get("og:url") and head.meta["og:url"] != page_url(page):
+            problems.append("og:url differs from canonical")
+        if head.h1 != 1 and rel != "learning-zone/graph/index.html":
+            problems.append(f"{head.h1} <h1>")
+        if problems:
+            seo_problems.append((rel, problems))
+    for field, getter in (("title", lambda h: h.title.strip()), ("description", lambda h: h.meta.get("description", ""))):
+        counts = Counter(getter(h) for _, h in unique)
+        for text, n in counts.items():
+            if n > 1 and text:
+                seo_problems.append((f"duplicate {field} x{n}", [text[:80]]))
+    print(f"[5] indexable pages: {len(indexable)}, with SEO problems: {len(seo_problems)}"
+          f" (info: {lz_long_titles} learning-zone titles over 60 chars)")
+    for rel, problems in seo_problems[:25]:
+        print(f"    {rel}: {'; '.join(problems)}")
+    if seo_problems:
+        failures.append("SEO metadata")
+
+    sitemap_path = DIST / "sitemap.xml"
+    locs = re.findall(r"<loc>([^<]+)</loc>", sitemap_path.read_text(encoding="utf-8")) if sitemap_path.exists() else []
+    expected = {page_url(p) for p, _ in unique}
+    noindex_urls = {page_url(p) for p in pages if p not in stubs and p.name != "404.html" and not duplicate_of_index(p)} - expected
+    sm_problems = []
+    sm_problems += [f"missing from sitemap: {u}" for u in sorted(expected - set(locs))[:10]]
+    sm_problems += [f"noindex page in sitemap: {u}" for u in sorted(noindex_urls & set(locs))[:10]]
+    stub_urls = {BASE + "/" + p.relative_to(DIST).as_posix() for p in stubs}
+    sm_problems += [f"redirect stub in sitemap: {u}" for u in locs if u in stub_urls][:10]
+    sm_problems += [f"sitemap URL has no file: {u}" for u in locs if (url_to_file(u) is None or not url_to_file(u).exists())][:10]
+    sm_problems += [f"duplicate sitemap URL: {u}" for u, n in Counter(locs).items() if n > 1][:10]
+    print(f"[6] sitemap URLs: {len(locs)}, problems: {len(sm_problems)}")
+    for p in sm_problems:
+        print(f"    {p}")
+    if sm_problems:
+        failures.append("sitemap")
+
+    llms_problems = []
+    llms_path = DIST / "llms.txt"
+    text = llms_path.read_text(encoding="utf-8") if llms_path.exists() else ""
+    if not text.startswith("# "):
+        llms_problems.append("llms.txt must start with an H1")
+    if not re.search(r"^> .+", text, re.M):
+        llms_problems.append("llms.txt has no blockquote summary")
+    links = re.findall(r"\]\((https?://[^)\s]+)\)", text)
+    for url in links:
+        if urlparse(url).netloc in SITE_HOSTS:
+            f = url_to_file(url)
+            if f is None or not f.exists():
+                llms_problems.append(f"llms.txt link has no file: {url}")
+    for name in ("llms.txt", "llms-full.txt"):
+        body = (DIST / name).read_text(encoding="utf-8") if (DIST / name).exists() else ""
+        if not body:
+            llms_problems.append(f"{name} missing or empty")
+        if "TODO(" in body or "prompt-engineering-guide" in body:
+            llms_problems.append(f"{name} contains a TODO note or an unlisted page")
+    leaked = [m.relative_to(DIST) for m in DIST.rglob("*.md") if "TODO(" in m.read_text(encoding="utf-8", errors="replace")]
+    llms_problems += [f"TODO note in markdown mirror: {m}" for m in leaked[:10]]
+    print(f"[7] llms.txt links: {len(links)}, problems: {len(llms_problems)}")
+    for p in llms_problems:
+        print(f"    {p}")
+    if llms_problems:
+        failures.append("llms.txt")
 
     print("PASS" if not failures else f"FAIL: {', '.join(failures)}")
     return 1 if failures else 0

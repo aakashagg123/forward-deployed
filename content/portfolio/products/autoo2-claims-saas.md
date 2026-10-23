@@ -1,3 +1,7 @@
+---
+description: "Case study: AutoO2, a motor insurance claims SaaS I co-founded. Photo-based claims, a repair auction and a network of 500+ workshops."
+---
+
 # AutoO2 — motor insurance claims SaaS
 
 *A B2B claims platform I co-founded, built, and took to 500+ workshops.*

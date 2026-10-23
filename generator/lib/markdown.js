@@ -17,7 +17,9 @@ import MarkdownIt from 'markdown-it';
 //   4. <!-- HTML comments --> pass through untouched (html:false would
 //      otherwise print them as visible text), so authors can leave
 //      TODO(Aakash) notes in the source without publishing them.
-export function createRenderer({ highlighter }) {
+// `readmeIndex: false` keeps README.md links as README.html (the Learning Zone
+// serves its READMEs as README.html, with no index.html beside them).
+export function createRenderer({ highlighter, readmeIndex = true }) {
   const md = new MarkdownIt({ html: false, linkify: true, typographer: true });
 
   const defaultLinkOpen = md.renderer.rules.link_open || ((t, i, o, e, s) => s.renderToken(t, i, o));
@@ -28,7 +30,7 @@ export function createRenderer({ highlighter }) {
       const href = token.attrs[hrefIdx][1];
       if (!/^[a-z][a-z0-9+.-]*:/i.test(href) && !href.startsWith('//') && /\.md(?=$|#)/.test(href)) {
         token.attrs[hrefIdx][1] = href
-          .replace(/(^|\/)README\.md(?=$|#)/, (_m, lead) => (lead ? lead : './'))
+          .replace(/(^|\/)README\.md(?=$|#)/, (_m, lead) => (readmeIndex ? (lead ? lead : './') : `${lead}README.md`))
           .replace(/\.md(?=$|#)/, '.html');
       }
     }
