@@ -41,35 +41,76 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><main class="content index" id="top">
   <div class="index-hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">A standalone module</span>
     <h1>RAG &amp; vector databases for the product leader</h1>
-    <p class="lede">Grounding models in your data — embeddings, vector databases, chunking, retrieval quality, and when to reach for long-context, fine-tuning, or a graph.</p>
-    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">7 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">knowledge graph</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
+    <p class="lede">Grounding models in your data — when to use RAG and when not to, embeddings, vector databases, chunking, retrieval quality, the alternatives, and a hands-on build with Claude Code, pgvector and Pinecone.</p>
+    <div class="index-insight"><span class="Badge" data-color="discovery" data-size="md" data-variant="soft" data-pill="">Core insight</span><p>Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.</p></div>
+    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">10 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">runnable code</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
   </div>
-  <div class="intro MarkdownContent"><p>A model's built-in knowledge is frozen at training time, generic, and unattributable — it
-cannot know your customers, your contracts, or what changed this morning, and when it
-doesn't know, it guesses fluently. <strong>Retrieval-Augmented Generation (RAG)</strong> is the fix that
-launched a thousand AI features: before the model answers, you <em>retrieve</em> the relevant
-facts from your own data and put them in front of it, so the answer is grounded in
-something real, current, private, and citable. The machinery underneath — embeddings,
-vector databases, chunking, reranking — is where most AI-feature engineering budget
-actually goes, and where most AI-feature quality is actually won or lost.</p>
-<p>This module is the product leader's map of that machinery. It teaches what RAG is and why
-it beats the alternatives, how semantic search and vector databases actually work (without
-the vendor fog), why chunking and retrieval quality quietly decide whether your feature is
-trustworthy, when to reach for long-context or fine-tuning instead, and where flat RAG runs
-out and structured retrieval (GraphRAG) takes over. It is the topic-organized front door;
-each lesson links to the deeper mechanics in the <a href="../ai/03-rag.html">AI engineering RAG module</a>
-and the <a href="../knowledge-graphs/index.html">Knowledge graphs</a> track.</p>
+  <div class="intro MarkdownContent"><p>A model's built-in knowledge is frozen at training time, generic, and has no source. It cannot know your customers, your contracts or what changed this morning. When it does not know, it guesses fluently.</p>
+<p><strong>Retrieval-Augmented Generation (RAG)</strong> is the common fix. Before the model answers, you <em>retrieve</em> the relevant facts from your own data and put them in front of it. The answer is then grounded in something real, current, private and citable. The machinery underneath, embeddings, vector databases, chunking and reranking, is where much of the engineering effort in AI features goes. It is also where their quality is won or lost.</p>
+<p>This module is the product leader's map of that machinery, in ten lessons. It starts with the decision most teams skip: whether RAG is the right tool at all. It then covers how semantic search and vector databases work, why chunking and retrieval quality decide whether a feature can be trusted, when long context or fine-tuning fits better, and where flat RAG gives way to structure. It ends with a hands-on build using Claude Code with pgvector or Pinecone, and a reference to every RAG term.</p>
+<p><strong>Every lesson has two layers.</strong> The body is for the leader who decides. A short <strong>Under the hood</strong> section is for the engineer who builds. It points to code in <code>rag-vector-databases/code/</code> that runs on the Python standard library, with no account and no install, and ends in <code>assert</code> lines that check the direction of each claim. Run a file to see every quoted number printed. The examples share one invented corpus: the help centre of Fernpay, a made-up invoicing product.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarizes an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAG architecture for engineers</td>
+<td><a href="../ai/03-rag.html#rag-architecture">RAG architecture</a></td>
+</tr>
+<tr>
+<td>Retrieval and answer metrics, faithfulness, citations</td>
+<td><a href="../ai/03-rag.html#retrieval-evals">Retrieval evals</a></td>
+</tr>
+<tr>
+<td>Evals, judges and monitoring in production</td>
+<td><a href="../evaluation-and-observability/index.html">Evaluation and observability</a></td>
+</tr>
+<tr>
+<td>Graphs, entity extraction and GraphRAG</td>
+<td><a href="../knowledge-graphs/index.html">Knowledge graphs</a></td>
+</tr>
+<tr>
+<td>What goes into the context window, and memory across sessions</td>
+<td><a href="../context-engineering/index.html">Context engineering</a> and <a href="../memory-and-context/index.html">Memory and context</a></td>
+</tr>
+<tr>
+<td>Tenant isolation and permission-aware retrieval</td>
+<td><a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a></td>
+</tr>
+<tr>
+<td>Prompt injection through retrieved documents</td>
+<td><a href="../ai-security-and-guardrails/index.html">AI security and guardrails</a></td>
+</tr>
+<tr>
+<td>Agent guard rails for Claude Code</td>
+<td><a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">Learning and doing ML with Claude Code</a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="the-knowledge-graph">The knowledge graph</h2>
-<p>RAG isn't a product — it's a pipeline with a quality loop. Everything here hangs off this
-picture:</p>
+<p>RAG is not a product. It is a pipeline with a quality loop. Everything in this module hangs off this picture:</p>
 <style>
 .dgm-rg{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
@@ -132,39 +173,28 @@ picture:</p>
   </div>
 </div>
 
-<p>Read it in three passes. <strong>The pipeline:</strong> at build time you chop your data into passages,
-turn each into a vector, and index it; at query time you turn the question into a vector,
-pull the nearest passages, sharpen them, and hand them to the model as grounded context.
-<strong>The quality loop:</strong> retrieval evals measure whether you're finding the right passages and
-whether the answer is actually supported — and tune chunking and reranking until they are.
-<strong>The decisions:</strong> RAG is one option against long-context and fine-tuning, and flat
-similarity retrieval eventually gives way to structured retrieval when the answer is a
-<em>connection</em> rather than a passage.</p>
+<p>Read it in three passes. <strong>The pipeline.</strong> At build time you cut your data into passages, turn each into a vector, and index it. At question time you turn the question into a vector, pull the nearest passages, sharpen them, and hand them to the model. <strong>The quality loop.</strong> Retrieval evals measure whether you find the right passages and whether the answer is supported. You tune chunking and reranking until they pass. <strong>The decisions.</strong> RAG is one option next to long context and fine-tuning, and it is the wrong option for counts, exact lookups and behaviour. Flat retrieval gives way to structure when the answer is a connection, not a passage.</p>
 <h2 id="the-lessons">The lessons</h2>
-<ul>
-<li><a href="why-rag.html"><strong>Why RAG?</strong></a> — grounding, freshness, private data, citations: the four
-  jobs a frozen model can't do, and the honest test for when you need retrieval.</li>
-<li><a href="embeddings-and-semantic-search.html"><strong>Embeddings &amp; semantic search</strong></a> — how meaning
-  becomes math, why search-by-meaning beats keywords, and where it quietly fails.</li>
-<li><a href="vector-databases.html"><strong>Vector databases</strong></a> — indexing, approximate nearest neighbours,
-  metadata filters, and choosing without the vendor fog.</li>
-<li><a href="chunking-and-ingestion.html"><strong>Chunking &amp; ingestion</strong></a> — the unglamorous pipeline that
-  silently decides what can ever be found; where quality is really made.</li>
-<li><a href="retrieval-quality.html"><strong>Retrieval quality</strong></a> — hybrid search, reranking, and the
-  recall/precision tradeoff that separates a demo from a product.</li>
-<li><a href="rag-vs-long-context-vs-finetuning.html"><strong>RAG vs. long-context vs. fine-tuning</strong></a> — the
-  three ways to give a model knowledge, and the cost of each choice.</li>
-<li><a href="graphrag-and-structured-retrieval.html"><strong>Beyond flat RAG: GraphRAG &amp; structured retrieval</strong></a>
-  — where similarity search runs out and structure takes over.</li>
-</ul>
-<p>Each lesson pairs the mechanics with a <strong>🎯 For the product leader</strong> briefing — why it
-matters, the decision it changes, the question to ask your team, and the risk if ignored —
-and a diagram. For the engineering-depth version of retrieval mechanics and evals, follow
-the spokes into <a href="../ai/03-rag.html#rag-architecture">RAG architecture</a> and
-<a href="../ai/03-rag.html#retrieval-evals">Retrieval evals</a>.</p>
-<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>.</p></div>
+<ol>
+<li><a href="when-to-use-rag.html"><strong>When to use RAG, and when not to</strong></a> — the decision tree, the five signals, and the requests that need SQL, a lookup, long context or a prompt instead.</li>
+<li><a href="why-rag.html"><strong>Why RAG?</strong></a> — grounding, freshness, private data and citations: the four jobs RAG does, and the refusal path.</li>
+<li><a href="embeddings-and-semantic-search.html"><strong>Embeddings and semantic search</strong></a> — how meaning becomes numbers, and where similar is not correct.</li>
+<li><a href="vector-databases.html"><strong>Vector databases</strong></a> — approximate search, the recall dial, the filter trap, and choosing a store.</li>
+<li><a href="chunking-and-ingestion.html"><strong>Chunking and ingestion</strong></a> — the pipeline that decides what can ever be found.</li>
+<li><a href="retrieval-quality.html"><strong>Retrieval quality</strong></a> — hybrid search, reranking, filters, and measuring recall.</li>
+<li><a href="rag-vs-long-context-vs-finetuning.html"><strong>RAG vs. long context vs. fine-tuning</strong></a> — three ways to give a model knowledge, and what each costs.</li>
+<li><a href="graphrag-and-structured-retrieval.html"><strong>Beyond flat RAG: GraphRAG and structured retrieval</strong></a> — multi-hop, global and counting questions.</li>
+<li><a href="building-rag-with-claude-code.html"><strong>Building RAG with Claude Code, pgvector and Pinecone</strong></a> — a seven-stage build, run against a real Postgres, with the Pinecone equivalent.</li>
+<li><a href="rag-terms.html"><strong>RAG terms, explained</strong></a> — every term by pipeline stage, with an example and a link.</li>
+</ol>
+<p>Then the <a href="recap.html">recap and real-world examples</a>, with a self-test.</p>
+<h2 id="run-the-code">Run the code</h2>
+<p>Every example is in <code>rag-vector-databases/code/</code>. Run them all with one command.</p>
+<pre><code class="language-bash">python3 rag-vector-databases/code/test_examples.py
+</code></pre>
+<p>The files are <code>decide.py</code>, <code>mini_rag.py</code>, <code>embeddings_demo.py</code>, <code>ann_demo.py</code>, <code>chunking_demo.py</code>, <code>graph_demo.py</code> and <code>pgvector_demo.py</code>, with the shared <code>corpus.py</code>. <code>pgvector_demo.py</code> runs against a real Postgres with pgvector when one is reachable through the usual <code>PG*</code> settings, and prints a skip message otherwise. <code>pinecone_example.py</code> needs a Pinecone account, so the test runner does not run it.</p></div>
   <h2 class="sec">The lessons</h2>
-  <div class="cards"><a class="card" href="why-rag.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>Why RAG?</h3><span class="card-go">Read lesson →</span></a><a class="card" href="embeddings-and-semantic-search.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>Embeddings &amp; semantic search</h3><span class="card-go">Read lesson →</span></a><a class="card" href="vector-databases.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Vector databases</h3><span class="card-go">Read lesson →</span></a><a class="card" href="chunking-and-ingestion.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Chunking &amp; ingestion</h3><span class="card-go">Read lesson →</span></a><a class="card" href="retrieval-quality.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Retrieval quality</h3><span class="card-go">Read lesson →</span></a><a class="card" href="rag-vs-long-context-vs-finetuning.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>RAG vs. long-context vs. fine-tuning</h3><span class="card-go">Read lesson →</span></a><a class="card" href="graphrag-and-structured-retrieval.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>Beyond flat RAG: GraphRAG &amp; structured retrieval</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <div class="cards"><a class="card" href="when-to-use-rag.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>When to use RAG, and when not to</h3><span class="card-go">Read lesson →</span></a><a class="card" href="why-rag.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>Why RAG?</h3><span class="card-go">Read lesson →</span></a><a class="card" href="embeddings-and-semantic-search.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Embeddings &amp; semantic search</h3><span class="card-go">Read lesson →</span></a><a class="card" href="vector-databases.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Vector databases</h3><span class="card-go">Read lesson →</span></a><a class="card" href="chunking-and-ingestion.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Chunking &amp; ingestion</h3><span class="card-go">Read lesson →</span></a><a class="card" href="retrieval-quality.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Retrieval quality</h3><span class="card-go">Read lesson →</span></a><a class="card" href="rag-vs-long-context-vs-finetuning.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>RAG vs. long-context vs. fine-tuning</h3><span class="card-go">Read lesson →</span></a><a class="card" href="graphrag-and-structured-retrieval.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">08</span><h3>Beyond flat RAG: GraphRAG &amp; structured retrieval</h3><span class="card-go">Read lesson →</span></a><a class="card" href="building-rag-with-claude-code.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">09</span><h3>Building RAG with Claude Code, pgvector and Pinecone</h3><span class="card-go">Read lesson →</span></a><a class="card" href="rag-terms.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">10</span><h3>RAG terms, explained</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
   </main>
 <div id="rs-root">

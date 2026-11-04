@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Data and decisions: deciding well under uncertainty — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink active" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
+    <h1>Data and decisions: deciding well under uncertainty</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Senior leaders rarely lack data. They lack time, and the data they have is partial, late or biased. The skill is to decide well <strong>before</strong> the data is complete. That means four things. Know what your data cannot see. Know the base rate before you trust an accuracy claim. Put a money value on each kind of mistake. And know when more data is worth its cost and its delay.</p>
+<p>The core tradeoff is speed against confidence. Waiting for better data lowers the chance of a wrong call. It also delays the value of a right one. In competitive markets it hands time to rivals. A clear decision rule, a priced error table and a deadline beat another month of analysis.</p>
+<p>The scale is large. A fraud model that "catches 90% of fraud" can block ten good customers for every fraudster. In this lesson's worked example, that model costs a merchant more than having no model at all. The fix is not a better model. It is a different threshold, set by money, not by accuracy.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — In Lending and Insurance, the outcome you care about (a default, a claim) arrives months or years after the decision. In Payments, fraud labels arrive weeks later, when disputes come in. You will always decide on incomplete evidence. And most of your risk decisions run through a model with a threshold that someone set.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the base rate before you accept any accuracy figure. You ask what each kind of error costs in money, and you set thresholds where the marginal costs meet. You cap what a test or a data purchase is worth before you fund it. You ask for ranges, and you track whether they come true.</p>
+<p><strong>Ask your team</strong> — <em>"At our current threshold, how many good customers do we block for each bad one we stop, and what does each of those blocks cost us?"</em></p>
+<p><strong>Risk if ignored</strong> — A risk model that looks accurate and quietly declines thousands of good customers. Tests that cost more than they could ever be worth. And false confidence on irreversible calls built on data that could not see the outcome.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ol>
+<li><strong>Ask for the base rate before any accuracy claim.</strong> When the event is rare, even a strong model produces mostly false alarms.</li>
+<li><strong>Price every cell of the error table.</strong> A threshold is a business decision. Set it where the money lost to one more false alarm equals the money saved by one more catch.</li>
+<li><strong>Cap a test's value before you fund it.</strong> No test is worth more than the expected value of perfect information. If the test costs more than that cap, decide now.</li>
+<li><strong>Forecast in ranges and keep score.</strong> Report P10, P50 and P90. If fewer than about eight in ten outcomes land inside your P10 to P90 range, your ranges are too narrow.</li>
+<li><strong>Judge the decision, not the outcome.</strong> A good decision can have a bad result. Review what you knew and how you reasoned, not only what happened.</li>
+<li><strong>Match the process to reversibility.</strong> Decide reversible calls fast and low in the organization. Give hard-to-reverse calls more evidence and a senior owner.</li>
+<li><strong>In regulated domains, treat a model as a governed asset.</strong> Good practice is to give it an owner, an inventory entry, independent validation and a monitoring plan before it decides anything about a customer.</li>
+</ol>
+<h2 id="mental-model-the-forecast-and-the-umbrella">Mental model: the forecast and the umbrella</h2>
+<pre class="mermaid">flowchart LR
+  Q[&quot;A decision&quot;] --&gt; V{&quot;Would more data&lt;br/&gt;change the choice?&quot;}
+  V --&gt;|&quot;no&quot;| D[&quot;Decide now&quot;]
+  V --&gt;|&quot;yes&quot;| C{&quot;Is the data worth&lt;br/&gt;more than the delay?&quot;}
+  C --&gt;|&quot;yes&quot;| G[&quot;Gather it,&lt;br/&gt;with a deadline&quot;]
+  C --&gt;|&quot;no&quot;| D
+  G --&gt; D</pre>
+<p>You take an umbrella when the forecast says 60% rain. You do not wait to be sure. You weigh the cost of getting wet against the cost of carrying it. Business decisions work the same way. More data has value only if it could change what you do. And it is worth gathering only if that value exceeds the cost of waiting.</p>
+<p>The umbrella also shows threshold thinking. A person who hates getting wet carries it at 20% rain. A person who hates carrying things waits for 80%. Same forecast, different costs, different threshold. Your fraud, credit and claims thresholds work the same way.</p>
+<p><strong>Where the analogy breaks.</strong> A weather forecast is calibrated. It has been checked against outcomes for years. Most business estimates are not. Treat your own team's confidence levels as uncalibrated until you have checked them against results.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="what-your-data-can-and-cannot-see">What your data can and cannot see</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>What it shows</th>
+<th>Its blind spot</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Behavioural</strong> (clicks, sessions, journeys)</td>
+<td>What people do</td>
+<td>Why they do it</td>
+</tr>
+<tr>
+<td><strong>Transactional</strong> (payments, orders, claims, loans)</td>
+<td>What happened, with money attached</td>
+<td>What did not happen</td>
+</tr>
+<tr>
+<td><strong>Survey and interview</strong></td>
+<td>What people say and feel</td>
+<td>What they will actually do</td>
+</tr>
+<tr>
+<td><strong>Third-party</strong> (credit bureau files, card-network data, market reports)</td>
+<td>Context you cannot see yourself</td>
+<td>How it was collected; it may be stale</td>
+</tr>
+<tr>
+<td><strong>Experimental</strong> (A/B tests, pilots)</td>
+<td>Cause and effect</td>
+<td>Long-term effects beyond the test window</td>
+</tr>
+<tr>
+<td><strong>Observational</strong> (dashboards, trends)</td>
+<td>Patterns over time</td>
+<td>Cause; many things change at once</td>
+</tr>
+</tbody>
+</table>
+<p>Data also differs by timing. A <strong>leading indicator</strong> moves before the outcome, such as quote volume before written premium. A <strong>lagging indicator</strong> confirms the outcome after it happens, such as loss ratio. You steer with leading indicators and judge with lagging ones.</p>
+<p>Each domain has a structural gap in what its data can show.</p>
+<ul>
+<li><strong>Lending: you only see outcomes for people you approved.</strong> A lender never learns whether a rejected applicant would have repaid. A model trained only on approved loans can be wrong about the people it rejects. Lenders approve a small, controlled group below the cutoff to learn more. Estimating the outcomes of rejected applicants is called <strong>reject inference</strong>. The value-of-information section below prices such a test.</li>
+<li><strong>Insurance: losses develop slowly.</strong> Claims for a policy year keep arriving and changing for a long time. In some lines it takes years. So the latest year's loss ratio is always too low. <a href="performance-and-growth.html#insurance-loss-development">Performance and growth</a> shows how a loss triangle corrects for this.</li>
+<li><strong>Payments: fraud labels arrive late.</strong> A fraud model sees the transaction now. The proof that it was fraud arrives later, when the cardholder disputes it. Last week's fraud rate is always too low. And you never learn whether a declined transaction was fraud, so declines hide their own mistakes.</li>
+<li><strong>Retail: seasons and store changes mix together.</strong> A sales rise may be the season, a promotion or a new store. Comparable-sales figures help. <a href="performance-and-growth.html">Performance and growth</a> covers how one large retailer defines them.</li>
+<li><strong>eCommerce: tests are cheap, long-term effects are not.</strong> You can test a checkout change in a week. You cannot easily test its effect on repeat purchase over a year.</li>
+<li><strong>FinTech: rules limit what data you may use.</strong> Fair-lending and privacy rules restrict which attributes a credit or pricing decision may use.</li>
+</ul>
+<p>Root, an auto insurer, uses driving data from customers' phones as an input to pricing. Its 10-K filings say it chooses not to quote the riskiest drivers. That is a data decision with a business purpose: the company uses data it can collect to decide which customers it wants.</p>
+<p><strong>Decision rule.</strong> For every model or dashboard you rely on, write down the outcomes it cannot observe. Then fund one small, ongoing way to observe them, such as a holdout or a below-cutoff test.</p>
+<h3 id="base-rates-why-accurate-models-raise-mostly-false-alarms">Base rates: why accurate models raise mostly false alarms</h3>
+<p><strong>What it is.</strong> The <strong>base rate</strong> is how common an event is before you look at any signal. Card fraud might be 0.2% of transactions. A default might be 4% of loans. A fraudulent insurance claim might be a few percent of claims.</p>
+<p><strong>How it works.</strong> A model's alerts mix true alarms and false alarms. True alarms come from the rare group. False alarms come from the large group. So when the event is rare, a small false-alarm rate on the large group can swamp a high catch rate on the small one.</p>
+<p>Two rates describe the model. <strong>Recall</strong> is the share of real fraud the model flags. <strong>Precision</strong> is the share of flags that are real fraud. The <a href="../machine-learning/measuring-a-model.html">measuring a model</a> lesson defines both, with the confusion matrix behind them. Here is the business consequence.</p>
+<p><strong>How to compute it.</strong></p>
+<pre><code class="language-text">true alarms   = volume × base rate × recall
+false alarms  = volume × (1 − base rate) × false-alarm rate
+precision     = true alarms ÷ (true alarms + false alarms)
+</code></pre>
+<p><strong>Numbers.</strong> Take 1,000,000 card transactions with 0.2% fraud, a model with 90% recall and a 2% false-alarm rate. The model catches 1,800 frauds. It also flags 19,960 good transactions. Precision is 1,800 ÷ 21,760 = <strong>8.3%</strong>. Eleven of every twelve flags are good customers. The worked example below prices this.</p>
+<p><strong>Domain application.</strong></p>
+<ul>
+<li><strong>Payments.</strong> A "90% accurate" fraud model at a merchant blocks real buyers. Each block is a lost sale and an annoyed customer.</li>
+<li><strong>Anti-money-laundering (AML) monitoring.</strong> Suspicious-activity alerts are rare events against huge volumes. Even a good model can produce mostly false alerts, because of the base-rate effect above. Each one costs analyst time. The base rate drives the size of the investigations team.</li>
+<li><strong>Insurance.</strong> A claims-fraud flag that sends claims to investigation slows payment for honest claimants. That hurts retention and can draw complaints.</li>
+<li><strong>Lending.</strong> A model that flags "likely default" on 4% base-rate loans has far better precision than a fraud model, at the same recall. The base rate is twenty times higher.</li>
+</ul>
+<p><strong>The common misreading.</strong> "The model is 90% accurate, so 90% of its alerts are right." Accuracy and recall say nothing about precision until you know the base rate.</p>
+<p><strong>Decision rule.</strong> When someone quotes accuracy or recall, ask two questions. What is the base rate? How many alerts per true case does this produce at our volume?</p>
+<h3 id="threshold-economics-price-each-cell">Threshold economics: price each cell</h3>
+<p><strong>What it is.</strong> Most risk models produce a score. A <strong>threshold</strong> turns the score into an action: approve or decline, pay or investigate. Every threshold puts each case into one of four cells. Each cell has a cost.</p>
+<p><strong>How it works.</strong> Raise the threshold and you flag fewer cases. You miss more fraud, and you block fewer good customers. Lower it and the reverse happens. The best threshold is not the one with the highest accuracy. It is the one with the lowest total cost.</p>
+<table>
+<thead>
+<tr>
+<th>Cell</th>
+<th>Payments meaning</th>
+<th>What it costs (illustrative)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Caught fraud</strong> (true positive)</td>
+<td>Fraud blocked</td>
+<td>Little; maybe review time</td>
+</tr>
+<tr>
+<td><strong>Missed fraud</strong> (false negative)</td>
+<td>Fraud approved</td>
+<td>Lost goods, the chargeback, a dispute fee and handling</td>
+</tr>
+<tr>
+<td><strong>False decline</strong> (false positive)</td>
+<td>Good customer blocked</td>
+<td>Lost margin on the order, plus the chance the customer never comes back</td>
+</tr>
+<tr>
+<td><strong>Good approval</strong> (true negative)</td>
+<td>Good customer served</td>
+<td>Nothing extra</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How to compute it.</strong> Total cost at a threshold is missed fraud × cost per miss + false declines × cost per false decline. Compute it at several thresholds. Pick the lowest.</p>
+<p>There is a shortcut for the margin. Look at the band of cases you would add by lowering the threshold one step. Block that band only if its fraud share is above this break-even:</p>
+<pre><code class="language-text">break-even fraud share = cost of a false decline ÷ (cost of a false decline + cost of a miss)
+</code></pre>
+<p>With a miss at $160 and a false decline at $25, the break-even is 25 ÷ 185 = <strong>13.5%</strong>. Block a band where more than 13.5% of cases are fraud. Approve a band where fewer are. This is the same cost-based cutoff that the <a href="../machine-learning/measuring-a-model.html">measuring a model</a> lesson derives. The business job is to get the two costs right.</p>
+<p><strong>Pricing the cells honestly.</strong> Teams usually price the miss well, because fraud losses show up on a report. They usually underprice the false decline. Its costs are spread out:</p>
+<ul>
+<li>Lost margin on the blocked order.</li>
+<li>Customers who leave after a decline. This is real, but it is hard to measure, so it is often set to zero.</li>
+<li>Support contacts from blocked customers.</li>
+<li>In Payments, a lower <strong>authorization rate</strong>, the share of attempted payments that succeed. Merchants compare providers on it. See <a href="performance-and-growth.html">performance and growth</a>.</li>
+</ul>
+<p>A third action often beats both approve and decline. A <strong>step-up</strong> check asks for more proof, such as a one-time code or a bank-app confirmation. It costs some friction and some abandoned checkouts. It costs far less than a decline. In Lending, the equivalent is "refer to manual review". In Insurance, it is "ask for a document" before paying a claim.</p>
+<p><strong>The common misreading.</strong> "The data science team sets the threshold." The team can show the trade-off curve. Only the business can price the cells. A threshold set without prices is a business decision taken by default.</p>
+<p><strong>Decision rule.</strong> When a band's fraud share is below the break-even, approve it, even if the model team calls it risky. When it is above, block it or step it up. Recompute the threshold whenever a cost changes, such as a new dispute fee or a margin change.</p>
+<p>The figure below shows the 90%-recall model from the base-rate section, with each cell priced.</p>
+<style>
+.ba-cm{background:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;
+  padding:24px 22px 20px;margin:26px 0;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04)}
+.ba-cm-title{font-size:var(--font-text-xs-size);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--color-text-secondary);font-weight:700;margin:0 0 4px}
+.ba-cm-sub{font-size:var(--font-text-sm-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-cm-grid{display:grid;grid-template-columns:minmax(6em,auto) 1fr 1fr;gap:8px;align-items:stretch}
+.ba-cm-h{font-size:var(--font-text-xs-size);font-weight:700;color:var(--color-text-secondary);
+  text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:4px}
+.ba-cm-rh{justify-content:flex-start;text-align:left}
+.ba-cm-cell{border-radius:12px;padding:12px 14px;border:1px solid;display:flex;flex-direction:column;gap:4px}
+.ba-cm-cell b{font-size:var(--font-text-sm-size)}
+.ba-cm-n{font-size:var(--font-text-lg-size);font-weight:700;font-variant-numeric:tabular-nums}
+.ba-cm-cost{font-size:var(--font-text-sm-size);font-variant-numeric:tabular-nums}
+.ba-cm-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface);color:var(--color-text-success)}
+.ba-cm-warn{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface);color:var(--color-text-warning)}
+.ba-cm-bad{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.ba-cm-neutral{background:var(--color-surface-tertiary);border-color:var(--color-border);color:var(--color-text-secondary)}
+.ba-cm-foot{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.ba-cm-chip{font-size:var(--font-text-xs-size);font-weight:600;border-radius:20px;padding:3px 10px;border:1px solid}
+.ba-cm-chip.info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface);color:var(--color-text-info)}
+.ba-cm-chip.danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface);color:var(--color-text-danger)}
+.ba-cm-chip.discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface);color:var(--color-text-discovery)}
+@media (max-width:640px){.ba-cm{padding:18px 14px}.ba-cm-grid{grid-template-columns:1fr 1fr}.ba-cm-h.ba-cm-corner{display:none}.ba-cm-rh{grid-column:1 / -1}}
+</style>
+<div class="ba-cm" role="figure" aria-label="Priced confusion matrix for a fraud model at 90 percent recall and a 2 percent false-alarm rate on one million transactions">
+  <div class="ba-cm-title">A priced confusion matrix · illustrative</div>
+  <p class="ba-cm-sub">1,000,000 card transactions · 0.2% fraud · threshold T2 (90% recall, 2% false-alarm rate) · costs assumed</p>
+  <div class="ba-cm-grid">
+    <div class="ba-cm-h ba-cm-corner"></div>
+    <div class="ba-cm-h">Really fraud · 2,000</div>
+    <div class="ba-cm-h">Really good · 998,000</div>
+
+    <div class="ba-cm-h ba-cm-rh">Model flags it</div>
+    <div class="ba-cm-cell ba-cm-ok"><b>Caught fraud</b><span class="ba-cm-n">1,800</span><span class="ba-cm-cost">cost ≈ $0</span></div>
+    <div class="ba-cm-cell ba-cm-bad"><b>False declines</b><span class="ba-cm-n">19,960</span><span class="ba-cm-cost">× $25 = $499,000</span></div>
+
+    <div class="ba-cm-h ba-cm-rh">Model approves it</div>
+    <div class="ba-cm-cell ba-cm-warn"><b>Missed fraud</b><span class="ba-cm-n">200</span><span class="ba-cm-cost">× $160 = $32,000</span></div>
+    <div class="ba-cm-cell ba-cm-neutral"><b>Good approvals</b><span class="ba-cm-n">978,040</span><span class="ba-cm-cost">cost $0</span></div>
+  </div>
+  <div class="ba-cm-foot">
+    <span class="ba-cm-chip info">Precision 8.3%: 1 in 12 flags is fraud</span>
+    <span class="ba-cm-chip danger">Total $531,000 vs $320,000 with no model</span>
+    <span class="ba-cm-chip discovery">Break-even fraud share 25 ÷ 185 = 13.5%</span>
+  </div>
+</div>
+
+<h3 id="value-of-information-what-a-test-is-worth">Value of information: what a test is worth</h3>
+<p><strong>What it is.</strong> The <strong>value of information</strong> is how much better your decision gets, in money, because you learned something first. It is the right way to decide whether to run a test, buy a data source or wait for more results.</p>
+<p><strong>How it works.</strong> Information has value only if it can change your choice. If you would launch whatever the test says, the test is worth nothing to this decision. If it might flip your choice, it is worth the money that flip saves, weighted by how likely the flip is.</p>
+<p><strong>How to compute it.</strong> Start with the cap. The <strong>expected value of perfect information (EVPI)</strong> is what you would gain if you knew the answer for certain.</p>
+<pre><code class="language-text">EVPI = expected value if you could choose after learning the truth
+     − expected value of your best choice today
+</code></pre>
+<p>No real test is perfect, so its value is lower than EVPI. The value of an imperfect test is the same calculation, using what the test would tell you instead of the truth. The Under the hood code computes both.</p>
+<p><strong>Domain application: a credit-cutoff test.</strong> <em>This example is illustrative. All inputs are assumed.</em></p>
+<p>A lender is deciding whether to approve a band of applicants just below its cutoff. About 10,000 such applicants apply each year.</p>
+<ul>
+<li>If the band is "good" (performs like current customers), each loan earns $300 of contribution after losses.</li>
+<li>If the band is "bad", each loan loses $250.</li>
+<li>The risk team thinks there is a 40% chance the band is good.</li>
+</ul>
+<p><strong>Step 1: the best choice today.</strong> Expected value of lending = 10,000 × (0.4 × $300 + 0.6 × −$250) = 10,000 × −$30 = <strong>−$300,000</strong>. So today the lender should not lend. The expected value of today's best choice is $0.</p>
+<p><strong>Step 2: the cap.</strong> With perfect information, the lender lends only if the band is good. That happens 40% of the time and earns 10,000 × $300 = $3,000,000. EVPI = 0.4 × $3,000,000 − $0 = <strong>$1,200,000</strong>. No test, model or data purchase can be worth more than $1.2 million for this decision.</p>
+<p><strong>Step 3: a real test.</strong> The lender approves 1,000 loans from the band for a year and watches them. Assume the result reads the band correctly 80% of the time. Then the test points to "good" 44% of the time. When it does, the chance the band is really good rises to 72.7%. Lending then earns $150 a loan, or $1.5 million on the next 10,000. When the test points to "bad", the lender holds back. The value of this imperfect test is 0.44 × $1,500,000 = <strong>$660,000</strong>.</p>
+<p><strong>Step 4: compare with the cost.</strong> The 1,000 test loans have an expected cost of 1,000 × $30 = $30,000. In the worst case, a bad band, they lose $250,000. The test is worth up to $660,000. Run it. But a data vendor offering a "$1.5 million insight" into this band is overpriced at any accuracy, because the cap is $1.2 million.</p>
+<p><strong>The common misreading.</strong> "More data is always better." Data has value only through the decision it changes. A perfect answer to a question that cannot change your choice is worth zero.</p>
+<p><strong>Decision rule.</strong> Before you fund a test or a data source, compute the cap. If the cost is above EVPI, decide now. If the cost is well below the value of the test, run it, with a deadline.</p>
+<h3 id="forecasting-with-ranges">Forecasting with ranges</h3>
+<p><strong>What it is.</strong> A <strong>range forecast</strong> gives three numbers instead of one. P10 is a value the outcome should beat 90% of the time. P50 is the middle case. P90 is a value the outcome should beat only 10% of the time.</p>
+<p><strong>How it works.</strong> A range shows where the risk lies. "Payment volume of $820 million next quarter" hides the fact that $700 million is plausible. "P10 $700M, P50 $820M, P90 $900M" shows a downside that is larger than the upside. That shape changes the plan. You hold hiring until the P50 is confirmed, or you prepare the cost cuts that a P10 would need.</p>
+<p><strong>How to run it.</strong></p>
+<ol>
+<li>Ask each forecast owner for P10, P50 and P90.</li>
+<li>Record them before the period starts.</li>
+<li>At the end, mark whether the outcome landed between P10 and P90.</li>
+<li>Over ten or more forecasts, about 80% should land inside. If only 60% land inside, the ranges are too narrow. The team is overconfident. Widen the ranges, or find what the team keeps missing.</li>
+</ol>
+<p>This is <strong>calibration</strong>: checking stated confidence against results. Weather forecasters do it routinely. Most product teams never do. A team that tracks it for a year becomes much harder to surprise.</p>
+<p><strong>Domain application.</strong> Lending teams forecast losses by vintage, so ranges are natural there. Insurers set reserves, which are forecasts of claims still to come. Payments teams forecast volume by merchant segment. Retailers forecast demand by item and store, and the cost of a miss is markdown or empty shelves.</p>
+<p><strong>Decision quality versus outcome quality.</strong> A good decision can have a bad outcome. You approved a well-tested credit change, and a recession hit. A bad decision can have a good outcome. You launched without a test, and got lucky. Judging people only by outcomes teaches them to avoid risk, or to hide it. Judge the decision by what was known, what was assumed, and how it was reasoned. A written decision record makes this possible.</p>
+<p><strong>The common misreading.</strong> "A single number shows commitment. A range shows doubt." A range shows where the doubt already is.</p>
+<p><strong>Decision rule.</strong> When a forecast drives a hard-to-reverse commitment, such as hiring, a capital raise or a credit policy, plan for the P10, not the P50.</p>
+<h3 id="turning-data-into-decisions">Turning data into decisions</h3>
+<ol>
+<li><strong>Write the decision first.</strong> Name the options and the date. Data without a decision is a report.</li>
+<li><strong>Ask what would change your mind.</strong> Write the result that would make you choose differently. If no result would, decide now.</li>
+<li><strong>Price the errors.</strong> Write what a wrong "yes" and a wrong "no" each cost.</li>
+<li><strong>Use expected value for bets with known odds.</strong> Multiply each outcome by its probability, and add them up. <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> extends this to cash flows over time.</li>
+<li><strong>Match the process to reversibility.</strong> See <a href="teams-and-collaboration.html">teams and collaboration</a>.</li>
+<li><strong>Run a pre-mortem.</strong> Before you commit, imagine it failed a year from now. Ask why. Fix the top two reasons.</li>
+<li><strong>Decide, record, review.</strong> Write the decision, the reason and a review date. Set the decision date when the analysis starts, and agree in advance what evidence is enough.</li>
+</ol>
+<h3 id="the-decision-matrix">The decision matrix</h3>
+<p>A <strong>weighted scoring matrix</strong> compares options on several criteria at once. Use it when options differ on things that do not share a unit, such as revenue, fit and risk.</p>
+<ol>
+<li>Pick four to six criteria that matter for this decision.</li>
+<li>Give each a weight. Weights add up to 1.</li>
+<li>Score each option on each criterion, for example 1 to 5.</li>
+<li>Multiply each score by its weight and add them up.</li>
+<li><strong>Test the weights.</strong> Change them within a reasonable range. If the top option changes, the decision depends on the weights, not the scores. Say so.</li>
+</ol>
+<p><em>Illustrative example: a mid-size retailer scores four bets. The retailer, the bets and all scores are invented.</em> For cost, a high score means low cost.</p>
+<table>
+<thead>
+<tr>
+<th>Bet</th>
+<th>Revenue (0.35)</th>
+<th>Fit (0.25)</th>
+<th>Confidence (0.20)</th>
+<th>Cost (0.20)</th>
+<th>Total</th>
+<th>Total if revenue 0.45, confidence 0.10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. Expand buy online, pick up in store</td>
+<td>4</td>
+<td>5</td>
+<td>4</td>
+<td>2</td>
+<td><strong>3.85</strong></td>
+<td><strong>3.85</strong></td>
+</tr>
+<tr>
+<td>B. Automated markdown pricing</td>
+<td>5</td>
+<td>3</td>
+<td>2</td>
+<td>3</td>
+<td><strong>3.50</strong></td>
+<td><strong>3.80</strong></td>
+</tr>
+<tr>
+<td>C. Relaunch the loyalty program</td>
+<td>3</td>
+<td>4</td>
+<td>3</td>
+<td>4</td>
+<td><strong>3.45</strong></td>
+<td><strong>3.45</strong></td>
+</tr>
+<tr>
+<td>D. Upgrade self-checkout</td>
+<td>2</td>
+<td>2</td>
+<td>5</td>
+<td>3</td>
+<td><strong>2.80</strong></td>
+<td><strong>2.50</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Under the first weights, A wins clearly. When the CFO shifts weight from confidence to revenue, A and B almost tie. The decision now depends on one question: how much do we value confidence? B has the higher upside and the weaker evidence. The team picks A and funds a small, time-boxed test of B in one region. The matrix did not decide. It showed the team what it was arguing about.</p>
+<p><strong>Decision rule.</strong> Never present a matrix without its weight test. A gap of 0.05 is a tie. Allocating capacity across many bets is a different job. See <a href="portfolio-strategy-and-allocation.html">portfolio strategy and capital allocation</a>.</p>
+<h3 id="model-governance-in-regulated-domains">Model governance in regulated domains</h3>
+<p><strong>What it is.</strong> In banking, a credit, fraud, pricing or capital model is a supervised asset. In April 2026 the US Federal Reserve, the Office of the Comptroller of the Currency (OCC) and the Federal Deposit Insurance Corporation (FDIC) issued joint supervisory guidance on <strong>model risk management</strong>. It replaced the agencies' earlier 2011 guidance. It is most relevant to banking organizations with more than $30 billion in total assets. It is guidance, not an enforceable standard. Model risk is the harm that can come from decisions based on wrong or misused model outputs. Smaller banks, and fintechs that lend through partner banks, often meet similar expectations through their bank partners. Ask your model risk team which rules apply to you.</p>
+<p><strong>How it works.</strong> The guidance groups the work into three areas: development and use, validation and monitoring, and governance. A common test in model risk practice is <strong>effective challenge</strong>: people who are competent, independent and have the authority to make changes question the model. In practice, a governed model often has:</p>
+<ul>
+<li><strong>An inventory entry.</strong> Every model in use is listed, with its owner, purpose and risk tier. The guidance describes a model inventory as common industry practice.</li>
+<li><strong>Independent validation.</strong> A team that did not build the model checks its concept, its data and its results, generally before first use.</li>
+<li><strong>Ongoing monitoring.</strong> Score drift, approval rates and outcomes are tracked against what the model predicted.</li>
+<li><strong>A challenger.</strong> A <strong>champion–challenger</strong> setup runs an alternative model or threshold on a small share of traffic. It shows whether the live model is still the best choice.</li>
+<li><strong>Documented overrides.</strong> When people overrule the model, the reasons are recorded and reviewed.</li>
+</ul>
+<p><strong>Domain application.</strong> In US lending, a declined applicant must be given the main reasons for the decline, or be told how to request them. That is part of Regulation B. So a credit model must produce reasons a person can read. This shapes which model types a lender can use. Insurers file rating rules with state regulators. Payments and anti-money-laundering models are reviewed by bank partners and examiners.</p>
+<p><strong>The common misreading.</strong> "Governance slows us down." Model governance mostly adds lead time you can plan for. Discovering it late is what slows you down. A threshold change on a credit model may need validation sign-off. Put it in the plan.</p>
+<p><strong>Decision rule.</strong> Before you commit a date for a model or threshold change in a regulated product, ask your model risk team what review it needs and how long that takes. Treat a threshold change as a model change unless they say otherwise.</p>
+<h2 id="worked-example-the-fraud-model-that-costs-more-than-no-model">Worked example: the fraud model that costs more than no model</h2>
+<p><em>This example is illustrative. The merchant, the model and every input are assumed. The code under the hood reproduces every number.</em></p>
+<p>An online merchant processes 1,000,000 card transactions a year. Fraud is 0.2% of transactions, so 2,000 are fraudulent. The fraud team proposes a new model at a threshold with 90% recall and a 2% false-alarm rate.</p>
+<p><strong>Step 1: count the cells.</strong></p>
+<ul>
+<li>Caught fraud: 2,000 × 90% = 1,800.</li>
+<li>Missed fraud: 2,000 − 1,800 = 200.</li>
+<li>False declines: 998,000 × 2% = 19,960.</li>
+<li>Precision: 1,800 ÷ (1,800 + 19,960) = <strong>8.3%</strong>.</li>
+</ul>
+<p><strong>Step 2: price the cells.</strong> The assumed inputs:</p>
+<ul>
+<li>A missed fraud costs <strong>$160</strong>. That is the lost goods on an average fraudulent order of $140, plus about $20 of dispute fees and handling.</li>
+<li>A false decline costs <strong>$25</strong>. That is $12 of lost margin on the order, plus a 5% chance the customer leaves for good, times $260 of future contribution ($13).</li>
+</ul>
+<p><strong>Step 3: compare thresholds.</strong> The team plots the model at five thresholds.</p>
+<table>
+<thead>
+<tr>
+<th>Threshold</th>
+<th>Recall</th>
+<th>False-alarm rate</th>
+<th>Missed fraud cost</th>
+<th>False decline cost</th>
+<th>Total cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No model</td>
+<td>0%</td>
+<td>0%</td>
+<td>$320,000</td>
+<td>$0</td>
+<td><strong>$320,000</strong></td>
+</tr>
+<tr>
+<td>T1</td>
+<td>95%</td>
+<td>5%</td>
+<td>$16,000</td>
+<td>$1,247,500</td>
+<td><strong>$1,263,500</strong></td>
+</tr>
+<tr>
+<td>T2 (proposed)</td>
+<td>90%</td>
+<td>2%</td>
+<td>$32,000</td>
+<td>$499,000</td>
+<td><strong>$531,000</strong></td>
+</tr>
+<tr>
+<td>T3</td>
+<td>80%</td>
+<td>0.5%</td>
+<td>$64,000</td>
+<td>$124,750</td>
+<td><strong>$188,750</strong></td>
+</tr>
+<tr>
+<td>T4</td>
+<td>60%</td>
+<td>0.1%</td>
+<td>$128,000</td>
+<td>$24,950</td>
+<td><strong>$152,950</strong></td>
+</tr>
+<tr>
+<td>T5</td>
+<td>40%</td>
+<td>0.02%</td>
+<td>$192,000</td>
+<td>$4,990</td>
+<td><strong>$196,990</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 4: read the table.</strong> The proposed threshold costs <strong>$531,000</strong>. That is $211,000 more than having no model at all. The model is good. The threshold is wrong for this merchant's costs.</p>
+<p><strong>Step 5: check the margin.</strong> The break-even fraud share for a band is 13.5%. Moving from T3 to T4 stops blocking a band of 400 frauds and 3,992 good customers. Its fraud share is 9.1%, below break-even, so approving that band saves money. Moving from T4 to T5 would also approve a band of 400 frauds and 798 good customers. Its fraud share is 33.4%, above break-even, so it should stay blocked. <strong>T4 is the best threshold here, at $152,950.</strong> That saves $167,050 a year against no model, and $378,050 against the proposal.</p>
+<p><strong>Step 6: check the inputs that drive it.</strong> The answer depends on the $25 false-decline cost. The churn part of it is an estimate. The team agrees to run a holdout: a small share of flagged transactions in the T3 to T4 band goes through a step-up check instead of a decline. The holdout measures how many are good customers and whether they come back.</p>
+<p><strong>What changed.</strong> The fraud team had optimised for catching fraud. The merchant's goal was the lowest total cost. Pricing both errors moved the threshold, and turned a loss into a saving.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Speed against confidence.</strong> Every week of analysis delays value. The cost of deciding fast is a higher error rate, which is fine for reversible calls.</li>
+<li><strong>Catching fraud against serving customers.</strong> A stricter threshold blocks more fraud and more good customers. You give up revenue and goodwill to cut losses. Only priced cells tell you where to stop.</li>
+<li><strong>Testing against deciding.</strong> A test reduces uncertainty. It costs time, money and sometimes real losses on test loans or test traffic. Its value is capped by EVPI.</li>
+<li><strong>Precision against honesty.</strong> A single number is easy to present. A range is more honest and harder to defend in a short meeting.</li>
+<li><strong>Scoring against judgement.</strong> A matrix makes reasoning visible. It can also hide judgement inside the weights. Always show the weight test.</li>
+<li><strong>Model performance against explainability.</strong> In lending, a more complex model may rank risk better. It may also be harder to explain and to validate. You can give up some accuracy for faster approval and clearer decline reasons.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Accuracy without a base rate.</strong> A launch review hears "92% accurate". Nobody asks how many alerts that means. Support sees a spike in "my card was declined" contacts a week after launch.</li>
+<li><strong>Unpriced false declines.</strong> The fraud dashboard shows losses falling. Approval rate and repeat purchase fall too, but on a different team's dashboard. Revenue misses plan, and nobody links it to the threshold.</li>
+<li><strong>Waiting for the lagging indicator.</strong> The team waits for loss data before acting. By then a year of loans is on the books.</li>
+<li><strong>Survivorship in the data.</strong> A lender studies only approved loans and concludes its cutoff is perfect. It never tests below the cutoff, so it never learns otherwise.</li>
+<li><strong>The overpriced test.</strong> A pilot costs more in losses and delay than the decision it informs could ever be worth. You see it when nobody can say which result would change the plan.</li>
+<li><strong>Uncalibrated ranges.</strong> Every forecast comes with a range, and actuals keep landing outside it. Nobody keeps score, so nothing improves.</li>
+<li><strong>Spurious precision and hidden weights.</strong> A score of 3.85 against 3.80 is treated as a clear win. Or someone tunes the weights until their favourite option wins.</li>
+<li><strong>Ungoverned threshold changes.</strong> A team edits a credit cutoff in a config file. Validation never saw it. It surfaces in a partner-bank audit or an examination.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The worked example, the threshold table, the value-of-information case and the weight test, in Python. It runs as written and reproduces the lesson's numbers.</p>
+<pre><code class="language-python"># Example F: base rate and a priced confusion matrix (all inputs assumed)
+N, fraud_rate = 1_000_000, 0.002
+fraud = N * fraud_rate              # 2,000 fraudulent transactions
+good = N - fraud                    # 998,000 good ones
+
+def cells(recall, fpr):
+    tp = fraud * recall
+    fp = good * fpr
+    return tp, fraud - tp, fp       # caught, missed, false declines
+
+tp, fn, fp = cells(0.90, 0.02)
+print(f&quot;precision {tp / (tp + fp):.1%}&quot;)      # 8.3%
+
+COST_MISS, COST_FALSE_DECLINE = 160, 25       # assumed, per transaction
+thresholds = {&quot;T1&quot;: (0.95, 0.05), &quot;T2&quot;: (0.90, 0.02), &quot;T3&quot;: (0.80, 0.005),
+              &quot;T4&quot;: (0.60, 0.001), &quot;T5&quot;: (0.40, 0.0002)}
+print(f&quot;no model: {fraud * COST_MISS:,.0f}&quot;)                       # 320,000
+for name, (r, f) in thresholds.items():
+    tp, fn, fp = cells(r, f)
+    print(name, f&quot;{fn * COST_MISS + fp * COST_FALSE_DECLINE:,.0f}&quot;)  # T4 152,950 is lowest
+print(f&quot;break-even: {COST_FALSE_DECLINE / (COST_FALSE_DECLINE + COST_MISS):.1%}&quot;)  # 13.5%
+
+# Value of information: a credit-cutoff test (all inputs assumed)
+loans, p_good, gain, loss = 10_000, 0.40, 300, -250
+ev_now = max(loans * (p_good * gain + (1 - p_good) * loss), 0)     # lending EV is -300,000, so 0
+evpi = p_good * loans * gain - ev_now                              # 1,200,000
+acc = 0.80                                                         # test reads the band right 80% of the time
+p_sig = p_good * acc + (1 - p_good) * (1 - acc)                    # 0.44
+post = p_good * acc / p_sig                                        # 0.727
+evsi = p_sig * max(loans * (post * gain + (1 - post) * loss), 0) - ev_now   # 660,000
+print(f&quot;EVPI {evpi:,.0f}  test value {evsi:,.0f}&quot;)
+
+# Weight test for the scoring matrix
+bets = {&quot;A&quot;: [4, 5, 4, 2], &quot;B&quot;: [5, 3, 2, 3], &quot;C&quot;: [3, 4, 3, 4], &quot;D&quot;: [2, 2, 5, 3]}
+def rank(w):
+    t = {k: round(sum(x * s for x, s in zip(w, v)), 2) for k, v in bets.items()}
+    return sorted(t.items(), key=lambda kv: -kv[1])
+print(rank([0.35, 0.25, 0.20, 0.20]))   # A 3.85, B 3.5, C 3.45, D 2.8
+print(rank([0.45, 0.25, 0.10, 0.20]))   # A 3.85, B 3.8, C 3.45, D 2.5
+</code></pre>
+<p>A calibration log needs only one row per forecast:</p>
+<pre><code class="language-yaml">forecast: q3_tpv_smb_segment
+owner: Head of SMB Payments
+recorded: 2026-06-28
+p10: 700_000_000
+p50: 820_000_000
+p90: 900_000_000
+actual: null            # filled in after the quarter closes
+inside_p10_p90: null    # the team's hit rate over many rows should be near 80%
+</code></pre>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">For each risk model in your product, write the base rate and the number of alerts per true case at current volume.</li>
+<li class="task todo">Put a money value on a miss and on a false decline, and write where each number comes from.</li>
+<li class="task todo">Recompute your main threshold from those prices. Compare it with the live threshold.</li>
+<li class="task todo">Before your next test or data purchase, compute EVPI. Write which result would change the decision.</li>
+<li class="task todo">Ask forecast owners for P10, P50 and P90, and start a calibration log.</li>
+<li class="task todo">Name your domain's data blind spot, and the holdout or below-cutoff test that covers it.</li>
+<li class="task todo">Check that every model and threshold in your product is in the model inventory, with an owner and a validation date.</li>
+<li class="task todo">Find one reversible decision waiting on analysis, and decide it this week.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="../machine-learning/measuring-a-model.html">Measuring a model</a> — precision, recall, the confusion matrix and calibration, explained from the ground up.</li>
+<li><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a> — running experiments and holdouts without fooling yourself.</li>
+<li><a href="performance-and-growth.html">Performance and growth</a> — loss development, vintage curves and authorization rate.</li>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> — expected value over time, scenarios and sensitivity.</li>
+<li><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> — allocating across bets of different risk.</li>
+<li><a href="../technical-product-sense/data-and-the-data-model.html">Data and the data model</a> — where your data comes from technically.</li>
+<li><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a> — scoring frameworks at team level.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="business-cases-and-valuation.html"><span class="lbl">← Previous</span><span class="ttl">Business cases, capital and valuation</span></a><a class="navcard next" href="markets-and-strategy.html"><span class="lbl">→ Next</span><span class="ttl">Markets and customers: segments, sizing and positioning</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-the-forecast-and-the-umbrella">Mental model: the forecast and the umbrella</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#what-your-data-can-and-cannot-see">What your data can and cannot see</a><a class="h3" href="#base-rates-why-accurate-models-raise-mostly-false-alarms">Base rates: why accurate models raise mostly false alarms</a><a class="h3" href="#threshold-economics-price-each-cell">Threshold economics: price each cell</a><a class="h3" href="#value-of-information-what-a-test-is-worth">Value of information: what a test is worth</a><a class="h3" href="#forecasting-with-ranges">Forecasting with ranges</a><a class="h3" href="#turning-data-into-decisions">Turning data into decisions</a><a class="h3" href="#the-decision-matrix">The decision matrix</a><a class="h3" href="#model-governance-in-regulated-domains">Model governance in regulated domains</a><a class="h2" href="#worked-example-the-fraud-model-that-costs-more-than-no-model">Worked example: the fraud model that costs more than no model</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fdata-and-decisions.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/data-and-decisions.html"</script><script defer src="../assets/glossary.js"></script></body></html>

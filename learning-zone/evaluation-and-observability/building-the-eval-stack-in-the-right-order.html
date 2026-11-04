@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Evaluation &amp; observability</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="why-eval-investment-is-the-job.html">1 · Why eval investment is the job</a><a class="modlink active" href="building-the-eval-stack-in-the-right-order.html">2 · Building the eval stack in the right order</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
     <h1>Building the eval stack in the right order</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><div class="explainer-link"><div class="Alert" data-variant="soft" data-color="info"><div class="Indicator"><svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm1.25 9.25h-2.5a.75.75 0 0 1 0-1.5h.5v-3h-.5a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75V13h.5a.75.75 0 0 1 0 1.5Z"/></svg></div><div class="Content"><div class="Message"><div class="Title">Visual explainer</div><div class="Description">See it step by step: <a href="../explainers/one-eval-regression-traced.html">One eval regression, traced to its cause →</a>. It follows one example through the stages, with a picture at each.</div></div></div></div></div><h2 id="tldr">TL;DR</h2>
 <p>The full eval and observability stack — golden sets, regression gates, calibrated
 LLM-as-judge grading, full production tracing, drift detection, trajectory evals for
 agents — is a lot to build at once, and trying to build all of it before shipping
@@ -185,7 +194,9 @@ or improving. The order is the discipline — not any single stage in isolation.
 sample, plus anything a user flagged — and read them one by one, labeling what went wrong
 in plain language, in the team's own words, without forcing the labels into a taxonomy
 yet. Only once a pile of these free-form labels exists does clustering them into a
-handful of named, recurring failure modes make sense. This unglamorous reading is what
+handful of named, recurring failure modes make sense. Hamel Husain's evals FAQ gives a working size: read at
+least 30 traces yourself first, then at least 100 overall, and keep going while new
+failure types still appear. This unglamorous reading is what
 tells a team what's actually worth building an automated evaluator for, and it's also the
 step most commonly skipped in the rush to have a dashboard to show. The full method —
 what the discipline calls open coding and axial coding — is developed in complete depth
@@ -207,6 +218,37 @@ complete engineering depth in
 where no change ships without a score, because the eval set has effectively become the
 spec — is the operating discipline developed in
 <a href="../technical-product-management/tpm-for-ai-products.html">TPM for AI products</a>.</p>
+<h2 id="choices-that-make-the-stack-trustworthy">Choices that make the stack trustworthy</h2>
+<ul>
+<li><strong>Prefer pass/fail over 1-5 scales.</strong> Binary labels are easier to agree on and easier to
+  validate. To track gradual progress, use several specific pass/fail checks, not one
+  vague score. OpenAI's guide also says models grade pass/fail and pairwise choices more
+  reliably than open-ended scores.</li>
+<li><strong>One judge per failure mode.</strong> Split the human labels into train, dev and a held-out
+  test set. Measure the judge's true positive rate (it catches real failures) and true
+  negative rate (it passes good outputs). Track both, because a judge that flags
+  everything has a perfect first number and a useless second one.</li>
+<li><strong>Know the judge's biases.</strong> The MT-Bench paper (Zheng et al., 2023) documents position,
+  verbosity and self-enhancement bias, and found that strong judges agree with human
+  preferences over 80% of the time. A later study (Panickssery et al., 2024) found that
+  models which better recognize their own output favor it more. Do not let a model
+  family judge itself without a human check.</li>
+<li><strong>Split the suite in two.</strong> Anthropic separates <em>capability</em> evals, which start with a
+  low pass rate and give the team a hill to climb, from <em>regression</em> evals, which should
+  sit near 100%. A capability eval that the system now passes "graduates" into the
+  regression suite. When every task passes, the eval is saturated and no longer shows
+  progress.</li>
+<li><strong>Gate on a pass-all rate.</strong> An example passes only if it passes every check. Report one
+  pass-all rate for checks that block a release and a second for issues the team accepts.</li>
+<li><strong>Grade the outcome, not one exact path.</strong> Anthropic warns that rigid step-sequence
+  checks punish valid solutions. For agents, grade the result, then add budgets (steps,
+  cost, time) and look at the first wrong step in failing traces.</li>
+<li><strong>Keep reading after launch.</strong> Re-run error analysis on a fresh sample of 100 or more
+  traces every few weeks, and always after an incident. Keep some random traces in every
+  batch so you still see failures your alerts miss.</li>
+<li><strong>Treat synthetic test data with care.</strong> It can widen coverage, but it cannot show how
+  common a failure is in production. Check it against real traces as soon as you have them.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Dashboards before reading</strong> — investing in scoring infrastructure before anyone spent
@@ -215,6 +257,8 @@ spec — is the operating discipline developed in
   before a human-reviewed golden set exists to check it against.</li>
 <li><strong>Observability before a working gate</strong> — full production tracing built before there's
   even a regression suite to tell whether a change should have shipped.</li>
+<li><strong>A judge nobody re-checks</strong> — the judge was validated once, then the model, prompt or
+  traffic changed and its agreement with humans quietly fell.</li>
 <li><strong>Trajectory evals skipped on an agentic system</strong> — grading only a long-running agent's
   final answer, missing the early step that actually caused the failure.</li>
 </ul>
@@ -226,6 +270,10 @@ spec — is the operating discipline developed in
       at what might matter?</li>
 <li class="task todo">Is any automated judge calibrated against human-labeled examples before it's
       trusted to grade at scale?</li>
+<li class="task todo">Are the judge's true positive and true negative rates measured on a held-out set of
+      human labels, and re-measured when the model or prompt changes?</li>
+<li class="task todo">Is there a regression suite near 100% that gates release, separate from capability
+      evals that still have room to improve?</li>
 <li class="task todo">If the system is agentic, does anything grade the path a run took, not just
       whether it reached the right answer?</li>
 </ul>
@@ -240,8 +288,8 @@ spec — is the operating discipline developed in
 <li><a href="../agentic-ai/reliability-and-evals.html">Reliability &amp; evals</a> — the full depth on
   trajectory evals for agents.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="why-eval-investment-is-the-job.html"><span class="lbl">← Previous</span><span class="ttl">Why eval investment is the job</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-each-stage-earns-the-next">The mental model: each stage earns the next</a><a class="h2" href="#where-to-actually-start-reading-not-scoring">Where to actually start: reading, not scoring</a><a class="h2" href="#growing-from-a-golden-set-to-a-full-production-practice">Growing from a golden set to a full production practice</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="why-eval-investment-is-the-job.html"><span class="lbl">← Previous</span><span class="ttl">Why eval investment is the job</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> An AI system&#x27;s biggest risk is failing quietly. The defence is measurement built in the right order, starting with reading real failures.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-each-stage-earns-the-next">The mental model: each stage earns the next</a><a class="h2" href="#where-to-actually-start-reading-not-scoring">Where to actually start: reading, not scoring</a><a class="h2" href="#growing-from-a-golden-set-to-a-full-production-practice">Growing from a golden set to a full production practice</a><a class="h2" href="#choices-that-make-the-stack-trustworthy">Choices that make the stack trustworthy</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

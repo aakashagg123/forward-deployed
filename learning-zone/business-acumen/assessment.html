@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Business acumen self-assessment — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink active" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Self-assessment</span>
+    <h1>Business acumen self-assessment</h1>
+  </div>
+  <div class="MarkdownContent"><!-- Business acumen self-assessment. Rendered as business-acumen/assessment.html by
+     scripts/build_business_acumen.py (extra_pages). Styling lives in
+     design-system/site/61-assessment.css. Everything runs in the browser; answers stay on
+     this device (localStorage, wrapped in try/catch) and are never sent anywhere. -->
+<div class="asm" id="asm-root">
+<p class="asm-intro">Rate each statement from 1 to 5. Be honest: rate what you can do and show evidence for today, not what you could learn. Your scores, the radar chart and your improvement plan update as you answer. Nothing leaves your browser. There are 60 statements: four for each of the fifteen lessons.</p>
+<div class="asm-scale">
+  <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>1 = not yet</span>
+  <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>2 = with help</span>
+  <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>3 = sometimes, alone</span>
+  <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>4 = reliably</span>
+  <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>5 = I teach it</span>
+</div>
+
+<h2 id="the-statements">The statements</h2>
+<form id="asm-form" autocomplete="off"></form>
+
+<h2 id="your-results">Your results</h2>
+<div class="asm-results" aria-live="polite">
+  <div class="asm-legend">
+    <span class="Badge" data-color="info" data-variant="soft" data-size="md" data-pill>Foundations</span>
+    <span class="Badge" data-color="success" data-variant="soft" data-size="md" data-pill>Business and markets</span>
+    <span class="Badge" data-color="warning" data-variant="soft" data-size="md" data-pill>Product leadership</span>
+    <span class="Badge" data-color="discovery" data-variant="soft" data-size="md" data-pill>People and influence</span>
+  </div>
+  <svg class="asm-radar" id="asm-radar" viewBox="-90 -40 580 480" role="img" aria-labelledby="asm-radar-title">
+    <title id="asm-radar-title">Radar chart of your fifteen business acumen scores</title>
+  </svg>
+  <h3 id="your-plan">Your improvement plan</h3>
+  <p class="asm-empty" id="asm-empty">Answer at least one statement to see your plan.</p>
+  <ol class="asm-plan" id="asm-plan"></ol>
+  <div class="asm-actions">
+    <button type="button" class="Button" id="asm-print" data-variant="outline" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Print or save as PDF</span></button>
+    <button type="button" class="Button" id="asm-reset" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Clear my answers</span></button>
+  </div>
+</div>
+
+<h2 id="how-scoring-works">How scoring works</h2>
+<p>Each axis has four statements. Its score is the average of your answered ratings, mapped from 1–5 to 0–100%: (average − 1) ÷ 4 × 100. With all four answered, that equals (total − 4) ÷ 16 × 100. The plan ranks axes by gap (100% minus the score). Below 50% is a <strong>focus</strong> area, with a lesson link and one two-week action from that lesson's practitioner checklist. From 50% to 74% is a <strong>build</strong> area. At 75% or above, the plan suggests how to <strong>maintain or stretch</strong>. The method is explained in <a href="foundations-and-assessment.html">lesson 1</a>.</p>
+</div>
+
+<script>
+(function(){
+  var AXES = [
+    {n:1, key:"found", c:"found", short:"Foundations", title:"Foundations and the T-shaped leader", slug:"foundations-and-assessment",
+     items:["I can explain in two sentences how my company makes money, and a finance partner would agree.",
+            "I can say which financial line a product change moves first, and roughly by how much.",
+            "I can name my domain's three binding constraints and the team that owns each.",
+            "I can name an artifact, such as a business case or a pricing memo, that proves each of my strongest skills."],
+     action:"Book a 30-minute session with one finance or risk partner to test your weakest area, then pick the two gaps that block a decision this quarter.",
+     stretch:"Coach a peer through the self-assessment and compare evidence."},
+    {n:5, key:"data", c:"found", short:"Data", title:"Data and decisions", slug:"data-and-decisions",
+     items:["I ask for the base rate before I trust an accuracy claim, and I can explain why rare events cause mostly false alarms.",
+            "I can set a model threshold by putting a price on each cell of the error table.",
+            "I can cap what a test is worth before I fund it, using the value of perfect information.",
+            "I forecast in P10, P50 and P90 ranges, and I check how often outcomes land inside them."],
+     action:"For your next model or rule change, ask for the base rate and price each cell of the error table before you set the threshold.",
+     stretch:"Keep score on your P10 to P90 forecasts for a quarter, and share your hit rate with your leads."},
+    {n:2, key:"money", c:"biz", short:"Statements", title:"Reading the three statements", slug:"the-language-of-money",
+     items:["I can trace my product to specific lines on the income statement, the balance sheet and the cash-flow statement.",
+            "I can explain when revenue is reported gross or net, and why a discount or cash-back offer lowers revenue.",
+            "I can compute how my product changes the cash conversion cycle, in days and in dollars.",
+            "I can walk from adjusted EBITDA to free cash flow, and explain why profit and cash can move in opposite directions."],
+     action:"Find your product's net revenue, cost of revenue and gross margin in the last management report. Then name the balance-sheet line your product grows.",
+     stretch:"Ask for free cash flow next to adjusted EBITDA in your unit's monthly review, and explain the gap to your team."},
+    {n:3, key:"unit", c:"biz", short:"Unit economics", title:"Unit economics", slug:"unit-economics",
+     items:["I can pick the right unit for my product, such as a payment, a loan, an order or a policy, and roll it up to a customer.",
+            "I can split contribution margin into three layers, and say which layer steers pricing, operations and growth spend.",
+            "I can compute customer acquisition cost (CAC) payback by cohort, and explain why it differs from simple payback.",
+            "I can explain why a lifetime value figure needs a time limit, a discount rate and cohort payback next to it."],
+     action:"Build the contribution waterfall for one unit of your product, from the first margin layer (CM1) to the third (CM3), and compute cohort payback for your newest paid channel.",
+     stretch:"Review a peer's lifetime value claim, and rebuild it with a time limit, a discount rate and cohort payback."},
+    {n:4, key:"case", c:"biz", short:"Valuation", title:"Business cases, capital and valuation", slug:"business-cases-and-valuation",
+     items:["I can build a business case with its counterfactual, net present value (NPV), internal rate of return (IRR) and payback, and I rank bets by NPV.",
+            "I can show bear, base and bull scenarios and a tornado chart, and report the expected NPV.",
+            "I can explain how funding cost and capital count as product costs in lending, banking or insurance.",
+            "I can explain how the company is valued, and why durable gross profit counts for more than one-off revenue."],
+     action:"Ask Finance for the discount rate and the hurdle for your next bet. Then build its case with a counterfactual and a tornado chart.",
+     stretch:"Review a peer's business case with your finance partner, and add the expected NPV across scenarios."},
+    {n:6, key:"mkt", c:"biz", short:"Markets", title:"Markets and customers", slug:"markets-and-strategy",
+     items:["I can size a market bottom-up as a revenue pool, and explain any gap of more than 2x from the top-down figure.",
+            "I can segment customers by need and economics, and choose the target segment on payback and lifetime contribution.",
+            "I can position our product against the customer's real alternative, which is often a bank, a spreadsheet or doing nothing.",
+            "I can read a rival's economics, such as its funding cost or take rate, before I copy its features."],
+     action:"Size your main market bottom-up as a revenue pool, and reconcile it with the top-down number.",
+     stretch:"Write the positioning for an adjacent segment, and test it with five customers from that segment."},
+    {n:7, key:"adv", c:"biz", short:"Advantage", title:"Competitive advantage and strategy", slug:"competitive-advantage-and-strategy",
+     items:["I can run the five competitive forces with evidence, and name the one force that caps profit.",
+            "I can map the profit pool for one unit of my product, and show where we sit in it.",
+            "I can name the benefit and the barrier behind each advantage we claim, and tell a network effect from plain scale.",
+            "I can write a one-page strategy, with a diagnosis, a guiding policy and coherent actions, that says what we will not do."],
+     action:"Run the five forces for your main market with written evidence, and name the move that would shift the force that caps profit.",
+     stretch:"Write a one-page strategy that lists three things you will not do, and the revenue each one costs."},
+    {n:8, key:"price", c:"prod", short:"Pricing", title:"Pricing and business models", slug:"monetization-and-business-models",
+     items:["I can explain our value metric, and test it against customer value, our cost driver, a predictable bill and gaming.",
+            "I can compute the break-even volume loss of a price change before I approve it.",
+            "I can estimate willingness to pay with one stated method and one observed method.",
+            "I can read a price waterfall, and approve discounts on pocket margin, not on the headline rate."],
+     action:"Before your next price change, compute the break-even volume loss and draw the price waterfall for your largest segment.",
+     stretch:"Lead a willingness-to-pay study with one stated and one observed method before your next price change."},
+    {n:9, key:"gtm", c:"prod", short:"Go-to-market", title:"Products and go-to-market", slug:"products-and-marketing",
+     items:["I can match the go-to-market motion to the deal size, and show when a sales team pays back.",
+            "I can plan sales capacity on ramped, attained output, not on quota.",
+            "I can fund marketing on incremental acquisition cost from a holdout, not on attributed conversions.",
+            "I can make a build, buy or partner call on three-year total cost of ownership, including the cost to exit."],
+     action:"For your largest paid channel, ask for a holdout test, and compare incremental acquisition cost with the attributed figure.",
+     stretch:"Run a build, buy or partner review of your three largest vendors, with a tested exit plan for each."},
+    {n:10, key:"perf", c:"prod", short:"Growth", title:"Performance and growth", slug:"performance-and-growth",
+     items:["I can split net growth into new, resurrected and churned customers, and compute the growth quick ratio.",
+            "I read gross revenue retention before net retention, and I can explain what net retention can hide.",
+            "I can compare lending vintages or insurance years at the same age, and explain why the latest year looks too good.",
+            "I can set a growth target with its guardrail inside it, and price one point of our main metric in money."],
+     action:"Split last quarter's net growth into flows, and rewrite each growth target with its guardrail inside it.",
+     stretch:"Give every metric on your scorecard one written definition and one owner."},
+    {n:11, key:"port", c:"prod", short:"Portfolio", title:"Portfolio strategy and capital allocation", slug:"portfolio-strategy-and-allocation",
+     items:["I can size the next and future horizons from the growth gap, and judge each horizon by its own standard.",
+            "I can stage a large investment, with each gate written before its stage starts.",
+            "I can spot bets that share one partner, one rule or one channel, and treat them as one bet.",
+            "I can decide to sunset a product by comparing the cost avoided with the contribution lost plus the run-off cost."],
+     action:"For your largest bet, write the scale criteria, the stop criteria and the gate date.",
+     stretch:"Run a quarterly portfolio review with one decision per bet, and list the dependencies your bets share."},
+    {n:12, key:"org", c:"people", short:"Organization", title:"Navigating the organization", slug:"navigating-the-organization",
+     items:["I can get an ask into the bottom-up plan before targets lock, priced at fully loaded cost.",
+            "I can explain opex, capex and capitalized development, and show the profit view and the cash view of an ask.",
+            "I can work with the three lines of defence, and ask for a time-boxed risk acceptance instead of a policy change.",
+            "I can map stakeholders on power and interest, mark every veto, and name a sponsor who argues for me."],
+     action:"Re-cost your next ask at fully loaded rates, and meet your finance partner before the bottom-up asks are due.",
+     stretch:"Sponsor someone two levels below you."},
+    {n:13, key:"team", c:"people", short:"Teams", title:"Teams and collaboration", slug:"teams-and-collaboration",
+     items:["I can label each team in my area as journey, platform, specialist or enabling, and declare how each pair works together.",
+            "I check team load and count handoffs before I ask for more headcount.",
+            "I can name the single accountable owner for each recurring cross-team decision, and route reversible decisions low.",
+            "I can run a business review with a written pre-read that ends in decisions with owners."],
+     action:"List the ten most frequent cross-team decisions in your area, give each a single accountable owner, and publish the list.",
+     stretch:"Start a community of practice for a skill spread across teams."},
+    {n:14, key:"lead", c:"people", short:"Org design", title:"Leading leaders and org design", slug:"leading-leaders-and-org-design",
+     items:["I can lead managers by setting outcomes and inspecting artifacts, not tasks.",
+            "I can write must-pass design criteria first, then choose between functional, product-line and matrix structures.",
+            "I can price a reorg in lost team-weeks and attrition, and compare that cost with the yearly saving.",
+            "I can define levels by scope, ambiguity and business impact, and hold calibration to evidence."],
+     action:"Before any structure change, write the must-pass design criteria, and price the reorg's cost against its yearly saving.",
+     stretch:"Design the org you would need for next year's strategy, before you need it."},
+    {n:15, key:"exec", c:"people", short:"Influence", title:"Executive influence and stakeholders", slug:"executive-influence-and-stakeholders",
+     items:["I can write a proposal whose first paragraph holds the ask, the answer and the cost.",
+            "I bring the board a decision, a risk or a change in the scorecard, never a feature list.",
+            "I can compute my walk-away point from my best alternative, and estimate the other side's before we meet.",
+            "I meet every high-power stakeholder alone before the decision meeting, so the meeting confirms what was agreed."],
+     action:"Rewrite the first paragraph of your next proposal so it holds the ask, the answer and the cost.",
+     stretch:"Present to the board or the executive team with a one-page pre-read."}
+  ];
+  var CLUSTER_NAME = {found:"Foundations", biz:"Business and markets", prod:"Product leadership", people:"People and influence"};
+  var CLUSTER_BADGE = {found:"info", biz:"success", prod:"warning", people:"discovery"};
+  var STORE = "ba-assessment-v2";
+  var NS = "http://www.w3.org/2000/svg";
+  var form = document.getElementById("asm-form");
+  var answers = {};
+  try { answers = JSON.parse(window.localStorage.getItem(STORE) || "{}") || {}; } catch (e) { answers = {}; }
+
+  function el(tag, attrs, text){
+    var e = document.createElement(tag);
+    for (var k in attrs) if (attrs.hasOwnProperty(k)) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function svg(tag, attrs, text){
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) if (attrs.hasOwnProperty(k)) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  // ---- build the form: one fieldset per axis, four statements each ----
+  AXES.forEach(function(ax){
+    var fs = el("fieldset", {"class":"asm-axis", "data-cluster":ax.c, id:"axis-" + ax.key});
+    fs.appendChild(el("legend", {}, "Lesson " + ax.n + " · " + ax.title));
+    var head = el("div", {"class":"asm-axis-head"});
+    var link = el("a", {"class":"asm-axis-link", href:ax.slug + ".html"}, "Read the lesson →");
+    var score = el("span", {"class":"asm-axis-score", id:"score-" + ax.key}, "not rated");
+    head.appendChild(link); head.appendChild(score); fs.appendChild(head);
+    ax.items.forEach(function(stmt, i){
+      var name = ax.key + "-" + i;
+      var row = el("div", {"class":"asm-item"});
+      var p = el("p", {"class":"asm-stmt", id:"stmt-" + name}, stmt);
+      var group = el("div", {"class":"asm-rate", role:"radiogroup", "aria-labelledby":"stmt-" + name});
+      for (var v = 1; v <= 5; v++){
+        var lab = el("label", {});
+        var inp = el("input", {type:"radio", name:name, value:String(v), "aria-label":"Rate " + v + " of 5"});
+        if (answers[name] === v) inp.checked = true;
+        lab.appendChild(inp); lab.appendChild(el("span", {"aria-hidden":"true"}, String(v)));
+        group.appendChild(lab);
+      }
+      row.appendChild(p); row.appendChild(group); fs.appendChild(row);
+    });
+    form.appendChild(fs);
+  });
+
+  // ---- scoring ----
+  function scoreOf(ax){
+    var sum = 0, n = 0;
+    for (var i = 0; i < ax.items.length; i++){
+      var v = answers[ax.key + "-" + i];
+      if (v) { sum += v; n++; }
+    }
+    if (!n) return null;
+    return Math.round(((sum / n) - 1) / 4 * 1000) / 10;
+  }
+
+  // ---- radar chart ----
+  var CX = 200, CY = 200, R = 150;
+  function point(i, frac){
+    var ang = (-90 + i * 360 / AXES.length) * Math.PI / 180;
+    return [CX + Math.cos(ang) * R * frac, CY + Math.sin(ang) * R * frac];
+  }
+  function drawRadar(scores){
+    var s = document.getElementById("asm-radar");
+    while (s.lastChild && s.lastChild.nodeName.toLowerCase() !== "title") s.removeChild(s.lastChild);
+    var half = 360 / AXES.length / 2;
+    AXES.forEach(function(ax, i){
+      var a0 = (-90 + i * 360 / AXES.length - half) * Math.PI / 180;
+      var a1 = (-90 + i * 360 / AXES.length + half) * Math.PI / 180;
+      var d = "M" + CX + "," + CY + " L" + (CX + Math.cos(a0) * R) + "," + (CY + Math.sin(a0) * R) +
+              " A" + R + "," + R + " 0 0 1 " + (CX + Math.cos(a1) * R) + "," + (CY + Math.sin(a1) * R) + " Z";
+      s.appendChild(svg("path", {"class":"wedge " + ax.c, d:d}));
+    });
+    [0.25, 0.5, 0.75, 1].forEach(function(f){
+      var pts = AXES.map(function(_, i){ return point(i, f).join(","); }).join(" ");
+      s.appendChild(svg("polygon", {"class":"ring", points:pts}));
+      s.appendChild(svg("text", {"class":"ring-label", x:CX + 4, y:CY - R * f + 12}, Math.round(f * 100) + "%"));
+    });
+    AXES.forEach(function(ax, i){
+      var p = point(i, 1);
+      s.appendChild(svg("line", {"class":"spoke", x1:CX, y1:CY, x2:p[0], y2:p[1]}));
+      var lp = point(i, 1.16);
+      var anchor = Math.abs(lp[0] - CX) < 8 ? "middle" : (lp[0] > CX ? "start" : "end");
+      s.appendChild(svg("text", {"class":"axis-label", x:lp[0], y:lp[1] + 4, "text-anchor":anchor}, ax.n + " " + ax.short));
+    });
+    var shape = AXES.map(function(ax, i){ return point(i, (scores[ax.key] || 0) / 100).join(","); }).join(" ");
+    s.appendChild(svg("polygon", {"class":"shape", points:shape}));
+    AXES.forEach(function(ax, i){
+      if (scores[ax.key] == null) return;
+      var p = point(i, scores[ax.key] / 100);
+      var dot = svg("circle", {"class":"dot " + ax.c, cx:p[0], cy:p[1], r:5});
+      dot.appendChild(svg("title", {}, ax.title + ": " + scores[ax.key] + "%"));
+      s.appendChild(dot);
+    });
+  }
+
+  // ---- plan ----
+  function drawPlan(scores){
+    var list = document.getElementById("asm-plan");
+    var empty = document.getElementById("asm-empty");
+    list.textContent = "";
+    var rated = AXES.filter(function(ax){ return scores[ax.key] != null; });
+    empty.hidden = rated.length > 0;
+    rated.sort(function(a, b){ return scores[a.key] - scores[b.key]; });   // largest gap first
+    rated.forEach(function(ax){
+      var sc = scores[ax.key], tier, badge, body;
+      if (sc < 50) { tier = "Focus"; badge = "danger"; body = "Two-week action: " + ax.action; }
+      else if (sc < 75) { tier = "Build"; badge = "warning"; body = "Next step: " + ax.action; }
+      else { tier = "Maintain or stretch"; badge = "success"; body = "Stretch: " + ax.stretch; }
+      var li = el("li", {});
+      var head = el("div", {"class":"asm-plan-head"});
+      var b = el("span", {"class":"Badge", "data-color":badge, "data-variant":"soft", "data-size":"sm", "data-pill":""}, tier);
+      var c = el("span", {"class":"Badge", "data-color":CLUSTER_BADGE[ax.c], "data-variant":"outline", "data-size":"sm", "data-pill":""}, CLUSTER_NAME[ax.c]);
+      var t = el("span", {"class":"asm-plan-title"}, ax.title + " · " + sc + "% (gap " + (Math.round((100 - sc) * 10) / 10) + ")");
+      head.appendChild(b); head.appendChild(c); head.appendChild(t); li.appendChild(head);
+      li.appendChild(el("p", {}, body));
+      var p2 = el("p", {});
+      p2.appendChild(document.createTextNode("Focus area: "));
+      p2.appendChild(el("a", {href:ax.slug + ".html"}, "Lesson " + ax.n + ", " + ax.title));
+      p2.appendChild(document.createTextNode(" · "));
+      p2.appendChild(el("a", {href:ax.slug + ".html#practitioner-checklist"}, "its checklist"));
+      li.appendChild(p2);
+      list.appendChild(li);
+    });
+  }
+
+  function render(){
+    var scores = {};
+    AXES.forEach(function(ax){
+      var sc = scoreOf(ax);
+      scores[ax.key] = sc;
+      document.getElementById("score-" + ax.key).textContent = sc == null ? "not rated" : sc + "%";
+    });
+    drawRadar(scores);
+    drawPlan(scores);
+  }
+
+  form.addEventListener("change", function(e){
+    var t = e.target;
+    if (!t || t.type !== "radio") return;
+    answers[t.name] = parseInt(t.value, 10);
+    try { window.localStorage.setItem(STORE, JSON.stringify(answers)); } catch (err) {}
+    render();
+  });
+  document.getElementById("asm-reset").addEventListener("click", function(){
+    answers = {};
+    try { window.localStorage.removeItem(STORE); } catch (err) {}
+    Array.prototype.forEach.call(form.querySelectorAll("input[type=radio]"), function(i){ i.checked = false; });
+    render();
+  });
+  document.getElementById("asm-print").addEventListener("click", function(){ window.print(); });
+  render();
+})();
+</script>
+</div>
+  <div class="pagenav"><a class="navcard prev" href="recap.html"><span class="lbl">← Previous</span><span class="ttl">Recap &amp; examples</span></a><span></span></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#the-statements">The statements</a><a class="h2" href="#your-results">Your results</a><a class="h3" href="#your-plan">Your improvement plan</a><a class="h2" href="#how-scoring-works">How scoring works</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/assessment.html"</script><script defer src="../assets/glossary.js"></script></body></html>

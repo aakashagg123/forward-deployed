@@ -41,50 +41,38 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="why-rag.html">1 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">2 · Embeddings &amp; semantic search</a><a class="modlink active" href="vector-databases.html">3 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">4 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">5 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">6 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">7 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-to-use-rag.html">1 · When to use RAG, and when not to</a><a class="modlink" href="why-rag.html">2 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">3 · Embeddings &amp; semantic search</a><a class="modlink active" href="vector-databases.html">4 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">5 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">6 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">7 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">8 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="building-rag-with-claude-code.html">9 · Building RAG with Claude Code, pgvector and Pinecone</a><a class="modlink" href="rag-terms.html">10 · RAG terms, explained</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
     <h1>Vector databases</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
-<p>Once your data is a pile of <a href="embeddings-and-semantic-search.html">embedding vectors</a>, you
-need somewhere to keep millions of them and, given a query vector, find the nearest ones in
-milliseconds. That's a <strong>vector database</strong>. Its one hard trick is <strong>approximate nearest
-neighbour (ANN)</strong> search: checking every vector to find the truly closest is too slow at
-scale, so a vector index takes a deliberate shortcut — it finds <em>almost</em> the closest,
-<em>much</em> faster, trading a sliver of accuracy for orders-of-magnitude speed. Around that core
-sit the features that actually decide whether you need a specialist product: <strong>metadata
-filtering</strong> (retrieve only this tenant's, this language's, non-expired passages),
-freshness (add/update/delete without a full rebuild), and scale. The product-leader trap is
-treating this as the hard part — it's the easy, commoditized part. Below a few million
-vectors, the vector index in the database you already run is usually enough; the real work
-is upstream in <a href="chunking-and-ingestion.html">chunking</a> and <a href="retrieval-quality.html">retrieval quality</a>.</p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Once your data is a set of <a href="embeddings-and-semantic-search.html">embedding vectors</a>, you need a place to keep them. Given a question's vector, that place must find the nearest ones in milliseconds. That is a <strong>vector database</strong>.</p>
+<p>Its one hard trick is <strong>approximate nearest neighbour (ANN)</strong> search. Comparing the question with every vector is exact, and too slow at scale. An ANN index skips most of the vectors and finds <em>almost</em> the closest ones, much faster. You trade a little recall for a lot of speed, and you can tune the trade.</p>
+<p>Around that core sit the features that decide the product: <strong>metadata filters</strong> (only this tenant, only current documents), <strong>freshness</strong> (add, update and delete without a rebuild), and scale. The search maths is now a commodity. The filters and the freshness are where products succeed or leak.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — This is the loudest, most vendor-crowded corner of RAG, so it's
-where teams over-spend attention and budget. Knowing the vector DB is a component — not
-the product — keeps you from a six-month platform bake-off for a workload Postgres
-handles.</p>
-<p><strong>What it changes in your decisions</strong> — You ask for the <em>query shape</em> (how many vectors,
-what filters, what latency, what freshness) before anyone names a vendor, and you push
-the team's effort toward ingestion and retrieval quality where it actually pays.</p>
-<p><strong>Ask yourself</strong> — <em>"How many vectors, filtered by what, at what latency — and did we
-check whether what we already run is enough before buying a new database?"</em></p>
-<p><strong>Risk if ignored</strong> — Either an expensive specialist system for a workload that didn't
-need one, or the reverse: a naïve store that can't filter by tenant and leaks one
-customer's passages into another's answers.</p>
+<p><strong>Why it matters</strong> — This is the loudest, most vendor-crowded corner of RAG. Teams over-spend attention here. Knowing the vector store is a component keeps you out of a six-month bake-off for a workload Postgres can handle.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the query shape before anyone names a vendor: how many vectors, which filters, what latency, how fresh. You push effort toward ingestion and retrieval quality, where it pays.</p>
+<p><strong>Ask your eng team</strong> — <em>"How many vectors, filtered by what, at what latency, and did we test the database we already run?"</em></p>
+<p><strong>Risk if ignored</strong> — A costly specialist system you did not need. Or the reverse: a store that cannot filter by tenant, and shows one customer's passages to another.</p>
 </blockquote>
 <h2 id="the-mental-model-a-librarian-for-meaning">The mental model: a librarian for meaning</h2>
-<p>A normal database finds rows by exact match on a key ("give me order #4411"). A vector
-database finds rows by <em>closeness in meaning</em> ("give me the 5 passages most like this
-question"). Picture a librarian who, instead of fetching the book you named, fetches the
-five books whose <em>contents</em> are most similar to a description you hand over — and does it
-without reading every book on every request, because they've pre-organized the shelves so
-similar books sit together.</p>
+<p>A normal database finds rows by exact match: "give me order 4411". A vector database finds rows by closeness: "give me the 5 passages most like this question". Picture a librarian who fetches the five books whose contents are most like your description. The librarian does not read every book each time. The shelves are arranged so that similar books sit together. That arrangement is the <strong>index</strong>.</p>
 <style>
 .dgm-vd{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
@@ -148,115 +136,153 @@ similar books sit together.</p>
 
   <div class="dgm-vd-out">
     <svg class="dgm-vd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
-    <div><h5>Top-k nearest passages · approximate</h5><p>ANN trades a tiny bit of exactness for orders-of-magnitude speed</p></div>
+    <div><h5>Top-k nearest passages · approximate</h5><p>ANN trades a little exactness for much faster search at scale</p></div>
   </div>
 </div>
 
-<p>That pre-organizing is the index; the "don't read every book" is the <em>approximate</em> in ANN.</p>
-<h2 id="exact-vs-approximate-the-one-tradeoff-that-matters">Exact vs. approximate: the one tradeoff that matters</h2>
-<p>The naïve way to find nearest neighbours is <em>brute force</em>: compare the query to every
-vector. It's perfectly accurate and perfectly unscalable — fine for 10,000 vectors,
-hopeless for 100 million. <strong>ANN indexes</strong> (you'll hear names like HNSW and IVF) organize
-the vectors so search can skip almost all of them and still usually find the true nearest —
-returning in milliseconds what brute force would take seconds to do.</p>
-<p>The price is a <strong>recall</strong> knob: an ANN index might return 95–99% of the true top results,
-missing an occasional genuine match. You tune it — more accuracy costs more speed and
-memory, and vice-versa. For product work this is a dial, not a worry: the miss rate is
-tiny, and <a href="retrieval-quality.html">reranking</a> and hybrid search cover the gap. What matters
-is knowing the dial exists, because "why did it miss that obvious document?" sometimes
-traces here.</p>
-<h2 id="what-actually-differentiates-the-options">What actually differentiates the options</h2>
-<p>The nearest-neighbour math is commoditized; these surrounding capabilities are where the
-real product decisions live:</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="exact-vs-approximate-search">Exact vs. approximate search</h3>
+<p><strong>Exact search</strong> compares the question with every vector. It is always right. It is fine for thousands of vectors and too slow for hundreds of millions.</p>
+<p><strong>ANN indexes</strong> organize the vectors so a search checks only a small part of them. Two families are common:</p>
+<ul>
+<li><strong>HNSW</strong> (hierarchical navigable small world) builds a layered graph. Each vector links to near neighbours. A search walks the graph from a coarse top layer to a fine bottom layer. pgvector's documentation says HNSW has a better speed-recall tradeoff than IVFFlat, with slower builds and more memory.</li>
+<li><strong>IVF</strong> (inverted file) groups vectors into lists around centre points. A search scans only the lists whose centres are closest to the question. More lists scanned means better recall and more work.</li>
+</ul>
+<p>Both have a dial. In pgvector it is <code>hnsw.ef_search</code> (40 by default) or <code>ivfflat.probes</code>. Turn it up for recall. Turn it down for speed.</p>
+<h3 id="the-filter-trap">The filter trap</h3>
+<p>Products need filters: this tenant, this language, current documents only. With an approximate index, many stores apply the filter <em>after</em> the index scan. pgvector's documentation gives an example. If a filter matches 10% of rows, and <code>hnsw.ef_search</code> is 40, only about 4 rows match on average. You asked for 10 results and get 4.</p>
+<p>Fixes exist. pgvector 0.8.0 added iterative index scans, which keep scanning until enough rows pass the filter. They are off by default (<code>SET hnsw.iterative_scan = strict_order</code> turns them on), and they stop at a scan limit, so a very narrow filter can still come up short. Other fixes are a partial index per common filter value, partitioning, or exact search on small tenants. Dedicated vector databases have their own filtered-search designs. Test filtered queries, not only unfiltered ones.</p>
+<h3 id="what-separates-the-options">What separates the options</h3>
 <table>
 <thead>
 <tr>
 <th>Capability</th>
-<th>Why it's a product decision</th>
+<th>Why it is a product decision</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Metadata filtering</strong></td>
-<td>Retrieve only this tenant's / this user's / non-expired / this-language passages. This is your <a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a> and permission boundary — get it wrong and you leak.</td>
+<td>Your tenant boundary and permission boundary. Get it wrong and you leak data. See <a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a>.</td>
 </tr>
 <tr>
-<td><strong>Freshness (CRUD)</strong></td>
-<td>Can you add, update, and delete vectors continuously, or must you rebuild the index? Decides whether your data can ever be current.</td>
+<td><strong>Freshness</strong></td>
+<td>Can you add, update and delete continuously, or must you rebuild? This decides whether your data can be current.</td>
 </tr>
 <tr>
-<td><strong>Scale &amp; cost</strong></td>
-<td>Millions vs. billions of vectors changes the architecture and the bill; most products are smaller than vendors imply.</td>
+<td><strong>Scale and cost</strong></td>
+<td>Millions and billions of vectors need different designs and bills. Most products are smaller than vendors suggest.</td>
 </tr>
 <tr>
 <td><strong>Hybrid support</strong></td>
-<td>Does it combine keyword + vector natively (<a href="retrieval-quality.html">lesson 5</a>), or must you bolt that on?</td>
+<td>Does it combine keyword and vector search natively, or must you build that?</td>
 </tr>
 <tr>
-<td><strong>Ops maturity</strong></td>
-<td>Backups, security, monitoring — a new distributed system is a new thing to run at 3 a.m.</td>
+<td><strong>Operations</strong></td>
+<td>Backups, security and monitoring. A new distributed system is one more thing to run at 3 a.m.</td>
 </tr>
 </tbody>
 </table>
-<p>The families you'll meet: <strong>the database you already have</strong> (Postgres with <code>pgvector</code>,
-or vector features now in most cloud databases) — one system, one ops story, great to a few
-million vectors; <strong>dedicated vector databases</strong> (Pinecone, Weaviate, Qdrant, Milvus and
-kin) — built for scale, rich filtering and hybrid, at the cost of another system to run;
-and <strong>search engines with vectors</strong> (Elasticsearch/OpenSearch) — strong when you already
-run them for keyword search and want hybrid in one place.</p>
-<h2 id="how-to-choose-without-the-vendor-fog">How to choose without the vendor fog</h2>
+<p>Three families cover most choices. <strong>The database you already run</strong>: Postgres with pgvector, or the vector features in most cloud databases. One system, one operations story. <strong>Dedicated vector databases</strong>: Pinecone, Weaviate, Qdrant, Milvus and others, built for scale, filtering and hybrid search. <strong>Search engines with vectors</strong>: Elasticsearch and OpenSearch, strong if you already run them for keyword search.</p>
+<h3 id="choosing-without-the-vendor-fog">Choosing without the vendor fog</h3>
 <ol>
-<li><strong>Write the query shape down.</strong> Vector count, filters you need (tenant, ACL, recency,
-   language), latency budget, freshness (how often data changes), and whether it's in a
-   user-facing request path. One page beats any benchmark deck.</li>
-<li><strong>Try what you already run first.</strong> If <code>pgvector</code> or your cloud DB's vector feature meets
-   the shape, stop — you avoid a whole new system. Revisit at the next order of magnitude.</li>
-<li><strong>Buy a specialist for real scale or rich hybrid/filtering</strong> you can't get otherwise —
-   deliberately, justified by the query shape, not the roadmap slide.</li>
-<li><strong>Guard the seams.</strong> Keep ingestion writing a store-neutral format and keep raw sources
-   replayable, so the vector DB is a component you can swap — the same
-   <a href="../technical-product-sense/economics-of-infrastructure.html">lock-in discipline</a> as any
-   infrastructure choice.</li>
+<li><strong>Write the query shape down.</strong> Vector count, filters, latency budget, how often data changes, and whether it is in a user-facing request. One page beats any benchmark deck.</li>
+<li><strong>Test what you already run first.</strong> If pgvector or your cloud database meets the shape, stop. Revisit at the next order of magnitude.</li>
+<li><strong>Buy a specialist for a real need.</strong> Scale, filtering or hybrid search you cannot get otherwise, justified by the query shape.</li>
+<li><strong>Keep the seams clean.</strong> Keep raw sources replayable and ingestion store-neutral, so you can swap the store. <a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a> covers this lock-in discipline.</li>
 </ol>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Recall vs. speed.</strong> Scanning more of the index finds more true neighbours and takes longer. Choose the point on the curve from your latency budget and your eval.</li>
+<li><strong>Build time vs. query time.</strong> HNSW builds slowly and queries fast. IVF builds fast and needs a good number of lists.</li>
+<li><strong>One system vs. two.</strong> Vectors in your main database join easily with business data. A separate store scales on its own and needs a sync job.</li>
+<li><strong>Filtered speed vs. filtered recall.</strong> Filtering after the scan is fast and can return too few results. Filtering first is complete and can be slower.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Bake-off theatre</strong> — months comparing vector DBs on synthetic recall while chunking and
-  retrieval quality (the real levers) go untouched.</li>
-<li><strong>Filtering as an afterthought</strong> — discovering post-launch that you can't cheaply
-  restrict retrieval to one tenant, so isolation is bolted on or, worse, missing —
-  a <a href="../ai/05-safety-multitenancy.html#safety-engineering">leakage</a> risk.</li>
-<li><strong>Rebuild-only freshness</strong> — an index that can't accept updates without a full rebuild, so
-  "current data" quietly means "data as of last Sunday."</li>
-<li><strong>Over-provisioning for imaginary scale</strong> — running a billion-vector architecture for two
-  million vectors; complexity and cost with no benefit.</li>
-<li><strong>Blaming the DB for bad answers</strong> — the vector DB returned the right neighbours; the
-  answer was wrong because the <a href="chunking-and-ingestion.html">chunks</a> or
-  <a href="retrieval-quality.html">reranking</a> were wrong. Look upstream first.</li>
+<li><strong>Bake-off theatre.</strong> Months comparing stores on synthetic recall while chunking and retrieval quality, the real levers, go untouched.</li>
+<li><strong>Filters added late.</strong> Discovering after launch that you cannot cheaply restrict retrieval to one tenant.</li>
+<li><strong>Too few filtered results.</strong> A narrow filter after an approximate scan returns 1 of 10 results, and nobody notices because the demo tenant was large.</li>
+<li><strong>Rebuild-only freshness.</strong> An index that cannot take updates, so "current data" means "data as of last Sunday".</li>
+<li><strong>Imaginary scale.</strong> A billion-vector design for two million vectors.</li>
+<li><strong>Blaming the store.</strong> The store returned the right neighbours. The answer was wrong because the <a href="chunking-and-ingestion.html">chunks</a> or the <a href="retrieval-quality.html">ranking</a> were wrong. Look upstream first.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>rag-vector-databases/code/ann_demo.py</code>. It builds a small IVF index in plain Python. k-means finds 32 centre points, and each vector joins the list of its nearest centre. A search scans only the <code>nprobe</code> closest lists.</p>
+<pre><code class="language-python">def ivf_search(pts, cents, groups, q, k, nprobe):
+    near = sorted(range(len(cents)), key=lambda j: -dot(q, cents[j]))[:nprobe]
+    cand = [i for j in near for i in groups[j]]        # only these vectors are compared
+    return exact(pts, q, k, cand), len(cand)
+</code></pre>
+<p>The real Postgres version is in <code>pgvector_demo.sql</code>. It creates an HNSW index with <code>USING hnsw (embedding vector_cosine_ops)</code>, and <code>EXPLAIN</code> confirms that the search uses it.</p>
+<h2 id="worked-example-the-recall-dial-and-the-filter-trap">Worked example: the recall dial and the filter trap</h2>
+<p><em>This example is invented. The vectors are random but clustered, from a fixed seed. The numbers come from <code>rag-vector-databases/code/ann_demo.py</code>.</em></p>
+<p>We index 5,000 vectors of 12 numbers each in 32 lists. We run 40 questions and compare the top 10 with exact search.</p>
+<table>
+<thead>
+<tr>
+<th>Lists scanned</th>
+<th>Recall@10</th>
+<th>Vectors compared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0.475</td>
+<td>3.3%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.655</td>
+<td>6.4%</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0.822</td>
+<td>12.7%</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0.955</td>
+<td>25.1%</td>
+</tr>
+<tr>
+<td>32 (all)</td>
+<td>1.000</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p>Scanning a quarter of the vectors finds 95.5% of the true top 10. Scanning everything is exact search. Real indexes on real embeddings have different numbers. The shape is the same: recall rises with the work done.</p>
+<p><strong>The filter trap.</strong> Now each vector belongs to one of 50 tenants, so each tenant owns about 2% of the rows. We search first, take the top 40, then keep one tenant's rows. On average that returns <strong>0.9</strong> results out of the 10 requested. Filtering first, then searching exactly within the tenant, returns all 10. A demo on a big tenant would never show the problem.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">Do we have the query-shape page (count, filters, latency, freshness) before any
-      vendor conversation?</li>
-<li class="task todo">Did we benchmark the database we already run on production-scale data first?</li>
-<li class="task todo">Can we filter retrieval by tenant / permission / recency — and is that enforced, not
-      optional?</li>
-<li class="task todo">Can the index take continuous adds/updates/deletes, so data stays current?</li>
-<li class="task todo">Is ingestion store-neutral and are sources replayable, so we're not married to one
-      vector DB?</li>
+<li class="task todo">Do we have the query-shape page before any vendor conversation?</li>
+<li class="task todo">Did we test the database we already run, on production-sized data?</li>
+<li class="task todo">Is the tenant and permission filter enforced on every query?</li>
+<li class="task todo">Have we tested filtered queries for small tenants, and counted the results returned?</li>
+<li class="task todo">Can the index take adds, updates and deletes continuously?</li>
+<li class="task todo">Do we know our recall at the index settings we ship?</li>
+<li class="task todo">Are sources replayable, so we can change stores?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
-<li><a href="embeddings-and-semantic-search.html">Embeddings &amp; semantic search</a> — what the vectors
-  are and how closeness is measured.</li>
-<li><a href="chunking-and-ingestion.html">Chunking &amp; ingestion</a> — where the vectors come from, and
-  where quality is really made.</li>
-<li><a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a> —
-  why metadata filtering is a safety boundary.</li>
-<li><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a>
-  — the build/buy/lock-in instincts applied here.</li>
+<li><a href="embeddings-and-semantic-search.html">Embeddings and semantic search</a> — what the vectors are.</li>
+<li><a href="building-rag-with-claude-code.html">Building RAG with Claude Code</a> — pgvector and Pinecone, step by step.</li>
+<li><a href="chunking-and-ingestion.html">Chunking and ingestion</a> — where the vectors come from.</li>
+<li><a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">Multi-tenant isolation</a> — why filters are a safety boundary.</li>
+<li><a href="../access-control/index.html">Access control</a> — who may see which documents.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>pgvector <a href="https://github.com/pgvector/pgvector/blob/v0.8.1/README.md">README</a>, release 0.8.1: HNSW and IVFFlat compared, <code>hnsw.ef_search</code> default of 40, <code>ivfflat.probes</code>, filtering applied after the index scan with the 10% and 4-rows example, iterative index scans from 0.8.0, partial indexes and partitioning. Read from the source, 2026-10.</li>
+<li>Malkov and Yashunin, <em>Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs</em>, IEEE TPAMI, 2020 (<a href="https://arxiv.org/abs/1603.09320">arxiv.org/abs/1603.09320</a>).</li>
+<li>Jégou, Douze and Schmid, <em>Product Quantization for Nearest Neighbor Search</em>, IEEE TPAMI, 2011: the inverted-file index with coarse quantization behind IVF.</li>
+<li>The vectors, tenants and every number are invented. They come from <code>rag-vector-databases/code/ann_demo.py</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="embeddings-and-semantic-search.html"><span class="lbl">← Previous</span><span class="ttl">Embeddings &amp; semantic search</span></a><a class="navcard next" href="chunking-and-ingestion.html"><span class="lbl">→ Next</span><span class="ttl">Chunking &amp; ingestion</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-librarian-for-meaning">The mental model: a librarian for meaning</a><a class="h2" href="#exact-vs-approximate-the-one-tradeoff-that-matters">Exact vs. approximate: the one tradeoff that matters</a><a class="h2" href="#what-actually-differentiates-the-options">What actually differentiates the options</a><a class="h2" href="#how-to-choose-without-the-vendor-fog">How to choose without the vendor fog</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="embeddings-and-semantic-search.html"><span class="lbl">← Previous</span><span class="ttl">Embeddings &amp; semantic search</span></a><a class="navcard next" href="chunking-and-ingestion.html"><span class="lbl">→ Next</span><span class="ttl">Chunking &amp; ingestion</span></a></div><footer class="foot"><strong>Core insight:</strong> Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-librarian-for-meaning">The mental model: a librarian for meaning</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#exact-vs-approximate-search">Exact vs. approximate search</a><a class="h3" href="#the-filter-trap">The filter trap</a><a class="h3" href="#what-separates-the-options">What separates the options</a><a class="h3" href="#choosing-without-the-vendor-fog">Choosing without the vendor fog</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-the-recall-dial-and-the-filter-trap">Worked example: the recall dial and the filter trap</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

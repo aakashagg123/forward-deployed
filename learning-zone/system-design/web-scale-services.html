@@ -41,16 +41,26 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink active" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink active" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
     <h1>Web-scale services</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
 <p>Four systems that define "internet scale." A <strong>URL shortener</strong> maps 100 million new short links per day, using a distributed ID generator and Base62 encoding. It chooses between 301 redirects (faster, cached) and 302 redirects (trackable, measurable). A <strong>web crawler</strong> systematically downloads billions of pages, using BFS traversal, a URL frontier with politeness and priority queues, and deduplication at every layer. A <strong>notification system</strong> routes 16 million daily notifications across push (APNS/FCM), SMS (Twilio), and email (SendGrid). Each channel gets its own message queue, with templating, rate limiting, and retry logic. And a <strong>news feed system</strong> serves a personalized timeline by combining fanout-on-write for normal users with fanout-on-read for celebrities, backed by a five-layer cache architecture.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the technical PM</strong></p>
@@ -554,6 +564,45 @@ Tracking: {{tracking.url}}
 <h3 id="social-graph-cache">Social graph cache</h3>
 <p>The social graph (who follows whom) is read on every fanout and every feed fetch. It changes rarely (follows/unfollows are infrequent compared to posts and reads). Storing it in a dedicated cache with long TTLs and lazy invalidation keeps fanout latency low. The data structure is typically a hash map: <code>user_id → set of follower_ids</code>.</p>
 <hr />
+<h2 id="under-the-hood">Under the hood</h2>
+<ul>
+<li><code>fanout.py</code> counts the daily cost of fan-out on write, fan-out on read and a hybrid, for an invented mix of accounts.</li>
+<li><code>stampede.py</code> counts database reads when a hot key expires, with and without request coalescing, and shows how a random jitter on the time to live spreads expiry.</li>
+<li><code>estimator.py</code> gives the Base62 and capacity numbers for the URL shortener.</li>
+</ul>
+<pre><code class="language-python">def hybrid_cost(accounts, users, threshold=1_000_000):
+    pushed = sum(f * p for _, f, p in accounts if f &lt; threshold)        # normal accounts: copy into feeds
+    pulled = users * READS_PER_USER_PER_DAY * CELEBRITIES_FOLLOWED      # celebrities: merge at read time
+    return pushed + pulled
+</code></pre>
+<h2 id="worked-example-why-feeds-are-hybrid">Worked example: why feeds are hybrid</h2>
+<p><em>The accounts and rates are invented. The numbers come from <code>fanout.py</code>, <code>stampede.py</code> and <code>estimator.py</code>.</em></p>
+<p><strong>Feed fan-out.</strong> 10 million users. 99,000 regular accounts have 200 followers and post twice a day. 900 popular accounts have 50,000 followers. 100 celebrities have 20 million followers.</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Operations per day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fan-out on write for everyone</td>
+<td>about 10.2 billion feed writes, and 98% of them come from the 100 celebrities</td>
+</tr>
+<tr>
+<td>Fan-out on read for everyone</td>
+<td>about 60 billion post lookups</td>
+</tr>
+<tr>
+<td>Hybrid: push for normal accounts, pull for celebrities</td>
+<td>about 1.7 billion</td>
+</tr>
+</tbody>
+</table>
+<p>The hybrid costs a sixth of pure push and a thirtieth of pure pull.</p>
+<p><strong>Cache stampede.</strong> A hot key expires while 1,000 requests are waiting. Naively that is 1,000 database reads. With request coalescing, one request refills the cache and the rest wait: 1 read. A second trap is synchronized expiry. 5,000 keys with the same 600-second TTL all expire in the same second. With 20% random jitter the busiest second has 59.</p>
+<p><strong>URL shortener.</strong> 7 Base62 characters give about 3.52 trillion codes. At 100 million new links a day, that lasts about 96 years.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>URL shortener hash collision</strong> — If using hash+collision resolution, high write rates increase collision frequency, degrading write latency. Monitor collision rate; switch to ID-based encoding if it exceeds 1%.</li>
@@ -584,9 +633,16 @@ Tracking: {{tracking.url}}
 <li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — the estimation and scaling techniques used to size these systems</li>
 <li><a href="real-time-systems.html">Real-time systems</a> — chat and autocomplete systems that share the queue-and-worker pattern with notifications</li>
 <li><a href="data-infrastructure.html">Data infrastructure</a> — distributed message queues that underpin the notification and feed architectures</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Nathan Bronson et al., <em>TAO: Facebook's Distributed Data Store for the Social Graph</em>, USENIX ATC 2013: the social graph behind feeds.</li>
+<li>Stripe API documentation, "Idempotent requests", stripe.com/docs/api/idempotent_requests: idempotency keys.</li>
+<li>Alex Xu, <em>System Design Interview</em>, volume 1: URL shortener, web crawler, notification system and news feed chapters.</li>
+<li>These sources were not re-opened during this revision, and the lesson's fact-check is pending. Numbers in the worked examples are invented or estimated, and come from the code in <code>system-design/code/</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="core-building-blocks.html"><span class="lbl">← Previous</span><span class="ttl">Core building blocks</span></a><a class="navcard next" href="real-time-systems.html"><span class="lbl">→ Next</span><span class="ttl">Real-time systems</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#url-shortener">URL shortener</a><a class="h3" href="#the-encoding-decision">The encoding decision</a><a class="h3" href="#the-redirect-decision">The redirect decision</a><a class="h3" href="#system-architecture">System architecture</a><a class="h3" href="#storage-estimation">Storage estimation</a><a class="h2" href="#web-crawler">Web crawler</a><a class="h3" href="#traversal-strategy">Traversal strategy</a><a class="h3" href="#url-frontier-architecture">URL frontier architecture</a><a class="h3" href="#priority">Priority</a><a class="h3" href="#politeness">Politeness</a><a class="h3" href="#deduplication">Deduplication</a><a class="h3" href="#robustness">Robustness</a><a class="h2" href="#notification-system">Notification system</a><a class="h3" href="#provider-landscape">Provider landscape</a><a class="h3" href="#architecture-per-channel-message-queues">Architecture: per-channel message queues</a><a class="h3" href="#notification-templates">Notification templates</a><a class="h3" href="#rate-limiting">Rate limiting</a><a class="h3" href="#retry-and-failure-handling">Retry and failure handling</a><a class="h3" href="#event-tracking">Event tracking</a><a class="h2" href="#news-feed-system">News feed system</a><a class="h3" href="#the-fanout-problem">The fanout problem</a><a class="h3" href="#feed-publishing-flow">Feed publishing flow</a><a class="h3" href="#feed-retrieval-flow">Feed retrieval flow</a><a class="h3" href="#the-five-layer-cache">The five-layer cache</a><a class="h3" href="#social-graph-cache">Social graph cache</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="distributed-data-and-consistency.html"><span class="lbl">← Previous</span><span class="ttl">Distributed data and consistency</span></a><a class="navcard next" href="real-time-systems.html"><span class="lbl">→ Next</span><span class="ttl">Real-time systems</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#url-shortener">URL shortener</a><a class="h3" href="#the-encoding-decision">The encoding decision</a><a class="h3" href="#the-redirect-decision">The redirect decision</a><a class="h3" href="#system-architecture">System architecture</a><a class="h3" href="#storage-estimation">Storage estimation</a><a class="h2" href="#web-crawler">Web crawler</a><a class="h3" href="#traversal-strategy">Traversal strategy</a><a class="h3" href="#url-frontier-architecture">URL frontier architecture</a><a class="h3" href="#priority">Priority</a><a class="h3" href="#politeness">Politeness</a><a class="h3" href="#deduplication">Deduplication</a><a class="h3" href="#robustness">Robustness</a><a class="h2" href="#notification-system">Notification system</a><a class="h3" href="#provider-landscape">Provider landscape</a><a class="h3" href="#architecture-per-channel-message-queues">Architecture: per-channel message queues</a><a class="h3" href="#notification-templates">Notification templates</a><a class="h3" href="#rate-limiting">Rate limiting</a><a class="h3" href="#retry-and-failure-handling">Retry and failure handling</a><a class="h3" href="#event-tracking">Event tracking</a><a class="h2" href="#news-feed-system">News feed system</a><a class="h3" href="#the-fanout-problem">The fanout problem</a><a class="h3" href="#feed-publishing-flow">Feed publishing flow</a><a class="h3" href="#feed-retrieval-flow">Feed retrieval flow</a><a class="h3" href="#the-five-layer-cache">The five-layer cache</a><a class="h3" href="#social-graph-cache">Social graph cache</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-why-feeds-are-hybrid">Worked example: why feeds are hybrid</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

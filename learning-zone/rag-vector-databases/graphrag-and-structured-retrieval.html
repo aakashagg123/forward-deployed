@@ -41,44 +41,37 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="why-rag.html">1 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">2 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">3 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">4 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">5 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">6 · RAG vs. long-context vs. fine-tuning</a><a class="modlink active" href="graphrag-and-structured-retrieval.html">7 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-to-use-rag.html">1 · When to use RAG, and when not to</a><a class="modlink" href="why-rag.html">2 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">3 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">4 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">5 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">6 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">7 · RAG vs. long-context vs. fine-tuning</a><a class="modlink active" href="graphrag-and-structured-retrieval.html">8 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="building-rag-with-claude-code.html">9 · Building RAG with Claude Code, pgvector and Pinecone</a><a class="modlink" href="rag-terms.html">10 · RAG terms, explained</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 07</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 08</span>
     <h1>Beyond flat RAG: GraphRAG &amp; structured retrieval</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
-<p>Plain ("flat") RAG retrieves the text chunks most <em>similar</em> to a question — which is
-perfect when the answer sits in a passage somewhere, and useless when the answer is a
-<em>connection</em> no single passage states, or a <em>summary</em> of the whole corpus. Two question
-types break flat RAG structurally: <strong>multi-hop</strong> ("which of our customers are exposed to
-this supplier's recall?" — the answer is a chain across documents, not any one of them) and
-<strong>global</strong> ("what are the main themes across this quarter's tickets?" — the answer is an
-aggregate, not a retrievable passage). <strong>GraphRAG</strong> and structured retrieval fix this by
-retrieving <em>structure</em> — a subgraph of connected entities, pre-built community summaries, or
-the result of an actual database query — instead of, or alongside, similar text. The
-product-leader takeaway is a discipline, not a technology purchase: know <em>which</em> questions
-flat RAG can't answer, adopt structure only when your roadmap actually has those questions,
-and never let a heavier pipeline in for a workload plain vector search already handles.</p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Plain, or "flat", RAG retrieves the chunks most <em>similar</em> to a question. That works when the answer sits in a passage. It fails when the answer is a <em>connection</em> that no single passage states, or a <em>summary</em> of the whole corpus, or a <em>count</em>.</p>
+<p>Three question shapes break flat RAG. <strong>Multi-hop</strong>: "which customers are exposed to this supplier's recall?" The answer is a chain across documents. <strong>Global</strong>: "what are the main themes in this quarter's tickets?" The answer is about the corpus, not in it. <strong>Quantitative</strong>: "how many contracts renew in Q3?" The answer is computed from rows, and top-k retrieval can never count past k.</p>
+<p><strong>GraphRAG</strong> and structured retrieval fix this by retrieving <em>structure</em> instead of similar text. That can be a set of connected entities, pre-built summaries, or the result of a real database query. The discipline is to know which questions flat RAG cannot answer, and to add structure only when your roadmap has those questions.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — Teams hit a wall where "our RAG just can't answer these questions"
-and either give up or over-build. Knowing the <em>shape</em> of question that flat RAG can't do
-tells you exactly when to invest in structure — and when the acronym is just fashion.</p>
-<p><strong>What it changes in your decisions</strong> — You classify the questions your feature must
-answer (passage-level vs. multi-hop vs. global) before choosing a retrieval architecture,
-and you let <em>measured</em> flat-RAG failures justify the step up, not a vendor deck.</p>
-<p><strong>Ask yourself</strong> — <em>"Are the questions we're failing on actually about connections or
-whole-corpus summaries — or is our flat RAG just tuned badly?"</em></p>
-<p><strong>Risk if ignored</strong> — Either a feature that plateaus because it can't do the questions
-that matter most, or an expensive graph-indexing pipeline built for questions that were
-95% simple passage lookups.</p>
+<p><strong>Why it matters</strong> — Teams hit a wall where "our RAG can't answer these questions". They either give up or over-build. The shape of the failing questions tells you when structure is worth it.</p>
+<p><strong>What it changes in your decisions</strong> — You sort your questions into passage, multi-hop, global and quantitative before choosing an architecture. You let measured failures justify the step up, not a vendor deck.</p>
+<p><strong>Ask your eng team</strong> — <em>"Are the questions we fail on about connections or whole-corpus summaries, or is our flat RAG just tuned badly?"</em></p>
+<p><strong>Risk if ignored</strong> — A feature that stalls on the questions that matter most. Or an expensive graph pipeline built for questions that were mostly simple lookups.</p>
 </blockquote>
-<h2 id="the-mental-model-passages-chains-and-summaries">The mental model: passages, chains, and summaries</h2>
-<p>Three question shapes, three retrieval needs:</p>
+<h2 id="the-mental-model-passages-chains-and-summaries">The mental model: passages, chains and summaries</h2>
 <style>
 .dgm-gr{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
@@ -163,94 +156,86 @@ that matter most, or an expensive graph-indexing pipeline built for questions th
   </div>
 </div>
 
-<p>Flat RAG is the right and cheapest tool for the first shape — most questions. The other two
-are where you graduate to structure.</p>
-<h2 id="why-flat-rag-breaks-on-these">Why flat RAG breaks on these</h2>
+<p>Flat RAG is the right and cheapest tool for the first shape, which covers most questions. The others are where structure earns its cost.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="why-flat-rag-breaks">Why flat RAG breaks</h3>
 <ul>
-<li><strong>Multi-hop.</strong> The answer requires <em>joining</em> facts across several documents:
-  customer → contract → product → component → supplier. No single chunk contains the chain,
-  so similarity search — which fetches chunks that each resemble the question — retrieves
-  fragments that never connect. You can sometimes brute-force it with clever prompting and
-  many retrieval rounds, but it's fragile and expensive.</li>
-<li><strong>Global.</strong> The answer is <em>about the corpus</em>, not <em>in it</em>: "what are the recurring
-  complaints?", "how has our policy drifted over time?" There's no passage to retrieve
-  because the answer is a synthesis over thousands of passages. Similarity search returns a
-  handful of chunks and the model summarizes <em>those</em>, giving a confident answer based on a
-  biased sliver.</li>
+<li><strong>Multi-hop.</strong> The answer joins facts across documents: supplier, then part, then product, then customer. No chunk holds the whole chain. Similarity search fetches chunks that each resemble the question, and they rarely connect. Many rounds of retrieval can sometimes force it, but that is fragile and slow.</li>
+<li><strong>Global.</strong> "What are the recurring complaints?" has no passage to retrieve. The answer is a synthesis over thousands of passages. Flat retrieval returns a handful, and the model summarizes those. The answer sounds confident and rests on a small, biased sample.</li>
+<li><strong>Quantitative.</strong> "How many?" and "what is the total?" need every matching row. Top-k returns k at most.</li>
 </ul>
-<h2 id="the-structured-approaches">The structured approaches</h2>
+<h3 id="the-structured-approaches">The structured approaches</h3>
 <ul>
-<li><strong>GraphRAG.</strong> Build a <a href="../knowledge-graphs/what-is-a-knowledge-graph.html">knowledge graph</a>
-  from your corpus (entities and typed relationships), then retrieve <em>connected subgraphs</em>
-  for multi-hop questions, and <em>pre-computed community summaries</em> for global ones.
-  Microsoft's 2024 GraphRAG work popularized the pattern; it answers the two hard shapes
-  with citations. The cost is a real indexing stage — extraction, resolution, summarization
-  — that must be <a href="../knowledge-graphs/governance-quality-and-trust.html">kept fresh</a>, so it
-  earns its place only when those questions are on the roadmap.</li>
-<li><strong>Text-to-query (structured data).</strong> When the real answer lives in a database ("how many
-  contracts renew in Q3?"), don't embed and retrieve — have the model
-  <a href="../knowledge-graphs/knowledge-graphs-and-llms.html">write a query</a> (SQL/Cypher) and let the
-  database compute the exact answer. Retrieval-by-similarity is the wrong tool for precise
-  aggregates; the database is the right one.</li>
-<li><strong>Hybrid, in practice.</strong> Most mature systems keep flat RAG for the common passage-level
-  questions and route the multi-hop/global/quantitative ones to graph or query retrieval —
-  a router in front of several retrievers, not one architecture forced to do everything.</li>
+<li><strong>GraphRAG.</strong> Build a <a href="../knowledge-graphs/what-is-a-knowledge-graph.html">knowledge graph</a> from your corpus: entities and typed relations. For multi-hop questions, retrieve connected subgraphs. For global questions, use summaries written in advance for each cluster of related entities. Microsoft Research's 2024 GraphRAG paper by Edge and colleagues built this for global questions over a whole corpus. The cost is a real indexing stage, with extraction, entity matching and summaries, that must be <a href="../knowledge-graphs/governance-quality-and-trust.html">kept fresh</a>.</li>
+<li><strong>Text-to-query.</strong> When the answer lives in a database, do not embed and retrieve. Have the model <a href="../knowledge-graphs/knowledge-graphs-and-llms.html">write a query</a>, in SQL or Cypher, and let the database compute the exact answer.</li>
+<li><strong>A router.</strong> Mature systems keep flat RAG for passage questions, and send multi-hop, global and quantitative questions to a graph or a query. That is several retrievers behind a router, not one architecture forced to do everything.</li>
 </ul>
-<p>The full treatment of graphs and their marriage with LLMs is the
-<a href="../knowledge-graphs/index.html">Knowledge graphs</a> track — this lesson is the bridge from
-RAG to it.</p>
-<h2 id="how-to-decide">How to decide</h2>
+<p>The <a href="../knowledge-graphs/index.html">knowledge graphs</a> track covers graphs and their use with language models in full.</p>
+<h3 id="how-to-decide">How to decide</h3>
 <ol>
-<li><strong>Classify your questions.</strong> Sample the real (or expected) questions and bucket them:
-   passage-level, multi-hop, global, quantitative. The mix tells you what you need.</li>
-<li><strong>Start flat, measure the failures.</strong> Ship plain <a href="retrieval-quality.html">hybrid RAG</a>,
-   and watch <em>which</em> questions it fails — with an <a href="../ai/03-rag.html#retrieval-evals">eval set</a>,
-   not vibes. If the failures cluster in multi-hop/global, you have your justification.</li>
-<li><strong>Add structure surgically.</strong> Route only the question types that need it to graph or
-   query retrieval; keep flat RAG for the majority. Don't replace a working pipeline
-   wholesale.</li>
-<li><strong>Cost the freshness.</strong> A graph or structured index is a second thing to keep current;
-   budget that before committing.</li>
+<li><strong>Sort your questions.</strong> Take a sample of real or expected questions. Label each one: passage, multi-hop, global or quantitative.</li>
+<li><strong>Start flat and measure.</strong> Ship hybrid RAG with an <a href="retrieval-quality.html">eval set</a>. Watch which question types fail.</li>
+<li><strong>Add structure where it fails.</strong> Route only those question types to a graph or a query. Keep flat RAG for the rest.</li>
+<li><strong>Cost the freshness.</strong> A graph or structured index is a second thing to keep current. Budget for it first.</li>
 </ol>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Coverage vs. cost.</strong> A graph answers multi-hop and global questions. It adds an extraction pipeline, entity matching and a second index to keep fresh.</li>
+<li><strong>Exact vs. approximate.</strong> A database query returns the exact count. Retrieval returns similar text. Choose by the question.</li>
+<li><strong>One architecture vs. a router.</strong> A router gives each question the right tool. It also adds a classification step that can route wrongly.</li>
+</ul>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>GraphRAG as fashion</strong> — building an expensive graph-indexing pipeline for a workload
-  that was overwhelmingly simple passage lookups; complexity and cost with no payoff.</li>
-<li><strong>Flat RAG on multi-hop forever</strong> — jamming ever-more chunks into the prompt to force
-  connections similarity can't make, instead of retrieving structure.</li>
-<li><strong>Similarity for aggregates</strong> — answering "how many / what's the trend" from a handful of
-  retrieved chunks instead of querying the source of truth; confidently wrong numbers.</li>
-<li><strong>All-or-nothing architecture</strong> — replacing flat RAG entirely with a graph, losing the
-  cheap, excellent tool for the 90% of questions that were passage-level.</li>
-<li><strong>Unmeasured escalation</strong> — jumping to GraphRAG on a hunch without an eval showing flat
-  RAG actually fails the questions that matter.</li>
+<li><strong>GraphRAG as fashion.</strong> A graph pipeline for a workload that was mostly simple lookups.</li>
+<li><strong>Flat RAG on multi-hop forever.</strong> Adding more and more chunks to the prompt to force connections that similarity cannot make.</li>
+<li><strong>Similarity for aggregates.</strong> Answering "how many?" from a few chunks instead of the source of truth. The numbers are confident and wrong.</li>
+<li><strong>All or nothing.</strong> Replacing flat RAG with a graph, and losing the cheap, good tool for most questions.</li>
+<li><strong>Unmeasured escalation.</strong> Moving to GraphRAG on a hunch, with no eval that shows flat RAG fails.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>rag-vector-databases/code/graph_demo.py</code>. It stores 13 facts as short chunks, one fact each, the way an ingestion pipeline would. Suppliers make parts, parts go into products, and customers buy products. A graph walk follows the links three steps.</p>
+<pre><code class="language-python">def walk(start):
+    parts = {o for s, r, o in FACTS if s == start and r == &quot;makes&quot;}
+    products = {o for s, r, o in FACTS if s in parts and r == &quot;goes into&quot;}
+    customers = {s for s, r, o in FACTS if o in products and r == &quot;buys&quot;}
+    return customers
+</code></pre>
+<p>The same file runs the multi-hop question and a count through the hybrid search from <code>mini_rag.py</code>, and compares.</p>
+<h2 id="worked-example-a-supplier-recall-and-a-renewal-count">Worked example: a supplier recall and a renewal count</h2>
+<p><em>This example is invented. The companies are made up. The numbers come from <code>rag-vector-databases/code/graph_demo.py</code>.</em></p>
+<p><strong>The multi-hop question.</strong> "Which customers are exposed to the recall at Kestrel Metals?" Hybrid search returns the top 5 chunks:</p>
+<ul>
+<li>Kestrel Metals makes bracket B-2.</li>
+<li>Kestrel Metals makes hinge H-7.</li>
+<li>Northgate School buys Atlas shelf.</li>
+<li>The contract with Northgate School renews in Q1.</li>
+<li>bracket B-2 goes into Atlas shelf.</li>
+</ul>
+<p>Those chunks name one exposed customer, Northgate School. The graph walk follows the chain: two parts, then two products (Atlas desk and Atlas shelf), then three customers: Brightwell Hotels, Harbor Clinic and Northgate School. Flat retrieval found one of the three. It missed the two customers that buy the Atlas desk, because the "hinge H-7 goes into Atlas desk" link was not in the top 5.</p>
+<p><strong>The count.</strong> "How many contracts renew in Q3?" The top 3 chunks all mention Q3, so a model reading them would say three. A count over the table gives five. Top-k retrieval can never count past k. A database query gets it right every time.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">Have we classified our real questions into passage-level / multi-hop / global /
-      quantitative?</li>
-<li class="task todo">Is plain hybrid RAG in place and <em>measured</em>, so we know which question types actually
-      fail?</li>
-<li class="task todo">For multi-hop/global needs, have we scoped graph retrieval — including the freshness
-      cost of a second index?</li>
-<li class="task todo">For precise aggregates, are we using text-to-query against the source of truth rather
-      than similarity retrieval?</li>
-<li class="task todo">Do we route by question type (keep flat RAG for the majority) rather than forcing one
-      architecture to do everything?</li>
+<li class="task todo">Have we sorted our real questions into passage, multi-hop, global and quantitative?</li>
+<li class="task todo">Is hybrid RAG in place and measured, so we know which types fail?</li>
+<li class="task todo">Do counts and totals go to a database query, not to retrieval?</li>
+<li class="task todo">For multi-hop or global needs, have we scoped a graph, including the cost of keeping it fresh?</li>
+<li class="task todo">Do we route by question type, keeping flat RAG for most questions?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
-<li><a href="retrieval-quality.html">Retrieval quality</a> — get flat RAG genuinely good before adding
-  structure.</li>
-<li><a href="../knowledge-graphs/knowledge-graphs-and-llms.html">Knowledge graphs &amp; LLMs</a> — GraphRAG and
-  text-to-query in depth.</li>
-<li><a href="../knowledge-graphs/what-is-a-knowledge-graph.html">What is a knowledge graph?</a> — the
-  structure GraphRAG retrieves over.</li>
-<li><a href="rag-vs-long-context-vs-finetuning.html">RAG vs. long-context vs. fine-tuning</a> — the other
-  axis of the retrieval decision.</li>
+<li><a href="when-to-use-rag.html">When to use RAG, and when not to</a> — counts and connections in the decision tree.</li>
+<li><a href="retrieval-quality.html">Retrieval quality</a> — make flat RAG good before adding structure.</li>
+<li><a href="../knowledge-graphs/knowledge-graphs-and-llms.html">Knowledge graphs and LLMs</a> — GraphRAG and text-to-query in depth.</li>
+<li><a href="../knowledge-graphs/what-is-a-knowledge-graph.html">What is a knowledge graph?</a> — the structure GraphRAG retrieves over.</li>
+<li><a href="rag-vs-long-context-vs-finetuning.html">RAG vs. long context vs. fine-tuning</a> — the other axis of the decision.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Edge et al., <em>From Local to Global: A Graph RAG Approach to Query-Focused Summarization</em>, Microsoft Research, 2024 (<a href="https://arxiv.org/abs/2404.16130">arxiv.org/abs/2404.16130</a>): a graph index with community summaries, for global questions over a whole corpus.</li>
+<li>The suppliers, customers and every number are invented. They come from <code>rag-vector-databases/code/graph_demo.py</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="rag-vs-long-context-vs-finetuning.html"><span class="lbl">← Previous</span><span class="ttl">RAG vs. long-context vs. fine-tuning</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-passages-chains-and-summaries">The mental model: passages, chains, and summaries</a><a class="h2" href="#why-flat-rag-breaks-on-these">Why flat RAG breaks on these</a><a class="h2" href="#the-structured-approaches">The structured approaches</a><a class="h2" href="#how-to-decide">How to decide</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="rag-vs-long-context-vs-finetuning.html"><span class="lbl">← Previous</span><span class="ttl">RAG vs. long-context vs. fine-tuning</span></a><a class="navcard next" href="building-rag-with-claude-code.html"><span class="lbl">→ Next</span><span class="ttl">Building RAG with Claude Code, pgvector and Pinecone</span></a></div><footer class="foot"><strong>Core insight:</strong> Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-passages-chains-and-summaries">The mental model: passages, chains and summaries</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#why-flat-rag-breaks">Why flat RAG breaks</a><a class="h3" href="#the-structured-approaches">The structured approaches</a><a class="h3" href="#how-to-decide">How to decide</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-supplier-recall-and-a-renewal-count">Worked example: a supplier recall and a renewal count</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>How a model learns — Visual explainers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Visual explainers</span><em>how it works</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="inside-one-llm-request.html">1 · Inside one LLM request</a><a class="modlink active" href="how-a-model-learns.html">2 · How a model learns</a><a class="modlink" href="one-token-through-a-transformer.html">3 · One token through a transformer</a><a class="modlink" href="how-an-image-model-draws.html">4 · How an image model draws</a><a class="modlink" href="one-agent-run.html">5 · One agent run, step by step</a><a class="modlink" href="anatomy-of-a-guardrailed-request.html">6 · Anatomy of a guardrailed request</a><a class="modlink" href="one-ai-feature-from-idea-to-launch.html">7 · One AI feature, from idea to launch</a><a class="modlink" href="one-model-change.html">8 · One model change: cost, speed and quality</a><a class="modlink" href="one-ai-feature-p-and-l.html">9 · From one AI task to gross margin</a><a class="modlink" href="one-eval-regression-traced.html">10 · One eval regression, traced to its cause</a><a class="modlink" href="one-user-story-to-agent-spec.html">11 · One user story becomes an agent spec</a><a class="modlink" href="one-ai-incident-review.html">12 · One AI incident, from alert to postmortem</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Explainer 02</span>
+    <h1>How a model learns</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: medium</em></p>
+<h2 id="in-one-minute">In one minute</h2>
+<p>A language model is trained by playing one game, over and over: guess the next word. Each wrong guess nudges millions of numbers a little. After an enormous number of nudges, the guesses become good. This page follows one training example, <strong>"The cat sat on the ___"</strong>, from raw text to a weight update. It then shows how the same push, in smaller doses, turns a word predictor into an assistant.</p>
+<p>You will meet the <strong>loss</strong>, the <strong>gradient</strong>, the <strong>learning rate</strong> and three kinds of training: pretraining, supervised tuning and preference tuning.</p>
+<p><em>Reading time: about 10 minutes. The probabilities are illustrative. The tuning numbers come from the toy model in this site's fine-tuning module.</em></p>
+<h2 id="1-raw-text">1 · Raw text</h2>
+<p>Training starts with text: books, web pages, code and more. Nobody labels it. The text itself is the teacher, because every sentence contains its own answers. In "The cat sat on the mat", the word after "on the" is "mat".</p>
+<p>This is called <strong>self-supervised</strong> learning. It scales, because the world has far more text than anyone could label by hand.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 1</span><h4>One sentence holds many questions</h4><p class="xf-sub">Every position is a question and the next word is the answer.</p><div class="xf-toks"><div class="xf-tok"><i class="xf-info" style="background:var(--color-background-info-surface)">The</i></div><div class="xf-tok"><i class="xf-discovery" style="background:var(--color-background-discovery-surface)"> cat</i></div><div class="xf-tok"><i class="xf-success" style="background:var(--color-background-success-surface)"> sat</i></div><div class="xf-tok"><i class="xf-caution" style="background:var(--color-background-caution-surface)"> on</i></div><div class="xf-tok"><i class="xf-warning" style="background:var(--color-background-warning-surface)"> the</i></div><div class="xf-tok"><i class="xf-danger" style="background:var(--color-background-danger-surface)"> mat</i></div></div><p class="xf-note">No labels needed: the text is its own teacher.</p></div>
+
+<p><strong>Remember:</strong> the data supplies its own answers.</p>
+<h2 id="2-an-example-and-a-target">2 · An example and a target</h2>
+<p>Training cuts the text into tokens and makes examples. The <strong>input</strong> is the words so far. The <strong>target</strong> is the word that really came next. One sentence makes many examples, one for each position.</p>
+<p>The model never sees the answer when it guesses. It sees "The cat sat on the" and must say what comes next. Then it is told the truth.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 2</span><h4>One training example</h4><p class="xf-sub">Input and a hidden target.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Input</b><span>The cat sat on the</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Model</b><span>guesses the next word</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Target</b><span>mat (kept hidden until after the guess)</span></div></div><p class="xf-note">One sentence makes one example per position.</p></div>
+
+<p><strong>Remember:</strong> each example is a question with a hidden, known answer.</p>
+<h2 id="3-a-guess">3 · A guess</h2>
+<p>For the input, the model gives a probability to every word it knows. These are its <strong>guess</strong>. At the start of training, the numbers are random, so the guess is poor. Later, "mat", "floor" and "sofa" get high odds and "carburetor" gets almost none.</p>
+<p>In our example the model gives the true word, "mat", a probability of 0.30. That is not bad, and not good either.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 3</span><h4>The model's guess</h4><p class="xf-sub">Illustrative probabilities for the word after "The cat sat on the".</p><div class="xf-bars"><div class="xf-lbl">floor</div><div class="xf-fill"><div style="width:60.0%;background:var(--color-background-info-solid)"></div></div><div class="xf-val">0.24</div><div class="xf-lbl">mat</div><div class="xf-fill"><div style="width:75.0%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">0.30</div><div class="xf-lbl">sofa</div><div class="xf-fill"><div style="width:35.0%;background:var(--color-background-discovery-solid)"></div></div><div class="xf-val">0.14</div><div class="xf-lbl">bed</div><div class="xf-fill"><div style="width:25.0%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">0.10</div><div class="xf-lbl">others</div><div class="xf-fill"><div style="width:55.0%;background:var(--color-background-warning-solid)"></div></div><div class="xf-val">0.22</div></div><p class="xf-note">The true word, mat, gets 0.30.</p></div>
+
+<p><strong>Remember:</strong> the model never says one word. It spreads probability over all of them.</p>
+<h2 id="4-the-loss">4 · The loss</h2>
+<p>The <strong>loss</strong> is a number that says how wrong the guess was. For language models it is the negative logarithm of the probability given to the true word. If the model gave "mat" 0.90, the loss is small. If it gave 0.02, the loss is large.</p>
+<p>A probability of 0.30 gives a loss of about 1.20. The goal of training is to push the average loss down, over all examples.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 4</span><h4>Loss is the surprise at the true word</h4><p class="xf-sub">Loss = minus the natural log of the probability given to the true word.</p><div class="xf-bars"><div class="xf-lbl">p = 0.90</div><div class="xf-fill"><div style="width:2.5%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">0.11</div><div class="xf-lbl">p = 0.30</div><div class="xf-fill"><div style="width:28.7%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">1.20</div><div class="xf-lbl">p = 0.02</div><div class="xf-fill"><div style="width:93.1%;background:var(--color-background-danger-solid)"></div></div><div class="xf-val">3.91</div></div><p class="xf-note">A confident right guess gives a small loss. A near-miss gives a large one.</p></div>
+
+<p><strong>Remember:</strong> a lower loss means the model was less surprised by the real word.</p>
+<h2 id="5-who-to-blame">5 · Who to blame</h2>
+<p>The model has millions or billions of numbers, called <strong>weights</strong>. Which ones caused the poor guess? <strong>Backpropagation</strong> works that out. It runs the model backwards and gives each weight a <strong>gradient</strong>: a hint about which way to change it, and by how much, to lower the loss.</p>
+<p>You can picture it as a huge set of dials. The gradient says, for each dial, "turn left a little" or "turn right a little".</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 5</span><h4>Backpropagation assigns a direction to every weight</h4><p class="xf-sub">Millions of dials, each told which way to turn.</p><div class="xf-flow"><div class="xf-box xf-danger"><b>Loss</b><span>1.20</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Run the model backwards</b><span>backpropagation</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-info"><b>Gradient per weight</b><span>turn up a little, turn down a little</span></div></div><p class="xf-note">A gradient is a direction, not an answer.</p></div>
+
+<p><strong>Remember:</strong> the gradient is a direction for every weight, not an answer.</p>
+<h2 id="6-a-small-step">6 · A small step</h2>
+<p>Training moves each weight a small step in the direction that lowers the loss. The size of the step is the <strong>learning rate</strong>. Too small, and training crawls. Too large, and it overshoots and the loss blows up. A good rate makes steady progress.</p>
+<p>After one step, the probability of "mat" might rise from 0.30 to 0.34, and the loss falls from about 1.20 to 1.08. One step helps a little. The power comes from the number of steps.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 6</span><h4>One small step</h4><p class="xf-sub">Probability of the true word, before and after one update (illustrative).</p><div class="xf-bars"><div class="xf-lbl">before</div><div class="xf-fill"><div style="width:60.0%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">0.30</div><div class="xf-lbl">after one step</div><div class="xf-fill"><div style="width:68.0%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">0.34</div></div><p class="xf-note">Loss falls from 1.20 to 1.08. One step helps a little.</p></div>
+
+<p><strong>Remember:</strong> learning is many small, safe steps, not one clever jump.</p>
+<h2 id="7-repeat-a-very-large-number-of-times">7 · Repeat, a very large number of times</h2>
+<p>Training does this loop on <strong>batches</strong> of examples, again and again: guess, measure the loss, find the gradients, take a step. Over an enormous amount of text, the model has to get good at grammar, facts, style and reasoning patterns, because those all help predict the next word.</p>
+<p>This stage is <strong>pretraining</strong>. It is the expensive one. It produces a <strong>base model</strong>: a very capable text continuer that does not yet behave like an assistant.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 7</span><h4>The training loop</h4><p class="xf-sub">Repeated on batch after batch of text.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Batch</b><span>many examples</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Guess</b><span>probabilities</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Loss</b><span>how surprised</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Gradients</b><span>which way</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Update</b><span>small step</span></div></div><p class="xf-note">Pretraining repeats this loop an enormous number of times.</p></div>
+
+<p><strong>Remember:</strong> pretraining builds the abilities. It does not build the manners.</p>
+<h2 id="8-from-predictor-to-assistant">8 · From predictor to assistant</h2>
+<p>Ask a base model "What is a mortgage rate?" and it may continue with more questions, as if it were a quiz sheet. To make it answer, a second stage shows it examples of good answers and trains on those. This is <strong>supervised fine-tuning</strong>.</p>
+<p>It works with far less data than pretraining. In the toy model in this site's fine-tuning module, the chance of the wanted answer rose from 0.083 to 0.987. It also has a cost. The loss on ordinary text rose from 1.103 to 2.280, so general ability slipped.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 8</span><h4>A base model and a tuned assistant</h4><p class="xf-sub">Numbers from the toy model in this site's fine-tuning module.</p><div class="xf-cmp"><div class="xf-box xf-info"><b>Base model</b><ul><li>Continues text</li><li>Chance of the wanted answer: 0.083</li><li>Loss on ordinary text: 1.103</li></ul></div><div class="xf-box xf-success"><b>After supervised tuning</b><ul><li>Answers the question</li><li>Chance of the wanted answer: 0.987</li><li>Loss on ordinary text: 2.280</li></ul></div></div><p class="xf-note">The push changed behaviour a lot. It also hurt other things.</p></div>
+
+<p><strong>Remember:</strong> a small push can change behaviour a lot, and can break other things.</p>
+<h2 id="9-learning-what-people-prefer">9 · Learning what people prefer</h2>
+<p>Instructions are not enough. People also prefer some answers to others: clearer, safer, less rambling. <strong>Preference tuning</strong> shows the model pairs of answers, one better than the other, and nudges it toward the better one. Methods include reinforcement learning from human feedback and direct preference optimization.</p>
+<p>The InstructGPT paper reported that people preferred outputs from a tuned 1.3-billion-parameter model to those of the 175-billion-parameter GPT-3, despite the size gap.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 9</span><h4>Preference tuning</h4><p class="xf-sub">Pairs of answers, one better than the other.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Two answers</b><span>to the same prompt</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>A preference</b><span>from people or a model</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Nudge</b><span>toward the preferred answer</span></div></div><p class="xf-note">InstructGPT: a tuned 1.3B model was preferred to the 175B GPT-3.</p></div>
+
+<p><strong>Remember:</strong> preference tuning shapes taste. It can also be over-optimized.</p>
+<h2 id="10-what-training-cannot-fix">10 · What training cannot fix</h2>
+<p>Training is good at behaviour: format, tone, style and how to follow instructions. It is poor at adding new facts reliably, at knowing what happened yesterday and at guarantees. A fact that was rare in the training text may not stick. A fact that changed will be stale.</p>
+<p>That is why products add retrieval for fresh facts, tools for exact work and checks for safety. Tuning also forgets: a push that teaches one thing can erode another.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 10</span><h4>What training does and does not do well</h4><div class="xf-cmp"><div class="xf-box xf-success"><b>Good at</b><ul><li>Format and tone</li><li>Following instructions</li><li>Narrow, repeatable behaviour</li></ul></div><div class="xf-box xf-danger"><b>Poor at</b><ul><li>Adding new facts reliably</li><li>Knowing what changed yesterday</li><li>Guarantees</li></ul></div></div><p class="xf-note">Train for behaviour, retrieve for facts.</p></div>
+
+<p><strong>Remember:</strong> train for behaviour, retrieve for facts, and test what you did not mean to change.</p>
+<h2 id="the-whole-journey">The whole journey</h2>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Summary</span><h4>From text to assistant</h4><p class="xf-sub">The same loop, three times.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Text</b><span>raw data</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Guess</b><span>probabilities</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Loss</b><span>surprise</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Gradient</b><span>direction</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Update</b><span>small step</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-danger"><b>Assistant</b><span>after tuning</span></div></div><p class="xf-note">Many small, safe steps add up.</p></div>
+
+<h2 id="where-it-breaks">Where it breaks</h2>
+<ul>
+<li><strong>Bad data.</strong> The model learns the mistakes in its examples.</li>
+<li><strong>Forgetting.</strong> A narrow push can damage general ability.</li>
+<li><strong>Reward hacking.</strong> A model optimized against a proxy learns to please the proxy.</li>
+<li><strong>Stale knowledge.</strong> The facts stop at the training cutoff.</li>
+<li><strong>Over-fitting.</strong> The model memorizes its examples instead of learning the pattern.</li>
+</ul>
+<h2 id="go-deeper">Go deeper</h2>
+<ul>
+<li><a href="../machine-learning/training-loss-and-gradient-descent.html">Training: loss and gradient descent</a> — stages 3 to 7 with code.</li>
+<li><a href="../fine-tuning/from-base-model-to-assistant.html">From base model to assistant</a> — stages 8 and 9 in depth.</li>
+<li><a href="../fine-tuning/preference-tuning-and-reward-hacking.html">Preference tuning and reward hacking</a> — where preference tuning goes wrong.</li>
+<li><a href="../fine-tuning/supervised-fine-tuning.html">Supervised fine-tuning</a> — data size, speed and forgetting.</li>
+<li><a href="../llms/prompting-vs-rag-vs-finetuning.html">Prompting vs. RAG vs. fine-tuning</a> — choosing the lever.</li>
+</ul>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>What does the loss measure?</strong>
+ <br />
+<details><summary>Answer</summary>How surprised the model was by the real next word: the negative logarithm of the probability it gave that word. A probability of 0.30 gives a loss of about 1.20.</details></p>
+</li>
+<li>
+<p><strong>What does the learning rate do?</strong>
+ <br />
+<details><summary>Answer</summary>It sets the size of each step. Too small is slow. Too large overshoots and the loss blows up.</details></p>
+</li>
+<li>
+<p><strong>Why can supervised tuning hurt general ability?</strong>
+ <br />
+<details><summary>Answer</summary>The weights are shared, so a push that makes one behaviour likely changes others. In the toy model, the loss on ordinary text rose from 1.103 to 2.280.</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Long Ouyang et al., <em>Training language models to follow instructions with human feedback</em>, NeurIPS 2022, abstract read 2026-11: supervised fine-tuning on labeler demonstrations, then fine-tuning with reinforcement learning from human feedback on ranked outputs, and the finding that outputs of the 1.3B InstructGPT model are preferred to those of the 175B GPT-3.</li>
+<li>This site's <code>fine-tuning/code/</code> toy model for the 0.083 to 0.987 and 1.103 to 2.280 figures. The example sentence, the probabilities 0.30 and 0.34 and the loss values computed from them are illustrative. This page's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="inside-one-llm-request.html"><span class="lbl">← Previous</span><span class="ttl">Inside one LLM request</span></a><a class="navcard next" href="one-token-through-a-transformer.html"><span class="lbl">→ Next</span><span class="ttl">One token through a transformer</span></a></div><footer class="foot"><strong>Core insight:</strong> Follow one example through the stages and the system stops being magic: each stage has one job, one cost and one way to break.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#in-one-minute">In one minute</a><a class="h2" href="#1-raw-text">1 · Raw text</a><a class="h2" href="#2-an-example-and-a-target">2 · An example and a target</a><a class="h2" href="#3-a-guess">3 · A guess</a><a class="h2" href="#4-the-loss">4 · The loss</a><a class="h2" href="#5-who-to-blame">5 · Who to blame</a><a class="h2" href="#6-a-small-step">6 · A small step</a><a class="h2" href="#7-repeat-a-very-large-number-of-times">7 · Repeat, a very large number of times</a><a class="h2" href="#8-from-predictor-to-assistant">8 · From predictor to assistant</a><a class="h2" href="#9-learning-what-people-prefer">9 · Learning what people prefer</a><a class="h2" href="#10-what-training-cannot-fix">10 · What training cannot fix</a><a class="h2" href="#the-whole-journey">The whole journey</a><a class="h2" href="#where-it-breaks">Where it breaks</a><a class="h2" href="#go-deeper">Go deeper</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=explainers%2Fhow-a-model-learns.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="explainers/how-a-model-learns.html"</script><script defer src="../assets/glossary.js"></script></body></html>

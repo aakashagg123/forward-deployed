@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>One AI incident, from alert to postmortem — Visual explainers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Visual explainers</span><em>how it works</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="inside-one-llm-request.html">1 · Inside one LLM request</a><a class="modlink" href="how-a-model-learns.html">2 · How a model learns</a><a class="modlink" href="one-token-through-a-transformer.html">3 · One token through a transformer</a><a class="modlink" href="how-an-image-model-draws.html">4 · How an image model draws</a><a class="modlink" href="one-agent-run.html">5 · One agent run, step by step</a><a class="modlink" href="anatomy-of-a-guardrailed-request.html">6 · Anatomy of a guardrailed request</a><a class="modlink" href="one-ai-feature-from-idea-to-launch.html">7 · One AI feature, from idea to launch</a><a class="modlink" href="one-model-change.html">8 · One model change: cost, speed and quality</a><a class="modlink" href="one-ai-feature-p-and-l.html">9 · From one AI task to gross margin</a><a class="modlink" href="one-eval-regression-traced.html">10 · One eval regression, traced to its cause</a><a class="modlink" href="one-user-story-to-agent-spec.html">11 · One user story becomes an agent spec</a><a class="modlink active" href="one-ai-incident-review.html">12 · One AI incident, from alert to postmortem</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Explainer 12</span>
+    <h1>One AI incident, from alert to postmortem</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: medium</em></p>
+<h2 id="in-one-minute">In one minute</h2>
+<p>AI features fail in a way that ordinary features rarely do. The service stays up and no error is thrown, but the answers are wrong. Users notice before the dashboards do. When it happens, the product manager's job is not to fix the code. It is to size the harm, choose what users see, tell people the truth and decide how to make it right.</p>
+<p>This page follows one incident at <strong>Harbor Credit Union</strong>. Its assistant starts telling members that the overdraft fee is $0. The real fee is $29. The page runs from the first screenshot to the actions that enter the roadmap.</p>
+<p><em>Reading time: about 10 minutes. Harbor Credit Union, its fee, its timeline and its numbers are invented. The incident roles and the postmortem practice follow Google's site reliability engineering book.</em></p>
+<h2 id="1-detection">1 · Detection</h2>
+<p>At 21:40 on a Tuesday, a member posts a screenshot. The assistant says: "There is no overdraft fee on your account." The member was charged $29 the week before.</p>
+<p>At the same time, support sees more tickets than usual about fees. No alert has fired. The assistant is up, fast and answering every question. By every system measure it is healthy.</p>
+<p>This is the typical shape of an AI incident. The first signal comes from people, not from monitoring.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 1</span><h4>Detection</h4><p class="xf-sub">21:40 on a Tuesday. No alert has fired.</p><div class="xf-flow"><div class="xf-box xf-danger"><b>Member screenshot</b><span>"no overdraft fee"</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Support tickets</b><span>more than usual about fees</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-info"><b>System health</b><span>up, fast, answering</span></div></div><p class="xf-note">An AI feature can be up and wrong at the same time.</p></div>
+
+<p><strong>Remember:</strong> an AI feature can be up and wrong at the same time.</p>
+<h2 id="2-declare-it-and-set-the-severity">2 · Declare it and set the severity</h2>
+<p>The on-call engineer and the product manager agree to declare an incident at 21:52. Google's site reliability engineering book advises declaring early: it is better to declare, find a simple fix and close it than to let a problem grow for hours.</p>
+<p>Next comes the <strong>severity level</strong> (SEV). Harbor's ladder puts wrong information about money that many members can see at SEV2. That means a response team now, and updates to leadership every hour.</p>
+<p>The ladder was agreed months ago. Nobody argues about it tonight.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 2</span><h4>Declare it and set the severity</h4><p class="xf-sub">Declared at 21:52. The ladder was agreed months ago.</p><div class="xf-layers"><div class="xf-box xf-danger"><b>SEV1</b><span>outage, or member data at risk</span></div><div class="xf-box xf-caution"><b>SEV2 (this one)</b><span>wrong money information many members can see</span></div><div class="xf-box xf-info"><b>SEV3</b><span>a minor corner case: a ticket</span></div></div><p class="xf-note">Better to declare early and close fast.</p></div>
+
+<p><strong>Remember:</strong> agree the severity ladder before the incident, so nobody debates it during one.</p>
+<h2 id="3-roles">3 · Roles</h2>
+<p>Google's model splits the work into roles. The <strong>incident commander</strong> keeps the big picture and assigns work. The operations lead changes the system, and only that group does. The communications lead keeps users and leaders informed. The planning lead tracks follow-up work and hand-offs.</p>
+<p>At Harbor, the on-call engineer leads operations. The product manager takes communications. The engineering manager is the incident commander.</p>
+<p>The commander's most important job, in Google's words, is to keep a living incident document. Every action and every time goes into it.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 3</span><h4>Roles</h4><p class="xf-sub">One commander, one live document.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Incident commander</b><span>the big picture; assigns work</span></div><div class="xf-box xf-discovery"><b>Operations</b><span>the only group that changes the system</span></div><div class="xf-box xf-caution"><b>Communications</b><span>members, support and leaders</span></div><div class="xf-box xf-success"><b>Planning</b><span>follow-ups and hand-offs</span></div></div><p class="xf-note">The commander keeps the living incident document.</p></div>
+
+<p><strong>Remember:</strong> one commander, clear roles and one live document.</p>
+<h2 id="4-stop-the-harm-first">4 · Stop the harm first</h2>
+<p>The team does not know the cause yet. That can wait. The first job is to stop more members getting the wrong answer.</p>
+<p>There are two prepared options. The <strong>kill switch</strong> turns the assistant off and sends every chat to human agents, which adds about 40 minutes of wait at this hour. The <strong>degraded mode</strong> keeps the assistant on, but sends every question about fees to the fixed fee page, written by people.</p>
+<p>The product manager chooses degraded mode at 21:58. It stops the harm and keeps the assistant useful for everything else. Both options were designed before launch, so the choice took minutes.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 4</span><h4>Stop the harm first</h4><p class="xf-sub">Two fallbacks, both designed before launch.</p><div class="xf-cmp"><div class="xf-box xf-caution"><b>Kill switch</b><ul><li>Assistant off</li><li>All chats to human agents</li><li>About 40 more minutes of wait</li></ul></div><div class="xf-box xf-success"><b>Degraded mode (chosen, 21:58)</b><ul><li>Assistant stays on</li><li>Fee questions go to the fixed fee page</li><li>Harm stops in minutes</li></ul></div></div><p class="xf-note">Mitigate before you diagnose.</p></div>
+
+<p><strong>Remember:</strong> mitigate before you diagnose, using a fallback you chose in advance.</p>
+<h2 id="5-tell-people-the-truth">5 · Tell people the truth</h2>
+<p>Communication starts at once and runs on a clock. At 22:10 support gets a short script: the assistant gave wrong fee information, the correct fee is on the fee page, and any member who was misled will hear from Harbor. At 22:30 leaders get the first update, and then one every hour.</p>
+<p>The message is plain. It says what is known, what is not known and when the next update comes. It does not guess the cause, and it does not promise a refund before that decision is made.</p>
+<p>Trust is often lost less by the error than by silence or spin.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 5</span><h4>Tell people the truth</h4><p class="xf-sub">The first hour. Time runs left to right.</p><div class="xf-lanes"><div class="xf-lbl">Actions</div><div class="xf-track"><div class="xf-seg xf-success" style="flex:1 1 0">21:58 harm stopped</div><div class="xf-seg xf-info" style="flex:1 1 0">22:10 support script</div><div class="xf-seg xf-discovery" style="flex:1 1 0">22:30 first update</div><div class="xf-seg xf-caution" style="flex:2 1 0">then every hour</div></div></div><p class="xf-note">Say what you know, what you do not, and when you will speak next.</p></div>
+
+<p><strong>Remember:</strong> say what you know, what you do not know and when you will speak next.</p>
+<h2 id="6-size-the-blast-radius">6 · Size the blast radius</h2>
+<p>The next morning the team uses the logs to find who was affected. The <strong>blast radius</strong> is the set of people and decisions the error reached.</p>
+<p>The fee page changed 6 days ago. Since then the assistant had 52,000 conversations. Of these, 3,100 asked about fees, and 1,240 got the "$0" answer.</p>
+<p>This is why AI features need full logs of each conversation. Without them, the team could only guess, and the make-good decision would be a guess too.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 6</span><h4>Size the blast radius</h4><p class="xf-sub">Conversations since the fee page changed, 6 days ago.</p><div class="xf-mem"><div style="flex:48900 1 0;background:var(--color-background-info-surface)">Other topics</div><div style="flex:1860 1 0;background:var(--color-background-caution-surface)"></div><div style="flex:1240 1 0;background:var(--color-background-danger-surface)"></div></div><div class="xf-mkey"><span><b>Other topics</b> 48,900 conversations</span><span><b>Fees, right answer</b> 1,860</span><span><b>Told $0</b> 1,240 members</span></div><p class="xf-note">Logs turn "some members" into a number.</p></div>
+
+<p><strong>Remember:</strong> logs turn "some members were affected" into a number you can act on.</p>
+<h2 id="7-the-causes-in-the-plural">7 · The causes, in the plural</h2>
+<p>The trace finds a chain. Six days ago, the fee schedule was updated. The new version put the fee table in an image. The ingestion step that feeds the assistant's search could not read the image, so the real fee vanished from the index. Search then returned the closest match it had: a page about a student account with no overdraft fee.</p>
+<p>That is the trigger. The conditions that let it through matter more. No one tested the assistant when documents changed. Fee answers did not cite their source. No alert watched answers about money.</p>
+<p>A <strong>blameless postmortem</strong> looks for these conditions, not for a person to blame.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 7</span><h4>The causes, in the plural</h4><p class="xf-sub">The trigger, then the conditions that let it through.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Fee table became an image</b><span>trigger</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Real fee missing from search</b><span></span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Student page returned</b><span>"no overdraft fee"</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-danger"><b>Wrong answer</b><span></span></div></div><p class="xf-note">Conditions: no test on document changes, no source on fee answers, no alert on money answers.</p></div>
+
+<p><strong>Remember:</strong> the trigger is one cause. Look for the conditions that let it through.</p>
+<h2 id="8-make-it-right">8 · Make it right</h2>
+<p>Now a product decision with a cost. Of the 1,240 members told "$0", 310 were charged the $29 fee in the following days. Refunding them all costs 310 × $29 = $8,990.</p>
+<p>The options are to refund only members who complain, to refund all 310, or to refund all 310 and write to all 1,240. The product manager recommends the last option. It costs the same $8,990, plus a letter. A member who relied on the assistant should not have to notice the error to be made whole.</p>
+<p>This decision is not a legal opinion. Legal and compliance review it before the letters go out.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 8</span><h4>Make it right</h4><p class="xf-sub">310 of the 1,240 were charged $29 after being told $0.</p><div class="xf-cmp"><div class="xf-box xf-caution"><b>Refund on complaint</b><ul><li>Cheaper at first</li><li>Depends on members noticing</li><li>Unfair to those who do not</li></ul></div><div class="xf-box xf-success"><b>Refund all 310 and write to all 1,240</b><ul><li>310 × $29 = $8,990</li><li>Plus a letter</li><li>Reviewed by legal and compliance</li></ul></div></div><p class="xf-note">Decide from the blast radius, not from who complains.</p></div>
+
+<p><strong>Remember:</strong> decide the make-good from the blast radius, not from who complains.</p>
+<h2 id="9-the-postmortem">9 · The postmortem</h2>
+<p>Within a week the team writes the postmortem. It has five parts: the impact, the timeline, the causes, what went well and the actions.</p>
+<p>Google's book defines a blameless postmortem as one that finds the contributing causes "without indicting any individual or team". It assumes people acted reasonably on what they knew. The book also suggests deciding the triggers for a postmortem in advance. One of them is an incident found by people rather than by monitoring, as this one was.</p>
+<p>What went well matters too. Degraded mode existed, and it worked in 6 minutes.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 9</span><h4>The postmortem</h4><p class="xf-sub">Blameless: causes, not culprits.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Impact</b><span>1,240 members misled, 310 charged, 6 days</span></div><div class="xf-box xf-discovery"><b>Timeline</b><span>from the living document</span></div><div class="xf-box xf-danger"><b>Causes</b><span>the trigger and three conditions</span></div><div class="xf-box xf-success"><b>What went well</b><span>degraded mode worked in 6 minutes</span></div><div class="xf-box xf-caution"><b>Actions</b><span>each with an owner and a date</span></div></div><p class="xf-note">A postmortem that blames a person stops hearing the truth.</p></div>
+
+<p><strong>Remember:</strong> a postmortem that blames a person stops hearing the truth.</p>
+<h2 id="10-actions-into-the-roadmap">10 · Actions into the roadmap</h2>
+<p>A postmortem is only useful if its actions ship. Each action gets an owner and a date, and is tracked like a feature.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Owner</th>
+<th>Due</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Run the assistant's tests on every document change</td>
+<td>AI engineering lead</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Fee answers must cite the source page</td>
+<td>Product manager</td>
+<td>3 weeks</td>
+</tr>
+<tr>
+<td>Alert on a change in answers about money</td>
+<td>Data lead</td>
+<td>4 weeks</td>
+</tr>
+<tr>
+<td>Flag documents whose tables cannot be read</td>
+<td>Content operations</td>
+<td>2 weeks</td>
+</tr>
+</tbody>
+</table>
+<p>The product manager reviews the list monthly. A repeat incident with an open action is treated as a process failure.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 10</span><h4>Actions into the roadmap</h4><p class="xf-sub">Tracked like features, reviewed monthly.</p><div class="xf-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="xf-cell ">Action</div><div class="xf-cell ">Owner</div><div class="xf-cell ">Due</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">Test the assistant on every document change</div><div class="xf-cell ">AI engineering lead</div><div class="xf-cell ">2 weeks</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">Fee answers cite the source page</div><div class="xf-cell ">Product manager</div><div class="xf-cell ">3 weeks</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">Alert on changes in money answers</div><div class="xf-cell ">Data lead</div><div class="xf-cell ">4 weeks</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">Flag documents with unreadable tables</div><div class="xf-cell ">Content operations</div><div class="xf-cell ">2 weeks</div></div><p class="xf-note">A repeat incident with an open action is a process failure.</p></div>
+
+<p><strong>Remember:</strong> an action without an owner and a date will not ship.</p>
+<h2 id="the-whole-journey">The whole journey</h2>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Summary</span><h4>One AI incident</h4><div class="xf-flow"><div class="xf-box xf-danger"><b>Detect</b><span>people first</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Declare</b><span>severity</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Mitigate</b><span>degraded mode</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-info"><b>Communicate</b><span>on a clock</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Size and make right</b><span>logs</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Learn</b><span>blameless, owned actions</span></div></div><p class="xf-note">Size the harm, choose what users see, tell the truth, make it right.</p></div>
+
+<h2 id="where-it-breaks">Where it breaks</h2>
+<ul>
+<li><strong>Monitoring for uptime only.</strong> The assistant is up and wrong, and nothing alerts.</li>
+<li><strong>Diagnosis first.</strong> The team hunts the cause while members keep getting wrong answers.</li>
+<li><strong>No prepared fallback.</strong> The kill switch is the only option, so the choice is all or nothing.</li>
+<li><strong>No logs.</strong> The blast radius is a guess, so the make-good is a guess.</li>
+<li><strong>Blame.</strong> The postmortem names a person, and the conditions stay.</li>
+<li><strong>Actions that never ship.</strong> The same incident returns next quarter.</li>
+</ul>
+<h2 id="go-deeper">Go deeper</h2>
+<ul>
+<li><a href="../technical-product-management/incidents-and-postmortems.html">Incidents &amp; postmortems</a> — the lifecycle and the AI extension.</li>
+<li><a href="../technical-product-management/launches-rollouts-and-migrations.html">Launches, rollouts &amp; migrations</a> — rollback-ready releases.</li>
+<li><a href="../technical-product-sense/reliability-and-failure.html">Reliability &amp; failure</a> — how systems fail.</li>
+<li><a href="../system-design/reliability-and-operations.html">Reliability and operations</a> — the operations side in depth.</li>
+<li><a href="../ai/04-evals-observability.html#observability">Observability</a> — logs, traces and quality alerts.</li>
+<li><a href="../ai-security-and-guardrails/governance-audit-and-compliance.html">Governance, audit &amp; compliance</a> — records that regulators and auditors expect.</li>
+<li><a href="one-eval-regression-traced.html">One eval regression, traced to its cause</a> — catching a quality drop before it ships.</li>
+</ul>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>The cause is unknown and members are still getting wrong answers. What comes first?</strong>
+ <br />
+<details><summary>Answer</summary>Stop the harm with a prepared fallback, such as degraded mode. Diagnosis comes after.</details></p>
+</li>
+<li>
+<p><strong>Why did no alert fire?</strong>
+ <br />
+<details><summary>Answer</summary>The alerts watched uptime and errors. The assistant was up and fast, and only its answers were wrong.</details></p>
+</li>
+<li>
+<p><strong>Why refund all 310 members rather than only those who complain?</strong>
+ <br />
+<details><summary>Answer</summary>The logs show exactly who was misled and charged. Fairness should not depend on a member noticing the error.</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Google, <em>Site Reliability Engineering</em>, chapter "Managing Incidents", sre.google/sre-book/managing-incidents, read 2026-11: the roles of incident command, operational work, communication and planning; "it is better to declare an incident early"; the commander's most important job is to keep a living incident document.</li>
+<li>Google, <em>Site Reliability Engineering</em>, chapter "Postmortem Culture", sre.google/sre-book/postmortem-culture, read 2026-11: a blameless postmortem focuses on contributing causes "without indicting any individual or team"; teams should define postmortem triggers in advance, including when monitoring fails and an incident is found manually.</li>
+<li>Harbor Credit Union, its fee, timeline, conversation counts, refunds and owners are invented for the example.</li>
+<li>Independent fact-check: run on 2026-11-04 by a separate agent with web access, blind to the edits. Result: clean, with no wrong, stale or unsupported claims.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="one-user-story-to-agent-spec.html"><span class="lbl">← Previous</span><span class="ttl">One user story becomes an agent spec</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> Follow one example through the stages and the system stops being magic: each stage has one job, one cost and one way to break.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#in-one-minute">In one minute</a><a class="h2" href="#1-detection">1 · Detection</a><a class="h2" href="#2-declare-it-and-set-the-severity">2 · Declare it and set the severity</a><a class="h2" href="#3-roles">3 · Roles</a><a class="h2" href="#4-stop-the-harm-first">4 · Stop the harm first</a><a class="h2" href="#5-tell-people-the-truth">5 · Tell people the truth</a><a class="h2" href="#6-size-the-blast-radius">6 · Size the blast radius</a><a class="h2" href="#7-the-causes-in-the-plural">7 · The causes, in the plural</a><a class="h2" href="#8-make-it-right">8 · Make it right</a><a class="h2" href="#9-the-postmortem">9 · The postmortem</a><a class="h2" href="#10-actions-into-the-roadmap">10 · Actions into the roadmap</a><a class="h2" href="#the-whole-journey">The whole journey</a><a class="h2" href="#where-it-breaks">Where it breaks</a><a class="h2" href="#go-deeper">Go deeper</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=explainers%2Fone-ai-incident-review.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="explainers/one-ai-incident-review.html"</script><script defer src="../assets/glossary.js"></script></body></html>

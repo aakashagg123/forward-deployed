@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Inside one LLM request — Visual explainers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Visual explainers</span><em>how it works</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="inside-one-llm-request.html">1 · Inside one LLM request</a><a class="modlink" href="how-a-model-learns.html">2 · How a model learns</a><a class="modlink" href="one-token-through-a-transformer.html">3 · One token through a transformer</a><a class="modlink" href="how-an-image-model-draws.html">4 · How an image model draws</a><a class="modlink" href="one-agent-run.html">5 · One agent run, step by step</a><a class="modlink" href="anatomy-of-a-guardrailed-request.html">6 · Anatomy of a guardrailed request</a><a class="modlink" href="one-ai-feature-from-idea-to-launch.html">7 · One AI feature, from idea to launch</a><a class="modlink" href="one-model-change.html">8 · One model change: cost, speed and quality</a><a class="modlink" href="one-ai-feature-p-and-l.html">9 · From one AI task to gross margin</a><a class="modlink" href="one-eval-regression-traced.html">10 · One eval regression, traced to its cause</a><a class="modlink" href="one-user-story-to-agent-spec.html">11 · One user story becomes an agent spec</a><a class="modlink" href="one-ai-incident-review.html">12 · One AI incident, from alert to postmortem</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Explainer 01</span>
+    <h1>Inside one LLM request</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: fast</em></p>
+<h2 id="in-one-minute">In one minute</h2>
+<p>You ask a chat assistant a question and words start to appear. This page follows one request from the moment you press Enter to the last word on your screen. The question is <strong>"What is a mortgage rate?"</strong>.</p>
+<p>Along the way you will meet seven ideas that explain almost everything about speed, cost and limits in AI products: <strong>tokens</strong>, the <strong>context window</strong>, <strong>prefill</strong>, <strong>decode</strong>, the <strong>KV cache</strong>, <strong>streaming</strong> and <strong>batching</strong>. The last stages show why serving many people at once is hard.</p>
+<p><em>Reading time: about 10 minutes. The token IDs and probabilities are illustrative. The memory and speed numbers come from this site's own worked examples.</em></p>
+<h2 id="1-you-press-enter">1 · You press Enter</h2>
+<p>Your question does not go straight to a model. It first reaches a <strong>gateway</strong>, a front door that checks who you are and whether you are within your limits. Limits are often counted in tokens as well as requests.</p>
+<p>The gateway adds the other things the model must see, such as the system instructions and the earlier messages in the chat. Then the request waits in a <strong>queue</strong> until a machine is free. Only then does it reach a <strong>GPU replica</strong>: one copy of the model running on an accelerator.</p>
+<p>Everything before the model is ordinary web engineering. What happens inside the replica is the new part.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 1</span><h4>Before the model</h4><p class="xf-sub">Ordinary web engineering, then one copy of the model.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Browser</b><span>your question</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Gateway</b><span>who you are, your limits</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Queue</b><span>wait for a free machine</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-danger"><b>GPU replica</b><span>one copy of the model</span></div></div><p class="xf-note">A request can wait before the model sees it.</p></div>
+
+<p><strong>Remember:</strong> a request spends time waiting before the model ever sees it.</p>
+<h2 id="2-text-becomes-tokens">2 · Text becomes tokens</h2>
+<p>A model does not read letters or words. It reads <strong>tokens</strong>: pieces of text, such as a whole word, part of a word or punctuation. A <strong>tokenizer</strong> splits your text into tokens, and each token maps to a whole number in the model's vocabulary.</p>
+<p>Your question might split like the figure shows. A different model may split it differently. Common words are often one token. Rare words break into several.</p>
+<p>Tokens matter everywhere: prices are quoted per token, context limits are counted in tokens and speed is measured in tokens per second.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 2</span><h4>Your question as tokens</h4><p class="xf-sub">An illustrative split. IDs are made up, and a real tokenizer will differ.</p><div class="xf-toks"><div class="xf-tok"><i class="xf-info" style="background:var(--color-background-info-surface)">What</i><em>2061</em></div><div class="xf-tok"><i class="xf-discovery" style="background:var(--color-background-discovery-surface)"> is</i><em>318</em></div><div class="xf-tok"><i class="xf-success" style="background:var(--color-background-success-surface)"> a</i><em>257</em></div><div class="xf-tok"><i class="xf-caution" style="background:var(--color-background-caution-surface)"> mortgage</i><em>20091</em></div><div class="xf-tok"><i class="xf-warning" style="background:var(--color-background-warning-surface)"> rate</i><em>2494</em></div><div class="xf-tok"><i class="xf-danger" style="background:var(--color-background-danger-surface)">?</i><em>30</em></div></div><p class="xf-note">6 tokens in, 6 numbers for the model.</p></div>
+
+<p><strong>Remember:</strong> the model sees a list of numbers, not your sentence.</p>
+<h2 id="3-the-context-window">3 · The context window</h2>
+<p>The <strong>context window</strong> is the most tokens the model can look at in one go. Your question is only a small part of it. The window also holds the system instructions, tool descriptions, earlier messages and any documents the app added. The answer must fit too.</p>
+<p>If everything does not fit, the app has to cut something: drop old messages, summarize them or refuse. The window is not a memory. The model sees only what is in it for this one request.</p>
+<p>Longer windows cost more. Attention, which you will see in the transformer explainer, does more work as the window grows.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 3</span><h4>What shares the context window</h4><p class="xf-sub">An illustrative 8,192-token window. Your question is a sliver.</p><div class="xf-mem"><div style="flex:400 1 0;background:var(--color-background-info-surface)"></div><div style="flex:900 1 0;background:var(--color-background-discovery-surface)"></div><div style="flex:2300 1 0;background:var(--color-background-caution-surface)">History</div><div style="flex:8 1 0;background:var(--color-background-danger-surface)"></div><div style="flex:4584 1 0;background:var(--color-background-success-surface)">Room for the answer</div></div><div class="xf-mkey"><span><b>Instructions</b> 400 tokens of system rules</span><span><b>Tools</b> 900 tokens of tool descriptions</span><span><b>History</b> 2,300 tokens of earlier chat</span><span><b>Q</b> your question: 8 tokens</span><span><b>Room for the answer</b> what is left for the reply</span></div><p class="xf-note">The app fills the window. Your own words are a small part.</p></div>
+
+<p><strong>Remember:</strong> the window is shared by everything the app sends, and it is not memory.</p>
+<h2 id="4-prefill-read-the-prompt">4 · Prefill: read the prompt</h2>
+<p>Now the model reads the whole prompt. This stage is called <strong>prefill</strong>. Because every prompt token already exists, the accelerator can work on all of them at the same time, in one large pass through the model's layers.</p>
+<p>Inside each layer, <strong>attention</strong> lets each token take information from the tokens before it. A token can look backwards, never forwards. That keeps the model's job simple: predict what comes next.</p>
+<p>Prefill ends with a score for every word in the vocabulary. Those scores decide the first word of the answer. Prefill is the main part of the wait before the first word appears.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 4</span><h4>Prefill reads together, decode writes in turn</h4><p class="xf-sub">Time runs left to right.</p><div class="xf-lanes"><div class="xf-lbl">Prefill</div><div class="xf-track"><div class="xf-seg xf-info" style="flex:6 1 0">6 prompt tokens, one parallel pass</div></div><div class="xf-lbl">Decode</div><div class="xf-track"><div class="xf-seg xf-success" style="flex:1 1 0">token 1</div><div class="xf-seg xf-success" style="flex:1 1 0">token 2</div><div class="xf-seg xf-success" style="flex:1 1 0">token 3</div><div class="xf-seg xf-success" style="flex:1 1 0">token 4</div><div class="xf-seg xf-success" style="flex:1 1 0">token 5</div><div class="xf-seg xf-success" style="flex:1 1 0">token 6</div></div></div><p class="xf-note">Prefill is parallel. Decode must go one step at a time.</p></div>
+
+<p><strong>Remember:</strong> prefill reads the prompt in parallel, so it is fast per token.</p>
+<h2 id="5-the-kv-cache-is-born">5 · The KV cache is born</h2>
+<p>While reading, attention computes two things for each token in each layer: a <strong>key</strong> and a <strong>value</strong>. They are what later tokens look up. The model keeps them in the <strong>KV cache</strong>, so it never has to recompute them.</p>
+<p>The cache is useful and expensive. It grows with every token, for every conversation, and it sits in the accelerator's memory next to the model's weights. For a 7-billion-parameter-class model, one 8,192-token conversation needs about 4.0 GiB of cache.</p>
+<p>On an 80 GiB accelerator, the weights take about 12.6 GiB. The rest is mostly cache. That is why memory, not arithmetic, usually decides how many people one machine can serve.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 5</span><h4>Where an 80 GiB accelerator's memory goes</h4><p class="xf-sub">A 7B-class model, 16-bit numbers, 16 conversations of 8,192 tokens.</p><div class="xf-mem"><div style="flex:12.6 1 0;background:var(--color-background-info-surface)">Weights</div><div style="flex:64 1 0;background:var(--color-background-caution-surface)">KV cache</div><div style="flex:3.4 1 0;background:var(--color-surface-secondary)"></div></div><div class="xf-mkey"><span><b>Weights</b> 12.6 GiB</span><span><b>KV cache</b> 16 conversations × 4.0 GiB</span><span><b>Other</b> about 3.4 GiB for activations and overhead</span></div><p class="xf-note">The cache, not the weights, is the big part. A 17th conversation would not fit.</p></div>
+
+<p><strong>Remember:</strong> the cache trades memory for speed, and memory runs out first.</p>
+<h2 id="6-the-decode-loop">6 · The decode loop</h2>
+<p>Now the model writes the answer one token at a time. This stage is <strong>decode</strong>. It picks a token, adds it to the text and runs again with the longer text. Each new token needs the one before it, so the steps cannot run side by side the way prefill can.</p>
+<p>At each step the model reads from the KV cache, adds the key and value of the newest token to it, and produces scores for the next word. Then the loop repeats until the model emits an end marker or reaches a length limit.</p>
+<p>Decode is slower per token than prefill. Each step reads all the weights from memory to produce one token.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 6</span><h4>One turn of the decode loop</h4><p class="xf-sub">Repeat until an end marker or a length limit.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Newest token</b><span>the word just chosen</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Model layers</b><span>reads weights and the cache</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Scores</b><span>one per word in the vocabulary</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Pick a token</b><span>add it to the text</span></div></div><p class="xf-note">Each loop adds one token and one entry to the cache.</p></div>
+
+<p><strong>Remember:</strong> decode is one token per step, so a long answer takes many steps.</p>
+<h2 id="7-choosing-the-next-word">7 · Choosing the next word</h2>
+<p>The scores for every word become <strong>probabilities</strong>. Something has to choose. The simplest rule is to take the highest. Many apps instead <strong>sample</strong>: they pick at random, weighted by probability. This is why the same question can get different answers.</p>
+<p><strong>Temperature</strong> adjusts the odds. A low temperature sharpens them, so the top word wins more often. A high temperature flattens them, so unlikely words get a chance. Low is steadier, and high is more varied.</p>
+<p>The choice happens at every step. A word picked early shapes everything after it.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 7</span><h4>Scores become probabilities, then one word is chosen</h4><p class="xf-sub">Illustrative odds for the first word of the answer.</p><div class="xf-bars"><div class="xf-lbl">A</div><div class="xf-fill"><div style="width:92.0%;background:var(--color-background-info-solid)"></div></div><div class="xf-val">0.46</div><div class="xf-lbl">The</div><div class="xf-fill"><div style="width:44.0%;background:var(--color-background-discovery-solid)"></div></div><div class="xf-val">0.22</div><div class="xf-lbl">Mortgage</div><div class="xf-fill"><div style="width:22.0%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">0.11</div><div class="xf-lbl">Your</div><div class="xf-fill"><div style="width:16.0%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">0.08</div><div class="xf-lbl">others</div><div class="xf-fill"><div style="width:26.0%;background:var(--color-background-warning-solid)"></div></div><div class="xf-val">0.13</div></div><p class="xf-note">Low temperature favours the tall bar. High temperature flattens the bars.</p></div>
+
+<p><strong>Remember:</strong> the model writes by choosing from probabilities, one token at a time.</p>
+<h2 id="8-streaming-to-your-screen">8 · Streaming to your screen</h2>
+<p>The server does not wait for the whole answer. It sends tokens to your browser as they are made. This is <strong>streaming</strong>. It does not make the model faster. It makes the answer feel faster, because you start reading at once.</p>
+<p>A common way is <strong>server-sent events</strong>: the browser keeps one connection open, and the server pushes small updates down it. Some apps use <strong>WebSockets</strong> when data must flow both ways, as in voice.</p>
+<p>The server may group several tokens into one chunk. Small chunks look smooth. Larger chunks reduce overhead.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 8</span><h4>Tokens are made one by one and sent in chunks</h4><p class="xf-sub">Time runs left to right.</p><div class="xf-lanes"><div class="xf-lbl">Server makes</div><div class="xf-track"><div class="xf-seg xf-success" style="flex:1 1 0">t1</div><div class="xf-seg xf-success" style="flex:1 1 0">t2</div><div class="xf-seg xf-success" style="flex:1 1 0">t3</div><div class="xf-seg xf-success" style="flex:1 1 0">t4</div><div class="xf-seg xf-success" style="flex:1 1 0">t5</div><div class="xf-seg xf-success" style="flex:1 1 0">t6</div><div class="xf-seg xf-success" style="flex:1 1 0">t7</div><div class="xf-seg xf-success" style="flex:1 1 0">t8</div></div><div class="xf-lbl">Browser gets</div><div class="xf-track"><div class="xf-seg xf-info" style="flex:3 1 0">chunk 1 · 3 tokens</div><div class="xf-seg xf-info" style="flex:3 1 0">chunk 2 · 3</div><div class="xf-seg xf-info" style="flex:2 1 0">chunk 3 · 2</div></div></div><p class="xf-note">Small chunks look smooth. Bigger chunks cost less overhead.</p></div>
+
+<p><strong>Remember:</strong> streaming changes when you see the answer, not how fast it is made.</p>
+<h2 id="9-many-people-at-once">9 · Many people at once</h2>
+<p>One machine serves many conversations. Running them together in a <strong>batch</strong> lets the accelerator read the weights once for many tokens, which raises output a lot. A batch of 16 streams gave about 2,365 tokens per second in total in our example, against about 148 for one stream.</p>
+<p>The catch is that answers differ in length. With <strong>static batching</strong>, a group waits for its longest answer. With <strong>continuous batching</strong>, a finished answer leaves at once and a waiting request takes its place. In our example, 64 requests took 1,887 steps with continuous batching and 2,890 with static batching.</p>
+<p>Memory limits the batch. On the 80 GiB machine from stage 5, 16 long conversations fit.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 9</span><h4>Four slots, ten steps</h4><p class="xf-sub">Each row is a slot on the accelerator. Letters are requests.</p><p class="xf-sub" style="margin-bottom:6px"><b>Static batching</b>: the group waits for its longest answer.</p><div class="xf-grid" style="grid-template-columns:repeat(10,minmax(0,1fr))"><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">D</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">D</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">D</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div><div class="xf-cell ">idle</div></div><p class="xf-sub" style="margin:14px 0 6px"><b>Continuous batching</b>: a finished answer is replaced at once.</p><div class="xf-grid" style="grid-template-columns:repeat(10,minmax(0,1fr))"><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">A</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-discovery" style="background:var(--color-background-discovery-surface)">B</div><div class="xf-cell xf-warning" style="background:var(--color-background-warning-surface)">E</div><div class="xf-cell xf-warning" style="background:var(--color-background-warning-surface)">E</div><div class="xf-cell xf-warning" style="background:var(--color-background-warning-surface)">E</div><div class="xf-cell xf-warning" style="background:var(--color-background-warning-surface)">E</div><div class="xf-cell xf-warning" style="background:var(--color-background-warning-surface)">E</div><div class="xf-cell xf-warning" style="background:var(--color-background-warning-surface)">E</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">C</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">F</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">F</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">F</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">F</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">D</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">D</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">D</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">G</div></div><p class="xf-note">In the site's example, 64 requests took 1,887 steps with continuous batching and 2,890 with static.</p></div>
+
+<p><strong>Remember:</strong> serving is a packing problem: fill the accelerator without running out of memory.</p>
+<h2 id="10-where-the-time-and-money-go">10 · Where the time and money go</h2>
+<p>Two numbers describe the experience. <strong>Time to first token</strong> is the wait before the first word. It includes the network, any queue and prefill. <strong>Tokens per second</strong> is how fast the rest arrives, and it is set by decode.</p>
+<p>Cost follows the same split. Long prompts cost prefill work and cache memory. Long answers cost decode steps. Bigger models cost more of both. Providers price input and output tokens separately for this reason.</p>
+<p>So to make a product faster or cheaper, you can shorten the prompt, cache a shared prefix, shorten the answer, pick a smaller model or batch better.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 10</span><h4>Where the wait and the speed come from</h4><p class="xf-sub">Time runs left to right.</p><div class="xf-lanes"><div class="xf-lbl">Time to first token</div><div class="xf-track"><div class="xf-seg xf-caution" style="flex:3 1 0">network + queue</div><div class="xf-seg xf-info" style="flex:4 1 0">prefill</div><div class="xf-seg xf-success" style="flex:1 1 0">first token</div></div><div class="xf-lbl">Then</div><div class="xf-track"><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div><div class="xf-seg xf-success" style="flex:1 1 0">tok</div></div></div><p class="xf-note">First-token time is mostly queue and prefill. The rest is set by decode.</p></div>
+
+<p><strong>Remember:</strong> first-token time is mostly prefill and queueing. Speed after that is decode.</p>
+<h2 id="the-whole-journey">The whole journey</h2>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Summary</span><h4>The whole journey</h4><p class="xf-sub">One request, six steps.</p><div class="xf-flow"><div class="xf-box xf-info"><b>Enter</b><span>gateway and queue</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Tokens</b><span>text to numbers</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Prefill</b><span>read the prompt</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Decode</b><span>write one token at a time</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Stream</b><span>send as you go</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-danger"><b>Many users</b><span>batch and fit memory</span></div></div><p class="xf-note">Each stage has one job, one cost and one way to break.</p></div>
+
+<h2 id="where-it-breaks">Where it breaks</h2>
+<ul>
+<li><strong>Queueing.</strong> A busy system makes you wait before any work starts.</li>
+<li><strong>Context overflow.</strong> Too much is sent, so something is cut.</li>
+<li><strong>Out of memory.</strong> Too many long conversations for the cache.</li>
+<li><strong>Slow first token.</strong> A very long prompt means a long prefill.</li>
+<li><strong>Uneven answers.</strong> One very long answer holds up a static batch.</li>
+</ul>
+<h2 id="go-deeper">Go deeper</h2>
+<ul>
+<li><a href="../transformers/generating-text-and-the-kv-cache.html">Generating text and the KV cache</a> — the formulas behind stages 4 to 6.</li>
+<li><a href="../system-design/genai-and-agent-platforms.html">GenAI and agent platforms</a> — the serving side in full.</li>
+<li><a href="../llms/the-context-window.html">The context window</a> — limits and what to put in the window.</li>
+<li><a href="../llms/temperature-sampling-and-determinism.html">Temperature, sampling and determinism</a> — stage 7 in depth.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — turning tokens into money.</li>
+</ul>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>Why does the first word take longer than the next ones?</strong>
+ <br />
+<details><summary>Answer</summary>The first word waits for network, any queue and prefill, which reads the whole prompt. Later words come from decode, one token per step.</details></p>
+</li>
+<li>
+<p><strong>Why does memory limit how many people one accelerator can serve?</strong>
+ <br />
+<details><summary>Answer</summary>Each conversation's KV cache grows with every token and sits beside the weights. In the example, 16 long conversations fit on 80 GiB.</details></p>
+</li>
+<li>
+<p><strong>Does streaming make the model generate faster?</strong>
+ <br />
+<details><summary>Answer</summary>No. It sends tokens as they are made, so you see the answer sooner.</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Woosuk Kwon et al., <em>Efficient Memory Management for Large Language Model Serving with PagedAttention</em>, SOSP 2023, abstract read 2026-11: the KV cache is large and grows and shrinks, and wasting it by fragmentation limits the batch size. The paper reports 2 to 4 times higher throughput for vLLM at the same latency.</li>
+<li>Gyeong-In Yu et al., <em>Orca</em>, OSDI 2022: continuous batching. Not re-opened.</li>
+<li>This site's worked examples: <code>transformers/code/</code> for cache sizes and <code>system-design/code/llm_serving.py</code> for decode speed and batching steps. Token IDs, probabilities and the example question are illustrative. This page's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="how-a-model-learns.html"><span class="lbl">→ Next</span><span class="ttl">How a model learns</span></a></div><footer class="foot"><strong>Core insight:</strong> Follow one example through the stages and the system stops being magic: each stage has one job, one cost and one way to break.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#in-one-minute">In one minute</a><a class="h2" href="#1-you-press-enter">1 · You press Enter</a><a class="h2" href="#2-text-becomes-tokens">2 · Text becomes tokens</a><a class="h2" href="#3-the-context-window">3 · The context window</a><a class="h2" href="#4-prefill-read-the-prompt">4 · Prefill: read the prompt</a><a class="h2" href="#5-the-kv-cache-is-born">5 · The KV cache is born</a><a class="h2" href="#6-the-decode-loop">6 · The decode loop</a><a class="h2" href="#7-choosing-the-next-word">7 · Choosing the next word</a><a class="h2" href="#8-streaming-to-your-screen">8 · Streaming to your screen</a><a class="h2" href="#9-many-people-at-once">9 · Many people at once</a><a class="h2" href="#10-where-the-time-and-money-go">10 · Where the time and money go</a><a class="h2" href="#the-whole-journey">The whole journey</a><a class="h2" href="#where-it-breaks">Where it breaks</a><a class="h2" href="#go-deeper">Go deeper</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=explainers%2Finside-one-llm-request.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="explainers/inside-one-llm-request.html"</script><script defer src="../assets/glossary.js"></script></body></html>

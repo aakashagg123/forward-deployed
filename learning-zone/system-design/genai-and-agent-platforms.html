@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GenAI and agent platforms — System Design</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink active" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 13</span>
+    <h1>GenAI and agent platforms</h1>
+  </div>
+  <div class="MarkdownContent"><div class="explainer-link"><div class="Alert" data-variant="soft" data-color="info"><div class="Indicator"><svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm1.25 9.25h-2.5a.75.75 0 0 1 0-1.5h.5v-3h-.5a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75V13h.5a.75.75 0 0 1 0 1.5Z"/></svg></div><div class="Content"><div class="Message"><div class="Title">Visual explainer</div><div class="Description">See it step by step: <a href="../explainers/inside-one-llm-request.html">Inside one LLM request →</a>. It follows one example through the stages, with a picture at each.</div></div></div></div></div><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A chat service for a large language model looks like any web service: a gateway, a stateful conversation layer, a router and a fleet of workers. The difference is the workers. Each one is an accelerator whose <strong>memory</strong> and <strong>bandwidth</strong>, not its compute, limit how many users it can serve. Weights fill part of the memory. Each active conversation adds a <strong>KV cache</strong> that grows with every token. Reading the weights for every generated token makes decoding slow.</p>
+<p>An <strong>agent platform</strong> adds a loop on top: the model plans, calls tools and sees results until the task is done. That loop needs <strong>durable orchestration</strong> so a crash resumes instead of repeating paid actions, a <strong>tool gateway</strong> with permissions, <strong>sandboxes</strong> for code and browsing, and <strong>budgets</strong> on steps and cost. Safety is layered: least privilege, isolation, human approval, kill switches and an audit log.</p>
+<p>The details of how models work are in the <a href="../transformers/index.html">transformers</a> module. This lesson shows how they become a service.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — Cost per conversation, time to first token and the number of users per machine all come from the serving design. An agent that can act can also do damage, so its controls are product requirements.</p>
+<p><strong>What it changes in your decisions</strong> — You size capacity by memory, not by weights alone. You ask for token-based rate limits and per-agent budgets. You decide which actions need a person's approval.</p>
+<p><strong>Ask your eng team</strong> — <em>"How many concurrent long conversations fit on one accelerator, what limits us, and what is the most damage one agent run can do before something stops it?"</em></p>
+<p><strong>Risk if ignored</strong> — A launch that runs out of GPU memory at a fraction of planned concurrency. An agent that repeats a payment after a crash, or runs up a large bill overnight.</p>
+</blockquote>
+<h2 id="the-mental-model-a-service-with-an-expensive-memory-bound-worker">The mental model: a service with an expensive, memory-bound worker</h2>
+<style>
+.dgm-ga{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ga-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ga h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ga-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ga-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-ga-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-ga-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-ga-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ga-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-ga-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-ga-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ga-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ga-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-ga-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ga-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-ga-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-ga-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-ga-note b{color:var(--color-text)}
+.dgm-ga-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-ga{padding:22px 14px 18px}.dgm-ga-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-ga-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ga">
+  <span class="dgm-ga-chip">An LLM service</span>
+  <h4>Ordinary layers in front, a memory-bound worker behind</h4>
+  <p class="dgm-ga-sub">Weights and the KV cache share accelerator memory.</p>
+  <div class="dgm-ga-grid">
+    <div class="dgm-ga-c dgm-ga-info"><h5><span class="dgm-ga-n">1</span>Gateway</h5><span class="dgm-ga-t">auth · token limits</span><p>Counts tokens, not only requests.</p></div>
+    <div class="dgm-ga-c dgm-ga-discovery"><h5><span class="dgm-ga-n">2</span>Conversation service</h5><span class="dgm-ga-t">history · prompt</span><p>Builds the prompt.</p></div>
+    <div class="dgm-ga-c dgm-ga-caution"><h5><span class="dgm-ga-n">3</span>Router</h5><span class="dgm-ga-t">load and cache aware</span><p>Sends a prompt prefix to the replica that holds it.</p></div>
+    <div class="dgm-ga-c dgm-ga-danger"><h5><span class="dgm-ga-n">4</span>GPU replicas</h5><span class="dgm-ga-t">continuous batching · KV cache</span><p>Memory, not compute, caps concurrency.</p></div>
+    <div class="dgm-ga-c dgm-ga-success"><h5><span class="dgm-ga-n">5</span>Stream tokens back</h5><span class="dgm-ga-t">server-sent events</span><p>First token, then the rest.</p></div>
+  </div>
+  <p class="dgm-ga-foot">Agents add a loop: the model proposes a tool call, a gateway checks it, and a checkpoint saves progress.</p>
+</div>
+
+<p>Every layer before the workers is ordinary system design. The workers are where the AI-specific costs live.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-llm-chat-service">The LLM chat service</h3>
+<ul>
+<li><strong>Edge and gateway.</strong> Authentication, and rate limits counted in requests and in tokens, plus safety checks.</li>
+<li><strong>Conversation service.</strong> Stores history and assembles the prompt: system prompt, history, retrieved context and tool results.</li>
+<li><strong>Routing.</strong> Picks the model and region, and sends requests to replicas that already hold a matching prompt prefix in cache.</li>
+<li><strong>Inference engines.</strong> Continuous batching, KV cache management, prefix caching, and streaming tokens back, for example with server-sent events.</li>
+<li><strong>After.</strong> Metering for billing, logging, evaluation and abuse monitoring.</li>
+</ul>
+<h3 id="why-memory-is-the-limit">Why memory is the limit</h3>
+<p><strong>Prefill</strong> reads the whole prompt at once and is limited by compute. <strong>Decode</strong> produces one token per step. Each step reads every weight from memory, so decode is limited by memory bandwidth. The KV cache holds keys and values for every token of every active conversation, and it lives beside the weights. The lessons on <a href="../transformers/generating-text-and-the-kv-cache.html">generating text and the KV cache</a> and <a href="../transformers/variants-and-reading-a-model-card.html">variants and model cards</a> give the formulas.</p>
+<h3 id="continuous-batching">Continuous batching</h3>
+<p>With <strong>static batching</strong>, a group of requests runs together until the longest one finishes, and short requests wait. With <strong>continuous batching</strong>, a finished request leaves at once and a waiting one takes its slot at the next step. Throughput rises, because the accelerator never idles on finished requests. Paged cache management avoids wasting memory on reserved but unused space.</p>
+<h3 id="the-agent-platform">The agent platform</h3>
+<ul>
+<li><strong>Agent loop.</strong> The model proposes a tool call. The platform runs it and returns the result, until the task is done.</li>
+<li><strong>Durable orchestration.</strong> Long-running agents checkpoint their state in a workflow engine, so a crash resumes at the last committed step.</li>
+<li><strong>Tool gateway.</strong> Authentication, per-tool permissions, quotas and timeouts.</li>
+<li><strong>Sandboxes.</strong> Isolated environments for code execution and browsing.</li>
+<li><strong>Memory.</strong> The context window plus a retrieval store.</li>
+<li><strong>Budgets and traces.</strong> Step, time and cost limits, and a full trace of every model and tool call.</li>
+</ul>
+<p>See <a href="../agentic-ai/index.html">agentic AI</a> and <a href="../tool-calling/index.html">tool calling</a> for how agents work.</p>
+<h3 id="keeping-agents-safe">Keeping agents safe</h3>
+<ul>
+<li><strong>Least privilege.</strong> Scoped credentials per agent and task, with no standing access to production.</li>
+<li><strong>Isolation.</strong> Sandboxed execution, allow-listed network egress and no access to other agents' data.</li>
+<li><strong>Human approval</strong> for high-impact actions: payments, deletions, external messages.</li>
+<li><strong>Limits and kill switches.</strong> Rate, spend and step caps that stop runaway behaviour quickly.</li>
+<li><strong>Audit and detection.</strong> Immutable logs of every action, and monitoring for unusual patterns.</li>
+<li><strong>Red-teaming</strong> before launch and after changes.</li>
+</ul>
+<p>Each control is independent, so an action must pass all of them before it touches the real world. <a href="../ai-security-and-guardrails/index.html">AI security and guardrails</a> goes deeper.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Latency vs. throughput.</strong> Bigger batches serve more users per accelerator and make each user wait a little longer.</li>
+<li><strong>Long context vs. concurrency.</strong> Every extra token of context costs cache memory.</li>
+<li><strong>Autonomy vs. approval.</strong> Fewer prompts make agents faster, and the cost of a mistake is higher.</li>
+<li><strong>Shared vs. dedicated capacity.</strong> Shared pools are cheaper, and noisy neighbours add latency.</li>
+<li><strong>Hosted model vs. self-hosted.</strong> Control and cost at scale against operating effort.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Out of memory.</strong> Concurrency planned on weights alone.</li>
+<li><strong>Cache fragmentation.</strong> Memory reserved for the maximum length and not used.</li>
+<li><strong>Head-of-line blocking.</strong> Short requests stuck behind long ones in a static batch.</li>
+<li><strong>Repeated side effects.</strong> An agent re-runs a paid or irreversible call after a crash.</li>
+<li><strong>Runaway loops.</strong> An agent retries a hopeless task and spends the budget.</li>
+<li><strong>Over-broad access.</strong> A tool credential that can reach more than the task needs.</li>
+<li><strong>Prompt injection.</strong> Text in a page or file steers the agent into misusing a tool.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Two files in <code>system-design/code/</code> model the ideas.</p>
+<ul>
+<li><code>llm_serving.py</code> computes how many long conversations fit beside the weights, the decode speed for one stream and for a batch, and the steps needed by static and continuous batching.</li>
+<li><code>agent_budget.py</code> runs a permissioned agent loop with step and cost budgets, a kill switch and a checkpoint.</li>
+</ul>
+<pre><code class="language-python">def continuous_steps(lengths, slots):
+    pending, running, steps = list(lengths), [], 0
+    while pending or running:
+        while pending and len(running) &lt; slots:
+            running.append(pending.pop(0))          # a free slot is refilled at once
+        steps += 1
+        running = [r - 1 for r in running if r - 1 &gt; 0]
+    return steps
+</code></pre>
+<h2 id="worked-example-memory-batches-and-a-crash">Worked example: memory, batches and a crash</h2>
+<p><em>The model shape and rates are illustrative. The numbers come from <code>llm_serving.py</code> and <code>agent_budget.py</code>.</em></p>
+<p><strong>Concurrency.</strong> An 80 GiB accelerator holds a model with 32 layers, hidden size 4,096 and 16-bit numbers. With 32 key-value heads, the weights take 12.6 GiB and each 8,192-token conversation needs 4.0 GiB of cache, so 16 conversations fit. With grouped-query attention and 8 key-value heads, the weights take 11.1 GiB and each conversation needs 1.0 GiB, so 68 fit. The same hardware serves more than four times as many long conversations.</p>
+<p><strong>Decoding.</strong> With 2 TB per second of memory bandwidth and 12.6 GiB of weights, one stream decodes about 148 tokens per second. A batch of 16 shares each read of the weights and yields about 2,365 tokens per second in total. This is an upper bound that ignores compute, cache reads and overhead.</p>
+<p><strong>Batching.</strong> 64 requests of 20 to 400 tokens run on 8 slots. Static batching needs 2,890 steps. Continuous batching needs 1,887, which is 1.53 times faster.</p>
+<p><strong>Agent safety.</strong> An agent plans five tool calls and crashes after the third. With a checkpoint, the resumed run makes only the remaining two calls: five calls in total and no repeats. A call to a tool the agent is not permitted to use is denied. With a cost budget of 10, the run stops after three calls, before the 20-unit card charge. A kill switch stops the run at once.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is capacity planned as weights plus cache at our real context length and concurrency?</li>
+<li class="task todo">Do we measure time to first token and time per token separately?</li>
+<li class="task todo">Are rate limits counted in tokens, not only requests?</li>
+<li class="task todo">Do shared prompt prefixes get cached and routed to the same replica?</li>
+<li class="task todo">Does every agent run have step, time and cost budgets?</li>
+<li class="task todo">Does every tool call go through a gateway with per-tool permissions?</li>
+<li class="task todo">Are paid or irreversible actions checkpointed, idempotent or approved by a person?</li>
+<li class="task todo">Is there a kill switch, an audit log and a red-team before launch?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="../transformers/generating-text-and-the-kv-cache.html">Generating text and the KV cache</a> — why memory limits serving.</li>
+<li><a href="../agentic-ai/index.html">Agentic AI</a> — how agents plan and act.</li>
+<li><a href="../tool-calling/index.html">Tool calling</a> — how models call tools.</li>
+<li><a href="../ai-security-and-guardrails/index.html">AI security and guardrails</a> — injection, least privilege and approval.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — token budgets and caching.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Woosuk Kwon et al., <em>Efficient Memory Management for Large Language Model Serving with PagedAttention</em>, SOSP 2023: cache memory waste and paging.</li>
+<li>Gyeong-In Yu et al., <em>Orca: A Distributed Serving System for Transformer-Based Generative Models</em>, OSDI 2022: continuous (iteration-level) batching.</li>
+<li>Reiner Pope et al., <em>Efficiently Scaling Transformer Inference</em>, 2022: the memory-bound decode phase.</li>
+<li>OWASP, <em>Top 10 for Large Language Model Applications</em>: prompt injection and excessive agency.</li>
+<li>Model shapes, rates and costs are illustrative. The numbers come from <code>system-design/code/</code>. These sources were not re-opened during this revision, and the lesson's fact-check is pending. Serving software changes fast, so this lesson is stamped fast.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="ml-system-design.html"><span class="lbl">← Previous</span><span class="ttl">ML system design: recommendations, ads and search</span></a><a class="navcard next" href="social-and-media-systems.html"><span class="lbl">→ Next</span><span class="ttl">Social and media systems</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-service-with-an-expensive-memory-bound-worker">The mental model: a service with an expensive, memory-bound worker</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-llm-chat-service">The LLM chat service</a><a class="h3" href="#why-memory-is-the-limit">Why memory is the limit</a><a class="h3" href="#continuous-batching">Continuous batching</a><a class="h3" href="#the-agent-platform">The agent platform</a><a class="h3" href="#keeping-agents-safe">Keeping agents safe</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-memory-batches-and-a-crash">Worked example: memory, batches and a crash</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=system-design%2Fgenai-and-agent-platforms.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="system-design/genai-and-agent-platforms.html"</script><script defer src="../assets/glossary.js"></script></body></html>

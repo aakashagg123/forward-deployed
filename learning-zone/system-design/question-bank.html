@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Question bank: 50 design questions mapped to the lessons — System Design</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink active" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 16</span>
+    <h1>Question bank: 50 design questions mapped to the lessons</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>This page is a practice list. It holds 50 questions that come up in design reviews and interviews, grouped by the kind of knowledge each one tests. Each row says how hard the question is and which lesson answers it. All 50 are now covered by at least one lesson.</p>
+<p>The best way to use it is recall. Pick a question. Answer it aloud, on a blank page, in about five minutes. Then read the lesson and mark what you missed. Recalling an answer teaches more than reading one again.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — The questions show what engineers are expected to know. They also show the gaps in your own mental map, before a design review finds them for you.</p>
+<p><strong>What it changes in your decisions</strong> — You can tell which questions your team has answered with evidence and which they have answered with a favourite tool.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which three of these questions would we struggle to answer for our own system?"</em></p>
+<p><strong>Risk if ignored</strong> — Gaps you did not know you had show up first in production.</p>
+</blockquote>
+<h2 id="the-mental-model-one-map-from-question-to-lesson">The mental model: one map from question to lesson</h2>
+<p>Think of the list as an index into the track. The levels are a guide: junior questions test fundamentals, mid questions test core designs, senior questions test depth and trade-offs. A strong answer at any level states its assumptions, gives numbers and names what happens when something fails.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="how-the-list-is-organized">How the list is organized</h3>
+<p>The rows run in five groups, in order. Questions 1 to 10 cover building blocks. Questions 11 to 20 cover data and distributed systems. Questions 21 to 34 are classic product designs. Questions 35 to 42 cover ML and GenAI systems. Questions 43 to 50 cover reliability and operations.</p>
+<h3 id="the-bank">The bank</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Level</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>What does a design discussion test, and how do you spend 45 minutes?</td>
+<td>Junior</td>
+<td><a href="foundations-and-framework.html">Read</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Why prefer stateless services and horizontal scaling?</td>
+<td>Junior</td>
+<td><a href="foundations-and-framework.html">Read</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>How do L4 and L7 load balancers differ, and what do health checks do?</td>
+<td>Junior</td>
+<td><a href="traffic-caching-apis-and-storage-choice.html">Read</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Which caching strategies exist, and how do you avoid a stampede?</td>
+<td>Mid</td>
+<td><a href="traffic-caching-apis-and-storage-choice.html">Read</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>What does a CDN do, and when is it the right tool?</td>
+<td>Junior</td>
+<td><a href="traffic-caching-apis-and-storage-choice.html">Read</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>How do you choose between SQL and NoSQL?</td>
+<td>Mid</td>
+<td><a href="traffic-caching-apis-and-storage-choice.html">Read</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>How do message queues differ from event logs, and what do the delivery guarantees mean?</td>
+<td>Mid</td>
+<td><a href="data-infrastructure.html">Read</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>How do you design an API: REST, gRPC, GraphQL, pagination, idempotency?</td>
+<td>Mid</td>
+<td><a href="traffic-caching-apis-and-storage-choice.html">Read</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Estimate the load and storage for a Twitter-like service.</td>
+<td>Mid</td>
+<td><a href="foundations-and-framework.html">Read</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Design a rate limiter and distribute it.</td>
+<td>Mid</td>
+<td><a href="core-building-blocks.html">Read</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Compare leader-follower, multi-leader and leaderless replication.</td>
+<td>Mid</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>12</td>
+<td>How do you shard a database, and what goes wrong?</td>
+<td>Mid</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Explain consistent hashing and virtual nodes.</td>
+<td>Mid</td>
+<td><a href="core-building-blocks.html">Read</a></td>
+</tr>
+<tr>
+<td>14</td>
+<td>What do CAP and PACELC say?</td>
+<td>Mid</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Explain the main consistency models with an example.</td>
+<td>Senior</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>16</td>
+<td>How do quorum reads and writes work?</td>
+<td>Senior</td>
+<td><a href="core-building-blocks.html">Read</a></td>
+</tr>
+<tr>
+<td>17</td>
+<td>What is consensus, and where do Raft and Paxos fit?</td>
+<td>Senior</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>18</td>
+<td>How do you keep data consistent across services: 2PC, sagas, outbox?</td>
+<td>Senior</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>19</td>
+<td>How do you generate unique IDs at scale?</td>
+<td>Mid</td>
+<td><a href="core-building-blocks.html">Read</a></td>
+</tr>
+<tr>
+<td>20</td>
+<td>Why can you not trust wall-clock time?</td>
+<td>Senior</td>
+<td><a href="distributed-data-and-consistency.html">Read</a></td>
+</tr>
+<tr>
+<td>21</td>
+<td>Design a URL shortener.</td>
+<td>Mid</td>
+<td><a href="web-scale-services.html">Read</a></td>
+</tr>
+<tr>
+<td>22</td>
+<td>Design a chat system.</td>
+<td>Senior</td>
+<td><a href="real-time-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Design a news feed.</td>
+<td>Senior</td>
+<td><a href="web-scale-services.html">Read</a></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Design find-nearby-drivers for ride hailing.</td>
+<td>Senior</td>
+<td><a href="location-and-geo-services.html">Read</a></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Design a payment system.</td>
+<td>Senior</td>
+<td><a href="transactional-and-financial.html">Read</a></td>
+</tr>
+<tr>
+<td>26</td>
+<td>Design a short-video upload and processing pipeline.</td>
+<td>Senior</td>
+<td><a href="social-and-media-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>27</td>
+<td>Design live streaming for tens of millions of viewers.</td>
+<td>Senior</td>
+<td><a href="social-and-media-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>28</td>
+<td>Design a like button that updates for everyone at global scale.</td>
+<td>Mid</td>
+<td><a href="social-and-media-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>29</td>
+<td>Design photo storage that serves a 15-year-old photo on demand.</td>
+<td>Senior</td>
+<td><a href="social-and-media-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>30</td>
+<td>Design metrics collection and monitoring for thousands of servers.</td>
+<td>Mid</td>
+<td><a href="data-infrastructure.html">Read</a></td>
+</tr>
+<tr>
+<td>31</td>
+<td>Design search over a social graph.</td>
+<td>Senior</td>
+<td><a href="social-and-media-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>32</td>
+<td>Design a swipe-and-match system.</td>
+<td>Mid</td>
+<td><a href="social-and-media-systems.html">Read</a></td>
+</tr>
+<tr>
+<td>33</td>
+<td>Design a delivery routing system.</td>
+<td>Senior</td>
+<td><a href="location-and-geo-services.html">Read</a></td>
+</tr>
+<tr>
+<td>34</td>
+<td>Design a notification system.</td>
+<td>Mid</td>
+<td><a href="web-scale-services.html">Read</a></td>
+</tr>
+<tr>
+<td>35</td>
+<td>How does ML system design differ from classic system design?</td>
+<td>Mid</td>
+<td><a href="ml-system-design.html">Read</a></td>
+</tr>
+<tr>
+<td>36</td>
+<td>Design a recommendation system for short videos.</td>
+<td>Senior</td>
+<td><a href="ml-system-design.html">Read</a></td>
+</tr>
+<tr>
+<td>37</td>
+<td>Design ads click prediction.</td>
+<td>Senior</td>
+<td><a href="ml-system-design.html">Read</a></td>
+</tr>
+<tr>
+<td>38</td>
+<td>Design product search ranking and listing classification.</td>
+<td>Mid</td>
+<td><a href="ml-system-design.html">Read</a></td>
+</tr>
+<tr>
+<td>39</td>
+<td>Design reverse image search over 100 billion images.</td>
+<td>Senior</td>
+<td><a href="ml-system-design.html">Read</a></td>
+</tr>
+<tr>
+<td>40</td>
+<td>Design an LLM chat service.</td>
+<td>Senior</td>
+<td><a href="genai-and-agent-platforms.html">Read</a></td>
+</tr>
+<tr>
+<td>41</td>
+<td>Design a platform that runs AI agents at scale.</td>
+<td>Senior</td>
+<td><a href="genai-and-agent-platforms.html">Read</a></td>
+</tr>
+<tr>
+<td>42</td>
+<td>How do you keep autonomous agents safe in production?</td>
+<td>Senior</td>
+<td><a href="genai-and-agent-platforms.html">Read</a></td>
+</tr>
+<tr>
+<td>43</td>
+<td>Reason about availability with SLIs, SLOs, SLAs and nines.</td>
+<td>Junior</td>
+<td><a href="numbers-and-formulas.html">Read</a></td>
+</tr>
+<tr>
+<td>44</td>
+<td>What should an observability setup include?</td>
+<td>Mid</td>
+<td><a href="reliability-and-operations.html">Read</a></td>
+</tr>
+<tr>
+<td>45</td>
+<td>Which resilience patterns prevent cascading failures?</td>
+<td>Senior</td>
+<td><a href="reliability-and-operations.html">Read</a></td>
+</tr>
+<tr>
+<td>46</td>
+<td>How do you deploy changes safely, including configuration?</td>
+<td>Mid</td>
+<td><a href="reliability-and-operations.html">Read</a></td>
+</tr>
+<tr>
+<td>47</td>
+<td>Design for regional failure: multi-region, RPO and RTO.</td>
+<td>Senior</td>
+<td><a href="reliability-and-operations.html">Read</a></td>
+</tr>
+<tr>
+<td>48</td>
+<td>How do you limit the blast radius of human error?</td>
+<td>Mid</td>
+<td><a href="reliability-and-operations.html">Read</a></td>
+</tr>
+<tr>
+<td>49</td>
+<td>What does a backup strategy that works look like?</td>
+<td>Mid</td>
+<td><a href="reliability-and-operations.html">Read</a></td>
+</tr>
+<tr>
+<td>50</td>
+<td>What happens when you type a URL and press Enter?</td>
+<td>Junior</td>
+<td><a href="foundations-and-framework.html">Read</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-to-answer-well">How to answer well</h3>
+<p>Use the same steps every time: scope the problem, estimate the load, sketch the design, go deep on the hardest part, and close with trade-offs and failure. The <a href="foundations-and-framework.html">foundations lesson</a> has the full framework.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Breadth vs. depth.</strong> Cover many questions lightly or a few deeply. Depth shows in the senior rows.</li>
+<li><strong>Memorized answers vs. reasoning.</strong> An answer you can derive from numbers beats one you recall.</li>
+<li><strong>Coverage.</strong> A lesson covers a question at the depth of a design review. For a question that matters to you, follow the lesson's sources.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Reading instead of recalling.</strong> The answer feels familiar, so you think you know it.</li>
+<li><strong>Skipping numbers.</strong> A design with no estimate cannot be judged.</li>
+<li><strong>Naming tools.</strong> "Use Kafka" is not a design until you say which problem it solves.</li>
+<li><strong>Ignoring failure.</strong> A design that never says what breaks.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The levels and the coverage column are a plain table in this file. Each link points to the lesson with the closest answer. If you add a lesson, link it from the matching row. The code behind most answers is in <code>system-design/code/</code>. Run <code>python3 system-design/code/test_examples.py</code> to check all of it.</p>
+<h2 id="worked-example-answering-question-9">Worked example: answering question 9</h2>
+<p><em>The numbers come from <code>system-design/code/estimator.py</code>.</em></p>
+<p>The question is "Estimate the load and storage for a Twitter-like service." Say your assumptions: 200 million daily users, 2 posts each, 300 bytes per post, 100 reads per write. Then compute. 400 million posts a day is about 4,630 writes per second. Reads are about 463,000 per second. Post text is about 120 GB a day, or about 43.8 TB a year. The conclusion that drives the design: reads dominate, so cache and precompute feeds. Text is small, and media will dominate storage.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have you answered ten questions aloud without notes?</li>
+<li class="task todo">Did every answer include an estimate with units?</li>
+<li class="task todo">Did every answer say what happens on failure?</li>
+<li class="task todo">Have you marked the rows you missed and read those lessons?</li>
+<li class="task todo">Have you asked a colleague to grade one answer?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="foundations-and-framework.html">Foundations and framework</a> — the answer framework and a seven-stage practice plan.</li>
+<li><a href="numbers-and-formulas.html">Numbers, formulas and papers</a> — the figures every answer uses.</li>
+<li><a href="recap.html">Recap</a> — the systems at a glance and a self-test.</li>
+<li><a href="../technical-product-sense/index.html">Technical product sense</a> — reading systems rather than designing them.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — measuring what you build.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Alex Xu, <em>System Design Interview</em>, volumes 1 and 2, and Martin Kleppmann, <em>Designing Data-Intensive Applications</em>: the topics the questions cover.</li>
+<li>The question wording, the levels and the coverage column are this track's own. The levels are a judgement, not a standard.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="reliability-and-operations.html"><span class="lbl">← Previous</span><span class="ttl">Reliability and operations</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-one-map-from-question-to-lesson">The mental model: one map from question to lesson</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#how-the-list-is-organized">How the list is organized</a><a class="h3" href="#the-bank">The bank</a><a class="h3" href="#how-to-answer-well">How to answer well</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-answering-question-9">Worked example: answering question 9</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=system-design%2Fquestion-bank.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="system-design/question-bank.html"</script><script defer src="../assets/glossary.js"></script></body></html>

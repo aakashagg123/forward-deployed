@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Practice: hill climbing — Building AI-native products</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Building AI-native products</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="designing-for-ambiguity.html">1 · Designing for ambiguity</a><a class="modlink" href="ux-practice-the-ai-feature-spec.html">2 · Practice: the AI feature spec</a><a class="modlink" href="model-intuition.html">3 · Model intuition</a><a class="modlink" href="model-intuition-practice.html">4 · Practice: probing and choosing models</a><a class="modlink" href="from-pixels-to-evals.html">5 · From pixels to evals</a><a class="modlink active" href="hill-climbing-in-practice.html">6 · Practice: hill climbing</a><a class="modlink" href="designing-agentic-flows.html">7 · Designing agentic flows</a><a class="modlink" href="agentic-flows-practice.html">8 · Practice: the agent spec and risk register</a><a class="modlink" href="how-users-behave-with-agents.html">9 · How users behave with agents</a><a class="modlink" href="researching-agent-interactions.html">10 · Practice: researching agent interactions</a><a class="modlink" href="capstone-ship-one-ai-native-feature.html">11 · Capstone: ship one AI-native feature</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
+    <h1>Practice: hill climbing</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p><strong>Hill climbing</strong> is the loop that turns an eval set into a better product. You score the current version. You read the failures and name their causes. You pick the most common cause and make one change aimed at it. You score again on the same set. If the score rose, and a fresh set agrees, you keep the change. Then you repeat.</p>
+<p>The loop is simple. Four habits make it work. <strong>Read failures by hand</strong>, because the cause is in the text. <strong>Change one thing at a time</strong>, so you know what helped. <strong>Keep a log</strong>, so you can see what you tried. And <strong>protect a holdout set</strong>, so you do not climb a hill that exists only in your test.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI product leader</strong></p>
+<p><strong>Why it matters</strong> — Most AI quality gains come from many small, measured steps, not from one big rewrite. The team that climbs faster and more honestly wins.</p>
+<p><strong>What it changes in your decisions</strong> — You ask to see the log, not only the latest score. You fund time for reading failures. You insist on a holdout set and on noise bands.</p>
+<p><strong>Ask your team</strong> — <em>"What were the last five changes, what did each do to the score and to the holdout, and what is the biggest failure cause now?"</em></p>
+<p><strong>Risk if ignored</strong> — A score that rises on the team's test and does not rise for users, because the test was tuned until it meant nothing.</p>
+</blockquote>
+<h2 id="the-mental-model-climb-then-check-on-fresh-ground">The mental model: climb, then check on fresh ground</h2>
+<style>
+.dgm-hc{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-hc-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-hc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-hc-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-hc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-hc-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-hc-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-hc-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-hc-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-hc-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-hc-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-hc-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-hc-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-hc-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-hc-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-hc-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-hc-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-hc-note b{color:var(--color-text)}
+.dgm-hc-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-hc{padding:22px 14px 18px}.dgm-hc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-hc-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-hc">
+  <span class="dgm-hc-chip">Climb on dev, check on holdout</span>
+  <h4>One change per round</h4>
+  <p class="dgm-hc-sub">The holdout shows whether the hill is real.</p>
+  <div class="dgm-hc-grid">
+    <div class="dgm-hc-c dgm-hc-info"><h5><span class="dgm-hc-n">1</span>Score on dev</h5><span class="dgm-hc-t">pass rate and noise band</span><p>Same cases every time.</p></div>
+    <div class="dgm-hc-c dgm-hc-discovery"><h5><span class="dgm-hc-n">2</span>Read failures</h5><span class="dgm-hc-t">at least 30, in full</span><p>Name and count the causes.</p></div>
+    <div class="dgm-hc-c dgm-hc-caution"><h5><span class="dgm-hc-n">3</span>One change</h5><span class="dgm-hc-t">aimed at the top cause</span><p>Prompt, context, tool or model.</p></div>
+    <div class="dgm-hc-c dgm-hc-warning"><h5><span class="dgm-hc-n">4</span>Holdout agrees?</h5><span class="dgm-hc-t">rarely checked, never tuned on</span><p>Yes: keep. No: undo.</p></div>
+    <div class="dgm-hc-c dgm-hc-success"><h5><span class="dgm-hc-n">5</span>Log it</h5><span class="dgm-hc-t">change · scores · fixed and broken</span><p>The team memory.</p></div>
+  </div>
+  <p class="dgm-hc-foot">If dev rises and the holdout does not, you are overfitting.</p>
+</div>
+
+<p>The dev set is where you climb. The holdout is where you check that you are still on real ground.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="build-the-eval-set">Build the eval set</h3>
+<p>Start from the examples in your spec. Add real failures from production and from user signals. Aim for 100 cases to begin, and more later. Label each case with a failure category when it fails, so you can count. Split the set into a <strong>dev set</strong>, which you look at and tune on, and a <strong>holdout set</strong>, which you score rarely and never tune on. A common split is 70% and 30%.</p>
+<h3 id="the-error-analysis-loop">The error-analysis loop</h3>
+<ol>
+<li>Run the system on the dev set. Record pass or fail per case.</li>
+<li>Read at least 30 failures in full.</li>
+<li>Name the cause of each one in a few words. Group them.</li>
+<li>Count the groups. The largest group is your target.</li>
+<li>Choose the cheapest fix for that cause: a prompt line, better context, a tool or a model change.</li>
+<li>Make one change. Re-run. Compare on the same cases.</li>
+</ol>
+<h3 id="compare-fairly">Compare fairly</h3>
+<p>Use the same cases and the same scoring each time. Compare pairs: which cases flipped from fail to pass and which flipped from pass to fail. A change that fixes 10 cases and breaks 8 is not an improvement of 2. Read the broken ones. Check the noise band before you believe a small gain.</p>
+<h3 id="guard-against-overfitting-your-own-eval">Guard against overfitting your own eval</h3>
+<p>Each time you look at the dev set and change the prompt, you fit the prompt to that set a little. After many rounds the dev score is flattering. The holdout shows the truth. If the dev score rises and the holdout does not, you are overfitting. Refresh the dev set with new production cases, and keep the holdout fixed for a longer period.</p>
+<h3 id="keep-the-log">Keep the log</h3>
+<p>Record each step: what you changed, why, the dev score before and after, the holdout score, the cases that flipped each way and the cost or latency change. The log is the team's memory and a way to stop repeating failed ideas.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>More cases vs. more reading.</strong> A bigger set gives smoother scores. Reading failures gives causes. You need both.</li>
+<li><strong>Dev score vs. holdout.</strong> Chase the dev set for speed. Trust the holdout for decisions.</li>
+<li><strong>One change vs. a batch.</strong> Single changes teach more. Batches save time and hide causes.</li>
+<li><strong>Automated judge vs. reading.</strong> Judges scale. Reading finds the surprises.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>No holdout.</strong> Every number is a flattering one.</li>
+<li><strong>Peeking.</strong> The holdout is checked so often it becomes a dev set.</li>
+<li><strong>Averaging away the dangerous cases.</strong> The rare severe failure is not tracked on its own.</li>
+<li><strong>Moving the goalposts.</strong> The rubric changes to make the score rise.</li>
+<li><strong>Gains that cost too much.</strong> Quality rises while latency or cost breaks the budget.</li>
+<li><strong>A stale set.</strong> Users have changed and the cases have not.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Three templates.</p>
+<pre><code class="language-text">EVAL SET SHEET
+Case id | Source (spec / production / signal) | Input | Expected | Group (dev/holdout) | Category if failing
+</code></pre>
+<pre><code class="language-text">FAILURE TALLY (dev set, run on ___)
+Cause                        | Count | Share | Example case ids | Cheapest fix
+ 1)
+ 2)
+Target for this round: ___
+</code></pre>
+<pre><code class="language-text">HILL-CLIMB LOG
+Step | Change (one thing) | Dev before → after | Holdout | Fixed (n) / Broken (n) | Cost / latency | Keep?
+</code></pre>
+<h2 id="worked-example-five-rounds-on-relay">Worked example: five rounds on Relay</h2>
+<p><em>Relay is invented. All numbers are made up for teaching.</em></p>
+<p>The team built an eval set of 200 cases and split it into 140 dev and 60 holdout. The starting version scored 62% on dev and 60% on holdout.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Change</th>
+<th>Dev</th>
+<th>Holdout</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Baseline</td>
+<td>62%</td>
+<td>60%</td>
+<td>Top cause: missing policy facts (31 of 53 fails)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Add policy retrieval</td>
+<td>71%</td>
+<td>68%</td>
+<td>Fixed 17, broke 4</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Rewrite opening to be less formal</td>
+<td>74%</td>
+<td>70%</td>
+<td>Tone failures down</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Add "ask a question when order data is missing"</td>
+<td>79%</td>
+<td>73%</td>
+<td>Awkward cases up</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Add 12 worked examples to the prompt</td>
+<td>88%</td>
+<td>74%</td>
+<td>Dev jumped, holdout barely moved</td>
+</tr>
+</tbody>
+</table>
+<p>Step 5 was the warning. Twelve new examples were close to dev cases, so the prompt had partly memorized the dev set. The team removed the examples that matched dev cases, refreshed the dev set with 40 new production cases, and rescored. Dev fell to 80% and holdout rose to 77%. That was the honest number. The log kept the lesson: <em>check the holdout on every step, and never copy dev cases into the prompt.</em></p>
+<blockquote>
+<p><strong>Capstone step 3.</strong> Build an eval set from your spec examples. Split dev and holdout. Run one round of the loop on your feature and fill in the tally and the log.</p>
+</blockquote>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is there a dev set and a protected holdout?</li>
+<li class="task todo">Are at least 30 failures read in full each round?</li>
+<li class="task todo">Is each change a single change?</li>
+<li class="task todo">Is the comparison paired, with fixed and broken counts?</li>
+<li class="task todo">Is the noise band known?</li>
+<li class="task todo">Is the log kept, with the holdout score on each line?</li>
+<li class="task todo">Are severe failures tracked on their own?</li>
+<li class="task todo">Is the dev set refreshed from production?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="from-pixels-to-evals.html">From pixels to evals</a> — the judgement behind this loop.</li>
+<li><a href="model-intuition-practice.html">Practice: probing and choosing models</a> — picking the model to climb with.</li>
+<li><a href="../evaluation-and-observability/building-the-eval-stack-in-the-right-order.html">Building the eval stack in the right order</a> — the engineering view.</li>
+<li><a href="../prompt-engineering/when-prompts-fail.html">When prompts fail</a> — reading failures.</li>
+<li><a href="../context-engineering/evaluating-context-quality.html">Evaluating context quality</a> — evals for retrieval.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Hamel Husain, writing on evals and error analysis for LLM products (hamel.dev): reading traces and grouping failures. Not re-opened.</li>
+<li>Relay, its eval set and every number are invented for teaching. This track's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="from-pixels-to-evals.html"><span class="lbl">← Previous</span><span class="ttl">From pixels to evals</span></a><a class="navcard next" href="designing-agentic-flows.html"><span class="lbl">→ Next</span><span class="ttl">Designing agentic flows</span></a></div><footer class="foot"><strong>Core insight:</strong> An AI-native product is designed around uncertainty: you decide what the model should do, measure it with evals, and shape the flow so people can trust and correct it.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-climb-then-check-on-fresh-ground">The mental model: climb, then check on fresh ground</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#build-the-eval-set">Build the eval set</a><a class="h3" href="#the-error-analysis-loop">The error-analysis loop</a><a class="h3" href="#compare-fairly">Compare fairly</a><a class="h3" href="#guard-against-overfitting-your-own-eval">Guard against overfitting your own eval</a><a class="h3" href="#keep-the-log">Keep the log</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-five-rounds-on-relay">Worked example: five rounds on Relay</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=building-ai-native-products%2Fhill-climbing-in-practice.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="building-ai-native-products/hill-climbing-in-practice.html"</script><script defer src="../assets/glossary.js"></script></body></html>

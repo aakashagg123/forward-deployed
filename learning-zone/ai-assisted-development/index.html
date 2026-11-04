@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AI-assisted development for the product and technology leader</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI-assisted development</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><main class="content index" id="top">
+  <div class="index-hero">
+    <h1>AI-assisted development for the product and technology leader</h1>
+    <p class="lede">What changes when a coding agent writes the code: specifying, verifying, controlling and measuring the work, with runnable examples and one real Stop-hook script.</p>
+    <div class="index-insight"><span class="Badge" data-color="discovery" data-size="md" data-variant="soft" data-pill="">Core insight</span><p>When an agent writes the code, the scarce work is specifying and verifying, so speed comes from the checks you build, not from the agent.</p></div>
+    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">6 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">runnable code</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">knowledge graph</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
+  </div>
+  <div class="intro MarkdownContent"><p>A coding agent reads your repository, edits files, runs commands and reports back. Teams that use one well ship faster. Teams that use one badly ship the same bugs faster, and review more code than before.</p>
+<p>The tool is the easy part. The work that changes is around it. Someone must <strong>specify</strong> the task so the agent can finish it. Someone must <strong>verify</strong> the result, because the agent will say it is done when it is not. Someone must <strong>control</strong> what the agent may touch. And someone must <strong>measure</strong> the outcome in a way that does not fool them.</p>
+<p>This module covers those four jobs for the leader who sets the rules. It does not teach one tool's menus. The examples follow Claude Code, because its documentation is public and specific, and the ideas carry to other coding agents.</p>
+<p>Every lesson has two layers. The body is for the leader who decides. A short <strong>Under the hood</strong> section is for the engineer who builds. It points to code that runs on the Python standard library and ends in <code>assert</code> lines. One file is a real Stop-hook script you can copy. The others are small models of cost, review time, permission rules and metrics, with invented numbers.</p>
+<p><strong>A note on scope and freshness.</strong> Coding agents change every few weeks. Settings, modes and prices in this module come from the Claude Code documentation as read in 2026-10. The <em>ideas</em> hold longer than the <em>names</em>. Check the documentation before you copy a setting.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How an agent loop works</td>
+<td><a href="../agentic-ai/index.html">Agentic AI</a> and <a href="../ai-agents/index.html">AI agents</a></td>
+</tr>
+<tr>
+<td>How agents call tools and servers</td>
+<td><a href="../tool-calling/index.html">Tool calling</a></td>
+</tr>
+<tr>
+<td>What goes into the context and how it fills</td>
+<td><a href="../context-engineering/index.html">Context engineering</a></td>
+</tr>
+<tr>
+<td>Writing evals and checks</td>
+<td><a href="../evaluation-and-observability/index.html">Evaluation and observability</a></td>
+</tr>
+<tr>
+<td>Prompt injection, secrets and least privilege</td>
+<td><a href="../ai-security-and-guardrails/index.html">AI security and guardrails</a></td>
+</tr>
+<tr>
+<td>Token prices, caching and budgets</td>
+<td><a href="../cost-optimization/index.html">Cost optimization</a></td>
+</tr>
+<tr>
+<td>Why a long session costs more</td>
+<td><a href="../transformers/generating-text-and-the-kv-cache.html">Generating text and the KV cache</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-knowledge-graph">The knowledge graph</h2>
+<style>
+.dgm-am{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-am-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-am h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-am-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-am-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dgm-am-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-am-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-am-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-am-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-am-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-am-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-am-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-am-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-am-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-am-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-am-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-am-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-am-note b{color:var(--color-text)}
+.dgm-am-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-am{padding:22px 14px 18px}.dgm-am-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-am-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-am">
+  <span class="dgm-am-chip">The module map</span>
+  <h4>A loop that feeds the spec</h4>
+  <p class="dgm-am-sub">What you learn from measuring changes what you specify.</p>
+  <div class="dgm-am-grid">
+    <div class="dgm-am-c dgm-am-info"><h5><span class="dgm-am-n">1</span>The bottleneck moves</h5><span class="dgm-am-t">specify · run · verify</span><p>Checks beat raw speed.</p></div>
+    <div class="dgm-am-c dgm-am-discovery"><h5><span class="dgm-am-n">2</span>Specs and the context file</h5><span class="dgm-am-t">standing brief + task spec</span><p>Write it once, use it every session.</p></div>
+    <div class="dgm-am-c dgm-am-success"><h5><span class="dgm-am-n">3</span>Verification</h5><span class="dgm-am-t">exit codes, not sentences</span><p>Make "done" a fact.</p></div>
+    <div class="dgm-am-c dgm-am-caution"><h5><span class="dgm-am-n">4</span>Control</h5><span class="dgm-am-t">permissions · modes · hooks</span><p>Guardrails, then a sandbox.</p></div>
+    <div class="dgm-am-c dgm-am-warning"><h5><span class="dgm-am-n">5</span>Running at scale</h5><span class="dgm-am-t">sessions · subagents · fan-out</span><p>Review capacity is the limit.</p></div>
+    <div class="dgm-am-c dgm-am-danger"><h5><span class="dgm-am-n">6</span>Measuring and governing</h5><span class="dgm-am-t">outcomes by difficulty</span><p>One-page policy.</p></div>
+  </div>
+  <p class="dgm-am-foot">Measurement feeds back into the spec.</p>
+</div>
+
+<p>Read it as a loop. When an agent writes the code, the scarce steps become <strong>specifying</strong> and <strong>verifying</strong>. The <strong>context file</strong> carries the spec across sessions. <strong>Verification</strong> turns "done" into a fact. <strong>Control</strong> limits the harm when the agent is wrong. <strong>Scale</strong> multiplies all of it. <strong>Measurement</strong> tells you whether it worked, and feeds back into the spec.</p>
+<h2 id="the-lessons">The lessons</h2>
+<ol>
+<li><a href="when-an-agent-writes-the-code.html">When an agent writes the code: where the bottleneck goes</a> — a model of time per task, and why checks beat speed.</li>
+<li><a href="specs-and-the-context-file.html">Specs and the context file</a> — what to write once so every session starts well.</li>
+<li><a href="verification-is-the-product.html">Verification is the product</a> — tests, hooks and the rule that "done" must be checked.</li>
+<li><a href="control-permissions-modes-and-hooks.html">Control: permissions, modes and hooks</a> — what a rule stops, and what it does not.</li>
+<li><a href="running-at-scale.html">Running at scale: sessions, subagents and fan-out</a> — context cost, parallel work and the review queue.</li>
+<li><a href="measuring-and-governing.html">Measuring and governing</a> — metrics that do not mislead, costs, and a policy that fits on a page.</li>
+</ol>
+<p>Then the <a href="recap.html">recap and real-world examples</a>, with a self-test.</p>
+<h2 id="run-the-code">Run the code</h2>
+<p>Every example is in <code>ai-assisted-development/code/</code>. Run them all with one command.</p>
+<pre><code class="language-bash">python3 ai-assisted-development/code/test_examples.py
+</code></pre>
+<p>The files are <code>lesson1_bottleneck.py</code> through <code>lesson6_metrics.py</code>, plus <code>stop_gate.py</code>, a Stop-hook script you can register. A passing file checks the direction of each claim, such as strong checks beating a faster agent. Run a file to see every quoted number printed.</p></div>
+  <h2 class="sec">The lessons</h2>
+  <div class="cards"><a class="card" href="when-an-agent-writes-the-code.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>When an agent writes the code: where the bottleneck goes</h3><span class="card-go">Read lesson →</span></a><a class="card" href="specs-and-the-context-file.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>Specs and the context file</h3><span class="card-go">Read lesson →</span></a><a class="card" href="verification-is-the-product.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Verification is the product</h3><span class="card-go">Read lesson →</span></a><a class="card" href="control-permissions-modes-and-hooks.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Control: permissions, modes and hooks</h3><span class="card-go">Read lesson →</span></a><a class="card" href="running-at-scale.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Running at scale: sessions, subagents and fan-out</h3><span class="card-go">Read lesson →</span></a><a class="card" href="measuring-and-governing.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Measuring and governing</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
+  </main>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=ai-assisted-development%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="ai-assisted-development/index.html"</script><script defer src="../assets/glossary.js"></script></body></html>

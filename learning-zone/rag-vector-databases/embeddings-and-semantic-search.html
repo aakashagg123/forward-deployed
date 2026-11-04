@@ -41,49 +41,38 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="why-rag.html">1 · Why RAG?</a><a class="modlink active" href="embeddings-and-semantic-search.html">2 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">3 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">4 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">5 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">6 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">7 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-to-use-rag.html">1 · When to use RAG, and when not to</a><a class="modlink" href="why-rag.html">2 · Why RAG?</a><a class="modlink active" href="embeddings-and-semantic-search.html">3 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">4 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">5 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">6 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">7 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">8 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="building-rag-with-claude-code.html">9 · Building RAG with Claude Code, pgvector and Pinecone</a><a class="modlink" href="rag-terms.html">10 · RAG terms, explained</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
     <h1>Embeddings &amp; semantic search</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
-<p>To retrieve by <em>meaning</em> rather than exact words, you first turn text into numbers that
-capture what it means. An <strong>embedding</strong> is that translation: a model reads a piece of text
-and outputs a long list of numbers (a <em>vector</em>) positioned so that texts with similar
-meaning land near each other in space. Then "search" becomes geometry — the passages most
-relevant to a question are simply the vectors <em>closest</em> to the question's vector. This is
-<strong>semantic search</strong>, and it's why a RAG system can answer "how do I cancel?" using a help
-article titled "ending your subscription" that shares not a single keyword. The magic has
-sharp edges: embeddings capture fuzzy similarity, not truth or logic; they can rank a
-confidently-wrong-but-similar passage above the right one; and the embedding model you
-choose, and the fact that queries and documents look different, quietly cap how good
-retrieval can ever be.</p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>To search by meaning rather than by exact words, you first turn text into numbers. An <strong>embedding</strong> is that translation. A model reads a piece of text and returns a long list of numbers, a <em>vector</em>. The model places the vectors so that texts with similar meanings land near each other.</p>
+<p>Search then becomes geometry. The passages most relevant to a question are the vectors closest to the question's vector. This is <strong>semantic search</strong>. It is why a RAG system can answer "how do I stop paying?" from an article titled "Ending your subscription", with no word in common.</p>
+<p>Embeddings have sharp edges. They measure resemblance, not truth. A retracted policy can sit almost on top of the current one. Exact codes and names are weak points. And a query embedded by one model cannot be compared with documents embedded by another.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the product leader</strong></p>
-<p><strong>Why it matters</strong> — Embeddings are the substrate under every RAG feature, semantic
-search bar, recommendation, and dedup system you'll ship. Not knowing what they can and
-can't do leads to promising "it understands meaning" and then being blindsided when it
-confidently retrieves something merely <em>similar</em> to the answer.</p>
-<p><strong>What it changes in your decisions</strong> — You treat the embedding model and the retrieval
-approach as product choices with quality consequences, not infrastructure to rubber-stamp
-— and you insist retrieval is <em>measured</em> (<a href="retrieval-quality.html">recall/precision</a>), not
-eyeballed on a few happy-path queries.</p>
-<p><strong>Ask yourself</strong> — <em>"For a question worded nothing like our documents, does retrieval
-still find the right passage — and how would we even know?"</em></p>
-<p><strong>Risk if ignored</strong> — A feature that dazzles on demo queries and fails on the long tail
-of real phrasings, because 'similar' silently diverged from 'relevant' and nobody was
-measuring.</p>
+<p><strong>Why it matters</strong> — Embeddings sit under every RAG feature, semantic search box and recommendation you will ship. If you do not know their limits, you will promise "it understands meaning" and then be surprised when it retrieves something that is merely similar.</p>
+<p><strong>What it changes in your decisions</strong> — You treat the embedding model as a product choice with a quality cost and a migration cost. You insist that retrieval is measured, not judged on a few demo queries.</p>
+<p><strong>Ask your eng team</strong> — <em>"For a question worded nothing like our documents, does retrieval still find the right passage, and how do we know?"</em></p>
+<p><strong>Risk if ignored</strong> — A feature that shines on demo queries and fails on the long tail of real wording, because "similar" drifted from "relevant" and nobody measured it.</p>
 </blockquote>
 <h2 id="the-mental-model-meaning-as-a-map">The mental model: meaning as a map</h2>
-<p>Imagine every possible sentence placed on an enormous map, arranged so that things meaning
-similar things sit close together — "cancel my plan," "end my subscription," and "stop
-billing" cluster in one neighbourhood; "reset my password" sits far away. An embedding is
-just the <strong>coordinates</strong> of a piece of text on that map. Semantic search is then trivial:
-embed the question, go to its coordinates, and grab whatever passages are nearby.</p>
+<p>Imagine every sentence placed on a huge map. Sentences with similar meanings sit close together. "Cancel my plan", "end my subscription" and "stop billing" form one neighbourhood. "Reset my password" sits far away. An embedding is the <strong>coordinates</strong> of a text on that map. Semantic search embeds the question, goes to its coordinates, and takes the nearest passages.</p>
 <style>
 .dgm-em{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
   border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
@@ -112,7 +101,7 @@ embed the question, go to its coordinates, and grab whatever passages are nearby
 <div class="dgm-em">
   <span class="dgm-em-chip">Embeddings</span>
   <h4>Text becomes a point in meaning space · near = similar</h4>
-  <p class="dgm-em-sub">Real embeddings have hundreds of dimensions — the 2-D picture keeps the intuition.</p>
+  <p class="dgm-em-sub">Real embeddings have hundreds or thousands of dimensions — the 2-D picture keeps the intuition.</p>
 
   <div class="dgm-em-pipe">
     <span class="dgm-em-lbl">The pipeline</span>
@@ -162,29 +151,16 @@ embed the question, go to its coordinates, and grab whatever passages are nearby
   </div>
 </div>
 
-<p>Real embeddings don't have 2 dimensions — they have hundreds or thousands, so "nearby" can
-capture topic, tone, entities, and intent all at once. But the intuition holds: <strong>distance
-in the space is (approximately) dissimilarity of meaning.</strong> Everything a vector database
-does (<a href="vector-databases.html">lesson 3</a>) is bookkeeping to find nearby points fast.</p>
-<h2 id="how-it-actually-works">How it actually works</h2>
+<p>Real embeddings have hundreds or thousands of numbers, not two. So "nearby" can capture topic, intent and entities at once. The intuition still holds: <strong>distance in the space is roughly difference in meaning.</strong> A <a href="vector-databases.html">vector database</a> is the machinery that finds nearby points fast.</p>
+<h2 id="mechanics">Mechanics</h2>
 <ul>
-<li><strong>Embedding a passage</strong> — an embedding model (a cousin of the LLM, often much smaller)
-  converts each chunk of your data into one vector, once, at ingestion time. You store the
-  vectors in a <a href="vector-databases.html">vector database</a>.</li>
-<li><strong>Embedding a query</strong> — at question time you embed the query with the <em>same</em> model, into
-  the <em>same</em> space, so distances are comparable.</li>
-<li><strong>Measuring closeness</strong> — the system computes a distance (usually <em>cosine similarity</em> —
-  the angle between vectors) and returns the top-k nearest passages. That's the retrieval.</li>
-<li><strong>The model must match</strong> — queries and documents must be embedded by the same model;
-  swapping the embedding model means re-embedding your entire corpus, because old and new
-  vectors live in different spaces. This is a real migration cost, not a config flip.</li>
+<li><strong>Embedding a passage.</strong> An embedding model turns each chunk of your data into one vector, once, at ingestion. The vectors go into a vector database.</li>
+<li><strong>Embedding a question.</strong> At question time, the same model embeds the question into the same space, so distances can be compared.</li>
+<li><strong>Measuring closeness.</strong> The usual measure is <strong>cosine similarity</strong>: the cosine of the angle between two vectors. 1 means the same direction. The system returns the top-k closest passages.</li>
+<li><strong>One model per index.</strong> Questions and documents must come from the same model. Changing the model means re-embedding the whole corpus, because old and new vectors live in different spaces.</li>
+<li><strong>Questions and passages differ.</strong> A short question and a long passage look different even when they match. Some embedding models take an input type for this. Voyage AI's models, for example, embed with <code>input_type="query"</code> or <code>input_type="document"</code>. Another method, HyDE, has a model write a hypothetical answer and embeds that instead of the question.</li>
 </ul>
-<h2 id="why-it-beats-keyword-search-and-where-it-doesnt">Why it beats keyword search — and where it doesn't</h2>
-<p>Keyword (lexical) search matches strings: fast, exact, and blind to paraphrase. It nails
-"error E-4021" and whiffs on "the app crashed with that timeout code." Semantic search is
-the mirror image — it gets the paraphrase and can miss the exact string (a product SKU, a
-person's name, a rare acronym). Neither wins everywhere, which is exactly why production
-systems run <strong>both</strong> and blend them (<a href="retrieval-quality.html">hybrid search</a>).</p>
+<h3 id="semantic-vs-keyword-search">Semantic vs. keyword search</h3>
 <table>
 <thead>
 <tr>
@@ -196,83 +172,88 @@ systems run <strong>both</strong> and blend them (<a href="retrieval-quality.htm
 <tbody>
 <tr>
 <td>Matches</td>
-<td>Exact words / strings</td>
-<td>Meaning / paraphrase</td>
+<td>Exact words</td>
+<td>Meaning and paraphrase</td>
 </tr>
 <tr>
-<td>Great at</td>
-<td>IDs, names, codes, jargon, exact quotes</td>
-<td>Natural-language questions, synonyms, intent</td>
+<td>Strong on</td>
+<td>IDs, names, codes, exact quotes</td>
+<td>Natural questions, synonyms, intent</td>
 </tr>
 <tr>
-<td>Blind to</td>
-<td>Synonyms, rephrasing</td>
-<td>Exact tokens it deems "unimportant"</td>
+<td>Weak on</td>
+<td>Synonyms and rewording</td>
+<td>Rare exact strings</td>
 </tr>
 <tr>
 <td>Fails quietly when</td>
-<td>The user doesn't know the exact term</td>
-<td>The right passage is worded very differently <em>and</em> something merely similar outranks it</td>
+<td>The user does not know the exact term</td>
+<td>Something similar outranks the right passage</td>
 </tr>
 </tbody>
 </table>
-<h2 id="the-sharp-edges">The sharp edges</h2>
-<p>Three properties of embeddings routinely surprise teams, and each is a product risk:</p>
+<p>Neither wins everywhere. Production systems run both and combine them. That is <a href="retrieval-quality.html">hybrid search</a>.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
 <ul>
-<li><strong>Similar ≠ correct.</strong> Embeddings rank by resemblance, not truth. A passage describing
-  the <em>old</em> policy is embedding-close to one describing the <em>new</em> policy; a passage about a
-  <em>competitor's</em> feature is close to one about yours. Retrieval will happily hand the model
-  a similar-but-wrong passage, and the model will answer from it. <a href="retrieval-quality.html">Reranking and
-  metadata filters</a> exist to fight this.</li>
-<li><strong>No logic or negation.</strong> "Refunds allowed" and "refunds not allowed" sit almost on top of
-  each other — the words are nearly identical, the meaning is opposite. Embeddings feel
-  meaning but don't <em>reason</em>; they can't reliably tell a rule from its negation.</li>
-<li><strong>Query/document asymmetry.</strong> A short question and a long document passage look different
-  even when they match. Good systems handle this (e.g. embedding models tuned for
-  asymmetric search, or generating a hypothetical answer to embed instead of the raw
-  question) — but naïvely embedding both the same way leaves quality on the table.</li>
+<li><strong>General vs. domain model.</strong> A general model is a safe start. A model trained for code, law or finance may retrieve better in that domain, and ties you to that vendor.</li>
+<li><strong>Bigger vs. smaller vectors.</strong> More numbers can hold more detail. They cost more memory and slower search. Many models let you choose a smaller size.</li>
+<li><strong>Switching models.</strong> A better model may appear next quarter. Switching means re-embedding everything and re-running your evals. Budget for it.</li>
+<li><strong>Embeddings vs. keywords.</strong> Embeddings win on wording. Keywords win on exact strings. Run both rather than pick one.</li>
 </ul>
-<p>The through-line: embeddings are a powerful <em>first-pass filter</em>, not a final judge of
-relevance. Design the pipeline to assume the first pass is fuzzy and add a sharper stage
-after it.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
-<li><strong>Trusting cosine similarity as truth</strong> — shipping the top vector match as "the answer"
-  with no reranking or filtering; the confidently-similar-but-wrong passage sails through.</li>
-<li><strong>Embedding-model mismatch</strong> — embedding queries and documents with different models (or
-  changing the model without re-embedding); distances become meaningless.</li>
-<li><strong>Ignoring the exact-match tail</strong> — going pure-semantic and losing every query that hinges
-  on a code, name, or SKU; the fix is <a href="retrieval-quality.html">hybrid search</a>, not a bigger
-  model.</li>
-<li><strong>Negation and version bugs</strong> — retrieving the outdated or opposite passage because it's
-  lexically almost identical; needs metadata (dates, status) and filters, not just vectors.</li>
-<li><strong>"It understands meaning" theatre</strong> — selling embeddings as comprehension; they're
-  similarity, and the gap shows up on the long tail of real queries.</li>
+<li><strong>Similarity treated as truth.</strong> The top match ships as "the answer", with no filter or reranker. The similar-but-wrong passage reaches the model.</li>
+<li><strong>Mixed models.</strong> Questions and documents embedded by different models, or a model change with no re-embed. Distances become meaningless.</li>
+<li><strong>The exact-match tail.</strong> Pure semantic search misses queries that hinge on a code, a name or a stock-keeping unit (SKU). The fix is hybrid search, not a bigger model.</li>
+<li><strong>Versions and negation.</strong> An old policy and a new one, or a rule and its negation, use nearly the same words. Their embeddings sit close together. Dates and status belong in metadata you can filter on.</li>
+<li><strong>"It understands meaning" claims.</strong> Embeddings measure similarity. They do not reason.</li>
 </ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>rag-vector-databases/code/mini_rag.py</code>. Its embedding is a toy, so you can read every step. A small hand-made table maps words to 22 concepts, such as "cancel" or "refund". Other words are hashed into a few spare slots. The vector is then scaled to length 1.</p>
+<pre><code class="language-python">def embed(text):
+    v = [0.0] * DIM
+    for t in tokens(text):
+        if t in WORD2CONCEPT:                      # &quot;stop&quot;, &quot;end&quot;, &quot;quit&quot; -&gt; the &quot;cancel&quot; slot
+            v[CONCEPT_IDS[WORD2CONCEPT[t]]] += 1.0
+        else:                                      # any other word -&gt; one of 8 spare slots
+            v[len(CONCEPTS) + zlib.crc32(t.encode()) % HASH_SLOTS] += HASH_WEIGHT
+    norm = math.sqrt(sum(x * x for x in v)) or 1.0
+    return [x / norm for x in v]
+
+def cosine(a, b):                                  # both have length 1, so this is the cosine
+    return sum(x * y for x, y in zip(a, b))
+</code></pre>
+<p>A real model learns its map from huge amounts of text, with hundreds or thousands of numbers. The toy writes the map by hand with 30. The behaviour you will see is the same in kind: good on paraphrase, weak on rare exact strings.</p>
+<h2 id="worked-example-paraphrase-a-near-miss-and-a-mixed-up-model">Worked example: paraphrase, a near-miss, and a mixed-up model</h2>
+<p><em>This example is invented. Fernpay is a made-up product. The numbers come from <code>rag-vector-databases/code/embeddings_demo.py</code>.</em></p>
+<p><strong>Paraphrase works.</strong> The question "how do I stop paying for fernpay" shares no meaningful word with the "End plan" help section. Their cosine similarity is still 0.773, because "stop", "paying" and "end", "billing" map to the same concepts. Keyword search has no word to match in that section. It matches "fernpay" in unrelated chunks instead.</p>
+<p><strong>Similar is not correct.</strong> The question "can I get my money back on a yearly plan" scores 0.936 against the current refund policy and 0.927 against the retracted one. The two policies score 0.99 against each other. They differ only in the word "old" in one title and the number of days. Embeddings alone cannot tell which one is in force. A status filter can.</p>
+<p><strong>Mixed models break everything.</strong> We keep the index and embed the questions with a "different model": the same numbers in a shuffled order. Recall@3 on the 12-question eval set falls from 0.833 to 0.167. Nothing errors. The search returns confident, wrong results.</p>
 <h2 id="practitioner-checklist">Practitioner checklist</h2>
 <ul>
-<li class="task todo">Are queries and documents embedded with the <em>same</em> model, and do we know the cost of
-      ever changing it (full re-embed)?</li>
-<li class="task todo">Do we have a plan for exact-match needs (IDs, names, codes) — i.e. hybrid, not
-      pure-semantic?</li>
-<li class="task todo">Is there a stage <em>after</em> similarity (<a href="retrieval-quality.html">reranking</a>, filters)
-      to catch similar-but-wrong passages?</li>
-<li class="task todo">Do version/recency and permissions live in metadata we can filter on, so we don't
-      retrieve the stale or forbidden passage?</li>
-<li class="task todo">Is retrieval quality measured on real, diverse phrasings — not just demo queries?</li>
+<li class="task todo">Are questions and documents embedded by the same model, and is the model recorded with the index?</li>
+<li class="task todo">Do we know the cost of changing the model: a full re-embed and a full eval?</li>
+<li class="task todo">Do exact codes, names and IDs have a keyword path?</li>
+<li class="task todo">Is there a stage after similarity, such as a filter or a reranker, to catch similar-but-wrong passages?</li>
+<li class="task todo">Do dates, versions and status live in metadata we can filter on?</li>
+<li class="task todo">Is retrieval measured on real, varied wording?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
-<li><a href="vector-databases.html">Vector databases</a> — where the vectors live and how nearest
-  neighbours are found fast.</li>
-<li><a href="retrieval-quality.html">Retrieval quality</a> — hybrid search and reranking, the sharper
-  second stage.</li>
-<li><a href="../ai/03-rag.html#rag-architecture">RAG architecture</a> — the engineering-depth spoke.</li>
-<li><a href="../ai/01-inference-internals.html#prompt-vs-semantic-caching">Semantic caching</a> — the
-  same embedding trick applied to caching responses.</li>
+<li><a href="vector-databases.html">Vector databases</a> — where the vectors live and how neighbours are found fast.</li>
+<li><a href="retrieval-quality.html">Retrieval quality</a> — hybrid search and reranking, the sharper second stage.</li>
+<li><a href="../tensors/what-a-tensor-is.html">What a tensor is</a> — the shape and bytes of a batch of vectors.</li>
+<li><a href="../ai/03-rag.html#rag-architecture">RAG architecture</a> — the engineering-depth version.</li>
+<li><a href="../ai/01-inference-internals.html#prompt-vs-semantic-caching">Prompt vs. semantic caching</a> — the same embedding trick used for caching.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic documentation, <a href="https://platform.claude.com/docs/en/build-with-claude/embeddings">Embeddings</a>: Anthropic does not offer its own embedding model; Voyage AI's models, the <code>input_type</code> parameter, and normalized embeddings where cosine similarity equals the dot product. Read 2026-10.</li>
+<li>Gao, Ma, Lin and Callan, <em>Precise Zero-Shot Dense Retrieval without Relevance Labels</em> (HyDE), ACL 2023 (<a href="https://arxiv.org/abs/2212.10496">arxiv.org/abs/2212.10496</a>): embedding a generated answer instead of the raw question.</li>
+<li>The toy embedding, the corpus and every number are invented. They come from <code>rag-vector-databases/code/embeddings_demo.py</code> and <code>mini_rag.py</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="why-rag.html"><span class="lbl">← Previous</span><span class="ttl">Why RAG?</span></a><a class="navcard next" href="vector-databases.html"><span class="lbl">→ Next</span><span class="ttl">Vector databases</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-meaning-as-a-map">The mental model: meaning as a map</a><a class="h2" href="#how-it-actually-works">How it actually works</a><a class="h2" href="#why-it-beats-keyword-search-and-where-it-doesnt">Why it beats keyword search — and where it doesn&#x27;t</a><a class="h2" href="#the-sharp-edges">The sharp edges</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="why-rag.html"><span class="lbl">← Previous</span><span class="ttl">Why RAG?</span></a><a class="navcard next" href="vector-databases.html"><span class="lbl">→ Next</span><span class="ttl">Vector databases</span></a></div><footer class="foot"><strong>Core insight:</strong> Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-meaning-as-a-map">The mental model: meaning as a map</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#semantic-vs-keyword-search">Semantic vs. keyword search</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-paraphrase-a-near-miss-and-a-mixed-up-model">Worked example: paraphrase, a near-miss, and a mixed-up model</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

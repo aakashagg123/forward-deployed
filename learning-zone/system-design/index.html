@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><main class="content index" id="top">
   <div class="index-hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">A standalone module</span>
     <h1>System design for the technical PM</h1>
     <p class="lede">How real systems are designed at scale — from rate limiters to stock exchanges — with the architecture, tradeoffs, and failure modes that shape product decisions.</p>
-    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">8 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">28 systems</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
+    <div class="index-insight"><span class="Badge" data-color="discovery" data-size="md" data-variant="soft" data-pill="">Core insight</span><p>Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.</p></div>
+    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">16 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">28 systems</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">runnable code</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">diagrams included</span></div>
   </div>
   <div class="intro MarkdownContent"><p>How real systems are designed at scale — from rate limiters to stock exchanges. This track covers the architecture, tradeoffs, and failure modes that shape product decisions.</p>
 <style>
@@ -124,7 +133,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <li><strong>Failure modes</strong> — how it breaks in production.</li>
 <li><strong>Practitioner checklist</strong> — what to verify before you ship or bet on this architecture.</li>
 </ul>
-<p>This track covers <strong>28 real-world systems</strong> across eight lessons, grouped by the kind of problem they solve.</p>
+<p>This track covers <strong>28 real-world systems</strong> across eight system lessons, plus lessons on numbers, traffic and caching, distributed data, ML and GenAI systems, social and media systems, and reliability, and a question bank. Systems are grouped by the kind of problem they solve.</p>
 <h2 id="connects-to-other-tracks">Connects to other tracks</h2>
 <ul>
 <li>The <a href="../technical-product-sense/index.html">technical product sense</a> track teaches you how to <em>read</em> systems. This track teaches you how they're <em>designed</em>.</li>
@@ -133,18 +142,99 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <h2 id="the-lessons">The lessons</h2>
 <ul>
-<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — scaling from zero to millions, back-of-envelope estimation, and the four-step system design framework</li>
+<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — scaling from zero to millions, back-of-envelope estimation, the four-step system design framework, what a design review evaluates, and a seven-stage practice plan</li>
+<li><a href="numbers-and-formulas.html">Numbers, formulas and papers</a> — latency orders of magnitude, availability and downtime, estimation shortcuts, and the classic papers</li>
+<li><a href="traffic-caching-apis-and-storage-choice.html">Traffic, caching, APIs and storage choice</a> — load balancers, caching strategies, CDNs, choosing a store, and API design</li>
 <li><a href="core-building-blocks.html">Core building blocks</a> — rate limiting, consistent hashing, distributed key-value stores, and unique ID generation</li>
+<li><a href="distributed-data-and-consistency.html">Distributed data and consistency</a> — replication, sharding, CAP and PACELC, consistency models, consensus, sagas and the outbox, and clocks</li>
 <li><a href="web-scale-services.html">Web-scale services</a> — URL shortener, web crawler, notification system, and news feed</li>
 <li><a href="real-time-systems.html">Real-time systems</a> — chat system, search autocomplete, and video streaming platforms</li>
 <li><a href="storage-and-sync.html">Storage &amp; sync</a> — cloud file storage and S3-like object storage</li>
 <li><a href="location-and-geo-services.html">Location &amp; geo services</a> — proximity service, nearby friends, and mapping/navigation</li>
 <li><a href="data-infrastructure.html">Data infrastructure</a> — distributed message queues, metrics monitoring, ad click aggregation, and email service</li>
-<li><a href="transactional-and-financial.html">Transactional &amp; financial systems</a> — hotel reservation, gaming leaderboard, payment system, digital wallet, and stock exchange</li>
+<li>
+<p><a href="transactional-and-financial.html">Transactional &amp; financial systems</a> — hotel reservation, gaming leaderboard, payment system, digital wallet, and stock exchange</p>
+</li>
+<li>
+<p><a href="ml-system-design.html">ML system design</a> — the ML lifecycle, recommendation funnels, ads click prediction, product search and reverse image search</p>
+</li>
+<li><a href="genai-and-agent-platforms.html">GenAI and agent platforms</a> — serving an LLM chat service, continuous batching, agent runtimes and keeping agents safe</li>
+<li><a href="social-and-media-systems.html">Social and media systems</a> — likes at scale, social-graph search, swipe and match, photo tiers, video pipelines and live streaming</li>
+<li><a href="reliability-and-operations.html">Reliability and operations</a> — SLOs, observability, resilience patterns, safe deploys, regional failure, backups, and five incident case studies</li>
+<li><a href="question-bank.html">Question bank</a> — 50 design questions, by level, mapped to the lessons that answer them</li>
 </ul>
-<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a></p></div>
+<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a></p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<p>Each lesson summarizes an idea and points to the lesson that covers it in full.</p>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Turning load forecasts into capacity</td>
+<td><a href="numbers-and-formulas.html">Numbers, formulas and papers</a> and <a href="foundations-and-framework.html">Foundations &amp; framework</a></td>
+</tr>
+<tr>
+<td>Rate limits, hashing, quorums and IDs</td>
+<td><a href="core-building-blocks.html">Core building blocks</a></td>
+</tr>
+<tr>
+<td>Caches, balancers, CDNs, stores and APIs</td>
+<td><a href="traffic-caching-apis-and-storage-choice.html">Traffic, caching, APIs and storage choice</a></td>
+</tr>
+<tr>
+<td>Replicas, consistency, consensus and sagas</td>
+<td><a href="distributed-data-and-consistency.html">Distributed data and consistency</a></td>
+</tr>
+<tr>
+<td>Recommendations, ads, search and vector indexes</td>
+<td><a href="ml-system-design.html">ML system design</a></td>
+</tr>
+<tr>
+<td>Serving LLMs and running agents safely</td>
+<td><a href="genai-and-agent-platforms.html">GenAI and agent platforms</a></td>
+</tr>
+<tr>
+<td>Counters, graphs, photos and live video</td>
+<td><a href="social-and-media-systems.html">Social and media systems</a></td>
+</tr>
+<tr>
+<td>Failure, rollout safety and recovery</td>
+<td><a href="reliability-and-operations.html">Reliability and operations</a></td>
+</tr>
+<tr>
+<td>Feeds, caches and fan-out</td>
+<td><a href="web-scale-services.html">Web-scale services</a></td>
+</tr>
+<tr>
+<td>Messages that must not be lost or doubled</td>
+<td><a href="data-infrastructure.html">Data infrastructure</a> and <a href="transactional-and-financial.html">Transactional &amp; financial systems</a></td>
+</tr>
+<tr>
+<td>How models work inside the serving layer</td>
+<td><a href="../transformers/generating-text-and-the-kv-cache.html">Generating text and the KV cache</a> and <a href="../cost-optimization/index.html">Cost optimization</a></td>
+</tr>
+<tr>
+<td>Evals, traces and the numbers you measure</td>
+<td><a href="../evaluation-and-observability/index.html">Evaluation and observability</a></td>
+</tr>
+<tr>
+<td>Practising with questions</td>
+<td><a href="question-bank.html">Question bank</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="run-the-code">Run the code</h2>
+<p>Every example is in <code>system-design/code/</code>. Run them all with one command.</p>
+<pre><code class="language-bash">python3 system-design/code/test_examples.py
+</code></pre>
+<p>Each file ends with <code>assert</code> lines. A passing file checks the direction of each claim in the lessons, such as consistent hashing moving only about 1/N of the keys. Run a file to see every quoted number printed.</p></div>
   <h2 class="sec">The lessons</h2>
-  <div class="cards"><a class="card" href="foundations-and-framework.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>Foundations &amp; framework</h3><span class="card-go">Read lesson →</span></a><a class="card" href="core-building-blocks.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>Core building blocks</h3><span class="card-go">Read lesson →</span></a><a class="card" href="web-scale-services.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Web-scale services</h3><span class="card-go">Read lesson →</span></a><a class="card" href="real-time-systems.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Real-time systems</h3><span class="card-go">Read lesson →</span></a><a class="card" href="storage-and-sync.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Storage &amp; sync</h3><span class="card-go">Read lesson →</span></a><a class="card" href="location-and-geo-services.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Location &amp; geo services</h3><span class="card-go">Read lesson →</span></a><a class="card" href="data-infrastructure.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>Data infrastructure</h3><span class="card-go">Read lesson →</span></a><a class="card" href="transactional-and-financial.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">08</span><h3>Transactional &amp; financial systems</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
+  <div class="cards"><a class="card" href="foundations-and-framework.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>Foundations &amp; framework</h3><span class="card-go">Read lesson →</span></a><a class="card" href="numbers-and-formulas.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>Numbers, formulas and papers to know</h3><span class="card-go">Read lesson →</span></a><a class="card" href="traffic-caching-apis-and-storage-choice.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Traffic, caching, APIs and storage choice</h3><span class="card-go">Read lesson →</span></a><a class="card" href="core-building-blocks.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Core building blocks</h3><span class="card-go">Read lesson →</span></a><a class="card" href="distributed-data-and-consistency.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Distributed data and consistency</h3><span class="card-go">Read lesson →</span></a><a class="card" href="web-scale-services.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Web-scale services</h3><span class="card-go">Read lesson →</span></a><a class="card" href="real-time-systems.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>Real-time systems</h3><span class="card-go">Read lesson →</span></a><a class="card" href="storage-and-sync.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">08</span><h3>Storage &amp; sync</h3><span class="card-go">Read lesson →</span></a><a class="card" href="location-and-geo-services.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">09</span><h3>Location &amp; geo services</h3><span class="card-go">Read lesson →</span></a><a class="card" href="data-infrastructure.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">10</span><h3>Data infrastructure</h3><span class="card-go">Read lesson →</span></a><a class="card" href="transactional-and-financial.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">11</span><h3>Transactional &amp; financial systems</h3><span class="card-go">Read lesson →</span></a><a class="card" href="ml-system-design.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">12</span><h3>ML system design: recommendations, ads and search</h3><span class="card-go">Read lesson →</span></a><a class="card" href="genai-and-agent-platforms.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">13</span><h3>GenAI and agent platforms</h3><span class="card-go">Read lesson →</span></a><a class="card" href="social-and-media-systems.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">14</span><h3>Social and media systems</h3><span class="card-go">Read lesson →</span></a><a class="card" href="reliability-and-operations.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">15</span><h3>Reliability and operations</h3><span class="card-go">Read lesson →</span></a><a class="card" href="question-bank.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">16</span><h3>Question bank: 50 design questions mapped to the lessons</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a></div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
   </main>
 <div id="rs-root">

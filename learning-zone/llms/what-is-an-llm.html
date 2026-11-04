@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>LLMs</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="what-is-an-llm.html">1 · What an LLM actually is</a><a class="modlink" href="the-context-window.html">2 · The context window</a><a class="modlink" href="capabilities-and-the-jagged-frontier.html">3 · Capabilities &amp; the jagged frontier</a><a class="modlink" href="prompting-and-in-context-learning.html">4 · Prompting &amp; in-context learning</a><a class="modlink" href="temperature-sampling-and-determinism.html">5 · Temperature, sampling &amp; determinism</a><a class="modlink" href="choosing-a-model.html">6 · Choosing a model</a><a class="modlink" href="prompting-vs-rag-vs-finetuning.html">7 · Prompting vs. RAG vs. fine-tuning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
     <h1>What an LLM actually is</h1>
   </div>
-  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+  <div class="MarkdownContent"><div class="explainer-link"><div class="Alert" data-variant="soft" data-color="info"><div class="Indicator"><svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm1.25 9.25h-2.5a.75.75 0 0 1 0-1.5h.5v-3h-.5a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75V13h.5a.75.75 0 0 1 0 1.5Z"/></svg></div><div class="Content"><div class="Message"><div class="Title">Visual explainer</div><div class="Description">See it step by step: <a href="../explainers/inside-one-llm-request.html">Inside one LLM request →</a>. It follows one example through the stages, with a picture at each.</div></div></div></div></div><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
 <h2 id="tldr">TL;DR</h2>
 <p>A large language model does one thing: given some text, it predicts the most likely next
 small piece of text, called a <strong>token</strong>. It does this once, appends the result, and does it
@@ -247,6 +256,16 @@ mistakes: teams sometimes think "teaching" the model a new fact by mentioning it
 the model has learned it permanently, when in fact nothing changes in the frozen model at
 all. What changed is only the text you sent for that one request. The next request starts
 from the same frozen model, knowing nothing extra unless you send it again.</p>
+<h2 id="reasoning-models-more-tokens-before-the-answer">Reasoning models: more tokens before the answer</h2>
+<p>Many current models are trained to think first. Before the visible answer, they write out
+working in their own words, then answer. This is still next-token prediction. The model
+just predicts more tokens, and the working helps on math, code and multi-step analysis.
+Three product facts follow. Thinking tokens are billed as output tokens, even when the
+vendor does not show them. OpenAI and Anthropic both say so. They also occupy the context
+window. And you steer the amount with a setting, usually called <strong>reasoning effort</strong>
+(OpenAI) or <strong>effort</strong> (Anthropic), not with a longer prompt. Higher effort means better
+answers on hard tasks, and a slower, costlier call. See
+<a href="choosing-a-model.html">Choosing a model</a> for how to set it.</p>
 <h2 id="why-this-mechanism-explains-so-much">Why this mechanism explains so much</h2>
 <p>Next-token prediction, alone, explains three things that otherwise look mysterious.
 <strong>Fluency without guaranteed truth</strong> — the model is optimized to produce likely-sounding
@@ -370,6 +389,8 @@ more weight table.</p>
 <li class="task todo">Is our cost model based on token counts, not a flat per-call assumption?</li>
 <li class="task todo">For any task involving exact counting, spelling, or character-level detail, have we
       tested it directly instead of assuming the model handles it like a human would?</li>
+<li class="task todo">If we use a reasoning model, do we budget for thinking tokens, and have we set effort
+      on purpose?</li>
 <li class="task todo">For long-input features, have we measured cost and latency at our largest real
       input, not only at a typical one?</li>
 </ul>
@@ -424,11 +445,18 @@ more weight table.</p>
   Claude 4.7 and later models use a newer tokenizer, and the same input text produces
   approximately 30 percent more tokens than on earlier models, depending on the content.
   The page advises recounting prompts against the model you plan to use. Read 2026-10-11.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/thinking">Thinking</a>: thinking
+  tokens are billed as output tokens, even when the text is not returned, and count toward
+  <code>max_tokens</code>. Read 2026-10-25.</li>
+<li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/reasoning">Reasoning guide</a>:
+  reasoning tokens are not visible through the API, occupy context-window space, and are
+  billed as output tokens; effort values vary by model. Read 2026-10-25.</li>
 <li>The worked example's scores, queries, keys and values are assumed. The weights and the
   score counts are computed by the code in Under the hood.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="the-context-window.html"><span class="lbl">→ Next</span><span class="ttl">The context window</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-extremely-well-read-guesser">The mental model: an extremely well-read guesser</a><a class="h2" href="#tokens-the-models-actual-unit-of-text">Tokens: the model&#x27;s actual unit of text</a><a class="h2" href="#inside-the-model-attention">Inside the model: attention</a><a class="h2" href="#training-versus-inference-two-very-different-costs">Training versus inference: two very different costs</a><a class="h2" href="#why-this-mechanism-explains-so-much">Why this mechanism explains so much</a><a class="h2" href="#worked-example-what-it-looks-at">Worked example: what &quot;it&quot; looks at</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood-attention-in-a-few-lines">Under the hood: attention in a few lines</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="the-context-window.html"><span class="lbl">→ Next</span><span class="ttl">The context window</span></a></div><footer class="foot"><strong>Core insight:</strong> Everything an LLM does follows from next-token prediction: a limited window, uneven skill, and answers that are sampled rather than computed.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-extremely-well-read-guesser">The mental model: an extremely well-read guesser</a><a class="h2" href="#tokens-the-models-actual-unit-of-text">Tokens: the model&#x27;s actual unit of text</a><a class="h2" href="#inside-the-model-attention">Inside the model: attention</a><a class="h2" href="#training-versus-inference-two-very-different-costs">Training versus inference: two very different costs</a><a class="h2" href="#reasoning-models-more-tokens-before-the-answer">Reasoning models: more tokens before the answer</a><a class="h2" href="#why-this-mechanism-explains-so-much">Why this mechanism explains so much</a><a class="h2" href="#worked-example-what-it-looks-at">Worked example: what &quot;it&quot; looks at</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood-attention-in-a-few-lines">Under the hood: attention in a few lines</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

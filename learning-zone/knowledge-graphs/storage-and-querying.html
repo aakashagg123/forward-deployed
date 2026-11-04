@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Knowledge graphs</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Knowledge graphs</span><em>a Generative AI module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-a-knowledge-graph.html">1 · What is a knowledge graph?</a><a class="modlink" href="ontologies-and-data-modeling.html">2 · Ontologies &amp; data modeling</a><a class="modlink" href="building-the-graph.html">3 · Building the graph</a><a class="modlink active" href="storage-and-querying.html">4 · Storage &amp; querying</a><a class="modlink" href="reasoning-and-analytics.html">5 · Reasoning &amp; analytics</a><a class="modlink" href="knowledge-graphs-and-llms.html">6 · Knowledge graphs &amp; LLMs</a><a class="modlink" href="governance-quality-and-trust.html">7 · Governance, quality &amp; trust</a><a class="modlink" href="knowledge-graphs-as-a-product.html">8 · Knowledge graphs as a product</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
@@ -174,9 +183,9 @@ compounds into feature velocity. When they're occasional, it's a curiosity.</p>
 </tr>
 <tr>
 <td>Query language</td>
-<td>Cypher; <strong>GQL</strong> (the 2024 ISO standard descended from it)</td>
+<td>Cypher; <strong>GQL</strong> (ISO/IEC 39075, published April 2024)</td>
 <td>SPARQL (W3C standard)</td>
-<td>SQL + recursive CTEs, or vendor graph SQL</td>
+<td>SQL + recursive CTEs, or <strong>SQL/PGQ</strong> (graph pattern matching inside SQL, standardized in SQL:2023)</td>
 </tr>
 <tr>
 <td>Strengths</td>
@@ -187,7 +196,7 @@ compounds into feature velocity. When they're occasional, it's a curiosity.</p>
 <tr>
 <td>Weaknesses</td>
 <td>Historically vendor-flavored (GQL is fixing this); semantics live in your docs, not the store</td>
-<td>Steeper learning curve, thinner tooling and talent, reification friction for edge properties</td>
+<td>Steeper learning curve, thinner tooling and talent, reification friction for edge properties (RDF 1.2, a W3C candidate recommendation as of April 2026, adds <em>triple terms</em> to ease this)</td>
 <td>Deep/variable-depth traversal slow and brittle; graph algorithms mostly absent</td>
 </tr>
 <tr>
@@ -198,6 +207,14 @@ compounds into feature velocity. When they're occasional, it's a curiosity.</p>
 </tr>
 </tbody>
 </table>
+<p>The third column is changing. SQL:2023 added <strong>SQL/PGQ</strong> (ISO/IEC 9075-16), which lets you
+declare a property graph over ordinary tables and query it with graph patterns. Cloud
+warehouses such as BigQuery have adopted it. PostgreSQL 19 added it in beta (June 2026).
+That shortens the road to "graph on the database you already run." But the Postgres
+implementation rewrites each graph query into ordinary joins. So it improves readability, not
+traversal speed. Check which path patterns your version supports (variable-length paths and
+shortest-path were reported missing in the first Postgres commit) before you count on it for
+deep queries.</p>
 <p>Deployment nuance worth knowing exists — native stores vs. multi-model engines vs.
 graph-on-warehouse, managed offerings from every major cloud — but it's an
 engineering-owned decision. Your leverage comes earlier, in choosing the <em>family</em>,
@@ -263,7 +280,7 @@ to rebuild the graph from sources when — not if — the pipeline needs a redo.
 <li><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a> —
   the build/buy/lock-in instincts applied here.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="building-the-graph.html"><span class="lbl">← Previous</span><span class="ttl">Building the graph</span></a><a class="navcard next" href="reasoning-and-analytics.html"><span class="lbl">→ Next</span><span class="ttl">Reasoning &amp; analytics</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="building-the-graph.html"><span class="lbl">← Previous</span><span class="ttl">Building the graph</span></a><a class="navcard next" href="reasoning-and-analytics.html"><span class="lbl">→ Next</span><span class="ttl">Reasoning &amp; analytics</span></a></div><footer class="foot"><strong>Core insight:</strong> A knowledge graph pays off when you pick the killer questions first, pay the curation bill, and show the source of every fact.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-traversal-vs-join-argument-honestly">The traversal-vs-join argument, honestly</a><a class="h2" href="#the-three-families">The three families</a><a class="h2" href="#how-to-run-the-decision">How to run the decision</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

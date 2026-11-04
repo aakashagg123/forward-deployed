@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI security &amp; guardrails</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-threat-model-and-guardrails.html">1 · The threat model, and guardrails as architecture</a><a class="modlink" href="red-teaming-and-proving-your-defenses.html">2 · Red-teaming: testing your defenses</a><a class="modlink" href="governance-audit-and-compliance.html">3 · Governance, audit &amp; compliance</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
     <h1>The threat model, and guardrails as architecture</h1>
   </div>
-  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+  <div class="MarkdownContent"><div class="explainer-link"><div class="Alert" data-variant="soft" data-color="info"><div class="Indicator"><svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm1.25 9.25h-2.5a.75.75 0 0 1 0-1.5h.5v-3h-.5a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75V13h.5a.75.75 0 0 1 0 1.5Z"/></svg></div><div class="Content"><div class="Message"><div class="Title">Visual explainer</div><div class="Description">See it step by step: <a href="../explainers/anatomy-of-a-guardrailed-request.html">Anatomy of a guardrailed request →</a>. It follows one example through the stages, with a picture at each.</div></div></div></div></div><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
 <h2 id="tldr">TL;DR</h2>
 <p>Teams treat "guardrails" as one line on a checklist. It is not one thing. Four different
 attacks hide under that word, and each needs its own defense.</p>
@@ -216,7 +225,9 @@ here?" It is "when this guardrail fails, which way does it fail?"</p>
 Application Security Project (OWASP). OWASP published a new edition on 4 August 2026, so
 the table gives the 2026 number first and the 2025 number in brackets. Buyers also use the
 report on adversarial machine learning (AI 100-2 E2025) from the National Institute of
-Standards and Technology (NIST). The table lets you translate.</p>
+Standards and Technology (NIST). The table lets you translate. One more 2026 change matters to product leaders: Excessive
+Agency, the risk of an AI with too many tools or permissions, rose from sixth place to
+third (LLM03). Agent features now carry more of the weight in security reviews.</p>
 <table>
 <thead>
 <tr>
@@ -328,10 +339,17 @@ come from Anthropic's own tests, so they are vendor-reported.</p>
   success rate from 61% to 2%. Fine-tuning only delayed the jailbreak.</li>
 <li><strong>Constitutional Classifiers (Jan 2025).</strong> Classifiers trained on written rules about
   allowed and blocked content cut jailbreak success on Claude from 86% to 4.4% in
-  Anthropic's automated test. In a public challenge that followed, the system was broken after about
-  five days. Four users passed all levels and one found a universal jailbreak.</li>
+  Anthropic's automated test. In a public challenge in February 2025, the system held for the first
+  five days. On days six and seven, four users passed all eight levels and one found a
+  universal jailbreak.</li>
+<li><strong>Next-generation classifiers (Jan 2026).</strong> Anthropic replaced the separate input and
+  output classifiers with one classifier that reads the output together with its input. A
+  cheap first stage screens all traffic and passes doubtful cases to a stronger second
+  stage. Anthropic reports about 1% extra compute (against 23.7% before) and a 0.05% refusal
+  rate on harmless traffic (against 0.38%). It found no universal jailbreak in about 1,700
+  hours of red-teaming, and one high-risk flaw. These are vendor figures.</li>
 </ul>
-<p>Read both fairly. A good guardrail changes the cost of an attack by a large factor. It does
+<p>Read these results fairly. A good guardrail changes the cost of an attack by a large factor. It does
 not make the attack impossible. Plan for the one that gets through.</p>
 <h2 id="fail-closed-not-fail-open">Fail closed, not fail open</h2>
 <p>Most software <strong>fails open</strong>: if an auth check times out, the instinct is to let the
@@ -488,19 +506,26 @@ def guarded_reply(user_msg, docs, session):
   reinforcement learning and adversarial training, and the adversarial-training result.
   Checked 2026-10.</li>
 <li>Nasr et al., <a href="https://arxiv.org/abs/2311.17035">Scalable Extraction of Training Data from (Production) Language Models</a>
-  (28 Nov 2023): the divergence attack on ChatGPT and the roughly 150 times higher rate. The
-  arXiv page was blocked when checked. The figures come from search-result excerpts.</li>
+  (28 Nov 2023): the divergence attack on ChatGPT and the roughly 150 times higher rate.
+  Abstract opened. The personal-data and open-model details were not re-checked.</li>
 <li>Greshake et al., <a href="https://arxiv.org/abs/2302.12173">Not what you've signed up for</a>
   (Feb 2023, revised May 2023): indirect prompt injection against real systems including Bing Chat.
   Search-result excerpts only.</li>
-<li>Anthropic, <a href="https://arxiv.org/abs/2501.18837">Constitutional Classifiers</a> (Jan 2025) and
-  the public-challenge results posted by Anthropic's Jan Leike (Feb 2025): the 86% to 4.4%
-  figure and the challenge outcome. Search-result excerpts only.</li>
+<li>Anthropic, <a href="https://www.anthropic.com/research/constitutional-classifiers">Constitutional Classifiers</a>
+  (Jan 2025): the 86% to 4.4% figure, and the public challenge of 3 to 10 Feb 2025. Page
+  opened 2026-10-23.</li>
+<li>Anthropic, <a href="https://www.anthropic.com/research/next-generation-constitutional-classifiers">Next-generation Constitutional Classifiers</a>
+  (Jan 2026): the exchange classifier, two-stage cascade, and the overhead and refusal
+  figures. Page opened 2026-10-23.</li>
 <li>OWASP, <a href="https://genai.owasp.org/llm-top-10/">Top 10 for LLM Applications</a>. The 2026 edition
   (4 Aug 2026) was read from OWASP's GitHub repository: LLM01 Prompt Injection, LLM02
   Sensitive Information Disclosure, LLM05 Data and Model Poisoning, LLM08 Hidden Context
   Exposure. The 2025 numbers (LLM04 and LLM07) come from the 2025 source text in the same
-  repository. Both editions describe a jailbreak as a form or subset of prompt injection. Checked 2026-10.</li>
+  repository. The rise of Excessive Agency to LLM03 comes from a Cloud Security Alliance
+  <a href="https://labs.cloudsecurityalliance.org/research/csa-research-note-owasp-genai-top10-2026-agent-control-stand/">research note</a>
+  (opened 2026-10-23). The OWASP project page confirms the 2026 edition of 4 Aug 2026.
+  The main OWASP page still showed the 2025 list when opened, so read the numbers
+  from the 2026 source before you cite them. Both editions describe a jailbreak as a form or subset of prompt injection. Checked 2026-10.</li>
 <li>NIST, <a href="https://www.nist.gov/publications/adversarial-machine-learning-taxonomy-and-terminology-attacks-and-mitigations-0">AI 100-2 E2025, Adversarial Machine Learning</a>
   (Mar 2025): the taxonomy by attacker goal, with poisoning, prompt injection and privacy
   attacks.</li>
@@ -509,7 +534,7 @@ def guarded_reply(user_msg, docs, session):
   (6 Feb 2023) and Know Your Meme, via search-result excerpts.</li>
 <li>The coverage-matrix scenario and the code sketch are invented and illustrative.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="red-teaming-and-proving-your-defenses.html"><span class="lbl">→ Next</span><span class="ttl">Red-teaming: testing your defenses</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="red-teaming-and-proving-your-defenses.html"><span class="lbl">→ Next</span><span class="ttl">Red-teaming: testing your defenses</span></a></div><footer class="foot"><strong>Core insight:</strong> AI security is four attacks, not one. A guardrail covers one shape, an untested defence is a guess, and governance counts only as evidence.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-four-attacks-four-defenses-one-rule">The mental model: four attacks, four defenses, one rule</a><a class="h2" href="#the-four-attacks-mapped-to-the-standards-your-buyers-use">The four attacks, mapped to the standards your buyers use</a><a class="h2" href="#jailbreak-the-model-turns-on-its-own-training">Jailbreak: the model turns on its own training</a><a class="h2" href="#injection-extraction-and-poisoning-attacking-the-system-not-the-mind">Injection, extraction and poisoning: attacking the system, not the mind</a><a class="h2" href="#what-a-guardrail-is-worth-two-measured-results">What a guardrail is worth: two measured results</a><a class="h2" href="#fail-closed-not-fail-open">Fail closed, not fail open</a><a class="h2" href="#worked-example-a-coverage-matrix-for-one-feature">Worked example: a coverage matrix for one feature</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

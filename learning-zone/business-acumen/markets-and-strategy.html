@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Markets and customers: segments, sizing and positioning — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink active" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
+    <h1>Markets and customers: segments, sizing and positioning</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Before you decide how to win, decide where to compete and for whom. This lesson covers the market side of strategy. <strong>Market sizing</strong> tells you how much revenue a market can hold. <strong>Segmentation</strong> splits that market into groups that need different things and have different economics. <strong>Positioning</strong> states why your target segment should choose you over its real alternative. A <strong>competitor teardown</strong> reads a rival's economics, not its feature list. <strong>SWOT</strong> and the <strong>growth matrix</strong> turn the facts into options and show how much risk each option carries.</p>
+<p>The core tradeoff is focus against reach. Focus on one segment builds an edge faster and makes every message sharper. Reach spreads the same budget across customers with different needs and different economics. Most product lines serve two or three segments well. Few serve ten.</p>
+<p>The scale matters. A sizing error can be 10x when a team counts payment volume or loan volume as if it were revenue. A segment with half the revenue can be worth twice as much once you count acquisition cost and retention.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — At vice president (VP) level you set the frame your teams work inside. If the frame is "serve everyone," every roadmap debate is a fight about priorities. If the frame names a target segment with known economics, most debates settle themselves.</p>
+<p><strong>What it changes in your decisions</strong> — You size markets in revenue, from the bottom up. You choose segments by contribution and payback, not by size alone. You write down which segments you will not serve this year.</p>
+<p><strong>Ask your team</strong> — <em>"What is this market worth in net revenue, not volume? Which segment pays back fastest, and which one are we choosing not to serve?"</em></p>
+<p><strong>Risk if ignored</strong> — A product built for an average customer who does not exist. A business case built on a market number that is ten times too big. A launch that wins the biggest segment and loses money on every customer in it.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li><strong>Size the revenue pool, not the volume.</strong> Multiply volume by the net take rate, spread or margin you can keep.</li>
+<li><strong>Trust bottom-up over top-down.</strong> If the two differ by more than 2x, find out why before you use either.</li>
+<li><strong>Cap your obtainable share by capacity.</strong> Your share is limited by how many customers your sales, partners or marketing can reach.</li>
+<li><strong>Segment by need and economics, not demographics.</strong> A segment is real only if it behaves differently and pays back differently.</li>
+<li><strong>Choose the target segment on payback and lifetime contribution,</strong> not on revenue alone.</li>
+<li><strong>Position against the customer's real alternative,</strong> which is often a bank, a spreadsheet or doing nothing.</li>
+<li><strong>Read a rival's economics before you copy its features.</strong> A rival with cheaper funding can beat you on price forever.</li>
+</ul>
+<h2 id="mental-model-from-market-to-promise">Mental model: from market to promise</h2>
+<pre class="mermaid">flowchart LR
+  MI[&quot;Market insight&lt;br/&gt;needs · behaviours · trends&quot;] --&gt; SZ[&quot;Size&lt;br/&gt;the revenue pool&quot;]
+  SZ --&gt; SEG[&quot;Segment&lt;br/&gt;group by need and economics&quot;]
+  SEG --&gt; TGT[&quot;Target&lt;br/&gt;choose who to serve&quot;]
+  TGT --&gt; POS[&quot;Position&lt;br/&gt;why us, against what&quot;]
+  POS --&gt; CVP[&quot;Value proposition&lt;br/&gt;the promise&quot;]</pre>
+<p>Strategy narrows. You start with a whole market and end with one promise to one group of customers. Each step throws options away on purpose. Sizing tells you whether the market is worth the effort. Segmentation and targeting pick the customers. Positioning and the value proposition say what you promise them.</p>
+<p><strong>Where the model breaks.</strong> It looks linear. In practice you loop. A positioning test can show that your segment was wrong. A segment's economics can show that your size estimate counted the wrong customers. Markets also move, so set a review date.</p>
+<p>Whether the market can stay profitable once rivals arrive is a separate question. The five competitive forces answer it. They live in <a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a>.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="market-insights">Market insights</h3>
+<p>Good market insight explains <strong>why</strong> customers behave as they do, not only what they do. Sources include customer interviews, sales and support conversations, transaction data, competitor moves, regulation and technology shifts. In regulated domains, a rule change is often the biggest market insight of the year. An interchange cap, a new licence type or a new real-time payment scheme can change who buys and why. For research methods, see <a href="../product-sense/user-research.html">User research</a>.</p>
+<h3 id="market-sizing-done-right">Market sizing done right</h3>
+<p>Market sizing estimates how much revenue a market can hold. Three nested numbers are common:</p>
+<ul>
+<li><strong>Total addressable market (TAM):</strong> all the revenue available if every possible customer bought from you.</li>
+<li><strong>Serviceable addressable market (SAM):</strong> the part of TAM your product can serve today, given its features, channels, licences and geography.</li>
+<li><strong>Serviceable obtainable market (SOM):</strong> the part of SAM you can realistically win in a set period, often three years.</li>
+</ul>
+<p><strong>Top-down and bottom-up.</strong> A <strong>top-down</strong> estimate starts from a big published number and cuts it down with percentages. It is fast. It is also easy to inflate, because each percentage is a guess. A <strong>bottom-up</strong> estimate starts from the unit: the number of customers you can name, times what each one is worth to you in revenue. It is slower. It is also easier to check, because every input is a count or a price you can test. Use bottom-up as your main number. Use top-down as a cross-check. If the two differ by more than 2x, one of them is wrong.</p>
+<p><strong>Size the revenue pool, not the volume.</strong> In financial products, the volume is not your revenue. A payment provider processes payment volume but keeps only the net take rate. A lender lends principal but earns the spread. A marketplace lists gross merchandise value (GMV) but keeps only its take rate. Always convert volume into the revenue you can keep. The definitions of take rate and gross versus net revenue live in <a href="the-language-of-money.html">The language of money</a>.</p>
+<p><strong>Common pitfalls.</strong></p>
+<ul>
+<li><strong>Counting volume as revenue.</strong> The deck says "a $120 billion market." The revenue pool is $600 million.</li>
+<li><strong>Ignoring reachable share.</strong> A SAM that includes customers you cannot reach through any channel you have.</li>
+<li><strong>Double counting.</strong> Adding the card volume and the bank-transfer volume of the same purchase.</li>
+<li><strong>Counting businesses, not buyers.</strong> A chain of 50 stores is one buying decision, not 50.</li>
+<li><strong>A static number.</strong> Markets grow, shrink and reprice. A falling net take rate shrinks the pool even when volume grows.</li>
+<li><strong>SOM as a share of TAM.</strong> "We only need 1% of the market" ignores how you would reach that 1%.</li>
+</ul>
+<p><strong>Worked sizing: payment acceptance for independent restaurants.</strong> <em>Illustrative. Every input is assumed.</em></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Input (assumed)</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Restaurants in the country</td>
+<td>200,000 independent restaurants</td>
+<td></td>
+</tr>
+<tr>
+<td>Card volume per restaurant</td>
+<td>$600,000 a year</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Volume</strong> (the misleading "market")</td>
+<td>200,000 × $600,000</td>
+<td><strong>$120 billion</strong></td>
+</tr>
+<tr>
+<td>Net take rate after interchange and scheme fees</td>
+<td>0.5%</td>
+<td>$3,000 per restaurant a year</td>
+</tr>
+<tr>
+<td><strong>TAM</strong> (revenue pool)</td>
+<td>200,000 × $3,000</td>
+<td><strong>$600 million</strong></td>
+</tr>
+<tr>
+<td>Restaurants on a point-of-sale (POS) system you integrate with</td>
+<td>35% → 70,000</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>SAM</strong></td>
+<td>70,000 × $3,000</td>
+<td><strong>$210 million</strong></td>
+</tr>
+<tr>
+<td>Sales capacity</td>
+<td>40 reps × 6 net new restaurants a month × 36 months = 8,640</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>SOM</strong> (three years)</td>
+<td>8,640 × $3,000</td>
+<td><strong>$25.9 million a year</strong></td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid">flowchart TB
+  V[&quot;Card volume&lt;br/&gt;$120B — not revenue&quot;] --&gt; T[&quot;TAM: revenue pool&lt;br/&gt;$600M at 0.5% net take&quot;]
+  T --&gt; S[&quot;SAM: on a POS we integrate with&lt;br/&gt;$210M · 70,000 restaurants&quot;]
+  S --&gt; O[&quot;SOM: what our capacity can win in 3 years&lt;br/&gt;$25.9M · 8,640 restaurants&quot;]</pre>
+<p>Three things stand out. First, the "market" in the pitch deck was 200 times the revenue pool. Second, the integration footprint cut the pool by almost two thirds. Third, the SOM comes from sales capacity, not from a percentage. It is 12.3% of SAM (8,640 ÷ 70,000). That share is high, so the team must also check it against win rates. If reps win one deal in five, each rep needs 30 qualified meetings a month.</p>
+<p><strong>Decision rule.</strong> If SOM in revenue cannot fund the team that builds and sells the product within the plan period, change the segment or the channel. Do not grow the TAM slide.</p>
+<p><strong>Common misreading.</strong> A big TAM is not a reason to enter. A big TAM with five strong rivals can be worth less than a small one you can own. The contribution per customer, which decides whether the SOM is worth winning, lives in <a href="unit-economics.html">Unit economics</a>.</p>
+<h3 id="segmentation-as-a-method">Segmentation as a method</h3>
+<p><strong>Segment by need, not by demographics.</strong> Two small merchants of the same size can need very different payments products. One sells online across borders. The other sells in a café. Segment by the job the customer hires the product to do, and the constraints they face.</p>
+<p>Needs-based segments look different in each domain:</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Two segments with different needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Payments</strong></td>
+<td>Cross-border online sellers who need many currencies, and cafés that need fast in-person checkout</td>
+</tr>
+<tr>
+<td><strong>Lending</strong></td>
+<td>Borrowers consolidating card debt, and borrowers financing one large purchase at checkout</td>
+</tr>
+<tr>
+<td><strong>eCommerce</strong></td>
+<td>Shoppers who want the lowest price, and shoppers who want delivery today</td>
+</tr>
+<tr>
+<td><strong>InsurTech</strong></td>
+<td>First-time renters who want a simple policy, and families who want broad cover</td>
+</tr>
+<tr>
+<td><strong>Retail</strong></td>
+<td>Weekly stock-up shoppers, and shoppers who buy online and collect in store</td>
+</tr>
+<tr>
+<td><strong>FinTech</strong></td>
+<td>Workers paid in one currency who spend in another, and small businesses who need fast access to their own sales</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The method, in four steps.</strong></p>
+<ol>
+<li><strong>Hypotheses.</strong> Start from interviews and support logs. Write three to six candidate segments, each defined by a need and a constraint.</li>
+<li><strong>Data.</strong> Pull behaviour and economics for each customer: what they buy, how often, at what price, what it costs to serve them, and how long they stay.</li>
+<li><strong>Criteria and clustering.</strong> Choose a few variables that drive both need and economics. A data team can cluster customers on them. Then name each cluster in plain words. If you cannot name it, it is not a segment.</li>
+<li><strong>Validation.</strong> Check that each segment is <strong>measurable</strong>, <strong>reachable</strong> through a channel you have, <strong>large enough</strong> to matter, <strong>distinct</strong> in how it responds to offers, and <strong>stable</strong> over a year. A segment that converts, retains and pays back like every other segment is not useful.</li>
+</ol>
+<p><strong>Segment economics.</strong> The test that matters most is economic. Compute contribution and acquisition cost for each segment. Here is an illustrative case for a US renters insurer. <em>Every input is assumed.</em></p>
+<p>Assume loss-adjustment expense (LAE), the cost of handling claims, is 10% of premium. Assume payment and servicing cost $10 per policy a year. Then contribution per policy-year = premium × (1 − loss ratio − 10%) − $10.</p>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Premium</th>
+<th>Loss ratio</th>
+<th>Contribution per year</th>
+<th>Customer acquisition cost (CAC)</th>
+<th>Annual retention</th>
+<th>Lifetime contribution</th>
+<th>Lifetime ÷ CAC</th>
+<th>Payback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Students in shared housing</td>
+<td>$120</td>
+<td>75%</td>
+<td>$8</td>
+<td>$60</td>
+<td>40%</td>
+<td>$13</td>
+<td>0.2</td>
+<td>7.5 years</td>
+</tr>
+<tr>
+<td>Young professionals</td>
+<td>$180</td>
+<td>55%</td>
+<td>$53</td>
+<td>$90</td>
+<td>75%</td>
+<td>$212</td>
+<td>2.4</td>
+<td>1.7 years</td>
+</tr>
+<tr>
+<td>Families renting houses</td>
+<td>$300</td>
+<td>65%</td>
+<td>$65</td>
+<td>$200</td>
+<td>80%</td>
+<td>$325</td>
+<td>1.6</td>
+<td>3.1 years</td>
+</tr>
+</tbody>
+</table>
+<p>Lifetime contribution here is contribution ÷ (1 − retention). For young professionals, that is $53 ÷ 0.25 = $212. It is undiscounted and simplified. <a href="unit-economics.html">Unit economics</a> shows the cohort method.</p>
+<p>Families bring the largest premium. Young professionals pay back fastest and have the best ratio. Students lose money at this acquisition cost. The decision: target young professionals first, grow families as capital allows, and stop paid acquisition for students.</p>
+<p>A caution for regulated products. Choosing whom to market to is not the same as charging them differently. In US insurance, states regulate the rating factors an insurer may use. In lending, fair-lending rules limit how you can treat groups of applicants. Check targeting plans with Compliance.</p>
+<p><strong>Targeting.</strong> Choose with explicit criteria: segment economics first, then size, growth, reachability, fit with your strengths, and the strength of rivals in that segment.</p>
+<p><strong>Common misreading.</strong> Segmenting by company size or age because the data is easy to get. Size is often a proxy for a need. Find the need.</p>
+<h3 id="positioning">Positioning</h3>
+<p><strong>Positioning</strong> is the place your product holds in the target customer's mind, compared with the alternatives. It is a choice you make, then express in product, price and message. Build it in five steps:</p>
+<ol>
+<li><strong>Competitive alternatives.</strong> What would the customer do if you did not exist? The answer is often not a competitor. It might be a bank branch, a spreadsheet, or doing nothing.</li>
+<li><strong>Unique attributes.</strong> What do you have that those alternatives lack?</li>
+<li><strong>Value.</strong> What does each attribute do for the customer, in money, time or risk?</li>
+<li><strong>Target.</strong> Which customers care most about that value?</li>
+<li><strong>Market category.</strong> Which frame makes your value obvious? Calling a product "a business account" invites comparison with banks. Calling it "a multi-currency account" invites a different comparison.</li>
+</ol>
+<p>Wise is a clear example of positioning on price and transparency. Wise says it uses the mid-market exchange rate and shows its fee separately, instead of adding a markup to the rate. Its 2019 annual report post said its average price fell from 0.73% of the transfer amount in 2016 to 0.67% in 2018. The position is "cheaper and clearer than your bank." Everything in the product supports it.</p>
+<p><strong>How to test a position.</strong> Show two or three positioning statements to target customers, and measure which one they repeat back and which one moves them to act. Track win and loss reasons in sales. A good position shows up as shorter sales cycles and fewer price objections.</p>
+<p><strong>Decision rule.</strong> If customers compare you on price with a rival you did not choose, your category is wrong. Change the frame before you change the price.</p>
+<h3 id="customer-value-proposition">Customer value proposition</h3>
+<p>A <strong>customer value proposition</strong> is the promise: the benefits a target customer gets, against what it costs them in money, time and risk, compared with their best alternative.</p>
+<p>Write it in one sentence: <em>For [target customer] who [need], our [product] [key benefit], unlike [alternative], because [reason to believe].</em></p>
+<h3 id="competitor-teardown-economics-not-features">Competitor teardown: economics, not features</h3>
+<p>A feature comparison tells you what a rival ships. A teardown of its economics tells you what it can afford to do next. Public companies disclose a lot in annual reports, investor presentations and pricing pages. Read them for five numbers:</p>
+<table>
+<thead>
+<tr>
+<th>What to estimate</th>
+<th>How to compute it from public data</th>
+<th>What it tells you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Take rate</strong></td>
+<td>Revenue ÷ payment volume or GMV</td>
+<td>How much it keeps per dollar, and whether that is falling</td>
+</tr>
+<tr>
+<td><strong>Funding cost</strong></td>
+<td>Interest expense ÷ average debt or deposits</td>
+<td>How cheaply it can lend</td>
+</tr>
+<tr>
+<td><strong>Credit or loss rate</strong></td>
+<td>Net charge-offs ÷ average loans, or loss ratio for an insurer</td>
+<td>How well it underwrites</td>
+</tr>
+<tr>
+<td><strong>Acquisition cost</strong></td>
+<td>Sales and marketing ÷ new customers</td>
+<td>How hard it pays to grow</td>
+</tr>
+<tr>
+<td><strong>Cost to serve</strong></td>
+<td>Operating expense ÷ active customers</td>
+<td>Whether it can survive a price war</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Illustrative teardown: two consumer lenders.</strong> <em>Every number is assumed.</em> Your company funds loans with a credit line at 7%. A rival with a bank charter funds with deposits at 3%. Both lose 6% of balances to credit losses each year. Both spend 5% of balances on operations.</p>
+<ul>
+<li>Your break-even interest rate is 7% + 6% + 5% = <strong>18%</strong>.</li>
+<li>The rival's break-even is 3% + 6% + 5% = <strong>14%</strong>.</li>
+</ul>
+<p>The rival can price at 16% and still earn 2 points. At 16%, you lose 2 points on every loan. No feature closes a 4-point gap in funding cost. The right move is to avoid its prime segment. Compete where your underwriting gives you lower losses, or your channel gives you lower acquisition cost. Why a bank charter is a source of advantage is covered in <a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a>.</p>
+<p><strong>Other sources.</strong> Pricing pages, app store reviews, job postings (which show what a rival is building), regulatory filings and mystery shopping. Keep a one-page teardown per main rival, and update it each quarter.</p>
+<p><strong>Common misreading.</strong> "They have feature X, so we need it." Ask first whether feature X makes money for them, and whether it would for you.</p>
+<h3 id="swot-and-synthesis">SWOT and synthesis</h3>
+<p><strong>SWOT</strong> lists <strong>strengths</strong>, <strong>weaknesses</strong>, <strong>opportunities</strong> and <strong>threats</strong>. Strengths and weaknesses are inside the company. Opportunities and threats are outside it. A SWOT on its own is a list. The value comes from synthesis: crossing the quadrants to produce options.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Opportunities</th>
+<th>Threats</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Strengths</strong></td>
+<td>Use a strength to seize an opportunity</td>
+<td>Use a strength to blunt a threat</td>
+</tr>
+<tr>
+<td><strong>Weaknesses</strong></td>
+<td>Fix a weakness to reach an opportunity</td>
+<td>Avoid the spot where a weakness meets a threat</td>
+</tr>
+</tbody>
+</table>
+<p>Three rules make a SWOT useful. First, every entry needs evidence: a number, a filing, a customer quote. Second, a strength counts only if it matters to the target segment. Third, each cell must end in an action you could fund, with a rough cost. Then rank the actions by segment economics, not by how many boxes they touch.</p>
+<h3 id="the-growth-matrix">The growth matrix</h3>
+<p>The growth matrix crosses <strong>existing or new markets</strong> with <strong>existing or new products</strong>. Each cell is a growth path, with rising risk as you move away from the core.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Existing product</th>
+<th>New product</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Existing market</strong></td>
+<td><strong>Penetration</strong>: sell more of what you have to the customers you know. Lowest risk.</td>
+<td><strong>Product development</strong>: sell new things to customers you know.</td>
+</tr>
+<tr>
+<td><strong>New market</strong></td>
+<td><strong>Market development</strong>: take what you have to new customers or places.</td>
+<td><strong>Diversification</strong>: new things for new customers. Highest risk.</td>
+</tr>
+</tbody>
+</table>
+<p>Each step away from the core adds unknowns. A new product adds pricing and loss unknowns. A new market adds channel and customer unknowns. In regulated domains, a new market often means a new licence, a new partner bank or new rate filings. Each of these takes months before the first sale.</p>
+<p>Mercado Libre shows a move from one cell to another. It began as a marketplace. Its filings now report two revenue streams: Commerce, and Fintech through Mercado Pago, which includes payments and credit. For its existing buyers and sellers, payments and credit were new products. That is product development, built on a customer base it already had.</p>
+<h3 id="strategic-options-and-their-costs">Strategic options and their costs</h3>
+<p>Every strategic option has a cost. Write it down.</p>
+<ul>
+<li><strong>Focus on one segment</strong> costs the revenue from the segments you leave.</li>
+<li><strong>Compete on price</strong> costs margin, and works only with a lasting cost advantage.</li>
+<li><strong>Compete on differentiation</strong> costs investment, and works only if customers pay for the difference.</li>
+<li><strong>Expand to new markets</strong> costs focus, and in regulated domains it costs licences and time.</li>
+</ul>
+<h2 id="worked-example-growth-options-for-a-renters-insurer">Worked example: growth options for a renters insurer</h2>
+<p><em>This example is invented, to show the method. The insurer, its markets and all numbers are illustrative, and every input is assumed.</em></p>
+<p>A US renters insurer sells in a set of states. It has three growth options for next year.</p>
+<p><strong>Assumed facts.</strong> It can reach 3,000,000 renter households in its current states. It has 60,000 policies, so penetration is 60,000 ÷ 3,000,000 = 2%. The average premium is $180 a year.</p>
+<p><strong>Step 1: size each option.</strong></p>
+<p><strong>Option A, penetration.</strong> Raise penetration from 2% to 3% in current states. New policies: 1% × 3,000,000 = 30,000. New written premium: 30,000 × $180 = <strong>$5.4 million</strong>. The insurer already has loss data for this product, so pricing risk is low.</p>
+<p><strong>Option B, market development.</strong> Expand to new states with 2,000,000 renter households. Assume it reaches 1% in two years: 20,000 policies × $180 = <strong>$3.6 million</strong>. Insurance is regulated by the states. Each new state needs a licence and rate filings, so this takes time and legal cost before the first sale.</p>
+<p><strong>Option C, product development.</strong> Sell pet insurance to existing customers. Assume 5% of 60,000 customers buy at $500 a year: 3,000 × $500 = <strong>$1.5 million</strong>. The insurer has no loss history for pets. Its first price is a guess, and the loss ratio could be far off for a year or more.</p>
+<p><strong>Step 2: run the five competitive forces on the new cells.</strong> Use the method in <a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a>. For pets, specialist pet insurers are established rivals, and the insurer has no data advantage. For new states, its existing price advantage may not hold where rivals already have local data.</p>
+<p><strong>Step 3: check segment economics.</strong> Option A is not one market. Using the segment table above, the insurer aims the new 30,000 policies at young professionals first. That segment pays back in under two years. It stops paid acquisition for students.</p>
+<p><strong>Step 4: decide.</strong> The team picks A as the main bet, with the largest premium and the lowest risk. It starts licence work in two new states as a slower second track. It drops pets for this year. It writes down why, so the choice can be revisited if a partner with pet loss data appears.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Focus vs. reach.</strong> A narrow target wins faster. It caps the size of the market you can win this year.</li>
+<li><strong>Bottom-up vs. top-down sizing.</strong> Bottom-up is checkable and slower. Top-down is fast and easy to inflate.</li>
+<li><strong>Largest segment vs. best-paying segment.</strong> The largest segment brings revenue. The best-paying one funds growth sooner.</li>
+<li><strong>Price vs. differentiation.</strong> A low price brings volume. It costs margin and invites rivals to match.</li>
+<li><strong>Organic vs. adjacent growth.</strong> Penetration is cheaper and slower. Adjacent markets grow faster and carry new risks.</li>
+<li><strong>Analysis vs. learning.</strong> A long strategy study gives a confident plan. A small market test gives real evidence in less time.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Serving everyone.</strong> No segment is excluded. Every roadmap debate restarts from zero.</li>
+<li><strong>The volume slide.</strong> The business case uses payment or loan volume as the market. Finance converts it to revenue, and the case collapses in the review.</li>
+<li><strong>Averaged economics.</strong> Contribution looks fine on average, while one segment loses money on every customer. You see it when growth in that segment makes total margin fall.</li>
+<li><strong>Demographic segments.</strong> Segments by age or company size, when the real difference is the need.</li>
+<li><strong>Feature-copy strategy.</strong> The team copies a rival's features without its funding cost or channel. You see it as matching features and losing on price.</li>
+<li><strong>SWOT as a list.</strong> Four boxes of facts, no options, no actions.</li>
+<li><strong>Diversification by accident.</strong> A team adds a new product for a new market and calls it an extension.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The numbers in this lesson, reproduced in Python.</p>
+<pre><code class="language-python"># Bottom-up sizing: payment acceptance for independent restaurants (all inputs assumed)
+restaurants, volume_each, net_take = 200_000, 600_000, 0.005
+rev_each = volume_each * net_take                     # 3,000
+tam = restaurants * rev_each                           # 600,000,000
+sam_count = int(restaurants * 0.35)                    # 70,000
+sam = sam_count * rev_each                             # 210,000,000
+som_count = 40 * 6 * 36                                # 8,640
+som = som_count * rev_each                             # 25,920,000
+print(f&quot;volume ${restaurants*volume_each/1e9:.0f}B  TAM ${tam/1e6:.0f}M  &quot;
+      f&quot;SAM ${sam/1e6:.0f}M  SOM ${som/1e6:.1f}M ({som_count/sam_count:.1%} of SAM)&quot;)
+
+# Segment economics for a renters insurer (all inputs assumed)
+LAE, SERVICING = 0.10, 10
+segments = {  # name: (premium, loss_ratio, cac, retention)
+    &quot;students&quot;:      (120, 0.75,  60, 0.40),
+    &quot;professionals&quot;: (180, 0.55,  90, 0.75),
+    &quot;families&quot;:      (300, 0.65, 200, 0.80),
+}
+for name, (prem, lr, cac, ret) in segments.items():
+    cm = prem * (1 - lr - LAE) - SERVICING
+    life = cm / (1 - ret)                              # undiscounted
+    print(f&quot;{name:13} CM/yr ${cm:.0f}  lifetime ${life:.0f}  &quot;
+          f&quot;ratio {life/cac:.1f}  payback {cac/cm:.1f} yrs&quot;)
+
+# Lender teardown: break-even rate = funding + losses + operations (assumed)
+for who, funding in ((&quot;us&quot;, 0.07), (&quot;rival&quot;, 0.03)):
+    print(who, f&quot;break-even {funding + 0.06 + 0.05:.0%}&quot;)
+
+# Renters growth options: households x penetration gain x premium (assumed)
+for opt, hh, pen, prem in ((&quot;A&quot;, 3_000_000, 0.01, 180),
+                           (&quot;B&quot;, 2_000_000, 0.01, 180),
+                           (&quot;C&quot;, 60_000, 0.05, 500)):
+    print(opt, f&quot;${hh * pen * prem:,.0f}&quot;)
+</code></pre>
+<p>The script prints a TAM of $600M, a SAM of $210M and a SOM of $25.9M (12.3% of SAM). For segments, it prints contribution of $8, $53 and $65 a year; payback of 7.5, 1.7 and 3.1 years. It prints break-even rates of 18% and 14%, and option values of $5,400,000, $3,600,000 and $1,500,000.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Size your market bottom-up, in revenue you keep, not in volume.</li>
+<li class="task todo">Cross-check with a top-down number. Explain any gap over 2x.</li>
+<li class="task todo">Derive SOM from your sales, partner or marketing capacity.</li>
+<li class="task todo">Compute contribution, CAC and payback for each segment.</li>
+<li class="task todo">Write your target segment in one sentence, and list two segments you will not serve this year.</li>
+<li class="task todo">Write your value proposition in the one-sentence template, against the customer's real alternative.</li>
+<li class="task todo">Keep a one-page economic teardown of each main rival.</li>
+<li class="task todo">Turn your last SWOT into at least four fundable actions.</li>
+<li class="task todo">Place each of your current bets on the growth matrix.</li>
+<li class="task todo">For any bet in a new market, list the licences, partners or filings it needs.</li>
+<li class="task todo">Set a review date for your strategy.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a> — the five forces, profit pools and how to win once you have chosen the segment.</li>
+<li><a href="unit-economics.html">Unit economics</a> — the contribution and payback behind segment economics.</li>
+<li><a href="the-language-of-money.html">The language of money</a> — take rate, and gross versus net revenue, for sizing in revenue.</li>
+<li><a href="products-and-marketing.html">Products and go-to-market</a> — turning a position into an offer and a launch.</li>
+<li><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> — funding bets across the growth matrix.</li>
+<li><a href="../product-sense/user-research.html">User research</a> — the interviews behind segment hypotheses.</li>
+<li><a href="../product-sense/cognitive-empathy.html">Cognitive empathy</a> — understanding the need behind a segment.</li>
+<li><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a> — strategy as the input to a roadmap.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="data-and-decisions.html"><span class="lbl">← Previous</span><span class="ttl">Data and decisions: deciding well under uncertainty</span></a><a class="navcard next" href="competitive-advantage-and-strategy.html"><span class="lbl">→ Next</span><span class="ttl">Competitive advantage and strategy</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-from-market-to-promise">Mental model: from market to promise</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#market-insights">Market insights</a><a class="h3" href="#market-sizing-done-right">Market sizing done right</a><a class="h3" href="#segmentation-as-a-method">Segmentation as a method</a><a class="h3" href="#positioning">Positioning</a><a class="h3" href="#customer-value-proposition">Customer value proposition</a><a class="h3" href="#competitor-teardown-economics-not-features">Competitor teardown: economics, not features</a><a class="h3" href="#swot-and-synthesis">SWOT and synthesis</a><a class="h3" href="#the-growth-matrix">The growth matrix</a><a class="h3" href="#strategic-options-and-their-costs">Strategic options and their costs</a><a class="h2" href="#worked-example-growth-options-for-a-renters-insurer">Worked example: growth options for a renters insurer</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fmarkets-and-strategy.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/markets-and-strategy.html"</script><script defer src="../assets/glossary.js"></script></body></html>

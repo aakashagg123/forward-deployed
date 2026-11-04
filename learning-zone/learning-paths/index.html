@@ -41,20 +41,29 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Learning paths</span><em>start here</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><main class="content index" id="top">
   <div class="index-hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">A standalone module</span>
     <h1>Learning paths for four roles</h1>
     <p class="lede">The tracks, put in order for a senior product manager, an AI product lead, an AI engineer, or an AI engineering lead. Each path says which lessons to read, what to skip, and when to move on.</p>
+    <div class="index-insight"><span class="Badge" data-color="discovery" data-size="md" data-variant="soft" data-pill="">Core insight</span><p>You do not need every lesson. Read the path for your role, in order, and skip the rest.</p></div>
     <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">4 paths</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">time estimates</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">checkpoints</span></div>
   </div>
   <div class="intro MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
 <p>This library has more than twenty tracks. You do not need all of them. A learning path picks the tracks and the lessons for one role, puts them in order, and says when to move on.</p>
-<p><strong>A note on scope.</strong> The paths do not teach anything new. They order and explain the lessons that already exist, and they say which lessons to skip. The lessons carry the content. The machine learning, tensors and CNNs modules are published.</p>
+<p><strong>A note on scope.</strong> The paths do not teach anything new. They order and explain the lessons that already exist, and they say which lessons to skip. The lessons carry the content. The machine learning, tensors, CNNs, transformers, fine-tuning and AI-assisted development modules are published.</p>
 <h2 id="pick-your-role">Pick your role</h2>
 <table>
 <thead>
@@ -70,25 +79,25 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <td><a href="senior-product-manager.html">Senior PM</a></td>
 <td>A product manager with several years of experience who is starting to own AI features</td>
 <td>You can lead an AI feature end to end. You choose the approach, set the quality bar, price it, and judge the risk.</td>
-<td>about 17 hours</td>
+<td>about 20.5 hours</td>
 </tr>
 <tr>
 <td><a href="ai-product-lead.html">AI Product Lead</a></td>
 <td>A product leader who owns an AI product line or a team of PMs shipping AI features</td>
 <td>You set direction for how the product grounds its answers, remembers, acts, stays safe and stays affordable. You can review a design with engineering and ask informed questions.</td>
-<td>about 26 hours</td>
+<td>about 31.5 hours</td>
 </tr>
 <tr>
 <td><a href="ai-engineer.html">AI Engineer</a></td>
 <td>A software engineer who builds AI-powered systems</td>
 <td>You can build, test and run a retrieval-backed, tool-using agent, and explain how it fails.</td>
-<td>about 76.5 hours</td>
+<td>about 84 hours</td>
 </tr>
 <tr>
 <td><a href="ai-engineering-lead.html">AI Engineering Lead</a></td>
 <td>An engineering manager or tech lead who runs a team that builds AI systems</td>
 <td>You review AI architecture, set quality and safety standards, control cost, and work well with product.</td>
-<td>about 37 hours</td>
+<td>about 42.5 hours</td>
 </tr>
 </tbody>
 </table>

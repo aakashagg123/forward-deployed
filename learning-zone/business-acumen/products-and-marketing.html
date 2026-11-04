@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Products and go-to-market — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink active" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 09</span>
+    <h1>Products and go-to-market</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>product</strong> is the whole offer a customer buys: the core function, the package around it, the price, the service and the promise. Features are only part of it. <strong>Go-to-market</strong> (GTM) is how the offer reaches the customer and how the customer buys it. At leadership level, both are business decisions. You decide which opportunities get a business case. You decide what to build, buy or partner for. And you decide which <strong>GTM motion</strong> sells the product: self-serve, a sales team, partners, or embedding inside someone else's software.</p>
+<p>Each motion has its own unit economics. A sales team costs thousands of dollars per customer and needs large accounts to pay back. Self-serve costs little per customer and only works when the product sells itself. Partners and embedding cut acquisition cost, but they take a share of revenue for as long as the customer stays. The wrong motion for the deal size is one of the most common reasons a good product loses money.</p>
+<p>Two more tools complete the picture. <strong>Incrementality</strong> tells you which marketing spend actually created customers, not just touched them. <strong>Total cost of ownership</strong> tells you what build, buy or partner really costs, including the oversight a regulator expects. In regulated domains, a partner may hold the licence you lack. But the regulator still holds you responsible for what your customers experience.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Many products fail on the parts around the feature: the wrong channel, a sales team selling deals too small to pay back, a marketing channel that takes credit for customers who would have come anyway, or a vendor who fails on your behalf. Those parts are your call, not the engineering team's.</p>
+<p><strong>What it changes in your decisions</strong> — You choose the GTM motion from the deal size and the payback it allows. You plan sales hiring with ramp and attainment, not with quota. You fund marketing on incremental acquisition cost from a holdout, not on attributed conversions. You make build-buy-partner calls on total cost of ownership, with an exit plan for every critical vendor.</p>
+<p><strong>Ask your team</strong> — <em>"If we had switched this channel off last quarter, how many of these customers would we still have won? Show me the holdout."</em></p>
+<p><strong>Risk if ignored</strong> — You scale a channel whose true acquisition cost is three times the reported one. Or you build a sales team for accounts that can never pay it back. Or a vendor or partner becomes a single point of failure for a regulated product you still answer for.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ol>
+<li>Match the GTM motion to the deal size. Use a sales team only where contribution per account pays back the sales cost within your payback limit.</li>
+<li>Plan sales capacity on ramped, attained output, not on quota. A new hire delivers well under half of quota in year one in a typical plan.</li>
+<li>Price a partner or an embedded channel on contribution after the revenue share, for the life of the customer, not on its low acquisition cost.</li>
+<li>Fund marketing on incremental acquisition cost from a holdout. Treat attributed conversions as a ceiling, not a measurement.</li>
+<li>Compare build, buy and partner on three-year total cost of ownership, including oversight, integration and exit.</li>
+<li>Outsource the work, never the accountability. Every critical vendor gets due diligence, monitoring and a tested exit plan.</li>
+<li>Protect models and pricing logic as trade secrets. Disclose decision reasons, not the model.</li>
+</ol>
+<h2 id="mental-model-the-offer-is-more-than-the-feature">Mental model: the offer is more than the feature</h2>
+<pre class="mermaid">flowchart TB
+  subgraph OFFER[&quot;THE OFFER&quot;]
+    CORE[&quot;Core&lt;br/&gt;the job it does&quot;]
+    PKG[&quot;Package&lt;br/&gt;tiers · bundle · terms&quot;]
+    SVC[&quot;Service&lt;br/&gt;onboarding · support · returns&quot;]
+    PRM[&quot;Promise&lt;br/&gt;brand · trust · guarantees&quot;]
+  end
+  CORE --- PKG --- SVC --- PRM</pre>
+<p>Think of the offer as layers. The core is what the product does. The package, service and promise make it something people buy. Competitors can copy a core feature quickly. The outer layers take longer to copy. The GTM motion is how the whole offer reaches the buyer. A strong offer sold through the wrong motion still loses money.</p>
+<p><strong>Where the model breaks.</strong> In some markets, the core really is everything. A payments API that fails one time in ten loses, whatever its service. Layers help only once the core is good enough.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="opportunity-assessment-and-the-business-case">Opportunity assessment and the business case</h3>
+<p>Before a build, answer these questions on one page:</p>
+<ol>
+<li><strong>What problem, for whom?</strong> Name the target customer and the need.</li>
+<li><strong>How big?</strong> Size the reachable market with simple, visible arithmetic.</li>
+<li><strong>Why now?</strong> What changed: a rule, a technology, a competitor, a customer behaviour?</li>
+<li><strong>Why us?</strong> What advantage do we bring?</li>
+<li><strong>How will we sell it?</strong> Name the GTM motion and the acquisition cost it implies.</li>
+<li><strong>How will we know it worked?</strong> One outcome metric and a target.</li>
+<li><strong>What could kill it?</strong> Regulatory, credit, fraud, operational and partner risks.</li>
+</ol>
+<p>If the answers are strong, write the full business case with NPV (net present value), a counterfactual and a sensitivity table. <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> shows how. Size the market as in <a href="markets-and-strategy.html">markets and customers</a>.</p>
+<h3 id="iterative-development-with-gates-where-the-rules-require-them">Iterative development, with gates where the rules require them</h3>
+<p>Most products should be built in small steps: test the riskiest assumption first, release to a small group, learn, then scale. In regulated domains, some steps need a gate before they go live. Examples are a new credit product, new customer disclosures or a new insurance rate. Plan the gate in from the start. Do not discover it a week before launch.</p>
+<p>Warby Parker is a public example of iterating on the offer, not just the product. Its 2021 S-1 describes a Home Try-On program. Customers chose five frames online and tried them at home for five days for free. The program solved the main barrier to buying glasses online: you cannot try them on. Warby Parker's 10-Q for the quarter ended June 30, 2026 says it decided in the second quarter of 2025 to sunset Home Try-On at the end of 2025. Its 10-K for 2025 names Virtual Try-On as part of its offer.</p>
+<p>The lesson for a product leader: an offer layer can be right for one stage and wrong for the next. A free home trial lowers the buyer's risk. It also carries shipping, handling and return costs on every order. Review each layer's cost against what it still earns.</p>
+<h3 id="product-design-and-packaging">Product design and packaging</h3>
+<p><strong>Packaging</strong> decides how features are grouped and sold: one product or many, tiers, bundles and add-ons. Packaging is a pricing decision in disguise. <a href="monetization-and-business-models.html">Pricing and business models</a> covers it in depth.</p>
+<p>A wholesale marketplace can package risk relief into its offer to independent retailers. Two common forms are delayed payment terms and easy returns on a first order from a new brand. Both lower the retailer's risk of trying a new brand. The marketplace absorbs some of that risk itself as part of the offer. (This is a general pattern, not a description of one company's current terms.) Delayed terms also tie up cash. <a href="the-language-of-money.html">The language of money</a> works through what net-60 terms do to working capital.</p>
+<h3 id="go-to-market-motions">Go-to-market motions</h3>
+<p>A <strong>GTM motion</strong> is the repeatable way a customer finds, buys and starts using the product. Four motions cover most financial and commerce products.</p>
+<style>
+.ba-gtm{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);
+  padding:24px 22px 20px;margin:26px 0;font-family:inherit;text-align:left}
+.ba-gtm-title{font-size:var(--font-text-2xs-size);letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+  color:var(--color-text-secondary);margin:0 0 4px}
+.ba-gtm-sub{font-size:var(--font-text-sm-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-gtm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.ba-gtm-card{border-radius:var(--radius-lg);padding:12px 12px 10px;border:1px solid var(--color-border);background:var(--color-surface)}
+.ba-gtm-chip{display:inline-block;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  border-radius:var(--radius-full);padding:3px 10px;border:1px solid transparent;margin:0 0 8px}
+.ba-gtm-who{font-size:var(--font-text-xs-size);color:var(--color-text);margin:0 0 8px;line-height:1.4}
+.ba-gtm-row{display:flex;justify-content:space-between;gap:8px;font-size:var(--font-text-xs-size);color:var(--color-text-secondary);
+  margin:0 0 3px;line-height:1.4}
+.ba-gtm-row b{font-family:var(--font-mono);color:var(--color-text);font-weight:600}
+.ba-gtm-fit{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--color-border);line-height:1.4}
+.ba-gtm-ss .ba-gtm-chip{background:var(--color-background-info-surface);color:var(--color-text-info);border-color:var(--color-border-info-surface)}
+.ba-gtm-ss{border-top:3px solid var(--color-border-info-outline)}
+.ba-gtm-sl .ba-gtm-chip{background:var(--color-background-discovery-surface);color:var(--color-text-discovery);border-color:var(--color-border-discovery-surface)}
+.ba-gtm-sl{border-top:3px solid var(--color-border-discovery-outline)}
+.ba-gtm-pl .ba-gtm-chip{background:var(--color-background-caution-surface);color:var(--color-text-caution);border-color:var(--color-border-caution-surface)}
+.ba-gtm-pl{border-top:3px solid var(--color-border-caution-outline)}
+.ba-gtm-em .ba-gtm-chip{background:var(--color-background-success-surface);color:var(--color-text-success);border-color:var(--color-border-success-surface)}
+.ba-gtm-em{border-top:3px solid var(--color-border-success-outline)}
+.ba-gtm-foot{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:14px 0 0;padding-top:10px;border-top:1px solid var(--color-border)}
+</style>
+<div class="ba-gtm" role="figure" aria-label="Four go-to-market motions for a payments company. Self-serve: contribution 60 dollars a month, CAC 400 dollars, payback 6.7 months. Sales-led: contribution 600 dollars a month, CAC 10,071 dollars, payback 16.8 months. Partner-led: 25 percent revenue share, contribution 350 dollars, CAC 4,250 dollars, payback 12.1 months. Embedded: 30 percent revenue share, contribution 53.33 dollars, CAC 400 dollars, payback 7.5 months. Illustrative, all inputs assumed.">
+  <p class="ba-gtm-title">Four go-to-market motions</p>
+  <p class="ba-gtm-sub">Per merchant, payments company. Illustrative; all inputs assumed. Contribution is per month, after any revenue share and the cost to serve.</p>
+  <div class="ba-gtm-grid">
+    <div class="ba-gtm-card ba-gtm-ss"><span class="ba-gtm-chip">Self-serve</span>
+      <p class="ba-gtm-who">Customer signs up alone. Small online merchant.</p>
+      <p class="ba-gtm-row">Revenue share<b>0%</b></p>
+      <p class="ba-gtm-row">Contribution<b>$60</b></p>
+      <p class="ba-gtm-row">CAC<b>$400</b></p>
+      <p class="ba-gtm-row">Payback<b>6.7 mo</b></p>
+      <p class="ba-gtm-fit"><b>Fits:</b> simple product, small deals. <b>Breaks:</b> on churn.</p></div>
+    <div class="ba-gtm-card ba-gtm-sl"><span class="ba-gtm-chip">Sales-led</span>
+      <p class="ba-gtm-who">A sales team closes a contract. Mid-sized merchant.</p>
+      <p class="ba-gtm-row">Revenue share<b>0%</b></p>
+      <p class="ba-gtm-row">Contribution<b>$600</b></p>
+      <p class="ba-gtm-row">CAC<b>$10,071</b></p>
+      <p class="ba-gtm-row">Payback<b>16.8 mo</b></p>
+      <p class="ba-gtm-fit"><b>Fits:</b> large deals. <b>Breaks:</b> below about $933 a month of net revenue.</p></div>
+    <div class="ba-gtm-card ba-gtm-pl"><span class="ba-gtm-chip">Partner-led</span>
+      <p class="ba-gtm-who">A partner refers or resells. Mid-sized merchant.</p>
+      <p class="ba-gtm-row">Revenue share<b>25%</b></p>
+      <p class="ba-gtm-row">Contribution<b>$350</b></p>
+      <p class="ba-gtm-row">CAC<b>$4,250</b></p>
+      <p class="ba-gtm-row">Payback<b>12.1 mo</b></p>
+      <p class="ba-gtm-fit"><b>Fits:</b> partner holds the trust. <b>Breaks:</b> a share for life costs more than it saves.</p></div>
+    <div class="ba-gtm-card ba-gtm-em"><span class="ba-gtm-chip">Embedded</span>
+      <p class="ba-gtm-who">Sold inside the merchant's software. Small merchant.</p>
+      <p class="ba-gtm-row">Revenue share<b>30%</b></p>
+      <p class="ba-gtm-row">Contribution<b>$53.33</b></p>
+      <p class="ba-gtm-row">CAC<b>$400</b></p>
+      <p class="ba-gtm-row">Payback<b>7.5 mo</b></p>
+      <p class="ba-gtm-fit"><b>Fits:</b> buying happens in the software. <b>Breaks:</b> if the partner switches provider.</p></div>
+  </div>
+  <p class="ba-gtm-foot">Lower acquisition cost usually means a larger revenue share. Compare motions on lifetime contribution after the share, and on payback.</p>
+</div>
+
+<p><strong>Self-serve.</strong> The customer finds the product, signs up, and starts using it with no salesperson. Acquisition cost comes from paid marketing, content and referrals. It works when the product is simple to evaluate and quick to start. Small merchants who sign up for online card acceptance are the classic case. In FinTech, a consumer opening a savings account in an app is another.</p>
+<p><strong>Sales-led.</strong> A sales team finds accounts, runs a sales cycle and closes a contract. It works when deals are large, the buyer needs convincing, or the contract is negotiated. Mid-sized and enterprise merchants in payments are sold this way. So are commercial insurance programmes and bank partnerships.</p>
+<p><strong>Partner-led.</strong> Another company refers or resells your product. Examples are an accounting firm that refers small businesses to a lender, a broker that sells an insurer's policies, or a bank that offers a fintech's product to its customers. The partner already has the customer's trust. You pay it a fee per customer or a share of revenue.</p>
+<p><strong>Embedded.</strong> Your product is sold inside software the customer already uses. Payments inside salon or restaurant software is the common case. Lending offered at a commerce checkout is another, and so is insurance sold at the point of a purchase. The software partner owns the customer relationship. You get very cheap distribution. You pay the largest share of revenue, and you depend on the partner the most. <a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a> explains why embedding also raises switching costs.</p>
+<h4 id="the-unit-economics-of-each-motion">The unit economics of each motion</h4>
+<p>The table compares the four motions for a payments company. The figures are illustrative, and every input is assumed. Each motion serves the merchant size it fits. Contribution is per merchant per month, after the partner's revenue share and the cost to serve. It uses the second contribution-margin layer (CM2) from <a href="unit-economics.html">unit economics</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Per merchant (assumed)</th>
+<th>Self-serve</th>
+<th>Sales-led</th>
+<th>Partner-led</th>
+<th>Embedded</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Typical merchant</td>
+<td>Small, online</td>
+<td>Mid-sized</td>
+<td>Mid-sized</td>
+<td>Small, in vertical software</td>
+</tr>
+<tr>
+<td>Net revenue per month</td>
+<td>$100</td>
+<td>$1,000</td>
+<td>$1,000</td>
+<td>$133.33</td>
+</tr>
+<tr>
+<td>Revenue share to partner</td>
+<td>0%</td>
+<td>0%</td>
+<td>25%</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>Cost to serve per month</td>
+<td>$40</td>
+<td>$400</td>
+<td>$400</td>
+<td>$40</td>
+</tr>
+<tr>
+<td><strong>Contribution per month</strong></td>
+<td><strong>$60</strong></td>
+<td><strong>$600</strong></td>
+<td><strong>$350</strong></td>
+<td><strong>$53.33</strong></td>
+</tr>
+<tr>
+<td>Acquisition cost (CAC)</td>
+<td>$400</td>
+<td>$10,071</td>
+<td>$4,250</td>
+<td>$400</td>
+</tr>
+<tr>
+<td>Monthly churn</td>
+<td>3%</td>
+<td>1%</td>
+<td>1.5%</td>
+<td>1%</td>
+</tr>
+<tr>
+<td><strong>Simple payback</strong></td>
+<td><strong>6.7 months</strong></td>
+<td><strong>16.8 months</strong></td>
+<td><strong>12.1 months</strong></td>
+<td><strong>7.5 months</strong></td>
+</tr>
+<tr>
+<td>Lifetime contribution (contribution ÷ churn)</td>
+<td>$2,000</td>
+<td>$60,000</td>
+<td>$23,333</td>
+<td>$5,333</td>
+</tr>
+<tr>
+<td>Lifetime contribution ÷ CAC</td>
+<td>5.0</td>
+<td>6.0</td>
+<td>5.5</td>
+<td>13.3</td>
+</tr>
+</tbody>
+</table>
+<p>The embedded column uses the same assumed numbers as the worked example in <a href="competitive-advantage-and-strategy.html">competitive advantage and strategy</a>. The sales-led acquisition cost of $10,071 comes from the capacity math below. Lifetime contribution here is undiscounted, to keep the comparison simple. <a href="unit-economics.html">Unit economics</a> shows why you should discount it and cap it.</p>
+<p><strong>How to read it.</strong> Four points stand out.</p>
+<ul>
+<li><strong>Sales-led has the best lifetime value and the worst payback.</strong> Each merchant is worth $60,000 over its life. But the company waits almost 17 months to recover the cost of winning it. A fast-growing sales team burns cash before it earns it.</li>
+<li><strong>The partner's share is a cost for life.</strong> The partner-led merchant costs less than half as much to acquire as the sales-led one. It also earns $250 less every month, for as long as the merchant stays. Over the expected life of about 67 months, that share adds up to about $16,700. That is far more than the $5,800 saved on acquisition cost.</li>
+<li><strong>Embedded wins on ratio, not on size.</strong> Its ratio of 13.3 is the best in the table. Each merchant is small, so the channel only matters at volume. It also depends on one partner.</li>
+<li><strong>Self-serve lives on churn.</strong> At 3% a month, the average self-serve merchant stays about 33 months. A small rise in churn wipes out most of the value.</li>
+</ul>
+<p><strong>Common misreading.</strong> "The partner channel is cheaper, so shift budget to it." It is cheaper to <em>acquire</em>. Whether it is cheaper <em>overall</em> depends on the revenue share, the churn, and how long the share lasts. Always compare lifetime contribution after the share, at the same discount rate.</p>
+<h4 id="when-to-switch-motions">When to switch motions</h4>
+<p>Motions are not chosen once. Companies add and drop them as they move up or down market.</p>
+<ul>
+<li><strong>Add sales on top of self-serve</strong> when a group of self-serve accounts is large enough to pay back a salesperson. Many companies flag such accounts from product usage. These are often called product-qualified leads. A salesperson then helps them expand.</li>
+<li><strong>Move a segment from sales-led to self-serve</strong> when its deals are too small. In the table, a ramped sales team costs $10,071 per merchant. To pay that back within 18 months, a merchant must earn at least $560 a month of contribution. At a 60% margin, that is about $933 a month of net revenue, or about $11,200 a year. Below that size, sales loses money on every deal. Self-serve or a partner should serve it.</li>
+<li><strong>Add partners</strong> when someone else already holds the customer's trust or workflow, and your direct payback is too long.</li>
+<li><strong>Embed</strong> when the buying decision happens inside software the customer already runs. Accept the revenue share and the dependence as the price.</li>
+</ul>
+<p><strong>Domain application: lending.</strong> A small-business lender may run all four motions at once. Self-serve online applications for small loans. A sales team for larger credit lines. Accountants and brokers as referral partners. And loans offered inside a commerce or accounting platform. Each channel has its own CAC, its own approval rate and its own default rate. Report unit economics by channel, never blended.</p>
+<p><strong>Decision rule.</strong> When the contribution per account cannot pay back the motion's CAC within your payback limit, change the motion for that segment. Do not change the price first.</p>
+<h3 id="sales-capacity-math">Sales capacity math</h3>
+<p>A sales-led business plans in <strong>capacity</strong>: how many salespeople, how fast they become productive, and what each one closes. Four inputs drive it.</p>
+<ul>
+<li><strong>Quota.</strong> The new business one fully productive salesperson is expected to close in a year. Here, an <strong>account executive</strong> (AE) has a quota of $600,000 of new annualized net revenue.</li>
+<li><strong>Attainment.</strong> The share of quota a rep actually closes, on average. Many teams plan well below 100%. Here, the plan assumes 70%.</li>
+<li><strong>Ramp.</strong> How long a new hire takes to reach full productivity. Here, a new AE closes nothing for three months, 50% of a full rep's output for the next three, and 100% after that. The year-one average is (0 × 3 + 0.5 × 3 + 1 × 6) ÷ 12 = <strong>62.5%</strong>.</li>
+<li><strong>Fully loaded seat cost.</strong> Salary, commission, benefits, tools, and the AE's share of managers, sales engineers and lead generation. Here, <strong>$300,000 a year</strong> per seat.</li>
+</ul>
+<p><strong>From capacity to sales-led CAC.</strong> All figures are assumed.</p>
+<ol>
+<li>A ramped AE closes $600,000 × 70% = <strong>$420,000</strong> of new annualized net revenue a year.</li>
+<li>The average new merchant brings $12,000 a year. So the AE closes $420,000 ÷ $12,000 = <strong>35 deals</strong> a year.</li>
+<li>Sales cost per deal = $300,000 ÷ 35 = $8,571.</li>
+<li>Add marketing's cost of the leads, $1,500 per closed deal. <strong>Sales-led CAC = $10,071.</strong></li>
+</ol>
+<p><strong>Ramp raises CAC.</strong> A new hire in year one closes $420,000 × 62.5% = $262,500, or about 21.9 deals. Their CAC is $300,000 ÷ 21.875 + $1,500 = <strong>$15,214</strong>. That is 51% higher than a ramped rep. A team where half the reps are new shows a much higher CAC than its mature cost. Read sales CAC by tenure group, or you will blame the wrong thing.</p>
+<p><strong>Planning the hiring.</strong> Suppose the plan needs $6 million of new annualized net revenue next year. The team has 8 ramped account executives.</p>
+<ol>
+<li>Ramped account executives deliver 8 × $420,000 = $3,360,000.</li>
+<li>The gap is $6,000,000 − $3,360,000 = $2,640,000.</li>
+<li>A new hire, hired at the start of the year, delivers $262,500.</li>
+<li>Hires needed = $2,640,000 ÷ $262,500 = 10.06. Round up to <strong>11</strong>.</li>
+</ol>
+<p>Those 11 hires cost 11 × $300,000 = $3.3 million in year one. They bring in about $2.9 million of new annualized revenue. Hire them late in the year, and they deliver almost nothing until the next one. That is why sales capacity is planned two quarters ahead of the revenue target.</p>
+<p><strong>Common misreading.</strong> "Revenue target ÷ quota = headcount." That plan assumes 100% attainment and no ramp. Here it would say $6,000,000 ÷ $600,000 = 10 reps in total, so only 2 new hires. The real need is 11 new hires.</p>
+<p><strong>Decision rule.</strong> When you plan a sales-led launch, model attainment and ramp explicitly. Then check that the resulting CAC pays back within your payback limit for the deal size you will actually sell.</p>
+<h4 id="partner-revenue-share">Partner revenue share</h4>
+<p>A <strong>referral partner</strong> sends you customers. A <strong>reseller</strong> sells your product under its own contract. Both expect payment. The common forms are a one-off fee per customer, a share of revenue for a fixed period, or a share for the life of the customer.</p>
+<p>The cost of a partner channel is: partner-management staff + onboarding + the revenue share. In the table, a partner manager costs $150,000 a year and brings in 40 merchants: $3,750 each. Onboarding adds $500. So CAC is $4,250 (assumed). The revenue share of 25% then costs $250 a month for life.</p>
+<p><strong>Negotiating the share.</strong> A share for life costs far more than a share for 24 months. On the partner-led merchant, a 24-month share costs $250 × 24 = $6,000, undiscounted and ignoring churn. A share for life costs about $16,700 at the same churn. Price the share as a CAC equivalent before you sign.</p>
+<h4 id="embedded-payments-revenue-share">Embedded payments revenue share</h4>
+<p>In embedded payments, a vertical software company offers card acceptance to the businesses on its platform. A payments provider processes the payments and shares the revenue. The software company gains a second revenue line. The payments provider gains distribution.</p>
+<p><strong>From the platform's side (illustrative).</strong> A salon-software company has 5,000 merchants. Assume 40% of them adopt its embedded payments. Each paying merchant brings $133.33 of net revenue a month, and the platform's share is 30%: $40 a month. That is 5,000 × 40% × $40 × 12 = <strong>$960,000</strong> a year. It needs almost no extra sales effort. This is why many vertical software companies now see payments as a core revenue line.</p>
+<p><strong>The share rises with risk.</strong> A software company can take more of the economics by taking on more of the work. Some register as a <strong>payment facilitator</strong>. They onboard and underwrite their own merchants under a provider's licence. They then keep a larger share. They also take on fraud and credit losses, compliance duties, and the cost of the risk team.</p>
+<p><strong>Decision rule.</strong> When a partner asks for a higher share, ask which risk or cost it takes on in return. A higher share with no transfer of losses or work is just a price cut.</p>
+<h3 id="attribution-versus-incrementality">Attribution versus incrementality</h3>
+<p><strong>Attribution</strong> assigns credit for a conversion to the marketing touches the customer saw before converting. <strong>Incrementality</strong> measures how many conversions the marketing <em>caused</em>: conversions with the spend minus conversions that would have happened without it. They answer different questions. Attribution says who touched the customer. Incrementality says who changed the outcome.</p>
+<p><strong>The common attribution rules.</strong></p>
+<ul>
+<li><strong>Last-touch.</strong> All credit goes to the last ad or link before the conversion. It favours channels that catch people just before they buy, such as paid search on your own brand name and retargeting ads.</li>
+<li><strong>First-touch.</strong> All credit goes to the first touch. It favours awareness channels.</li>
+<li><strong>Multi-touch.</strong> Credit is split across touches by a rule: equally, more to recent touches, or more to the first and last. Some tools fit the split from data.</li>
+</ul>
+<p>All three share one flaw. They only split credit among touches that <em>happened</em>. None asks what the customer would have done with no ad at all. Ad platforms also report conversions on their own ads. They grade their own homework. Privacy rules and platform changes have also cut the user-level data that attribution needs, so the numbers are less complete than they look.</p>
+<p><strong>How incrementality is measured.</strong></p>
+<ul>
+<li><strong>Holdout test.</strong> Randomly withhold the ads from part of the target audience. Compare conversion rates. The gap is the incremental effect. This is the gold standard. <a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a> covers test design and sample size.</li>
+<li><strong>Geographic test.</strong> Switch spend on in some regions and off in comparable ones. It works for channels you cannot randomize by person, such as television or outdoor ads.</li>
+<li><strong>Marketing mix modelling</strong> (MMM). A statistical model links total sales to spend by channel over time. It covers every channel, including offline ones. It needs years of data and gives broad answers. Calibrate it with holdout tests.</li>
+</ul>
+<p><strong>Where the gap is largest.</strong> Attributed and incremental numbers diverge most for brand search, retargeting, and offers to existing customers. These touches reach people who were already about to buy. They diverge least for new audiences who have never heard of you.</p>
+<p><strong>Domain application: lending.</strong> A lender pays a comparison site per funded loan. Many of those borrowers searched for the lender by name first. The site's tracking link was the last touch, so it takes the credit. A holdout by region or by time shows how many borrowers would have applied directly.</p>
+<p><strong>Domain application: FinTech.</strong> A neobank offers a cash bonus to open an account. Attribution credits the bonus with every account opened during the offer. Some of those customers were coming anyway. Many others take the bonus and leave. Incrementality on <em>retained</em> customers is the number that matters.</p>
+<p><strong>Decision rule.</strong> Fund a channel on incremental CAC from a holdout. Re-test each large channel at least once a year, because the gap changes as the audience saturates.</p>
+<p><strong>Common misreading.</strong> "Retargeting has our lowest CAC." It often has the lowest <em>attributed</em> CAC, because it reaches people who already chose you. Its incremental CAC can be the highest in the plan.</p>
+<p>The worked example below shows the arithmetic.</p>
+<h3 id="make-buy-or-partner">Make, buy or partner</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Choose it when</th>
+<th>The cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Make</strong></td>
+<td>The capability is a core differentiator, or no vendor fits</td>
+<td>Time, team and upkeep for as long as you run it</td>
+</tr>
+<tr>
+<td><strong>Buy</strong></td>
+<td>The capability is common, and vendors do it well</td>
+<td>Per-unit fees, less control, vendor lock-in</td>
+</tr>
+<tr>
+<td><strong>Partner</strong></td>
+<td>Someone else holds what you need: a licence, a balance sheet, a channel</td>
+<td>A share of the revenue, and dependence on the partner's priorities</td>
+</tr>
+</tbody>
+</table>
+<p>In regulated domains, partnership is common. A fintech may use a partner bank to hold deposits or issue cards. An insurance agency may sell on a carrier's licence and capital. A retailer may use an outside lender for financing at checkout.</p>
+<p>Target took the buy route for same-day delivery. In December 2017 it agreed to acquire Shipt, a same-day delivery platform, for $550 million. As general reasoning, not a Target statement: buying an existing network can be faster than building one. Buying a whole company is a portfolio decision. <a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> covers acquisition math.</p>
+<h4 id="total-cost-of-ownership">Total cost of ownership</h4>
+<p><strong>Total cost of ownership</strong> (TCO) is everything an option costs over its life, not only its price tag. Compare options over the same period, usually three to five years.</p>
+<table>
+<thead>
+<tr>
+<th>Cost</th>
+<th>Make</th>
+<th>Buy</th>
+<th>Partner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Up front</td>
+<td>Design and build</td>
+<td>Integration, contract, security review</td>
+<td>Integration, legal, due diligence</td>
+</tr>
+<tr>
+<td>Running</td>
+<td>Engineers, infrastructure, data sources</td>
+<td>Per-unit or licence fees, price rises at renewal</td>
+<td>Revenue share, joint operations</td>
+</tr>
+<tr>
+<td>Oversight</td>
+<td>Compliance testing, audits, model validation</td>
+<td>Vendor monitoring, audit rights, a fallback vendor</td>
+<td>Partner oversight, joint compliance reviews</td>
+</tr>
+<tr>
+<td>Hidden</td>
+<td>The roadmap the team did not build</td>
+<td>Lock-in, data you cannot take with you</td>
+<td>Partner's priorities, partner's regulator</td>
+</tr>
+<tr>
+<td>Exit</td>
+<td>Decommissioning</td>
+<td>Migration to another vendor</td>
+<td>Unwinding customers, data and contracts</td>
+</tr>
+</tbody>
+</table>
+<p>Three costs are missed most often. <strong>Opportunity cost:</strong> the team that builds a commodity capability does not build your differentiator. <strong>Price at renewal:</strong> a vendor that is hard to leave can raise prices. <strong>Exit cost:</strong> moving millions of records or customers to a new provider is a project in itself. The worked example below shows how hidden costs move a build-or-buy break-even.</p>
+<h4 id="third-party-risk-management">Third-party risk management</h4>
+<p><strong>Third-party risk management</strong> is how a company chooses, watches and leaves its vendors and partners. In financial services, regulators treat it as part of running the business safely. In June 2023, the three US federal banking agencies (the Federal Reserve, the Federal Deposit Insurance Corporation (FDIC) and the Office of the Comptroller of the Currency (OCC)) issued joint final guidance on third-party relationships. It describes a life cycle: planning, due diligence and selection, contract negotiation, ongoing monitoring, and termination. The bank stays responsible for activities it outsources. In the EU, the Digital Operational Resilience Act (DORA) has applied since January 2025. It sets rules for how financial firms manage their technology providers.</p>
+<p>The life cycle, in product terms:</p>
+<ol>
+<li><strong>Plan.</strong> Decide whether the activity is critical. A vendor that touches customer money, credit decisions or identity checks is critical.</li>
+<li><strong>Due diligence.</strong> Check the vendor's financial health, security, compliance record, and its own key vendors.</li>
+<li><strong>Contract.</strong> Write in service levels, audit rights, data ownership, incident notice, and help with exit.</li>
+<li><strong>Monitor.</strong> Track performance, incidents and the vendor's finances. Review critical vendors at least yearly.</li>
+<li><strong>Exit.</strong> Keep a written, tested plan to move to another provider or bring the work in-house.</li>
+</ol>
+<p><strong>When you are the third party.</strong> In banking-as-a-service, a fintech uses a partner bank's licence. To the bank, the fintech is the third party. The bank must oversee the fintech's onboarding, complaints and compliance. US bank regulators have taken enforcement action against partner banks over weak oversight of their fintech programmes, for example a Federal Reserve action in June 2024. The fintech feels that as slower launches and new controls.</p>
+<p><strong>A real failure of a middle layer.</strong> In April 2024, a banking-as-a-service middleware provider filed for bankruptcy. Many end customers of the fintech apps that relied on it lost access to their money for weeks or months, while the parties tried to reconcile who owned what. The lesson for a product leader is not about one company. If a middle layer keeps the record of whose money is whose, your customers depend on that record. Ask who holds it, and how you would rebuild it without them.</p>
+<p><strong>Decision rule.</strong> For any critical vendor or partner, name the fallback before you sign. If there is none, the contract needs stronger rights or the capability needs to come in-house.</p>
+<h3 id="the-marketing-cycle-and-the-four-ps">The marketing cycle and the four Ps</h3>
+<p>Marketing runs as a loop: <strong>insight → plan → execute → measure → learn</strong>. A GTM plan answers:</p>
+<ul>
+<li><strong>Who</strong> is the target segment for this launch?</li>
+<li><strong>What</strong> is the message, and the proof behind it?</li>
+<li><strong>Where</strong> will we reach them: self-serve, a sales team, partners or embedded?</li>
+<li><strong>How much</strong> will it cost to win each customer, and how fast will it pay back?</li>
+<li><strong>When</strong> will each segment get it?</li>
+</ul>
+<p>The four Ps are four levers of the marketing mix.</p>
+<table>
+<thead>
+<tr>
+<th>P</th>
+<th>The question</th>
+<th>Payments</th>
+<th>Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Product</strong></td>
+<td>What exactly are we selling?</td>
+<td>Online card acceptance with fraud tools</td>
+<td>A private-label product line</td>
+</tr>
+<tr>
+<td><strong>Price</strong></td>
+<td>What do we charge, and how?</td>
+<td>A blended rate, or interchange plus a markup</td>
+<td>Shelf price, promotions and markdown plan</td>
+</tr>
+<tr>
+<td><strong>Place</strong></td>
+<td>Where does the customer buy it?</td>
+<td>Direct sign-up, or through software platforms that embed it</td>
+<td>Stores, website, marketplaces</td>
+</tr>
+<tr>
+<td><strong>Promotion</strong></td>
+<td>How do they hear about it?</td>
+<td>Developer docs, partner listings, sales team</td>
+<td>In-store display, loyalty emails, ads</td>
+</tr>
+</tbody>
+</table>
+<p>"Place" is the GTM motion. Choose it with the unit economics above, not by habit.</p>
+<h3 id="launches">Launches</h3>
+<p>Not every launch needs the same weight. Tier them.</p>
+<ul>
+<li><strong>Tier 1</strong>: a new product or market. Full plan: press, sales training, support readiness, risk sign-off.</li>
+<li><strong>Tier 2</strong>: a major feature. Customer communication, docs, support briefing.</li>
+<li><strong>Tier 3</strong>: an improvement. Release notes.</li>
+</ul>
+<p>A sales-led tier 1 launch also needs sales enablement before launch day. Reps must be trained, and pricing approval rules must be set. See <a href="../technical-product-management/launches-rollouts-and-migrations.html">Launches, rollouts and migrations</a> for the execution side.</p>
+<h3 id="intellectual-property-basics">Intellectual property basics</h3>
+<p>Four kinds of intellectual property matter most to a product leader.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>What it protects</th>
+<th>How you get it</th>
+<th>Domain example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Patent</strong></td>
+<td>An invention: a new, useful, non-obvious method or device</td>
+<td>Apply and get it granted. You must disclose how it works. In the US, a utility patent generally lasts 20 years from filing.</td>
+<td>A new card-reader design</td>
+</tr>
+<tr>
+<td><strong>Trademark</strong></td>
+<td>A brand name, logo or slogan</td>
+<td>Use it in trade, and register it for stronger rights. It can last as long as you use it and renew it.</td>
+<td>A product or app name</td>
+</tr>
+<tr>
+<td><strong>Copyright</strong></td>
+<td>Original expression, such as code, text and design</td>
+<td>It exists once the work is created. Registration adds rights in some countries.</td>
+<td>Your app's code and content</td>
+</tr>
+<tr>
+<td><strong>Trade secret</strong></td>
+<td>Valuable information kept secret</td>
+<td>Keep it secret, with access controls and contracts</td>
+<td>A credit model or pricing algorithm</td>
+</tr>
+</tbody>
+</table>
+<p>Credit and pricing models are usually protected as trade secrets, not patents. A patent would require you to publish how the model works. Note one tension in US lending: the law requires a lender to tell a declined applicant the main reasons for the decision. You disclose reasons, not the model.</p>
+<p>Partnerships put trade secrets at risk. A partner integration or a vendor contract can expose your pricing logic or model features. Check confidentiality terms and data-use limits before you share them.</p>
+<h2 id="worked-examples">Worked examples</h2>
+<h3 id="worked-example-attributed-versus-incremental-cac">Worked example: attributed versus incremental CAC</h3>
+<p><em>Illustrative. The company and every input are assumed.</em></p>
+<p>A neobank runs a $150,000 paid-social campaign for new card customers. The ad platform reports <strong>1,000 conversions</strong>. The growth team reports a CAC of $150,000 ÷ 1,000 = <strong>$150</strong>. Each new customer earns an assumed $25 a month of contribution. So reported payback is $150 ÷ $25 = 6 months. The team asks to double the budget.</p>
+<p>The product leader asks for the holdout. The campaign targeted 1,000,000 people. A random 20% (200,000 people) never saw the ads.</p>
+<p><strong>Step 1: read the holdout.</strong> The holdout group produced 175 sign-ups with no ads. Its conversion rate was 175 ÷ 200,000 = 0.0875%.</p>
+<p><strong>Step 2: build the counterfactual.</strong> Without ads, the 800,000 exposed people would have converted at the same rate. That is 800,000 × 0.0875% = <strong>700</strong> sign-ups.</p>
+<p><strong>Step 3: find the incremental conversions.</strong> The exposed group produced 1,000 sign-ups. Incremental = 1,000 − 700 = <strong>300</strong>. The ads lifted sign-ups by 300 ÷ 700 = 42.9%. That is a real effect. It is also much smaller than the platform claims.</p>
+<p><strong>Step 4: compute true CAC.</strong> Incremental CAC = $150,000 ÷ 300 = <strong>$500</strong>. That is <strong>3.3 times</strong> the reported $150.</p>
+<p><strong>Step 5: recompute payback.</strong> $500 ÷ $25 = <strong>20 months</strong>, not 6.</p>
+<p><strong>Step 6: state the uncertainty.</strong> The holdout had only 175 sign-ups, so the estimate is noisy. A rough 95% range for the incremental conversions is 179 to 421. So incremental CAC lies between about $356 and $837. Even the best case is more than twice the reported number.</p>
+<p><strong>Decision.</strong> Do not double the budget. Cut the audience that converts anyway: existing app visitors and people who searched for the brand. Re-test with a larger holdout. Fund the channel only if incremental payback falls inside the company's limit.</p>
+<p><strong>Why this matters beyond marketing.</strong> The business case for the next product used the same $150 CAC. Every case built on attributed CAC overstated its return. <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> shows the same counterfactual logic for a whole product.</p>
+<h3 id="worked-example-build-or-buy-identity-verification">Worked example: build or buy identity verification</h3>
+<p><em>This example is invented, to show the method. The company and all numbers are illustrative.</em></p>
+<p>A fintech must verify each new customer's identity. This step is often called know your customer (KYC). It needs 600,000 checks a year.</p>
+<p><strong>Buy.</strong> A vendor charges $1.20 a check. Annual cost: 600,000 × $1.20 = $720,000. Three-year cost: <strong>$2,160,000</strong>.</p>
+<p><strong>Build.</strong> Build cost $1,500,000. Running cost $400,000 a year for data sources, staff and upkeep. Three-year cost: $1,500,000 + 3 × $400,000 = <strong>$2,700,000</strong>.</p>
+<p><strong>Step 1: compare.</strong> Over three years, buying is $540,000 cheaper.</p>
+<p><strong>Step 2: find the break-even volume.</strong> Building costs $2,700,000 over three years. Buying the same costs 3 × $1.20 × V. They are equal when V = $2,700,000 ÷ $3.60 = <strong>750,000 checks a year</strong>. Below that, buy. Above it, building starts to pay, if the build estimate holds.</p>
+<p><strong>Step 3: add the hidden costs (TCO).</strong> The price tags leave out oversight. Assume these extra three-year costs.</p>
+<ul>
+<li><strong>Buy:</strong> integration $100,000 once. Vendor monitoring and audits $50,000 a year. A fallback vendor's minimum fees $30,000 a year. Total extra: $100,000 + 3 × $80,000 = $340,000. Three-year TCO: <strong>$2,500,000</strong>.</li>
+<li><strong>Build:</strong> compliance testing and audit $50,000 a year. Total extra: $150,000. Three-year TCO: <strong>$2,850,000</strong>.</li>
+</ul>
+<p><strong>Step 4: recompute the break-even.</strong> Build TCO equals buy TCO when $2,850,000 = $340,000 + $3.60 × V. So V = $2,510,000 ÷ $3.60 = <strong>about 697,000 checks a year</strong>. The hidden costs moved the break-even down by about 53,000 checks. Buy still wins today. The review point arrives sooner.</p>
+<p><strong>Step 5: check differentiation.</strong> Identity checks are not why customers choose this fintech. They are a gate. That points to buy.</p>
+<p><strong>Step 6: check accountability.</strong> Buying moves the work, not the responsibility. If the vendor's checks fail, the fintech answers to its regulator and its partner bank. The team adds vendor monitoring, a fallback vendor and audit rights to the contract. Those are the costs counted in step 3.</p>
+<p><strong>Decision:</strong> buy now, with a review if volume nears 700,000 a year.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Self-serve vs. sales-led.</strong> Self-serve is cheap per customer and scales fast. It costs you the large accounts that need a person to buy. Sales-led wins large accounts. It costs cash up front and long payback.</li>
+<li><strong>Partner or embedded vs. direct.</strong> A partner gives you cheap reach and trust you do not have. It costs a revenue share for years, and the partner owns the relationship.</li>
+<li><strong>Attribution vs. holdouts.</strong> Attribution is cheap and always on. It overstates channels that catch buyers late. Holdouts are accurate. They cost the conversions you give up in the held-out group, and they take weeks.</li>
+<li><strong>Make vs. buy.</strong> Making gives control and costs time and upkeep. Buying gives speed and costs per unit, forever, plus oversight.</li>
+<li><strong>Partner vs. licence.</strong> A partner's licence gets you to market. It costs revenue share and control of your roadmap. Getting your own licence costs years and capital.</li>
+<li><strong>Big launch vs. quiet launch.</strong> A big launch builds awareness. It costs more and makes a slow start visible.</li>
+<li><strong>Patent vs. trade secret.</strong> A patent gives a time-limited legal monopoly and requires disclosure. A secret lasts as long as you keep it, and gives no protection if someone builds the same thing on their own.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Feature without an offer.</strong> A strong feature with no price, channel or support plan.</li>
+<li><strong>Motion mismatch.</strong> A sales team sells deals too small to pay back its cost. You see it as rising sales CAC and payback beyond 24 months in the small-deal segment.</li>
+<li><strong>Quota-based hiring plan.</strong> Headcount set as target ÷ quota. The year ends far short, because new hires were ramping and attainment was below 100%.</li>
+<li><strong>Revenue share for life, priced as a fee.</strong> A partner deal signed on low CAC. Two years later, the share has cost several times the saving. You see it as falling contribution margin in the partner segment.</li>
+<li><strong>Attribution taken as truth.</strong> Budget shifts to retargeting and brand search. Attributed CAC falls, total new customers stay flat. That pattern is the signal.</li>
+<li><strong>Gate discovered late.</strong> A regulatory or partner approval appears in the last week.</li>
+<li><strong>Outsourced and forgotten.</strong> A vendor's failure becomes your regulatory finding, or your customers lose access to their money.</li>
+<li><strong>No exit plan.</strong> A critical vendor raises prices or fails, and the migration takes a year you do not have.</li>
+<li><strong>One launch weight for all.</strong> Every launch is tier 1, so none gets the attention it needs.</li>
+<li><strong>Leaked secret.</strong> A pricing model is shared in a pitch deck or a partner integration with no protection.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>This script reproduces the sales capacity math, the motion table, the embedded share, worked example J and the build-or-buy TCO. Python 3, standard library only. Every input is assumed.</p>
+<pre><code class="language-python">import math
+
+# 1. Sales capacity -&gt; sales-led CAC
+seat_cost = 300_000        # fully loaded cost per account executive seat, per year
+quota = 600_000            # new annualized net revenue per ramped rep, per year
+attainment = 0.70          # average share of quota reps actually close
+deal = 12_000              # annualized net revenue per new merchant
+lead_cost = 1_500          # marketing cost per closed deal
+ramp = [0]*3 + [0.5]*3 + [1]*6   # productivity by month for a new hire
+ramp_factor = sum(ramp) / 12     # 0.625
+
+def sales_cac(productivity):
+    revenue = quota * attainment * productivity
+    deals = revenue / deal
+    return revenue, deals, seat_cost / deals + lead_cost
+
+print(sales_cac(1.0))          # (420000.0, 35.0, 10071.4...)
+print(sales_cac(ramp_factor))  # (262500.0, 21.875, 15214.2...)
+
+# Hiring plan: $6M of new annualized net revenue, 8 ramped reps today
+gap = 6_000_000 - 8 * quota * attainment                  # 2,640,000
+hires = math.ceil(gap / (quota * attainment * ramp_factor))
+print(gap, hires)                                         # 2640000.0 11
+
+# 2. Four motions, per merchant per month
+motions = {
+    #             net rev, partner share, cost to serve, CAC, monthly churn
+    &quot;self-serve&quot;: (100,   0.00, 40,  400,              0.030),
+    &quot;sales-led&quot;:  (1_000, 0.00, 400, sales_cac(1.0)[2], 0.010),
+    &quot;partner&quot;:    (1_000, 0.25, 400, 4_250,            0.015),
+    &quot;embedded&quot;:   (400/3, 0.30, 40,  400,              0.010),
+}
+for m, (rev, share, cts, cac, churn) in motions.items():
+    cm = rev * (1 - share) - cts
+    print(m, round(cm, 2), round(cac / cm, 1), round(cm / churn), round(cm / churn / cac, 1))
+# self-serve 60.0 6.7 2000 5.0 | sales-led 600.0 16.8 60000 6.0
+# partner 350.0 12.1 23333 5.5 | embedded 53.33 7.5 5333 13.3
+
+cm_needed = sales_cac(1.0)[2] / 18          # 18-month payback limit
+print(round(cm_needed), round(cm_needed / 0.6 * 12))   # 560 11190
+
+# 3. Embedded payments, from the software platform's side
+print(5_000 * 0.40 * (400/3 * 0.30) * 12)   # 960000.0
+
+# 4. Worked example J: attribution vs incrementality
+spend = 150_000
+exposed_n, holdout_n = 800_000, 200_000
+exposed_conv, holdout_conv = 1_000, 175
+baseline = holdout_conv * exposed_n / holdout_n            # 700
+incremental = exposed_conv - baseline                      # 300
+sd = math.sqrt(exposed_conv + (exposed_n / holdout_n) ** 2 * holdout_conv)
+lo, hi = incremental - 1.96 * sd, incremental + 1.96 * sd  # about 179 to 421
+print(spend / exposed_conv, spend / incremental)           # 150.0 500.0
+print(round(spend / hi), round(spend / lo))                # 356 837
+print(spend / exposed_conv / 25, spend / incremental / 25) # 6.0 20.0 months
+
+# 5. Build or buy identity checks: three-year TCO
+fee, years = 1.20, 3
+buy_tco = 600_000 * fee * years + 100_000 + (50_000 + 30_000) * years   # 2,500,000
+build_tco = 1_500_000 + 400_000 * years + 50_000 * years                # 2,850,000
+buy_fixed = 100_000 + 80_000 * years
+print(round((build_tco - buy_fixed) / (fee * years)))                   # 697222
+</code></pre>
+<p>The uncertainty range in step 4 uses a simple count-based approximation. Ask your analyst for a proper confidence interval before a large budget call.</p>
+<p>A one-page opportunity assessment template:</p>
+<pre><code class="language-markdown">## Opportunity: &lt;name&gt;
+- Target customer and need:
+- Reachable market (show the arithmetic):
+- Why now:
+- Why us (advantage):
+- GTM motion, CAC and payback by channel:
+- Outcome metric and target:
+- Build / buy / partner, three-year TCO, and the exit plan:
+- Regulatory and partner gates (with lead times):
+- Top three risks and how we test them first:
+- Launch tier:
+- Ask: money, people, decision date
+</code></pre>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Write a one-page opportunity assessment for your next proposed build, including its GTM motion.</li>
+<li class="task todo">For each channel, list CAC, contribution after any revenue share, churn and payback. Compare them at the same discount rate.</li>
+<li class="task todo">Find the deal size below which your sales team loses money, and move that segment to another motion.</li>
+<li class="task todo">Rebuild the sales hiring plan with ramp and attainment. Check that hiring starts early enough.</li>
+<li class="task todo">Ask for a holdout on your largest marketing channel. Replace attributed CAC with incremental CAC in every business case.</li>
+<li class="task todo">Price every partner revenue share as a CAC equivalent over the customer's life.</li>
+<li class="task todo">For each critical vendor or partner, write the fallback, the exit plan and the three-year TCO.</li>
+<li class="task todo">Map every regulatory and partner gate for your next launch, with lead times.</li>
+<li class="task todo">Assign a launch tier to each item on your roadmap.</li>
+<li class="task todo">Check with Legal which of your assets are patents, trademarks, copyright or trade secrets.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="unit-economics.html">Unit economics</a> — CAC, contribution layers, cohort payback and lifetime value.</li>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> — NPV, counterfactuals and incrementality for a whole bet.</li>
+<li><a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a> — embedding as a strategy, and the direct-versus-embedded merchant.</li>
+<li><a href="markets-and-strategy.html">Markets and customers</a> — choosing and sizing the segment the offer serves.</li>
+<li><a href="monetization-and-business-models.html">Pricing and business models</a> — pricing, packaging and tiers.</li>
+<li><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> — buying whole companies, and staging big bets.</li>
+<li><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a> — holdouts, test design and sample size.</li>
+<li><a href="../technical-product-management/launches-rollouts-and-migrations.html">Launches, rollouts and migrations</a> — running the launch itself.</li>
+<li><a href="../technical-product-sense/apis-and-contracts.html">APIs and contracts</a> — what an integration with a vendor or partner commits you to.</li>
+<li><a href="../product-sense/creativity.html">Creativity</a> — generating the options before you choose.</li>
+<li><a href="../technical-product-management/discovery-to-delivery.html">Discovery to delivery</a> — testing the riskiest assumption first.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="monetization-and-business-models.html"><span class="lbl">← Previous</span><span class="ttl">Pricing and business models</span></a><a class="navcard next" href="performance-and-growth.html"><span class="lbl">→ Next</span><span class="ttl">Performance and growth: KPIs, scorecards and the metrics that move profit</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-the-offer-is-more-than-the-feature">Mental model: the offer is more than the feature</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#opportunity-assessment-and-the-business-case">Opportunity assessment and the business case</a><a class="h3" href="#iterative-development-with-gates-where-the-rules-require-them">Iterative development, with gates where the rules require them</a><a class="h3" href="#product-design-and-packaging">Product design and packaging</a><a class="h3" href="#go-to-market-motions">Go-to-market motions</a><a class="h3" href="#sales-capacity-math">Sales capacity math</a><a class="h3" href="#attribution-versus-incrementality">Attribution versus incrementality</a><a class="h3" href="#make-buy-or-partner">Make, buy or partner</a><a class="h3" href="#the-marketing-cycle-and-the-four-ps">The marketing cycle and the four Ps</a><a class="h3" href="#launches">Launches</a><a class="h3" href="#intellectual-property-basics">Intellectual property basics</a><a class="h2" href="#worked-examples">Worked examples</a><a class="h3" href="#worked-example-attributed-versus-incremental-cac">Worked example: attributed versus incremental CAC</a><a class="h3" href="#worked-example-build-or-buy-identity-verification">Worked example: build or buy identity verification</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fproducts-and-marketing.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/products-and-marketing.html"</script><script defer src="../assets/glossary.js"></script></body></html>

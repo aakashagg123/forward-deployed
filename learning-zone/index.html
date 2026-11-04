@@ -39,7 +39,16 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head><body>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head><body>
 <main class="index landing">
   <h1>Supercharge your AI learning</h1>
   <p class="lede">Hands-on tracks for PMs and engineers moving into AI — from first principles to production.</p>
@@ -64,6 +73,14 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
       <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Path</span>
       <h3>AI Engineering Lead →</h3>
       <p>Review architecture, set quality and safety standards, and control cost.</p>
+    </a>
+  </div>
+  <div class="group">Learn by seeing</div>
+  <div class="cards">
+    <a class="card" href="explainers/index.html">
+      <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>New</span>
+      <h3>Visual explainers →</h3>
+      <p>Follow one example through a system or a product decision, one stage at a time, with a picture at every stage. How AI systems work: an LLM request, how a model learns, a token through a transformer, an image model, an agent run and a guardrailed request. How AI products are run: a launch, a model change, a margin, an eval regression, an agent spec and an incident.</p>
     </a>
   </div>
   <div class="group">All modules</div>
@@ -144,6 +161,28 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
       or foundation model, and why vision features break in production. Runnable code in
       three lessons.</p>
     </a>
+    <a class="card" href="transformers/index.html">
+      <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Foundations</span>
+      <h3>Transformers →</h3>
+      <p>The stack behind almost every language model: attention, the block, position and the
+      cost of context, the KV cache, and reading a model card as memory, compute and cost.
+      Runnable code in every lesson.</p>
+    </a>
+    <a class="card" href="building-ai-native-products/index.html">
+      <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Craft</span>
+      <h3>Building AI-native products →</h3>
+      <p>Five skills for the AI product leader: opinionated UX for ambiguous interaction, model intuition, pixels to evals to hill climbing, agentic flows and how users behave with agents. Templates and teardowns in every practice lesson.</p>
+    </a>
+    <a class="card" href="ai-assisted-development/index.html">
+      <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Craft</span>
+      <h3>AI-assisted development for leaders →</h3>
+      <p>What changes when a coding agent writes the code: specifying, verifying, controlling and measuring the work. Runnable code in every lesson, including a real Stop-hook script.</p>
+    </a>
+    <a class="card" href="fine-tuning/index.html">
+      <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Foundations</span>
+      <h3>Fine-tuning and post-training →</h3>
+      <p>How a base model becomes an assistant, what supervised tuning, LoRA and preference tuning change, why the dataset is the product, and how to test the break-even and gate the release. Runnable code in every lesson.</p>
+    </a>
     <a class="card" href="generative-ai/index.html">
       <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Generative AI</span>
       <h3>Generative AI: the big picture →</h3>
@@ -166,8 +205,8 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
     <a class="card" href="rag-vector-databases/index.html">
       <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Generative AI</span>
       <h3>RAG &amp; vector databases →</h3>
-      <p>Grounding models in your data — embeddings, vector databases, chunking, retrieval
-      quality, and when to reach for long-context, fine-tuning, or a graph.</p>
+      <p>Grounding models in your data — when to use RAG and when not to, embeddings, vector
+      databases, chunking, retrieval quality, and a hands-on build with Claude Code and pgvector.</p>
     </a>
     <a class="card" href="memory-and-context/index.html">
       <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Generative AI</span>
@@ -220,7 +259,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
       <h3>System design →</h3>
       <p>How real systems are designed at scale — from rate limiters to stock exchanges —
       with the architecture, tradeoffs, and failure modes that shape product decisions.
-      28 systems across 8 lessons, diagrams included.</p>
+      28 systems plus lessons on distributed data, caching, ML and GenAI systems, social media and reliability, a question bank and runnable code, diagrams included.</p>
     </a>
     <a class="card" href="access-control/index.html">
       <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Module</span>
@@ -243,11 +282,18 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
       productivity patterns, through few-shot and chain-of-thought, into the prompts
       that drive Claude Code and other coding agents. 10 lessons.</p>
     </a>
+    <a class="card" href="business-acumen/index.html">
+      <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Module</span>
+      <h3>Business acumen →</h3>
+      <p>Money, markets, organizations and influence for Group PMs, Heads of Product and
+      VPs — grounded in FinTech, Payments, Lending, eCommerce, InsurTech and Retail. 15 lessons
+      and an interactive self-assessment with a radar chart and an improvement plan.</p>
+    </a>
     <a class="card" href="graph/index.html">
       <span class="Badge" data-color="secondary" data-variant="soft" data-size="md" data-pill>Explore</span>
       <h3>Knowledge graph →</h3>
-      <p>Every page across all nine modules as one interactive map — 364 pages,
-      2042 cross-references. Search it, filter by track, click any node to jump in.</p>
+      <p>Every page across all 29 modules as one interactive map — 443 pages,
+      2736 cross-references. Search it, filter by track, click any node to jump in.</p>
     </a>
   </div>
   <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>

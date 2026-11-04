@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Portfolio strategy and capital allocation — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink active" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 11</span>
+    <h1>Portfolio strategy and capital allocation</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A product leader at Head of Product or vice president (VP) level owns a <strong>portfolio</strong>: several products and bets at different stages. The job is to allocate money and people across them. That means funding the core, growing what is emerging, buying options on the future, buying what is faster to buy than build, and stopping what no longer earns its place.</p>
+<p>The core tradeoff is today against tomorrow. Money spent defending the core cannot fund future bets. Money spent on future bets is not spent on the business that pays the bills. A good portfolio makes that split on purpose. It judges each bet by the right standard. It funds big bets in stages, so you can stop them cheaply. And it counts how bets depend on each other, because three bets on one partner are one bet.</p>
+<p>The scale is large. Staging one illustrative bet in this lesson raises its expected value by half. Valuing the option it opens raises it again. A product-level acquisition that works on the deck can destroy value once synergies are counted at realistic rates. And a product that loses $0.8 million a year can cost more to keep than to close.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Most portfolio waste is not a bad bet. It is a bet that should have been stopped a year ago, or a future bet judged by core-business return targets and starved before it could prove anything. The rest is acquisitions priced on synergies nobody delivered.</p>
+<p><strong>What it changes in your decisions</strong> — You size each horizon from the growth gap, not from a fixed split. You place each bet in a horizon and judge it by that horizon's standard. You fund large bets in stages with written gates. You count the options a bet opens and the dependencies it shares. You price an acquisition on realized synergies. You close products on sunset economics, not on sentiment.</p>
+<p><strong>Ask your team</strong> — <em>"What evidence, by what date, would make us stop this bet? Have we written it down? And which other bets fail if the same partner, rule or channel fails?"</em></p>
+<p><strong>Risk if ignored</strong> — A portfolio of zombie products that each need a team, a growth plan that rests on one hidden dependency, and no capacity left for the next growth engine.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ol>
+<li>Size the next and future horizons from the growth gap between the target and the core's own trajectory. A fixed split is a starting point, not an answer.</li>
+<li>Judge each horizon by its own standard. Use net present value (NPV) at the hurdle rate for the core, unit economics and gates for emerging bets, and cost per learning milestone for options.</li>
+<li>Release money in stages. Each stage buys the evidence for the next decision, and each gate is written before the stage starts.</li>
+<li>Count shared dependencies. Bets that share one partner, one rule or one channel are one bet.</li>
+<li>Value the option a bet opens, but only if a later decision really depends on what the bet reveals.</li>
+<li>Price an acquisition at standalone value plus realized synergies minus integration cost. Tie the uncertain part of the price to delivery.</li>
+<li>Close a product when the cost avoided beats the contribution lost plus the one-off cost of sunset and run-off.</li>
+</ol>
+<h2 id="mental-model-near-next-and-future-horizons">Mental model: near, next and future horizons</h2>
+<pre class="mermaid">flowchart LR
+  N[&quot;NEAR&lt;br/&gt;the core business&lt;br/&gt;defend and extend&lt;br/&gt;judge on profit and share&quot;] --&gt; X[&quot;NEXT&lt;br/&gt;emerging businesses&lt;br/&gt;scale what works&lt;br/&gt;judge on growth and unit economics&quot;]
+  X --&gt; F[&quot;FUTURE&lt;br/&gt;options and experiments&lt;br/&gt;learn cheaply&lt;br/&gt;judge on evidence gained&quot;]</pre>
+<p><strong>Near-horizon</strong> work extends the core business that earns today's profit. <strong>Next-horizon</strong> work scales emerging businesses that have shown early proof. <strong>Future-horizon</strong> work buys options: small, cheap experiments that might become the next core.</p>
+<p>Each horizon needs a different standard. Judge a future bet by core-business profit targets and it will always lose. Judge the core by learning goals and it will drift.</p>
+<p><strong>Where the model breaks.</strong> Horizons are not a timeline. A regulatory change can turn a future option into an urgent near-horizon need overnight. And some companies set a fixed budget split across horizons. The right split depends on how fast your core is growing or shrinking, not on a rule.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-portfolio-view">The portfolio view</h3>
+<p>List every product and bet in one table. For each, record its horizon, growth, contribution margin, strategic role, team cost and key dependencies. A <strong>share-versus-growth grid</strong> is one common way to view it. It plots market growth against your relative market share:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Low market share</th>
+<th>High market share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>High market growth</strong></td>
+<td>Question marks: invest to win, or exit</td>
+<td>Stars: invest to keep the lead</td>
+</tr>
+<tr>
+<td><strong>Low market growth</strong></td>
+<td>Candidates to fix, sell or sunset</td>
+<td>Cash generators: fund the rest of the portfolio</td>
+</tr>
+</tbody>
+</table>
+<p>The grid is a starting point. It ignores synergies. A low-share product might be what keeps your best customers loyal. In a neobank, a small savings product may hold deposits that fund the lending book. Judge it by what the whole customer is worth, not by its own line.</p>
+<h3 id="allocation-mechanics">Allocation mechanics</h3>
+<p>Allocation decides how much money and how many people each horizon gets. Four mechanics make it work.</p>
+<h4 id="size-the-horizons-from-the-growth-gap">Size the horizons from the growth gap</h4>
+<p>One example split is 70/20/10: 70% core, 20% next and 10% future. A fixed split is easy to explain. It is also arbitrary. A shrinking core needs more in the later horizons. A core growing fast needs most of its capacity just to keep up.</p>
+<p>A better start is the <strong>growth gap</strong>: the distance between the company's target and where the core will get on its own.</p>
+<p><strong>How to compute it.</strong> An illustrative company has $500 million of revenue. All inputs are assumed.</p>
+<ol>
+<li>The target is 15% growth a year for three years: $500M × 1.15³ = <strong>$760.4M</strong>.</li>
+<li>The core, left alone, grows 5% a year: $500M × 1.05³ = <strong>$578.8M</strong>.</li>
+<li>The gap is $760.4M − $578.8M = <strong>$181.6M</strong> of year-three revenue.</li>
+<li>Next-horizon bets already in flight are expected to add $100M, risk-adjusted.</li>
+<li>That leaves <strong>$81.6M</strong> for new bets.</li>
+</ol>
+<p>Now test the plan. Suppose a typical future bet has a 10% chance of becoming a $100M business. Filling $81.6M would take about 8 such bets: 81.6 ÷ (0.10 × 100) = 8.2. Worse, future bets rarely reach scale within three years. So the year-three gap cannot come from the future horizon. It must come from more next-horizon bets, an acquisition, or a lower target.</p>
+<p><strong>Decision rule.</strong> When the gap is larger than what the next horizon can deliver, say so in the plan. Do not pretend a handful of experiments will close it in time.</p>
+<p><strong>Common misreading.</strong> "We put 10% into innovation, so we are covered." The share of budget says nothing about whether the bets can fill the gap, or fill it in time.</p>
+<h4 id="set-the-hurdle-rate-by-horizon">Set the hurdle rate by horizon</h4>
+<p>A <strong>hurdle rate</strong> is the minimum return Finance requires for a bet. <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> shows how it starts from the cost of capital and rises with risk. At portfolio level, each horizon uses a different test.</p>
+<table>
+<thead>
+<tr>
+<th>Horizon</th>
+<th>Main test</th>
+<th>Typical hurdle</th>
+<th>What to report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Near</td>
+<td>NPV at the hurdle rate</td>
+<td>Cost of capital, about 10% in the illustration</td>
+<td>NPV, payback, sensitivity</td>
+</tr>
+<tr>
+<td>Next</td>
+<td>Unit economics with gates</td>
+<td>Higher rate, or probability-weighted cash flows</td>
+<td>Cohort payback, contribution margin trend, gate results</td>
+</tr>
+<tr>
+<td>Future</td>
+<td>Cost per learning milestone</td>
+<td>A spending cap per stage, not a rate</td>
+<td>Evidence gained against the written gate</td>
+</tr>
+</tbody>
+</table>
+<p>Use one risk adjustment, not two. If the cash flows are already weighted by the probability of success, a large premium on the rate counts the same risk twice. For future bets, the cash flows are too uncertain for a rate to mean much. Fund them as options instead, as shown below.</p>
+<h4 id="fund-in-stages-metered-funding">Fund in stages (metered funding)</h4>
+<p><strong>Metered funding</strong> releases money in stages. Each stage gets enough to reach its next proof point. More money comes only when the bet passes a written gate. Venture investors fund startups this way. An internal portfolio can do the same.</p>
+<p><strong>How it works (illustrative, all inputs assumed).</strong> A company has ten future bets.</p>
+<ul>
+<li><strong>Stage 1:</strong> each gets $0.5M to test its riskiest assumption. Cost: 10 × $0.5M = $5M.</li>
+<li><strong>Stage 2:</strong> three pass. Each gets $2M to prove unit economics. Cost: $6M.</li>
+<li><strong>Stage 3:</strong> one passes. It gets $10M to scale. Cost: $10M.</li>
+</ul>
+<p>Total spend: <strong>$21M</strong>. Funding all ten bets fully from the start would cost 10 × $12.5M = <strong>$125M</strong>. Staging does not change which bet wins. It stops paying for the losers early.</p>
+<p><strong>Domain application: lending.</strong> A lender tests a new credit band with a small pool of loans. Early delinquency at 30 days past due arrives in weeks. Losses arrive over the loan's life. The gate can use early delinquency, but the stage-two budget should allow for a later loss surprise.</p>
+<p><strong>Decision rule.</strong> Size each stage to the cheapest test that can change the next decision. If no result could change it, the stage is not a test. It is a launch.</p>
+<h4 id="zero-based-review">Zero-based review</h4>
+<p>Most budgets are <strong>incremental</strong>: last year's number plus or minus a few percent. A <strong>zero-based review</strong> starts each team from zero. The team must justify every dollar against what it delivers.</p>
+<p>Zero-based review finds the spending that nobody would approve today. It has a cost. It takes leaders' time, and it can scare teams into short-term projects. Some companies run it every few years, or on one slice of the portfolio each year. A practical version splits each team's budget into <strong>run</strong> (keep the lights on, meet regulatory duties) and <strong>change</strong> (new value). Then it reviews the change part from zero.</p>
+<p><strong>Decision rule.</strong> When more than about half of a product's team works on run costs, put that product in the next zero-based review. It is a sunset or re-platform candidate.</p>
+<p><a href="navigating-the-organization.html">Navigating the organization</a> explains how the annual plan and budget cycle works.</p>
+<h4 id="hold-a-reserve-and-review-on-a-cadence">Hold a reserve, and review on a cadence</h4>
+<ul>
+<li><strong>Hold a reserve.</strong> Keep some capacity unallocated for what you learn mid-year.</li>
+<li><strong>Count opportunity cost.</strong> A team on a weak bet is a team not on a strong one.</li>
+<li><strong>Review on a cadence.</strong> A quarterly portfolio review asks one question per bet: scale, continue, change or stop?</li>
+</ul>
+<h3 id="portfolio-construction-correlation-and-concentration">Portfolio construction: correlation and concentration</h3>
+<p>A portfolio is not a list of independent bets. Bets often share a partner, a rule, a channel or a customer group. When the shared piece fails, they fail together.</p>
+<p><strong>How it works.</strong> Compare two portfolios of three bets. Each bet has a 70% chance of success on its own. All inputs are assumed.</p>
+<ul>
+<li><strong>Independent bets.</strong> The chance all three fail is 0.3 × 0.3 × 0.3 = <strong>2.7%</strong>.</li>
+<li><strong>Bets sharing one partner bank.</strong> There is a 20% chance the partner bank exits or is stopped by its regulator, and then all three fail. Otherwise, each bet succeeds with 87.5%, so its overall chance stays at 70%. The chance all three fail is 0.2 + 0.8 × 0.125³ = <strong>20.2%</strong>.</li>
+</ul>
+<p>Both portfolios expect 2.1 successes. But the shared-partner portfolio is <strong>7.5 times</strong> as likely to deliver nothing. Expected value hides this. Your board will not.</p>
+<p><strong>Where correlation hides in financial and commerce products:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Shared dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FinTech</td>
+<td>One partner bank holds the licence for every product</td>
+</tr>
+<tr>
+<td>Payments</td>
+<td>One card network rule, or one acquiring bank</td>
+</tr>
+<tr>
+<td>Lending</td>
+<td>One funding source, such as one warehouse line or one forward-flow buyer</td>
+</tr>
+<tr>
+<td>InsurTech</td>
+<td>One carrier or reinsurer, or one region exposed to the same storm</td>
+</tr>
+<tr>
+<td>eCommerce</td>
+<td>One marketplace or one ad platform supplies most demand</td>
+</tr>
+<tr>
+<td>Retail</td>
+<td>One supplier region or one shipping route</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Concentration</strong> is the same problem measured by share. Ask what share of contribution comes from one product, one partner, one channel and one rule. Debit interchange is an example of a rule risk. In the US, it is capped for large issuers. <a href="monetization-and-business-models.html">Pricing and business models</a> covers that rule. A product line that earns mostly debit interchange depends on staying outside the cap.</p>
+<p><strong>Decision rule.</strong> When two bets share a critical dependency, report them as one bet in the portfolio review. Add a bet that removes the dependency, such as a second partner, before you add a third bet that shares it.</p>
+<p><strong>Common misreading.</strong> "We have five bets, so we are diversified." Count the dependencies, not the bets.</p>
+<h3 id="build-buy-or-partner-at-portfolio-level">Build, buy or partner at portfolio level</h3>
+<p>At portfolio level, the question is how to gain a whole capability or market, not a single feature. <a href="products-and-marketing.html">Products and go-to-market</a> covers the feature-level version and total cost of ownership.</p>
+<ul>
+<li><strong>Build</strong> when the capability is core to your advantage and you have time.</li>
+<li><strong>Buy</strong> a company when you need speed, a licence, a team or customers. SoFi agreed in 2021 to acquire Golden Pacific Bancorp, a community bank with about $150 million in assets. SoFi said the deal would accelerate its pursuit of a national bank charter. It already had preliminary conditional approval from the Office of the Comptroller of the Currency (OCC), the US national bank regulator, for a new bank, granted in October 2020. With the deal, it planned to switch that new-bank application to a change-of-control application. A charter lets a lender fund loans with deposits.</li>
+<li><strong>Partner</strong> when someone else holds what you need and you can share the economics. Many fintechs reach customers through a partner bank instead of holding a charter.</li>
+</ul>
+<h3 id="acquisitions-at-product-level">Acquisitions at product level</h3>
+<p>Product leaders are often asked to judge a target: a small company whose product, team or licence would fill a gap. The core equation is simple.</p>
+<p><strong>Value created for the buyer = standalone value + present value (PV) of realized synergies − PV of integration cost − price paid.</strong></p>
+<ul>
+<li><strong>Standalone value</strong> is what the target is worth on its own cash flows, as it runs today.</li>
+<li><strong>Synergies</strong> are the extra value from combining. <strong>Cost synergies</strong> remove duplicate cost or lower your losses. <strong>Revenue synergies</strong> sell the target's product to your customers, or yours to theirs.</li>
+<li><strong>Integration cost</strong> is the one-off cost of combining: engineering, migration, compliance, retention packages, and the roadmap you pause.</li>
+<li><strong>Price</strong> usually includes a premium over standalone value. That premium is a bet that synergies will arrive.</li>
+</ul>
+<p><strong>Realization is the whole game.</strong> Cost synergies are within your control and arrive sooner. Revenue synergies depend on customers buying, and they often arrive late and smaller. Discount plans for each kind separately.</p>
+<p><strong>How to compute it (illustrative, all inputs assumed).</strong> A payments company considers buying a fraud-tools startup.</p>
+<ol>
+<li>Standalone value: <strong>$40M</strong>. Price asked: <strong>$60M</strong>. Integration cost: <strong>$8M</strong>.</li>
+<li>Planned synergies: $6M a year of revenue synergy (selling the tools to existing merchants) and $3M a year of cost synergy (lower fraud losses on your own volume).</li>
+<li>Value them over five years at 10%. The five-year annuity factor is 3.7908. Planned PV = $9M × 3.7908 = <strong>$34.1M</strong>.</li>
+<li>On the deck: $40M + $34.1M − $8M − $60M = <strong>+$6.1M</strong>. The deal looks good.</li>
+<li>Now assume realistic delivery: 50% of the revenue synergy and 90% of the cost synergy. Realized PV = ($3M + $2.7M) × 3.7908 = <strong>$21.6M</strong>.</li>
+<li>Realistic value created: $40M + $21.6M − $8M − $60M = <strong>−$6.4M</strong>. The deal destroys value.</li>
+<li>The <strong>walk-away price</strong> on realized synergies is $40M + $21.6M − $8M = <strong>$53.6M</strong>.</li>
+</ol>
+<p><strong>Earn-outs move the risk.</strong> An <strong>earn-out</strong> pays part of the price later, only if agreed targets are met. Here, offer $45M up front and up to $15M more if the revenue synergy is delivered. If it is delivered in full, with cost synergy still at 90%, you pay $60M and create $40M + ($6M + $2.7M) × 3.7908 − $8M − $60M ≈ <strong>+$5.0M</strong>. If only half is delivered, you pay $45M and create $40M + $21.6M − $8M − $45M = <strong>+$8.6M</strong>. The earn-out turns a losing case into a winning one.</p>
+<p>Earn-outs have costs. The sellers will push the earn-out metric, even when that conflicts with integration. Disputes over how the metric was measured are common. Write the definition as carefully as a contract price.</p>
+<p><strong>Acqui-hires.</strong> An <strong>acqui-hire</strong> buys a company mainly for its team. Price it against the alternative of hiring. In an illustration, a $12M deal for 15 engineers costs $800,000 per engineer. Hiring 15 engineers might cost $40,000 each in recruiting: $0.6M. The acqui-hire is worth more only if it saves time worth the difference. If it brings a product to market 12 months earlier, and that product earns $0.5M of gross profit a month, the time is worth $6M. Then the deal is worth about $6.6M against a $12M price. It needs more than speed to pay. A rare skill, a licence or customers must make up the rest. Retention packages also matter. If the team leaves when its packages vest, you bought a short lease.</p>
+<p><strong>Domain application: insurance.</strong> An insurer buys an agency or a managing general agent (MGA) for its distribution. The revenue synergy is placing more premium with the buyer. The hidden cost is that the agency's other carriers may move their business elsewhere. Standalone value can fall on the day the deal closes.</p>
+<p><strong>Decision rule.</strong> Pay no more than standalone value plus synergies you control. Pay for the rest with an earn-out tied to delivery.</p>
+<p><strong>Common misreading.</strong> "The synergies justify the premium." The planned synergies justify it. The realized ones decide whether you created value.</p>
+<h3 id="valuing-the-option-to-expand">Valuing the option to expand</h3>
+<p>A <strong>real option</strong> is the right, but not the obligation, to take a future business action. Staged investment creates options. You invest a little to learn, then decide whether to invest more. Options are worth more when uncertainty is high. If you knew the outcome, you would not need the option.</p>
+<p>Common options in a product portfolio:</p>
+<ul>
+<li><strong>Option to expand</strong>: start small and scale if it works. Then enter a second market from that base.</li>
+<li><strong>Option to abandon</strong>: stop after the pilot and limit the loss.</li>
+<li><strong>Option to wait</strong>: delay until a regulation, a partner or a technology is clearer.</li>
+</ul>
+<p>The option to expand is the one most often left out of business cases. A first product can open a door: a second market, a second product, or a data asset. A case that values only the first product undervalues the bet. The worked example below extends a staged buy now, pay later case with a second stage.</p>
+<style>
+.ba-opt{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:var(--radius-2xl);padding:28px 22px 20px;margin:26px 0;font-family:inherit;text-align:left;position:relative}
+.ba-opt-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-surface);color:var(--color-text-discovery);
+  border:1px solid var(--color-border-discovery-surface);font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;border-radius:var(--radius-full);padding:3px 12px}
+.ba-opt-title{font-size:var(--font-text-sm-size);font-weight:var(--font-weight-semibold);color:var(--color-text);margin:0 0 4px}
+.ba-opt-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-opt-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:stretch}
+.ba-opt-col{display:flex;flex-direction:column;gap:8px}
+.ba-opt-step{font-size:var(--font-text-2xs-size);letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--color-text-tertiary);margin:0}
+.ba-opt-node{border-radius:var(--radius-lg);border:1px solid var(--color-border);padding:10px 10px 8px;background:var(--color-surface)}
+.ba-opt-node p{margin:0;font-size:var(--font-text-xs-size);color:var(--color-text-secondary);line-height:1.4}
+.ba-opt-node .ba-opt-name{font-size:var(--font-text-sm-size);font-weight:650;color:var(--color-text);margin:0 0 4px}
+.ba-opt-node b{font-family:var(--font-mono);color:var(--color-text);font-weight:600}
+.ba-opt-go{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.ba-opt-stop{background:var(--color-surface-secondary)}
+.ba-opt-cost{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-surface)}
+.ba-opt-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:16px 0 0}
+.ba-opt-box{border-radius:var(--radius-lg);border:1px solid var(--color-border);padding:10px 12px}
+.ba-opt-box p{margin:0 0 3px;font-size:var(--font-text-xs-size);color:var(--color-text-secondary);display:flex;justify-content:space-between;gap:8px}
+.ba-opt-box p b{font-family:var(--font-mono);color:var(--color-text)}
+.ba-opt-box .ba-opt-name{display:block;font-size:var(--font-text-sm-size);font-weight:650;color:var(--color-text);margin:0 0 6px}
+.ba-opt-win{border-top:3px solid var(--color-border-success-outline)}
+.ba-opt-win p b.ba-opt-big{color:var(--color-text-success)}
+.ba-opt-foot{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:14px 0 0;padding-top:10px;border-top:1px solid var(--color-border)}
+@media (max-width:640px){.ba-opt-flow{grid-template-columns:1fr 1fr}.ba-opt{padding:24px 14px 16px}}
+</style>
+<div class="ba-opt" role="figure" aria-label="Decision tree for the staged buy now, pay later bet with an option to expand. Pilot costs 2 million dollars. With 50 percent success, scale the core for 8 million dollars, worth 30 million dollars; with 50 percent failure, stop. After success, a 1 million dollar test of merchant financing; with 40 percent good news, expand for 12 million dollars, worth 40 million dollars; otherwise do not expand. The expansion option is worth 10.2 million dollars. Commit fully: 6 million dollars without the option, 11.1 million with it. Staged: 9 million without, 14.1 million with. Illustrative, no time value of money.">
+  <span class="ba-opt-chip">Option tree</span>
+  <p class="ba-opt-title">Staged BNPL bet, with the option to expand</p>
+  <p class="ba-opt-sub">Illustrative. All inputs assumed. Values in $ millions, ignoring the time value of money.</p>
+  <div class="ba-opt-flow">
+    <div class="ba-opt-col"><p class="ba-opt-step">Stage 1</p>
+      <div class="ba-opt-node ba-opt-cost"><p class="ba-opt-name">Pilot</p><p>Cost <b>−2</b></p><p>Reveals if the core works</p></div></div>
+    <div class="ba-opt-col"><p class="ba-opt-step">Gate 1</p>
+      <div class="ba-opt-node ba-opt-go"><p class="ba-opt-name">50% success</p><p>Scale for <b>−8</b></p><p>Core worth <b>30</b></p></div>
+      <div class="ba-opt-node ba-opt-stop"><p class="ba-opt-name">50% fail</p><p>Stop: <b>0</b></p></div></div>
+    <div class="ba-opt-col"><p class="ba-opt-step">Stage 2</p>
+      <div class="ba-opt-node ba-opt-cost"><p class="ba-opt-name">Test merchant financing</p><p>Cost <b>−1</b></p><p>Only on the success path</p></div></div>
+    <div class="ba-opt-col"><p class="ba-opt-step">Gate 2</p>
+      <div class="ba-opt-node ba-opt-go"><p class="ba-opt-name">40% good</p><p>Expand for <b>−12</b></p><p>Worth <b>40</b></p></div>
+      <div class="ba-opt-node ba-opt-stop"><p class="ba-opt-name">60% weak</p><p>Do not expand: <b>0</b></p></div></div>
+  </div>
+  <div class="ba-opt-res">
+    <div class="ba-opt-box"><span class="ba-opt-name">Commit fully now</span>
+      <p>Core only <b>6.0</b></p><p>With expansion option <b>11.1</b></p></div>
+    <div class="ba-opt-box ba-opt-win"><span class="ba-opt-name">Stage it</span>
+      <p>Core only <b>9.0</b></p><p>With expansion option <b class="ba-opt-big">14.1</b></p></div>
+  </div>
+  <p class="ba-opt-foot">Expansion option = −1 + 0.4 × (40 − 12) = 10.2, reachable only after the core succeeds. It counts only if gate 2 is written and enforced.</p>
+</div>
+
+<p><strong>When an option is real.</strong> Three conditions must all hold. A later decision must exist. The first stage must reveal information that changes that decision. And you must be willing to walk away when the news is bad. If the team will expand whatever the pilot shows, there is no option. There is only a slower commitment.</p>
+<p><strong>Decision rule.</strong> Count option value only when the gate that triggers the next stage is written and someone is accountable for enforcing it.</p>
+<p><strong>Common misreading.</strong> "It is strategic, so the option value makes up for the negative NPV." Strategic value that nobody can describe as a later decision is not an option. It is a hope.</p>
+<h3 id="double-down-or-sunset">Double down or sunset</h3>
+<p>Decide in advance what would make you scale a bet, and what would make you stop it. Typical scale signals: improving unit economics, organic demand, and a lead competitors cannot easily close. Typical stop signals: flat adoption after real effort, unit economics that do not improve with scale, and a high cost to maintain.</p>
+<p>Shopify shows that a large bet can be reversed. In 2022 it agreed to buy Deliverr, a fulfillment company, in a deal valued at about $2.1 billion, to build its logistics business. In May 2023 Shopify agreed to sell most of its logistics business to Flexport. Shopify's results release said it would receive stock representing a 13% equity interest in Flexport, on top of its existing stake. Flexport would become the official logistics partner for Shopify. Shopify moved logistics from "build" to "partner" in about a year.</p>
+<h4 id="sunset-economics">Sunset economics</h4>
+<p>Stopping a product is an investment decision too. It has a one-off cost and a stream of savings.</p>
+<p><strong>Sunset value = PV of costs avoided − PV of contribution lost − one-off sunset costs.</strong></p>
+<ul>
+<li><strong>Costs avoided:</strong> the team, infrastructure, vendors, compliance work and incident risk the product carries.</li>
+<li><strong>Contribution lost:</strong> the margin from customers who leave instead of moving to another product.</li>
+<li><strong>One-off costs:</strong> migration engineering, customer notice and support, incentives to move, and the cost of <strong>run-off</strong>: serving what remains until it ends.</li>
+</ul>
+<p><strong>Run-off duration</strong> depends on the domain. A payments product can wind down in months. A loan book runs off over the remaining loan terms, unless you sell it. An insurance book can pay claims for years after the last policy ends, especially in liability lines.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>What a sunset must handle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lending</td>
+<td>Existing loans must be serviced until they are repaid or sold</td>
+</tr>
+<tr>
+<td>InsurTech</td>
+<td>Policies in force must be honoured. Claims on them must be paid, sometimes for years. This is called <strong>run-off</strong>.</td>
+</tr>
+<tr>
+<td>Payments</td>
+<td>Merchants need time and help to move to another payment method</td>
+</tr>
+<tr>
+<td>FinTech</td>
+<td>Account closures need customer notice and a way to move funds</td>
+</tr>
+<tr>
+<td>Retail</td>
+<td>Stock must be cleared, and leases and staff handled</td>
+</tr>
+<tr>
+<td>eCommerce</td>
+<td>Sellers in a closed category need notice and a path elsewhere</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decision rule.</strong> When a product's run costs exceed its contribution, and the team could move to a bet that clears its hurdle, model the sunset. Do not wait for the product to fail loudly.</p>
+<p><strong>Common misreading.</strong> "It still has customers, so we cannot close it." The question is not whether anyone uses it. The question is whether keeping it beats closing it, after migration and run-off are paid.</p>
+<h2 id="worked-examples">Worked examples</h2>
+<h3 id="worked-example-staging-a-buy-now-pay-later-bet">Worked example: staging a buy now, pay later bet</h3>
+<p><em>This example is invented, to show the method. The company and all numbers are illustrative. For simplicity, it ignores the time value of money.</em></p>
+<p>An eCommerce platform considers launching its own buy now, pay later (BNPL) product. Leadership believes there is a 50% chance it succeeds.</p>
+<p><strong>Assumed values.</strong> If it succeeds, the business is worth $30 million in present value. If it fails, what is left is worth $2 million.</p>
+<p><strong>Option A: commit fully now.</strong> Invest $10 million up front.</p>
+<ul>
+<li>Expected value = 0.5 × $30M + 0.5 × $2M − $10M = $15M + $1M − $10M = <strong>$6 million</strong>.</li>
+</ul>
+<p><strong>Option B: stage it.</strong> Spend $2 million on a pilot with one merchant category. The pilot reveals whether the product will succeed. Then invest the remaining $8 million only if it does. If the pilot fails, stop and recover nothing.</p>
+<ul>
+<li>If success: $30M − $8M = $22M.</li>
+<li>If failure: $0.</li>
+<li>Expected value = −$2M + 0.5 × $22M + 0.5 × $0 = <strong>$9 million</strong>.</li>
+</ul>
+<p><strong>Step 3: value the option.</strong> Staging is worth $9M − $6M = <strong>$3 million</strong> more. That is the value of the right to stop.</p>
+<p><strong>Step 4: write the gate.</strong> Before the pilot starts, the team writes what "success" means. For example: a target approval rate, a cap on early delinquency, and a minimum lift in merchant conversion. Without a written gate, the pilot drifts into a launch whatever the result.</p>
+<h3 id="extending-the-case-the-option-to-expand">Extending the case: the option to expand</h3>
+<p><em>Still illustrative. All new inputs are assumed. Still no time value of money.</em></p>
+<p>If core BNPL succeeds, the platform can expand into financing for its merchants: working-capital loans repaid from sales. It can only do so from a working BNPL base. It reuses the credit models, the funding and the licences.</p>
+<p><strong>Step 5: value the expansion on its own.</strong> Expansion costs $12M. There is a 40% chance it is worth $40M and a 60% chance it is worth $5M.</p>
+<ul>
+<li>Expand without a test: 0.4 × $40M + 0.6 × $5M − $12M = $16M + $3M − $12M = <strong>$7M</strong>.</li>
+<li>Run a $1M test first, and expand only if the news is good: −$1M + 0.4 × ($40M − $12M) = <strong>$10.2M</strong>.</li>
+</ul>
+<p>The tested route is worth more, so the expansion option is worth <strong>$10.2M</strong>, if the core succeeds.</p>
+<p><strong>Step 6: put it back in the tree.</strong> The expansion option exists only in the success branch.</p>
+<ul>
+<li>Commit fully now: 0.5 × ($30M + $10.2M) + 0.5 × $2M − $10M = <strong>$11.1M</strong>.</li>
+<li>Stage it: −$2M + 0.5 × ($22M + $10.2M) = <strong>$14.1M</strong>.</li>
+</ul>
+<p><strong>Step 7: see what the option changes.</strong> The staged bet is now worth $14.1M, not $9M. The difference matters most when the first stage is weak on its own. Suppose success were worth only $10M instead of $30M. Then the staged bet alone is −$2M + 0.5 × ($10M − $8M) = <strong>−$1.0M</strong>. A standalone case would reject it. With the expansion option, it is −$2M + 0.5 × ($2M + $10.2M) = <strong>+$4.1M</strong>. The first product is worth starting because of the door it opens.</p>
+<p><strong>Step 8: write the second gate.</strong> The merchant-financing test needs its own written gate, such as early delinquency below a cap and a minimum share of merchants who draw a loan. Without it, the option value is fiction.</p>
+<h3 id="worked-example-sunsetting-a-legacy-prepaid-card">Worked example: sunsetting a legacy prepaid card</h3>
+<p><em>Illustrative. The company and every input are assumed.</em></p>
+<p>A fintech runs a legacy prepaid card next to its main debit account. The prepaid card has 40,000 active accounts.</p>
+<p><strong>Step 1: today's economics.</strong> The card earns $1.2M a year of net revenue. It costs $2.0M a year to run: six engineers, a processor contract and compliance work. It loses <strong>$0.8M</strong> a year.</p>
+<p><strong>Step 2: the sunset plan.</strong> The company moves customers to the main account. It expects 60% of them to move. Those customers keep their revenue, $0.72M a year. The main account serves them for an extra $0.1M a year. The other 40% leave.</p>
+<p><strong>Step 3: the new economics.</strong> After the sunset, the moved customers earn $0.72M − $0.1M = <strong>$0.62M</strong> a year. The annual gain is $0.62M − (−$0.8M) = <strong>$1.42M</strong>.</p>
+<p><strong>Step 4: the one-off costs.</strong> Migration engineering, customer notice, support and move incentives cost $1.0M. Run-off for remaining balances and late disputes costs $0.2M. Total: <strong>$1.2M</strong>.</p>
+<p><strong>Step 5: payback and NPV.</strong> Payback is $1.2M ÷ $1.42M × 12 = <strong>about 10 months</strong>. Over three years at 10%, the annuity factor is 2.4869. NPV = $1.42M × 2.4869 − $1.2M = <strong>$2.33M</strong>.</p>
+<p><strong>Step 6: the hidden benefit.</strong> The six engineers move to a bet that clears its hurdle. That value is not in the NPV above, so the case is conservative.</p>
+<p><strong>Step 7: the obligations.</strong> Customers need notice and a simple way to move their balance. Unclaimed balances follow the rules for unclaimed property. The partner bank must approve the plan. Plan the run-off before you announce the date.</p>
+<p><strong>Decision.</strong> Sunset, with the migration live before the notice goes out.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Core vs. future.</strong> Funding the core protects today's profit. Funding the future protects next decade's. The cost of either extreme is a business that is efficient and shrinking, or exciting and broke.</li>
+<li><strong>Fixed split vs. growth gap.</strong> A fixed split is simple and predictable. It costs you a plan that may not close the gap. Sizing from the gap is honest. It costs harder conversations about the target.</li>
+<li><strong>Staging vs. speed.</strong> Staging limits losses and costs time. In a race, a competitor may scale first.</li>
+<li><strong>Diversified vs. focused.</strong> Spreading bets lowers the chance of total failure. It costs focus, and each bet gets less. Concentrating gives a bet the resources to win. It costs a higher chance of losing everything at once.</li>
+<li><strong>Buy vs. build at scale.</strong> An acquisition buys time and capability. It costs a premium, and integration is hard.</li>
+<li><strong>Earn-out vs. clean price.</strong> An earn-out ties price to delivery. It costs flexibility in integration, and it invites disputes.</li>
+<li><strong>Sunset vs. maintain.</strong> Stopping frees a team. It costs customer goodwill and regulatory work, and sometimes a strategic position.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Zombie products.</strong> Bets that never hit their goals but are never stopped. You see them as teams that spend most of their time on run work.</li>
+<li><strong>Wrong yardstick.</strong> Future bets judged on near-term profit, and starved.</li>
+<li><strong>The launch that was a pilot.</strong> A pilot with no gate quietly becomes a full product.</li>
+<li><strong>The innovation budget that cannot close the gap.</strong> The plan funds 10% for the future and still misses the target in year three.</li>
+<li><strong>Hidden correlation.</strong> Three bets fail in the same quarter because one partner bank changed its risk appetite.</li>
+<li><strong>Synergy on the deck.</strong> An acquisition priced on planned revenue synergies. Two years later, the integration team reports half of them.</li>
+<li><strong>Option value as an excuse.</strong> A negative case is approved for "strategic options" that no one has written down.</li>
+<li><strong>Sunk-cost thinking.</strong> "We have spent $20 million, we cannot stop now."</li>
+<li><strong>Sunset without a plan.</strong> A product is closed, and the servicing, claims or migration obligations surprise the team.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>This script reproduces the growth gap, staged funding, correlation, option tree, acquisition and sunset numbers. Python 3, standard library only. All inputs are assumed. Values are in $ millions.</p>
+<pre><code class="language-python"># 1. Growth gap
+target = 500 * 1.15 ** 3               # 760.4
+core = 500 * 1.05 ** 3                 # 578.8
+gap = target - core                    # 181.6
+left_for_new = gap - 100               # 81.6
+print(round(target, 1), round(core, 1), round(gap, 1), round(left_for_new / (0.10 * 100), 1))  # ... 8.2
+
+# 2. Metered funding of ten future bets
+print(10 * 0.5 + 3 * 2.0 + 1 * 10.0, 10 * (0.5 + 2.0 + 10.0))   # 21.0 125.0
+
+# 3. Correlation: three 70% bets, independent vs one shared partner (20% failure)
+p, q = 0.7, 0.2
+independent = (1 - p) ** 3                        # 0.027
+shared = q + (1 - q) * (1 - p / (1 - q)) ** 3     # 0.2016
+print(round(independent, 3), round(shared, 3), round(shared / independent, 1))   # 0.027 0.202 7.5
+
+# 4. BNPL tree: commit vs stage, then the option to expand
+ps = 0.5
+commit = ps * 30 + (1 - ps) * 2 - 10              # 6.0
+staged = -2 + ps * (30 - 8)                       # 9.0
+expand_now = 0.4 * 40 + 0.6 * 5 - 12              # 7.0
+expand_tested = -1 + 0.4 * (40 - 12)              # 10.2
+expand = max(0, expand_now, expand_tested)
+print(commit, staged, round(ps * (30 + expand) + (1 - ps) * 2 - 10, 1), round(-2 + ps * (30 - 8 + expand), 1))  # 6.0 9.0 11.1 14.1
+print(-2 + ps * (10 - 8), round(-2 + ps * (10 - 8 + expand), 1))   # -1.0 4.1 (success worth only $10M)
+
+# 5. Acquisition: value = standalone + realized synergy - integration - price
+af5 = sum(1 / 1.10 ** t for t in range(1, 6))    # 3.7908
+planned = (6 + 3) * af5                           # 34.1
+realized = (6 * 0.5 + 3 * 0.9) * af5              # 21.6
+print(round(40 + planned - 8 - 60, 1), round(40 + realized - 8 - 60, 1))    # 6.1 -6.4
+print(round(40 + realized - 8, 1))                       # walk-away price 53.6
+print(round(40 + (6 + 3 * 0.9) * af5 - 8 - 60, 1))       # earn-out, revenue in full: 5.0
+print(round(40 + realized - 8 - 45, 1))                  # earn-out, half delivered: 8.6
+
+# Acqui-hire: price per engineer, and the alternative
+print(12 / 15, 15 * 0.04 + 12 * 0.5)              # 0.8 per engineer; 6.6 alternative
+
+# 6. Sunset a legacy prepaid card
+gain = (1.2 * 0.6 - 0.1) - (1.2 - 2.0)            # 1.42 a year
+one_off = 1.0 + 0.2
+af3 = sum(1 / 1.10 ** t for t in range(1, 4))    # 2.4869
+print(round(gain, 2), round(one_off / gain * 12, 1), round(gain * af3 - one_off, 2))  # 1.42 10.1 2.33
+</code></pre>
+<p>A portfolio review row, as a config file:</p>
+<pre><code class="language-yaml">bet: bnpl-pilot
+horizon: future
+stage_budget: 2_000_000
+gate_date: 2027-03-31
+scale_if: {approval_rate: &quot;&gt;= 0.60&quot;, early_delinquency_30d: &quot;&lt;= 0.02&quot;, merchant_conversion_lift: &quot;&gt;= 0.05&quot;}
+stop_if: &quot;any scale_if criterion missed by more than half&quot;
+shared_dependencies: [partner-bank-a, card-network-rules]
+options_opened: [merchant-financing]
+owner: GM Commerce Financial Services
+</code></pre>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">List every product and bet in your portfolio, with its horizon, team cost and key dependencies.</li>
+<li class="task todo">Compute the growth gap. Check whether the next horizon can close it in time.</li>
+<li class="task todo">Write the standard each horizon is judged by.</li>
+<li class="task todo">For your largest bet, write the scale criteria, the stop criteria and the gate date.</li>
+<li class="task todo">Find one bet that should be staged, and split it into a pilot and a scale phase.</li>
+<li class="task todo">Group bets by shared partner, rule and channel. Report each group as one bet.</li>
+<li class="task todo">For any acquisition on the table, compute value created on realized synergies, and the walk-away price.</li>
+<li class="task todo">Name one candidate to sunset. Compute its sunset value and list the obligations it would trigger.</li>
+<li class="task todo">Hold a quarterly portfolio review with one decision per bet.</li>
+<li class="task todo">Keep a reserve of capacity unallocated.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> — NPV, hurdle rates, scenarios and how the company is valued.</li>
+<li><a href="unit-economics.html">Unit economics</a> — the contribution and payback tests for next-horizon bets.</li>
+<li><a href="data-and-decisions.html">Data and decisions</a> — deciding under uncertainty and the value of information.</li>
+<li><a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a> — which bets build a durable advantage.</li>
+<li><a href="products-and-marketing.html">Products and go-to-market</a> — build, buy or partner for a single capability, and total cost of ownership.</li>
+<li><a href="navigating-the-organization.html">Navigating the organization</a> — the planning and budget cycle.</li>
+<li><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a> — turning allocation into a roadmap.</li>
+<li><a href="../technical-product-management/launches-rollouts-and-migrations.html">Launches, rollouts and migrations</a> — running the migration in a sunset.</li>
+<li><a href="../technical-product-sense/tech-debt-and-estimation.html">Tech debt and estimation</a> — the maintenance cost every product carries.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="performance-and-growth.html"><span class="lbl">← Previous</span><span class="ttl">Performance and growth: KPIs, scorecards and the metrics that move profit</span></a><a class="navcard next" href="navigating-the-organization.html"><span class="lbl">→ Next</span><span class="ttl">Navigating the organization: how the company really works</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-near-next-and-future-horizons">Mental model: near, next and future horizons</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-portfolio-view">The portfolio view</a><a class="h3" href="#allocation-mechanics">Allocation mechanics</a><a class="h3" href="#portfolio-construction-correlation-and-concentration">Portfolio construction: correlation and concentration</a><a class="h3" href="#build-buy-or-partner-at-portfolio-level">Build, buy or partner at portfolio level</a><a class="h3" href="#acquisitions-at-product-level">Acquisitions at product level</a><a class="h3" href="#valuing-the-option-to-expand">Valuing the option to expand</a><a class="h3" href="#double-down-or-sunset">Double down or sunset</a><a class="h2" href="#worked-examples">Worked examples</a><a class="h3" href="#worked-example-staging-a-buy-now-pay-later-bet">Worked example: staging a buy now, pay later bet</a><a class="h3" href="#extending-the-case-the-option-to-expand">Extending the case: the option to expand</a><a class="h3" href="#worked-example-sunsetting-a-legacy-prepaid-card">Worked example: sunsetting a legacy prepaid card</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fportfolio-strategy-and-allocation.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/portfolio-strategy-and-allocation.html"</script><script defer src="../assets/glossary.js"></script></body></html>

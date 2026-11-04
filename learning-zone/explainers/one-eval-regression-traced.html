@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>One eval regression, traced to its cause — Visual explainers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Visual explainers</span><em>how it works</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="inside-one-llm-request.html">1 · Inside one LLM request</a><a class="modlink" href="how-a-model-learns.html">2 · How a model learns</a><a class="modlink" href="one-token-through-a-transformer.html">3 · One token through a transformer</a><a class="modlink" href="how-an-image-model-draws.html">4 · How an image model draws</a><a class="modlink" href="one-agent-run.html">5 · One agent run, step by step</a><a class="modlink" href="anatomy-of-a-guardrailed-request.html">6 · Anatomy of a guardrailed request</a><a class="modlink" href="one-ai-feature-from-idea-to-launch.html">7 · One AI feature, from idea to launch</a><a class="modlink" href="one-model-change.html">8 · One model change: cost, speed and quality</a><a class="modlink" href="one-ai-feature-p-and-l.html">9 · From one AI task to gross margin</a><a class="modlink active" href="one-eval-regression-traced.html">10 · One eval regression, traced to its cause</a><a class="modlink" href="one-user-story-to-agent-spec.html">11 · One user story becomes an agent spec</a><a class="modlink" href="one-ai-incident-review.html">12 · One AI incident, from alert to postmortem</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Explainer 10</span>
+    <h1>One eval regression, traced to its cause</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: medium</em></p>
+<h2 id="in-one-minute">In one minute</h2>
+<p>An <strong>eval</strong> is a set of test cases that scores an AI feature before it ships. One day the score drops. The tempting move is to guess a cause and patch it. The better move is a short trace: check that the drop is real, find what changed, find where it hurts, then find which layer caused it.</p>
+<p>This page follows one drop for <strong>Parcelpoint</strong>, a shipping-support assistant. A release candidate fails its eval gate: the score falls from 86% to 78%. Ten stages later, the team knows the cause, has fixed it and has a new rule that would have caught it.</p>
+<p><em>Reading time: about 10 minutes. Parcelpoint, its test cases and its scores are invented. The statistics method follows Evan Miller's paper on error bars for evals.</em></p>
+<h2 id="1-the-gate-turns-red">1 · The gate turns red</h2>
+<p>Every Parcelpoint release runs 300 test cases in <strong>continuous integration</strong> (CI): the automatic checks that run before code can ship. The current version passes 258 of them, or 86%. The release candidate passes 234, or 78%.</p>
+<p>The gate blocks the release. That is its job. It does not say why the score fell, or whether the fall matters.</p>
+<p>The product manager has one question to answer first: is this a real problem, or noise in the test?</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 1</span><h4>The gate turns red</h4><p class="xf-sub">Test cases passed, of 300.</p><div class="xf-bars"><div class="xf-lbl">current version</div><div class="xf-fill"><div style="width:86.0%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">258</div><div class="xf-lbl">release candidate</div><div class="xf-fill"><div style="width:78.0%;background:var(--color-background-danger-solid)"></div></div><div class="xf-val">234</div></div><p class="xf-note">86% to 78%. The gate blocks the release.</p></div>
+
+<p><strong>Remember:</strong> a red gate is a question, not an answer.</p>
+<h2 id="2-is-the-drop-real">2 · Is the drop real?</h2>
+<p>A score from 300 cases is an estimate, with an error bar. For a pass rate near 80%, the <strong>standard error</strong> is about 2 points. So each score is uncertain by about ±4 to 5 points.</p>
+<p>The two scores come from the same 300 cases, so compare them case by case. This is a <strong>paired comparison</strong>. It is more precise, because both versions find the same cases easy or hard. Here, 31 cases went from pass to fail and 7 went from fail to pass. The net loss is 24 cases.</p>
+<p>Paired, the 8-point drop has an uncertainty of about ±4 points. Compared as two separate scores, it would be about ±6. Either way, the drop is real.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 2</span><h4>Is the drop real?</h4><p class="xf-sub">The same 300 cases, compared one by one.</p><div class="xf-cmp"><div class="xf-box xf-info"><b>Case by case</b><ul><li>31 cases: pass to fail</li><li>7 cases: fail to pass</li><li>Net: 24 lost</li></ul></div><div class="xf-box xf-success"><b>Error bars (95%)</b><ul><li>Each score: about ±4 to 5 points</li><li>Unpaired difference: about ±6</li><li>Paired difference: about ±4</li></ul></div></div><p class="xf-note">An 8-point drop is well outside the noise.</p></div>
+
+<p><strong>Remember:</strong> before acting on a score change, ask how big the error bar is.</p>
+<h2 id="3-what-changed">3 · What changed?</h2>
+<p>The release bundles three changes. The prompt moved from version 41 to version 42. The search index was rebuilt. A software library was updated. The model itself did not change: Parcelpoint pins the model version, so a vendor update cannot slip in.</p>
+<p>Write the list down before forming a theory. Teams often blame the change they like least. A written list keeps the search honest.</p>
+<p>Each change maps to a layer of the system: the prompt, the retrieval and the plumbing. The next stages narrow it down to one.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 3</span><h4>What changed?</h4><p class="xf-sub">List every change before forming a theory.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Prompt</b><span>version 41 to version 42</span></div><div class="xf-box xf-discovery"><b>Search index</b><span>rebuilt</span></div><div class="xf-box xf-caution"><b>Library</b><span>updated</span></div><div class="xf-box xf-success"><b>Model</b><span>pinned, unchanged</span></div></div><p class="xf-note">Each change maps to a layer.</p></div>
+
+<p><strong>Remember:</strong> list every change in the release before you guess a cause.</p>
+<h2 id="4-slice-the-score">4 · Slice the score</h2>
+<p>A total score hides where the damage is. Split the 300 cases by the kind of question, called a <strong>slice</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Slice</th>
+<th>Cases</th>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tracking</td>
+<td>120</td>
+<td>95%</td>
+<td>94%</td>
+</tr>
+<tr>
+<td>Returns</td>
+<td>80</td>
+<td>88%</td>
+<td>86%</td>
+</tr>
+<tr>
+<td>Customs and duties</td>
+<td>50</td>
+<td>84%</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>Address changes</td>
+<td>50</td>
+<td>64%</td>
+<td>60%</td>
+</tr>
+</tbody>
+</table>
+<p>Customs fell by 40 points. The other slices moved by 4 points or less, inside the noise. The drop is not spread across the product. It is one kind of question.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 4</span><h4>Slice the score</h4><p class="xf-sub">Pass rate by kind of question.</p><div class="xf-heat" style="grid-template-columns:auto repeat(2,minmax(0,1fr))"><div class="xf-hh"></div><div class="xf-hh">Before</div><div class="xf-hh">After</div><div class="xf-hh" style="justify-content:flex-end">Tracking (120)</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 95%, var(--color-surface));color:var(--white)">95%</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 94%, var(--color-surface));color:var(--white)">94%</div><div class="xf-hh" style="justify-content:flex-end">Returns (80)</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 88%, var(--color-surface));color:var(--white)">88%</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 86%, var(--color-surface));color:var(--white)">86%</div><div class="xf-hh" style="justify-content:flex-end">Customs (50)</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 84%, var(--color-surface));color:var(--white)">84%</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 44%, var(--color-surface));color:var(--color-text)">44%</div><div class="xf-hh" style="justify-content:flex-end">Address (50)</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 64%, var(--color-surface));color:var(--white)">64%</div><div class="xf-cell" style="background:color-mix(in srgb, var(--color-background-discovery-solid) 60%, var(--color-surface));color:var(--white)">60%</div></div><p class="xf-note">Customs fell 40 points. The rest moved 4 points or less.</p></div>
+
+<p><strong>Remember:</strong> slice the score. Most regressions live in one corner.</p>
+<h2 id="5-read-the-failures">5 · Read the failures</h2>
+<p>Numbers point to a corner. Reading tells you what went wrong there. Customs now has 28 failing cases. Six of them failed before the release too. The team opens the other 22, the customs cases that passed before and fail now, and sorts them by cause. This is <strong>error analysis</strong>.</p>
+<ul>
+<li>15 answers leave out the duty threshold: the value above which a parcel pays import duty.</li>
+<li>4 answers apply the rule for the wrong country.</li>
+<li>3 answers have a tone problem.</li>
+</ul>
+<p>One cause covers two thirds of the new failures. The answers are not wrong so much as incomplete. They stop before the most important fact.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 5</span><h4>Read the failures</h4><p class="xf-sub">The 22 customs cases that passed before and fail now, by cause.</p><div class="xf-bars"><div class="xf-lbl">missing the duty threshold</div><div class="xf-fill"><div style="width:68.2%;background:var(--color-background-danger-solid)"></div></div><div class="xf-val">15</div><div class="xf-lbl">wrong country rule</div><div class="xf-fill"><div style="width:18.2%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">4</div><div class="xf-lbl">tone</div><div class="xf-fill"><div style="width:13.6%;background:var(--color-background-info-solid)"></div></div><div class="xf-val">3</div></div><p class="xf-note">Customs has 28 failures now. 6 of them failed before the release too.</p></div>
+
+<p><strong>Remember:</strong> read the failures and count the causes. One cause usually dominates.</p>
+<h2 id="6-find-the-layer">6 · Find the layer</h2>
+<p>A missing fact has two likely causes. Either search did not find the document, or the model had it and left it out.</p>
+<p>Check search first. For customs questions, the right document was in the top five results in 46 of 50 cases, before and after the release. That is a <strong>recall at 5</strong> of 0.92, unchanged. Search is fine.</p>
+<p>Then check the answers. The typical customs answer fell from 140 words to 75. Prompt version 42 had added one new line: "Keep every answer under 80 words." Short answers suit tracking questions. They cut off customs answers, which need a threshold and a list of steps.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 6</span><h4>Find the layer</h4><p class="xf-sub">Rule out the easy one first.</p><div class="xf-cmp"><div class="xf-box xf-success"><b>Search: fine</b><ul><li>Right document in top 5: 46 of 50</li><li>Recall at 5: 0.92 before and after</li></ul></div><div class="xf-box xf-danger"><b>Prompt: the cause</b><ul><li>Typical customs answer: 140 to 75 words</li><li>New line: keep every answer under 80 words</li></ul></div></div><p class="xf-note">Short answers suit tracking. They cut off customs.</p></div>
+
+<p><strong>Remember:</strong> test each layer in turn, starting with the one that is easiest to rule out.</p>
+<h2 id="7-hold-or-ship">7 · Hold or ship?</h2>
+<p>Now a product decision. Customs questions are about 1 in 8 of real traffic. The release also has a fix that support wants this week.</p>
+<p>Option one: ship now, and keep the old prompt for customs questions only. That ships the fix, but it adds a special case that someone must remember to remove. Option two: hold the release for two days, fix the prompt, and re-run the eval.</p>
+<p>Parcelpoint holds. A wrong customs answer can cost a customer money at the border. The support fix can wait two days.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 7</span><h4>Hold or ship?</h4><p class="xf-sub">Customs is about 1 in 8 of real traffic.</p><div class="xf-cmp"><div class="xf-box xf-caution"><b>Ship with a special case</b><ul><li>The support fix ships this week</li><li>Old prompt for customs only</li><li>A special case to remember</li></ul></div><div class="xf-box xf-success"><b>Hold two days (chosen)</b><ul><li>Fix the prompt</li><li>Re-run the eval</li><li>No wrong answers at the border</li></ul></div></div><p class="xf-note">The trace gives the facts. The product manager weighs the harm.</p></div>
+
+<p><strong>Remember:</strong> the trace gives the facts. The product manager weighs the harm.</p>
+<h2 id="8-fix-and-check-again">8 · Fix and check again</h2>
+<p>The new prompt line says: "Keep answers under 80 words, unless the answer needs a threshold, a fee or a list of steps."</p>
+<p>The re-run passes 256 of 300, or 85%. Customs recovers to 41 of 50. The other slices are within one case of where they were. Two cases below the old total is well inside the noise.</p>
+<p>The team also runs the <strong>holdout</strong> set: 100 cases that are never used to tune the prompt. It scores 85, against 86 before. The fix did not just fit the 300 cases it was tested on.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 8</span><h4>Fix and check again</h4><p class="xf-sub">Pass rate on the 300 cases.</p><div class="xf-bars"><div class="xf-lbl">current</div><div class="xf-fill"><div style="width:86.0%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">86%</div><div class="xf-lbl">candidate</div><div class="xf-fill"><div style="width:78.0%;background:var(--color-background-danger-solid)"></div></div><div class="xf-val">78%</div><div class="xf-lbl">fixed</div><div class="xf-fill"><div style="width:85.3%;background:var(--color-background-info-solid)"></div></div><div class="xf-val">85%</div></div><p class="xf-note">Customs back to 41 of 50. Holdout: 85 of 100, against 86 before.</p></div>
+
+<p><strong>Remember:</strong> after a fix, check the cases you did not tune on.</p>
+<h2 id="9-make-it-impossible-to-repeat">9 · Make it impossible to repeat</h2>
+<p>A fix that leaves the test set unchanged invites the same mistake later. Parcelpoint adds the 15 "missing threshold" cases to the eval as <strong>regression cases</strong>: cases that once failed and must keep passing.</p>
+<p>It also adds two rules to the gate. No slice may drop more than 5 points, even when the total passes. And any prompt line that limits length must be tested on the slice with the longest answers.</p>
+<p>The total-score gate would have passed a smaller version of this bug. The slice rule would not.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 9</span><h4>Make it impossible to repeat</h4><p class="xf-sub">Leave a test behind.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Regression cases</b><span>the 15 missing-threshold cases join the test set</span></div><div class="xf-box xf-caution"><b>Slice rule</b><span>no slice may drop more than 5 points</span></div><div class="xf-box xf-success"><b>Length rule</b><span>a prompt line that limits length is tested on the longest answers</span></div></div><p class="xf-note">The total-score gate would have passed a smaller bug.</p></div>
+
+<p><strong>Remember:</strong> every regression should leave behind a test that would catch it.</p>
+<h2 id="10-the-log-entry">10 · The log entry</h2>
+<p>The trace ends with a short entry in the change log. The next person who sees a drop in customs can read it in a minute.</p>
+<ul>
+<li><strong>What changed:</strong> prompt v42 added a limit of 80 words.</li>
+<li><strong>What broke:</strong> customs answers left out the duty threshold, so the slice fell from 84% to 44%.</li>
+<li><strong>How it was found:</strong> paired comparison, slicing, error analysis, then a layer check.</li>
+<li><strong>The fix:</strong> the limit now allows longer answers that need a threshold, a fee or steps.</li>
+<li><strong>The new guard:</strong> 15 regression cases and the slice rule.</li>
+</ul>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 10</span><h4>The log entry</h4><p class="xf-sub">Readable in a minute.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Change</b><span>prompt v42 added an 80-word limit</span></div><div class="xf-box xf-danger"><b>Broke</b><span>customs 84% to 44%: the threshold was cut</span></div><div class="xf-box xf-discovery"><b>Found by</b><span>paired comparison, slicing, error analysis, layer check</span></div><div class="xf-box xf-success"><b>Fix</b><span>longer answers allowed for thresholds, fees and steps</span></div><div class="xf-box xf-caution"><b>Guard</b><span>15 regression cases and the slice rule</span></div></div><p class="xf-note">Write down the cause and the guard.</p></div>
+
+<p><strong>Remember:</strong> write down the cause and the guard, not only the fix.</p>
+<h2 id="the-whole-journey">The whole journey</h2>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Summary</span><h4>One regression, traced</h4><div class="xf-flow"><div class="xf-box xf-danger"><b>Red gate</b><span></span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-info"><b>Real?</b><span>error bars</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>What changed</b><span>the list</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Slice</b><span>find the corner</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Layer</b><span>rule out search</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Fix and guard</b><span></span></div></div><p class="xf-note">A red gate is a question, not an answer.</p></div>
+
+<h2 id="where-it-breaks">Where it breaks</h2>
+<ul>
+<li><strong>Chasing noise.</strong> A 2-point drop on a small set triggers a week of work.</li>
+<li><strong>Total score only.</strong> One slice collapses while the total looks acceptable.</li>
+<li><strong>Guessing the layer.</strong> The team rebuilds search when the prompt was the cause.</li>
+<li><strong>Tuning on the test.</strong> The fix fits the test cases and fails on new ones.</li>
+<li><strong>No regression cases.</strong> The same bug ships again next quarter.</li>
+</ul>
+<h2 id="go-deeper">Go deeper</h2>
+<ul>
+<li><a href="../evaluation-and-observability/why-eval-investment-is-the-job.html">Why eval investment is the job</a> — a score is an estimate, not a fact.</li>
+<li><a href="../evaluation-and-observability/building-the-eval-stack-in-the-right-order.html">Building the eval stack in the right order</a> — from reading outputs to a full test stack.</li>
+<li><a href="../building-ai-native-products/hill-climbing-in-practice.html">Practice: hill climbing</a> — error analysis and the holdout set.</li>
+<li><a href="../rag-vector-databases/retrieval-quality.html">Retrieval quality</a> — recall and how to measure search.</li>
+<li><a href="../technical-product-management/tpm-for-ai-products.html">Technical product management for AI</a> — eval-driven development.</li>
+<li><a href="../ai/04-evals-observability.html#evals">Evals</a> — the engineering side of the eval suite.</li>
+</ul>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>The score drops 2 points on 100 cases. What do you do first?</strong>
+ <br />
+<details><summary>Answer</summary>Check the error bar. On 100 cases, a 2-point move is likely noise.</details></p>
+</li>
+<li>
+<p><strong>Why compare the two versions case by case?</strong>
+ <br />
+<details><summary>Answer</summary>Both versions see the same cases, so a paired comparison removes the variation from easy and hard cases and gives a tighter error bar.</details></p>
+</li>
+<li>
+<p><strong>The answers were missing a fact. Why check search before the prompt?</strong>
+ <br />
+<details><summary>Answer</summary>A missing fact can mean the document was never found. Search is quick to check, and ruling it out points to the prompt or the model.</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Evan Miller, <em>Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations</em>, arXiv 2411.00640, 2024, full text read 2026-11. For a pass rate, the standard error is √(p(1 − p)/n), and a 95% interval is the mean ± 1.96 standard errors. The paper recommends comparing two models on question-level paired differences, which lowers the variance when the models agree on which questions are hard.</li>
+<li>The error bars on this page are derived from the invented counts. Standard error at 86% of 300: √(0.86 × 0.14 / 300), about 2.0 points. At 78%, about 2.4 points. Unpaired error of the difference: √(2.0² + 2.4²), about 3.1 points, so ±6 at 95%. Paired: the 300 case differences have 31 at −1, 7 at +1 and 262 at 0, which gives a standard error of about 2.0 points, so ±4 at 95%.</li>
+<li>How the counts fit together (derived from the invented data): customs passed 42 of 50 before and 22 after. That net loss of 20 is 22 cases that went from pass to fail, minus 2 that went the other way. Across all slices, 31 cases went from pass to fail and 7 from fail to pass: customs 22 and 2, tracking 2 and 1, returns 3 and 2, address 4 and 2.</li>
+<li>Parcelpoint, its cases, slices, scores and prompt are invented for the example.</li>
+<li>Independent fact-check: run on 2026-11-04 by a separate agent with web access, blind to the edits. Result: clean, with no wrong, stale or unsupported claims. The error bars are derived from invented counts, with the steps shown above.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="one-ai-feature-p-and-l.html"><span class="lbl">← Previous</span><span class="ttl">From one AI task to gross margin</span></a><a class="navcard next" href="one-user-story-to-agent-spec.html"><span class="lbl">→ Next</span><span class="ttl">One user story becomes an agent spec</span></a></div><footer class="foot"><strong>Core insight:</strong> Follow one example through the stages and the system stops being magic: each stage has one job, one cost and one way to break.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#in-one-minute">In one minute</a><a class="h2" href="#1-the-gate-turns-red">1 · The gate turns red</a><a class="h2" href="#2-is-the-drop-real">2 · Is the drop real?</a><a class="h2" href="#3-what-changed">3 · What changed?</a><a class="h2" href="#4-slice-the-score">4 · Slice the score</a><a class="h2" href="#5-read-the-failures">5 · Read the failures</a><a class="h2" href="#6-find-the-layer">6 · Find the layer</a><a class="h2" href="#7-hold-or-ship">7 · Hold or ship?</a><a class="h2" href="#8-fix-and-check-again">8 · Fix and check again</a><a class="h2" href="#9-make-it-impossible-to-repeat">9 · Make it impossible to repeat</a><a class="h2" href="#10-the-log-entry">10 · The log entry</a><a class="h2" href="#the-whole-journey">The whole journey</a><a class="h2" href="#where-it-breaks">Where it breaks</a><a class="h2" href="#go-deeper">Go deeper</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=explainers%2Fone-eval-regression-traced.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="explainers/one-eval-regression-traced.html"</script><script defer src="../assets/glossary.js"></script></body></html>

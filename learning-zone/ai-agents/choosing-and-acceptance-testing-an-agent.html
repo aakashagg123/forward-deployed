@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI agents</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-an-agent-is-and-how-much-autonomy-it-needs.html">1 · What an agent is, and how much autonomy it needs</a><a class="modlink" href="planning-reasoning-and-reliability-across-a-run.html">2 · Planning, reasoning &amp; reliability across a run</a><a class="modlink" href="when-not-to-build-an-agent.html">3 · When not to build an agent</a><a class="modlink" href="running-an-agent-in-production.html">4 · Running an agent in production</a><a class="modlink active" href="choosing-and-acceptance-testing-an-agent.html">5 · Choosing and acceptance-testing an agent</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
     <h1>Choosing and acceptance-testing an agent</h1>
   </div>
-  <div class="MarkdownContent"><p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
 <h2 id="tldr">TL;DR</h2>
 <p>Sooner or later you will be asked to buy an agent, or to sign off on one your team built.
 Two problems make this hard. The label "agent" is used loosely, so a product may not be what
@@ -304,7 +313,8 @@ trajectory grading in depth.</p>
 <li>Gartner, <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027</a>
   (Jun 2025): the prediction, the definition of agent-washing, and the estimate of about 130
   real vendors. Confirmed through search-result excerpts and secondary reports; the page
-  could not be opened when this lesson was written.</li>
+  could not be opened (HTTP 403) on the 2026-10 recheck either. The 40% figure is a forecast, not
+  an observed result, and no revision turned up in search.</li>
 <li>Civil Resolution Tribunal of British Columbia, <a href="https://www.canlii.org/en/bc/bccrt/doc/2024/2024bccrt149/2024bccrt149.html">Moffatt v. Air Canada, 2024 BCCRT 149</a>
   (Feb 2024): the tribunal held the airline responsible for its chatbot's misleading
   statement. The chat took place in November 2022. The decision text was checked by an
@@ -313,7 +323,7 @@ trajectory grading in depth.</p>
 <li>The vendor claim, the test table, the results, and the code are invented and
   illustrative.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="running-an-agent-in-production.html"><span class="lbl">← Previous</span><span class="ttl">Running an agent in production</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="running-an-agent-in-production.html"><span class="lbl">← Previous</span><span class="ttl">Running an agent in production</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> The agent loop is simple. Success depends on the decisions around it: how much autonomy, how it catches its mistakes, and what limits surround it.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-claim-test-threshold">The mental model: claim, test, threshold</a><a class="h2" href="#due-diligence-is-it-really-an-agent-and-can-you-rely-on-it">Due diligence: is it really an agent, and can you rely on it?</a><a class="h2" href="#acceptance-testing-design-the-test-before-the-deal">Acceptance testing: design the test before the deal</a><a class="h2" href="#worked-example-an-acceptance-test-for-a-claim">Worked example: an acceptance test for a claim</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

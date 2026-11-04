@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>LLMs</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-llm.html">1 · What an LLM actually is</a><a class="modlink" href="the-context-window.html">2 · The context window</a><a class="modlink" href="capabilities-and-the-jagged-frontier.html">3 · Capabilities &amp; the jagged frontier</a><a class="modlink" href="prompting-and-in-context-learning.html">4 · Prompting &amp; in-context learning</a><a class="modlink" href="temperature-sampling-and-determinism.html">5 · Temperature, sampling &amp; determinism</a><a class="modlink active" href="choosing-a-model.html">6 · Choosing a model</a><a class="modlink" href="prompting-vs-rag-vs-finetuning.html">7 · Prompting vs. RAG vs. fine-tuning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
     <h1>Choosing a model</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><div class="explainer-link"><div class="Alert" data-variant="soft" data-color="info"><div class="Indicator"><svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm1.25 9.25h-2.5a.75.75 0 0 1 0-1.5h.5v-3h-.5a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75V13h.5a.75.75 0 0 1 0 1.5Z"/></svg></div><div class="Content"><div class="Message"><div class="Title">Visual explainer</div><div class="Description">See it step by step: <a href="../explainers/one-model-change.html">One model change: cost, speed and quality →</a>. It follows one example through the stages, with a picture at each.</div></div></div></div></div><h2 id="tldr">TL;DR</h2>
 <p>There is no single best model, only the best model for a specific job, at a specific
 price, at a specific speed. Four dimensions do most of the work in that choice. <strong>Size and
 capability</strong> — bigger, more capable models handle harder reasoning and nuance better, at a
@@ -172,6 +181,28 @@ everything."</p>
   infrastructure: more control over cost at scale and over your data's path, at the cost of
   running and maintaining that infrastructure yourself.</li>
 </ul>
+<h2 id="effort-a-fifth-dial-inside-one-model">Effort: a fifth dial inside one model</h2>
+<p>Many current models let you trade quality for speed and cost without switching models. The
+setting is called effort (Anthropic) or reasoning effort (OpenAI). It controls how many
+tokens the model spends, including thinking tokens, which are billed as output. Anthropic
+says tuning effort is often a better lever than switching models. Defaults differ by model:
+as of October 2026, Anthropic's default is <code>medium</code> on Opus 5.5 and Haiku 5.5 and <code>high</code> on
+Fable 5.1 and Sonnet 5.5. The consequence is easy to miss. If your team moves from one
+model to its successor and does not set effort, the default may change, and so will your
+cost and latency. Run an effort sweep on your own evals each time you switch.</p>
+<h2 id="two-ways-to-start">Two ways to start</h2>
+<p>Anthropic describes two starting points. <strong>Efficiency-first</strong>: start with the smallest model
+(for example Haiku 5.5), test, and move up only where a gap shows. This suits prototypes,
+tight latency and high volume. <strong>Capability-first</strong>: start with a strong model, get the
+feature working, then lower effort or move down a tier to cut cost. Either way, the first
+step is a set of tests built from your own tasks. The vendor says a good evaluation set is
+the most important step.</p>
+<p>Prices show why it matters. As of October 2026, Anthropic lists input/output prices per
+million tokens of $10/$50 for Fable 5.1, $4/$20 for Opus 5.5, $2/$10 for Sonnet 5.5 and
+from $0.10/$0.50 for Haiku 5.5. That is a spread of about 100 times on input. Treat these
+numbers as a dated snapshot. Two discounts also move the bill: batch requests cost 50
+percent less, and cached input costs a small fraction of the base price. Both suit work that
+can wait or that repeats a long prefix.</p>
 <h2 id="model-routing-the-practical-answer-to-which-one">Model routing: the practical answer to "which one?"</h2>
 <p>The strongest teams do not pick one model for a whole product. They route different
 request types to different models based on how hard each one actually is — a pattern
@@ -181,6 +212,13 @@ choice from a single, static decision into a per-request routing rule, and it is
 where the largest, least painful cost savings in an AI product are found — because most
 products send far more simple requests than hard ones, and were paying premium prices for
 all of them.</p>
+<p>A second pattern pairs models inside one task. An orchestrator hands bulk work to cheaper
+workers. Or a cheaper model runs the task and escalates hard decisions to a stronger
+advisor. Anthropic documents both.</p>
+<p>On open versus closed: open-weight models have narrowed the gap with closed ones, by most
+public trackers, but the size of the gap depends on the benchmark and the date. Where you
+run an open model also matters, because hosted endpoints can differ in quality. Test the
+exact deployment you plan to use, not the model name.</p>
 <h2 id="choosing-without-chasing-every-release">Choosing without chasing every release</h2>
 <p>New models arrive often, and each one claims to beat the last on some benchmark. Chasing
 every release is its own cost, in engineering time and in the testing debt of re-verifying
@@ -196,6 +234,8 @@ product, not just real in the abstract.</p>
   one launches, without a clear, measured reason tied to your own tasks.</li>
 <li><strong>Choosing by benchmark alone</strong> — picking a model because of a published score, without
   testing it on your own real requests first.</li>
+<li><strong>Inheriting the default effort</strong> — switching to a newer model and letting a different
+  default quietly change cost, latency and quality.</li>
 <li><strong>Ignoring latency until launch</strong> — discovering only after shipping that a highly capable
   model is too slow for an interactive feature that needed a fast response.</li>
 </ul>
@@ -207,6 +247,8 @@ product, not just real in the abstract.</p>
       faster model?</li>
 <li class="task todo">Have we tested a candidate model on our own tasks before switching, rather than
       switching on benchmark scores alone?</li>
+<li class="task todo">Have we set effort explicitly and swept it on our own evals, instead of inheriting a
+      default that may change with the next model?</li>
 <li class="task todo">Is latency budgeted per feature, based on whether a user is actively waiting or not?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
@@ -217,9 +259,27 @@ product, not just real in the abstract.</p>
   spoke on routing requests to the right model automatically.</li>
 <li><a href="../ai/04-evals-observability.html#cost-attribution">Cost attribution</a> — tracking
   what each model choice actually costs, per feature.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/about-claude/models/choosing-a-model">Choosing the right model</a>:
+  efficiency-first and capability-first starts; effort is often a better lever than
+  switching; build your own benchmark tests; combine models (executor/advisor,
+  orchestrator/workers). Read 2026-10-25.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/models/overview">Models overview</a>: model names,
+  prices, default effort, 50 percent batch discount. Read 2026-10-25.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/effort">Effort</a>: effort covers all
+  output tokens; defaults by model; run a fresh sweep when changing models. Read 2026-10-25.</li>
+<li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/reasoning">Reasoning guide</a>:
+  reasoning effort values vary by model. Read 2026-10-25.</li>
+<li>The open-weight statement rests on secondary trackers seen in search results (not opened);
+  it is worded without figures for that reason.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="temperature-sampling-and-determinism.html"><span class="lbl">← Previous</span><span class="ttl">Temperature, sampling &amp; determinism</span></a><a class="navcard next" href="prompting-vs-rag-vs-finetuning.html"><span class="lbl">→ Next</span><span class="ttl">Prompting vs. RAG vs. fine-tuning</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-hiring-for-a-task-not-for-a-title">The mental model: hiring for a task, not for a title</a><a class="h2" href="#the-four-dimensions">The four dimensions</a><a class="h2" href="#model-routing-the-practical-answer-to-which-one">Model routing: the practical answer to &quot;which one?&quot;</a><a class="h2" href="#choosing-without-chasing-every-release">Choosing without chasing every release</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="temperature-sampling-and-determinism.html"><span class="lbl">← Previous</span><span class="ttl">Temperature, sampling &amp; determinism</span></a><a class="navcard next" href="prompting-vs-rag-vs-finetuning.html"><span class="lbl">→ Next</span><span class="ttl">Prompting vs. RAG vs. fine-tuning</span></a></div><footer class="foot"><strong>Core insight:</strong> Everything an LLM does follows from next-token prediction: a limited window, uneven skill, and answers that are sampled rather than computed.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-hiring-for-a-task-not-for-a-title">The mental model: hiring for a task, not for a title</a><a class="h2" href="#the-four-dimensions">The four dimensions</a><a class="h2" href="#effort-a-fifth-dial-inside-one-model">Effort: a fifth dial inside one model</a><a class="h2" href="#two-ways-to-start">Two ways to start</a><a class="h2" href="#model-routing-the-practical-answer-to-which-one">Model routing: the practical answer to &quot;which one?&quot;</a><a class="h2" href="#choosing-without-chasing-every-release">Choosing without chasing every release</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

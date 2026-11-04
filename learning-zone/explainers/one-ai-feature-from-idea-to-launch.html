@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>One AI feature, from idea to launch — Visual explainers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Visual explainers</span><em>how it works</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="inside-one-llm-request.html">1 · Inside one LLM request</a><a class="modlink" href="how-a-model-learns.html">2 · How a model learns</a><a class="modlink" href="one-token-through-a-transformer.html">3 · One token through a transformer</a><a class="modlink" href="how-an-image-model-draws.html">4 · How an image model draws</a><a class="modlink" href="one-agent-run.html">5 · One agent run, step by step</a><a class="modlink" href="anatomy-of-a-guardrailed-request.html">6 · Anatomy of a guardrailed request</a><a class="modlink active" href="one-ai-feature-from-idea-to-launch.html">7 · One AI feature, from idea to launch</a><a class="modlink" href="one-model-change.html">8 · One model change: cost, speed and quality</a><a class="modlink" href="one-ai-feature-p-and-l.html">9 · From one AI task to gross margin</a><a class="modlink" href="one-eval-regression-traced.html">10 · One eval regression, traced to its cause</a><a class="modlink" href="one-user-story-to-agent-spec.html">11 · One user story becomes an agent spec</a><a class="modlink" href="one-ai-incident-review.html">12 · One AI incident, from alert to postmortem</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Explainer 07</span>
+    <h1>One AI feature, from idea to launch</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: medium</em></p>
+<h2 id="in-one-minute">In one minute</h2>
+<p>An AI feature is not done when the demo works. It is done when you know what it is worth, what it costs when it is wrong, and when you will pull it back. This page follows one feature from the first idea to the first month in production. The feature is <strong>claim summaries for insurance adjusters</strong> at Northwind Mutual.</p>
+<p>At each stage you make one call that only the product manager can make: the size of the prize, the cost of an error, the quality bar, the cheapest way to reach it, the model, the design for being wrong, the launch gate and the readout.</p>
+<p><em>Reading time: about 10 minutes. Northwind Mutual is invented. Every number on this page is illustrative, and every price is an assumed example, not a vendor quote.</em></p>
+<h2 id="1-the-size-of-the-prize">1 · The size of the prize</h2>
+<p>Start with the job, not the model. Northwind's adjusters handle about 40,000 claims a month. Each adjuster reads the whole file first: notes, emails, photos and earlier claims. That takes about 12 minutes per claim.</p>
+<p>The idea is a one-page summary at the top of every file. If reading drops to 5 minutes, the team saves 7 minutes on each of 40,000 claims. That is 280,000 minutes, or about 4,667 hours a month.</p>
+<p>This number is the ceiling, not the forecast. It tells you how much you can spend to get there, and whether the idea is worth a team at all.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 1</span><h4>The size of the prize</h4><p class="xf-sub">Minutes to read one claim file (illustrative).</p><div class="xf-bars"><div class="xf-lbl">today</div><div class="xf-fill"><div style="width:85.7%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">12 min</div><div class="xf-lbl">target</div><div class="xf-fill"><div style="width:35.7%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">5 min</div></div><p class="xf-note">7 minutes × 40,000 claims = 280,000 minutes, about 4,667 hours a month.</p></div>
+
+<p><strong>Remember:</strong> size the prize before you pick the tool, so you know what the feature may cost.</p>
+<h2 id="2-is-ai-the-right-tool">2 · Is AI the right tool?</h2>
+<p>Some of the file is already structured: policy number, dates, amounts. Ordinary code can show those fields with no model at all, and it will not invent them.</p>
+<p>The rest is free text: adjuster notes, customer emails, repair quotes. A rule cannot summarize a rambling email. A language model can, but it is <strong>probabilistic</strong>: it will sometimes be wrong, and it will not tell you when.</p>
+<p>So the design splits the work. Code shows the structured fields. The model writes only the summary of the free text.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 2</span><h4>Is AI the right tool?</h4><p class="xf-sub">Split the work by what each part needs.</p><div class="xf-cmp"><div class="xf-box xf-info"><b>Structured fields: code</b><ul><li>Policy number, dates, amounts</li><li>Exact every time</li><li>No model needed</li></ul></div><div class="xf-box xf-discovery"><b>Free text: model</b><ul><li>Notes, emails, repair quotes</li><li>A summary needs judgement</li><li>Sometimes wrong, silently</li></ul></div></div><p class="xf-note">Use a model only for the part rules cannot do.</p></div>
+
+<p><strong>Remember:</strong> use a model only for the part that rules cannot do.</p>
+<h2 id="3-the-cost-of-being-wrong">3 · The cost of being wrong</h2>
+<p>Not all errors are equal. A summary with awkward wording costs a few seconds. A summary that leaves out an earlier claim on the same car could lead to a wrong payout. That is a real loss, and a possible fraud gap.</p>
+<p>Write the errors down and rank them by harm. The high-harm ones become <strong>must-not-fail cases</strong>: inputs where any failure blocks launch, whatever the average score says. Northwind picks 10 of them, such as "a prior claim exists" and "the customer disputes liability".</p>
+<p>This table, more than any model benchmark, sets how careful the feature must be.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 3</span><h4>The cost of being wrong</h4><p class="xf-sub">Rank errors by harm. The worst become must-not-fail cases.</p><div class="xf-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="xf-cell ">Error</div><div class="xf-cell ">Harm</div><div class="xf-cell ">Treatment</div><div class="xf-cell ">Awkward wording</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">Low</div><div class="xf-cell ">Fix over time</div><div class="xf-cell ">Missing a minor detail</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">Medium</div><div class="xf-cell ">Counts against the bar</div><div class="xf-cell ">Missing a prior claim</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">High</div><div class="xf-cell ">Must-not-fail case</div><div class="xf-cell ">Wrong party at fault</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">High</div><div class="xf-cell ">Must-not-fail case</div></div><p class="xf-note">Northwind names 10 must-not-fail cases.</p></div>
+
+<p><strong>Remember:</strong> rank errors by harm. The worst ones become must-not-fail cases.</p>
+<h2 id="4-a-spec-built-on-examples">4 · A spec built on examples</h2>
+<p>A normal acceptance test says "given this input, expect this output". A model's output varies, so the spec uses <strong>examples</strong> instead: real inputs, with an accepted answer and a rejected one for each.</p>
+<p>Northwind's one-page spec names the job, the inputs, the scope and what the summary must never do. It lists 3 worked examples, the 10 must-not-fail cases and a quality bar. The bar is <strong>85% of held-back test cases pass, and none of the 10 must-not-fail cases fail</strong>.</p>
+<p>The same examples become the first evaluation set. If a case is in the spec, it is in the test.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 4</span><h4>A one-page spec built on examples</h4><p class="xf-sub">The examples become the first test set.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Job</b><span>a one-page summary at the top of each claim file</span></div><div class="xf-box xf-discovery"><b>Inputs</b><span>notes, emails, quotes and earlier claims</span></div><div class="xf-box xf-success"><b>Examples</b><span>3 worked examples, each with an accepted and a rejected summary</span></div><div class="xf-box xf-danger"><b>Must not fail</b><span>10 cases, such as a prior claim on the same car</span></div><div class="xf-box xf-caution"><b>Quality bar</b><span>85% of held-back cases pass, and no must-not-fail case fails</span></div></div><p class="xf-note">If a case is in the spec, it is in the test.</p></div>
+
+<p><strong>Remember:</strong> for a model feature, the examples are the spec.</p>
+<h2 id="5-the-cheapest-lever-first">5 · The cheapest lever first</h2>
+<p>There are three ways to make a model better at a task: change the prompt, give it the right documents (<strong>retrieval</strong>), or train it further (<strong>fine-tuning</strong>). Try them in that order, because each one costs more than the last.</p>
+<p>Northwind scores each step on 150 development cases. A plain prompt passes 74%. Adding retrieval of the policy wording takes it to 86%. Adding three worked examples to the prompt takes it to 90%. On 60 held-back cases it scores 52, about 87%.</p>
+<p>The bar is met without training a model. Fine-tuning stays on the shelf.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 5</span><h4>The cheapest lever first</h4><p class="xf-sub">Pass rate on 150 development cases (illustrative).</p><div class="xf-bars"><div class="xf-lbl">prompt only</div><div class="xf-fill"><div style="width:74.0%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">74%</div><div class="xf-lbl">+ retrieval</div><div class="xf-fill"><div style="width:86.0%;background:var(--color-background-info-solid)"></div></div><div class="xf-val">86%</div><div class="xf-lbl">+ 3 examples</div><div class="xf-fill"><div style="width:90.0%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">90%</div></div><p class="xf-note">52 of 60 held-back cases pass, about 87%. No fine-tuning needed.</p></div>
+
+<p><strong>Remember:</strong> climb from prompt to retrieval to fine-tuning, and stop when the bar is met.</p>
+<h2 id="6-choosing-the-model">6 · Choosing the model</h2>
+<p>Quality is one of three numbers. The other two are speed and cost. Northwind runs the same 150 cases on three models. The large model passes 91%, but its slowest answers take 6.8 seconds and a claim costs about $0.11. The small model is fast and cheap, but it fails 3 of the 10 must-not-fail cases, so it is out.</p>
+<p>The mid-size model passes 90%, answers within 3.1 seconds and costs about $0.04 a claim. That is a file of about 15,000 input tokens and 600 output tokens at assumed prices of $2 and $10 per million.</p>
+<p>The mid-size model wins, and the decision record says what would change it.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 6</span><h4>Choosing the model</h4><p class="xf-sub">The same 150 cases on three models. Prices are assumed.</p><div class="xf-grid" style="grid-template-columns:repeat(5,minmax(0,1fr))"><div class="xf-cell ">Model</div><div class="xf-cell ">Pass rate</div><div class="xf-cell ">Slowest answers</div><div class="xf-cell ">Cost per claim</div><div class="xf-cell ">Must-not-fail</div><div class="xf-cell xf-info" style="background:var(--color-background-info-surface)">Large</div><div class="xf-cell ">91%</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">6.8 s</div><div class="xf-cell xf-caution" style="background:var(--color-background-caution-surface)">$0.11</div><div class="xf-cell ">10 of 10</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">Mid-size</div><div class="xf-cell ">90%</div><div class="xf-cell ">3.1 s</div><div class="xf-cell ">$0.04</div><div class="xf-cell xf-success" style="background:var(--color-background-success-surface)">10 of 10</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">Small</div><div class="xf-cell ">79%</div><div class="xf-cell ">1.2 s</div><div class="xf-cell ">$0.006</div><div class="xf-cell xf-danger" style="background:var(--color-background-danger-surface)">7 of 10</div></div><p class="xf-note">Mid-size meets all three. Small fails must-not-fail cases.</p></div>
+
+<p><strong>Remember:</strong> choose on quality, speed and cost together, using your own cases.</p>
+<h2 id="7-design-for-being-wrong">7 · Design for being wrong</h2>
+<p>Even at 90%, about 1 summary in 10 has a problem. The design must make problems easy to spot and cheap to fix. Microsoft researchers list guidelines for this, such as "make clear how well the system can do what it can do" and "support efficient correction".</p>
+<p>Northwind's design has four parts. Each sentence in the summary links to its source in the file. A field the model could not find shows "not found", never a guess. The full file stays one click away. The adjuster confirms the summary before any decision.</p>
+<p>These choices cost little. They turn a hidden error into a visible one.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 7</span><h4>Design for being wrong</h4><p class="xf-sub">About 1 summary in 10 has a problem.</p><div class="xf-layers"><div class="xf-box xf-info"><b>Sources</b><span>each sentence links to its place in the file</span></div><div class="xf-box xf-caution"><b>Not found</b><span>a missing field says so, never a guess</span></div><div class="xf-box xf-discovery"><b>Full file</b><span>one click away</span></div><div class="xf-box xf-success"><b>Confirm</b><span>the adjuster confirms before any decision</span></div></div><p class="xf-note">Turn a hidden error into a visible one.</p></div>
+
+<p><strong>Remember:</strong> design the screen for the 1 time in 10 the model is wrong.</p>
+<h2 id="8-the-launch-gate">8 · The launch gate</h2>
+<p>A <strong>launch gate</strong> is a short list of numbers, agreed in advance, that decide when to ship, when to widen and when to roll back. Agreeing it before launch stops a debate in the middle of an incident.</p>
+<ul>
+<li><strong>Ship</strong> to 20 adjusters if the held-back score is at least 85% and no must-not-fail case fails.</li>
+<li><strong>Widen</strong> after two weeks if adjusters correct fewer than 15% of summaries and reading time falls by at least 3 minutes.</li>
+<li><strong>Roll back</strong> if a missed detail changes a claim decision, the score drops below 80%, the slowest answers pass 5 seconds or a claim costs more than $0.08.</li>
+</ul>
+<p>The claims director owns the <strong>kill switch</strong> and can pull it alone.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 8</span><h4>The launch gate</h4><p class="xf-sub">Agreed in advance, with numbers and an owner.</p><div class="xf-layers"><div class="xf-box xf-success"><b>Ship</b><span>to 20 adjusters: held-back score at least 85%, no must-not-fail failure</span></div><div class="xf-box xf-info"><b>Widen</b><span>after 2 weeks: under 15% of summaries corrected, reading time down at least 3 minutes</span></div><div class="xf-box xf-danger"><b>Roll back</b><span>a missed detail changes a decision, score under 80%, slowest answers over 5 s or cost over $0.08</span></div></div><p class="xf-note">The claims director owns the kill switch.</p></div>
+
+<p><strong>Remember:</strong> write the roll-back rule before launch, with numbers and an owner.</p>
+<h2 id="9-a-staged-rollout">9 · A staged rollout</h2>
+<p>The feature reaches people in steps. In weeks 1 and 2 it goes to 20 adjusters. In weeks 3 and 4 it goes to 10% of claims, then to 50% in weeks 5 and 6, and to everyone from week 7.</p>
+<p>At each step the team checks the gate's numbers before moving on. The early group also gives the best feedback, because they see every rough edge. At 10%, Northwind found that photo-heavy files produced thin summaries, and added a line that says "photos not summarized".</p>
+<p>A staged rollout trades speed for safety. You learn on a few claims before you bet all of them.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 9</span><h4>A staged rollout</h4><p class="xf-sub">Weeks run left to right.</p><div class="xf-lanes"><div class="xf-lbl">Exposure</div><div class="xf-track"><div class="xf-seg xf-info" style="flex:2 1 0">20 adjusters · weeks 1-2</div><div class="xf-seg xf-discovery" style="flex:2 1 0">10% · weeks 3-4</div><div class="xf-seg xf-caution" style="flex:2 1 0">50% · weeks 5-6</div><div class="xf-seg xf-success" style="flex:2 1 0">100% · week 7 on</div></div></div><p class="xf-note">Check the gate's numbers before each step.</p></div>
+
+<p><strong>Remember:</strong> widen only when the numbers from the last step hold.</p>
+<h2 id="10-the-first-month-readout">10 · The first-month readout</h2>
+<p>In the first full month at 100%, reading time fell from 12 minutes to 6.5, not to the 5 that the team had hoped for. That saves 5.5 minutes on 40,000 claims: 220,000 minutes, or about 3,667 hours.</p>
+<p>At an assumed loaded cost of $45 an hour, that time is worth about $165,000 a month. The model costs about $1,600 a month (40,000 claims × $0.04). Adjusters corrected 11% of summaries. No missed detail changed a decision.</p>
+<p>The value is real only if the saved time goes to other work, such as faster payouts or fewer new hires. Say which one in the readout.</p>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Stage 10</span><h4>The first-month readout</h4><p class="xf-sub">Minutes to read one claim file.</p><div class="xf-bars"><div class="xf-lbl">before</div><div class="xf-fill"><div style="width:85.7%;background:var(--color-background-caution-solid)"></div></div><div class="xf-val">12 min</div><div class="xf-lbl">hoped for</div><div class="xf-fill"><div style="width:35.7%;background:var(--color-background-info-solid)"></div></div><div class="xf-val">5 min</div><div class="xf-lbl">measured</div><div class="xf-fill"><div style="width:46.4%;background:var(--color-background-success-solid)"></div></div><div class="xf-val">6.5 min</div></div><p class="xf-note">5.5 min × 40,000 = about 3,667 hours, worth about $165,000 at an assumed $45 an hour. Model cost: about $1,600.</p></div>
+
+<p><strong>Remember:</strong> report value in the units the business uses, and say where the saved time goes.</p>
+<h2 id="the-whole-journey">The whole journey</h2>
+<style>
+.xf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 24px 20px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.xf-chip{position:absolute;top:-11px;left:22px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.xf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.xf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 14px;line-height:1.45}
+.xf-note{margin:14px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center;line-height:1.45}
+.xf-box{border-radius:12px;padding:10px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0}
+.xf-box b{display:block;font-size:12px;margin-bottom:3px;line-height:1.3}
+.xf-box span{display:block;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.xf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.xf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.xf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.xf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.xf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.xf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.xf-flow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px}
+.xf-flow .xf-box{flex:1 1 0}
+.xf-ar{flex:0 0 auto;align-self:center;color:var(--color-text-tertiary);font-size:14px;line-height:1}
+.xf-ar::before{content:"\2192"}
+.xf-toks{display:flex;flex-wrap:wrap;gap:8px}
+.xf-tok{display:flex;flex-direction:column;align-items:center;gap:3px}
+.xf-tok i{font-style:normal;font-weight:700;font-size:13px;border-radius:8px;padding:5px 9px;border:1px solid var(--color-border);white-space:pre}
+.xf-tok em{font-style:normal;font-size:10px;color:var(--color-text-tertiary);font-variant-numeric:tabular-nums}
+.xf-layers{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.xf-layers .xf-box{display:flex;gap:10px;align-items:baseline;justify-content:space-between}
+.xf-layers .xf-box b{margin:0;flex:0 0 auto}
+.xf-layers .xf-box span{text-align:right}
+.xf-lanes{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.xf-lbl{font-size:11px;font-weight:700;color:var(--color-text-secondary)}
+.xf-track{display:flex;gap:3px;min-width:0}
+.xf-seg{border-radius:6px;padding:6px 4px;font-size:10px;text-align:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);min-width:0;overflow:hidden}
+.xf-mem{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--color-border)}
+.xf-mem div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;min-width:0;overflow:hidden;white-space:nowrap}
+.xf-mkey{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:10.5px;color:var(--color-text-secondary)}
+.xf-mkey b{color:var(--color-text)}
+.xf-bars{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.xf-bars .xf-lbl{white-space:nowrap}
+.xf-fill{height:16px;border-radius:5px;border:1px solid var(--color-border);background:var(--color-surface-secondary);overflow:hidden}
+.xf-fill div{height:100%;border-radius:4px}
+.xf-val{font-size:11px;font-variant-numeric:tabular-nums;color:var(--color-text-secondary)}
+.xf-grid{display:grid;gap:3px}
+.xf-cell{border-radius:5px;min-height:22px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);background:var(--color-surface-secondary);color:var(--color-text-secondary);font-variant-numeric:tabular-nums}
+.xf-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.xf-cmp ul{margin:6px 0 0;padding-left:16px;font-size:10.5px;color:var(--color-text-secondary);line-height:1.5}
+.xf-heat{display:grid;gap:3px;font-variant-numeric:tabular-nums}
+.xf-hh{font-size:10.5px;font-weight:700;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;padding:2px}
+@media (max-width:640px){
+  .xf{padding:24px 14px 16px}
+  .xf-flow{flex-direction:column}
+  .xf-ar{align-self:center}
+  .xf-ar::before{content:"\2193"}
+  .xf-cmp{grid-template-columns:1fr}
+  .xf-layers .xf-box{flex-direction:column;gap:2px}
+  .xf-layers .xf-box span{text-align:left}
+}
+</style>
+<div class="xf"><span class="xf-chip">Summary</span><h4>One AI feature, idea to launch</h4><div class="xf-flow"><div class="xf-box xf-info"><b>Prize</b><span>size it first</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-danger"><b>Cost of errors</b><span>must-not-fail cases</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-discovery"><b>Spec</b><span>examples and a bar</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-caution"><b>Model</b><span>quality, speed, cost</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-warning"><b>Gate</b><span>ship, widen, roll back</span></div><span class="xf-ar" aria-hidden="true"></span><div class="xf-box xf-success"><b>Readout</b><span>value in business units</span></div></div><p class="xf-note">Each stage is a decision the product manager owns.</p></div>
+
+<h2 id="where-it-breaks">Where it breaks</h2>
+<ul>
+<li><strong>No prize sized.</strong> The team cannot say what the feature may cost.</li>
+<li><strong>Average score only.</strong> A 90% score hides a must-not-fail case that fails.</li>
+<li><strong>Fine-tuning first.</strong> The team trains a model before trying the prompt and retrieval.</li>
+<li><strong>Gate without numbers.</strong> Nobody can agree, during an incident, that it is time to roll back.</li>
+<li><strong>Value assumed, not measured.</strong> The readout repeats the target instead of the result.</li>
+</ul>
+<h2 id="go-deeper">Go deeper</h2>
+<ul>
+<li><a href="../building-ai-native-products/capstone-ship-one-ai-native-feature.html">Capstone: ship one AI-native feature</a> — the launch gate template.</li>
+<li><a href="../building-ai-native-products/ux-practice-the-ai-feature-spec.html">Practice: the AI feature spec</a> — the one-page spec with examples.</li>
+<li><a href="../building-ai-native-products/model-intuition-practice.html">Practice: probing and choosing models</a> — the bake-off in stage 6.</li>
+<li><a href="../building-ai-native-products/hill-climbing-in-practice.html">Practice: hill climbing</a> — the climb in stage 5, with development and held-back sets.</li>
+<li><a href="../building-ai-native-products/designing-for-ambiguity.html">Designing for ambiguity</a> — the screen in stage 7.</li>
+<li><a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy, or fine-tune</a> — when the cheap levers are not enough.</li>
+<li><a href="../technical-product-management/launches-rollouts-and-migrations.html">Launches, rollouts &amp; migrations</a> — staged rollout in general.</li>
+<li><a href="../product-sense/product-sense-for-ai.html">Product sense for AI products</a> — judging whether AI fits the job.</li>
+</ul>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>The average score is 92%, but one must-not-fail case fails. Do you ship?</strong>
+ <br />
+<details><summary>Answer</summary>No. A must-not-fail case blocks launch whatever the average says. That is the point of naming them.</details></p>
+</li>
+<li>
+<p><strong>Why try retrieval before fine-tuning?</strong>
+ <br />
+<details><summary>Answer</summary>It is cheaper and faster to change, and it often closes the gap. Northwind reached its bar without training a model.</details></p>
+</li>
+<li>
+<p><strong>Reading time fell by 5.5 minutes a claim. When is that not worth $165,000 a month?</strong>
+ <br />
+<details><summary>Answer</summary>When the saved time is not used for other work. The readout must say where the time goes.</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Saleema Amershi et al., <em>Guidelines for Human-AI Interaction</em>, Conference on Human Factors in Computing Systems (CHI), 2019, read 2026-11: 18 guidelines, including G2 "Make clear how well the system can do what it can do" and G9 "Support efficient correction".</li>
+<li>Anthropic, "Define your success criteria", platform.claude.com/docs/en/test-and-evaluate/define-success, read 2026-11: success criteria should be specific, measurable, achievable and relevant, and most uses need several criteria, including latency and price.</li>
+<li>Northwind Mutual, its claims, scores, prices, hours and costs are invented for the example.</li>
+<li>Independent fact-check: run on 2026-11-04 by a separate agent with web access, blind to the edits. Result: clean, with no wrong, stale or unsupported claims. The checker confirmed the wording of the human-AI guidelines on Microsoft's own guidelines page, not in the paper PDF. It read the success-criteria page in part: the first 100,000 of about 153,000 characters. Vendor documentation pages carry no on-page date, so the vendor terms above hold as of the read date.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="anatomy-of-a-guardrailed-request.html"><span class="lbl">← Previous</span><span class="ttl">Anatomy of a guardrailed request</span></a><a class="navcard next" href="one-model-change.html"><span class="lbl">→ Next</span><span class="ttl">One model change: cost, speed and quality</span></a></div><footer class="foot"><strong>Core insight:</strong> Follow one example through the stages and the system stops being magic: each stage has one job, one cost and one way to break.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#in-one-minute">In one minute</a><a class="h2" href="#1-the-size-of-the-prize">1 · The size of the prize</a><a class="h2" href="#2-is-ai-the-right-tool">2 · Is AI the right tool?</a><a class="h2" href="#3-the-cost-of-being-wrong">3 · The cost of being wrong</a><a class="h2" href="#4-a-spec-built-on-examples">4 · A spec built on examples</a><a class="h2" href="#5-the-cheapest-lever-first">5 · The cheapest lever first</a><a class="h2" href="#6-choosing-the-model">6 · Choosing the model</a><a class="h2" href="#7-design-for-being-wrong">7 · Design for being wrong</a><a class="h2" href="#8-the-launch-gate">8 · The launch gate</a><a class="h2" href="#9-a-staged-rollout">9 · A staged rollout</a><a class="h2" href="#10-the-first-month-readout">10 · The first-month readout</a><a class="h2" href="#the-whole-journey">The whole journey</a><a class="h2" href="#where-it-breaks">Where it breaks</a><a class="h2" href="#go-deeper">Go deeper</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=explainers%2Fone-ai-feature-from-idea-to-launch.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="explainers/one-ai-feature-from-idea-to-launch.html"</script><script defer src="../assets/glossary.js"></script></body></html>

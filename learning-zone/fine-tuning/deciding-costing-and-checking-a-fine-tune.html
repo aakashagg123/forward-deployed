@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Deciding, costing and checking a fine-tune — Fine-tuning</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Fine-tuning</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="from-base-model-to-assistant.html">1 · From base model to assistant: the post-training pipeline</a><a class="modlink" href="supervised-fine-tuning.html">2 · Supervised fine-tuning</a><a class="modlink" href="lora-and-parameter-efficient-tuning.html">3 · LoRA and parameter-efficient tuning</a><a class="modlink" href="preference-tuning-and-reward-hacking.html">4 · Preference tuning and reward hacking</a><a class="modlink" href="the-dataset.html">5 · The dataset: quality, duplicates, contamination and synthetic data</a><a class="modlink active" href="deciding-costing-and-checking-a-fine-tune.html">6 · Deciding, costing and checking a fine-tune</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
+    <h1>Deciding, costing and checking a fine-tune</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Fine-tune when you have a behaviour problem that a better prompt cannot fix, you have a test that measures it, and the volume is high enough to pay for the project. In other cases, a prompt, a retrieved document or a different model is cheaper.</p>
+<p>The cost case usually rests on one trade. A large model with a long prompt of instructions and examples is replaced by a smaller tuned model with a short prompt. The saving per request is real. The project has a fixed cost: data, training, evaluation, and the work of keeping the model current. The break-even volume is the fixed cost divided by the saving per request.</p>
+<p>A release gate keeps the project honest. Ship only if the target task improved by an agreed margin and general ability did not slip.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Fine-tuning is the most over-chosen option in AI roadmaps. It feels like owning the model. Often a prompt, a retrieval step or a cheaper model does the job at a fraction of the effort.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the break-even volume and the release gate before approving a tuning project. You also plan for a retune each time the base model changes.</p>
+<p><strong>Ask your eng team</strong> — <em>"What is the best result we get from prompting and retrieval, what does tuning add on top, and at what volume does the saving cover the project?"</em></p>
+<p><strong>Risk if ignored</strong> — A fine-tuned model that costs more than the prompt it replaced, and falls behind each time the vendor releases a better base model.</p>
+</blockquote>
+<h2 id="the-mental-model-a-fixed-cost-against-a-per-request-saving">The mental model: a fixed cost against a per-request saving</h2>
+<style>
+.dgm-dc{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-dc-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-dc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-dc-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-dc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-dc-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-dc-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-dc-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-dc-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-dc-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-dc-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-dc-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-dc-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-dc-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-dc-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-dc-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-dc-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-dc-note b{color:var(--color-text)}
+.dgm-dc-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-dc{padding:22px 14px 18px}.dgm-dc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-dc-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-dc">
+  <span class="dgm-dc-chip">The decision</span>
+  <h4>Three questions before you tune</h4>
+  <p class="dgm-dc-sub">Each answer ends in an action.</p>
+  <div class="dgm-dc-grid">
+    <div class="dgm-dc-c dgm-dc-info"><h5><span class="dgm-dc-n">1</span>A behaviour problem</h5><p>Where you start.</p></div>
+    <div class="dgm-dc-c dgm-dc-caution"><h5><span class="dgm-dc-n">2</span>Does a better prompt or retrieval fix it?</h5><span class="dgm-dc-t">yes: do that</span><p>If no, go on.</p></div>
+    <div class="dgm-dc-c dgm-dc-warning"><h5><span class="dgm-dc-n">3</span>Is there a test that measures it?</h5><span class="dgm-dc-t">no: build the test first</span><p>If yes, go on.</p></div>
+    <div class="dgm-dc-c dgm-dc-discovery"><h5><span class="dgm-dc-n">4</span>Does the saving pay for the project at our volume?</h5><span class="dgm-dc-t">no: do not tune</span><p>If yes, go on.</p></div>
+    <div class="dgm-dc-c dgm-dc-success"><h5><span class="dgm-dc-n">5</span>Tune, then gate the release</h5><p>Gain above the margin, general drop below the limit.</p></div>
+  </div>
+  <p class="dgm-dc-foot">Example break-even: about 250,980 requests for a $2,000 project (invented prices).</p>
+</div>
+
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="when-tuning-fits">When tuning fits</h3>
+<p>Tuning fits these needs: a consistent format or voice, a narrow task where a small model can match a large one, a long prompt you want to shorten, and style that is hard to describe in words. It does not fit adding facts, fixing knowledge gaps or handling data that changes often. For those, see <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">RAG vs. long context vs. fine-tuning</a>.</p>
+<h3 id="the-cost-model">The cost model</h3>
+<p>Per request, count input and output tokens at each model's price. A tuned small model usually has a short prompt, because the instructions and examples live in the weights. A custom model may also cost a premium to host.</p>
+<p>The fixed cost has four parts: writing and checking data, training runs, the evaluation work, and upkeep. Upkeep is the one teams forget. When the base model improves, the tuned version falls behind, and the data may need to be run again.</p>
+<h3 id="distillation">Distillation</h3>
+<p>Distillation trains a small model on the outputs of a large one. The large model writes the training answers. The cost of that step is the number of examples times the large model's price per example. It is often modest next to the engineering time.</p>
+<h3 id="the-release-gate">The release gate</h3>
+<p>Define two numbers before training. The first is the minimum gain on the target task. The second is the largest drop in general ability you will accept. Test the tuned model against the base model on both. Ship only if it clears both.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Prompt now vs. tune later.</strong> A prompt ships today. Tuning pays back only at volume.</li>
+<li><strong>Vendor tuning vs. own.</strong> A vendor's service is quick and ties you to that vendor and base model. Your own gives control and a team to run.</li>
+<li><strong>One task vs. many.</strong> A model tuned for one task is sharp. Tuning for many is harder to test.</li>
+<li><strong>Retune cadence.</strong> More frequent retuning keeps pace with base models and costs more.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Tuning before testing.</strong> No test, so no way to know if it worked.</li>
+<li><strong>Ignoring the fixed cost.</strong> The saving per request looks large, and the project never pays back.</li>
+<li><strong>No upkeep.</strong> The base model moves on, and the tuned model ages.</li>
+<li><strong>Ungated release.</strong> The target score rose and general ability fell, and nobody checked.</li>
+<li><strong>Wrong problem.</strong> A knowledge gap fixed with tuning, when retrieval would have worked.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>fine-tuning/code/lesson6_decide.py</code>. All prices are invented. The break-even function compares the two ways to answer a request.</p>
+<pre><code class="language-python">def breakeven(prompt_big=1800, prompt_small=150, out_tokens=200, serve_premium=1.5, fixed=2000.0, price=PRICE):
+    big = per_request(prompt_big, out_tokens, price[&quot;big_in&quot;], price[&quot;big_out&quot;])
+    small = per_request(prompt_small, out_tokens, price[&quot;small_in&quot;] * serve_premium, price[&quot;small_out&quot;] * serve_premium)
+    saving = big - small
+    return dict(big=big, small=small, saving=saving, requests=fixed / saving if saving &gt; 0 else float(&quot;inf&quot;))
+</code></pre>
+<p>The release gate is two comparisons: gain at least <code>min_gain</code>, and general ability down by at most <code>max_general_drop</code>.</p>
+<h2 id="worked-example-when-a-fine-tune-pays-back">Worked example: when a fine-tune pays back</h2>
+<p><em>This example is invented. The prices and volumes are assumptions for the arithmetic, not quotes. The numbers come from <code>fine-tuning/code/lesson6_decide.py</code>.</em></p>
+<p>A large model costs $3 per million input tokens and $15 per million output tokens. A small model costs $0.25 and $1.25. A tuned small model costs 1.5 times that to host. Each request has 200 output tokens.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Prompt</th>
+<th>Cost per 1,000 requests</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Large model, long few-shot prompt</td>
+<td>1,800 tokens</td>
+<td>$8.40</td>
+</tr>
+<tr>
+<td>Tuned small model, short prompt</td>
+<td>150 tokens</td>
+<td>$0.43</td>
+</tr>
+</tbody>
+</table>
+<p>The saving is $7.97 per 1,000 requests.</p>
+<table>
+<thead>
+<tr>
+<th>Project cost</th>
+<th>Break-even</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$2,000</td>
+<td>about 251,000 requests</td>
+</tr>
+<tr>
+<td>$500</td>
+<td>about 63,000 requests</td>
+</tr>
+</tbody>
+</table>
+<p>If the large model needed only a 300-token prompt, the saving would shrink and the break-even for $2,000 would rise to about 577,000 requests. A shorter prompt on the large model removes much of the case for tuning.</p>
+<p><strong>Distillation.</strong> Having the large model write 20,000 training examples, at 400 input and 250 output tokens each, costs $99.00.</p>
+<p><strong>The release gate.</strong> Three candidates are tested against a baseline score of 0.84 and a general score of 0.80. A minimum gain of 0.02 and a largest general drop of 0.01 are required.</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Gain</th>
+<th>General ability</th>
+<th>Ship?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A: 0.91, general 0.795</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>B: 0.91, general 0.74</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>C: 0.85, general 0.80</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Candidate B would look best on the target task alone and is rejected for the damage to general ability.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have we tried a better prompt and retrieval first, and recorded the result?</li>
+<li class="task todo">Is there a test that measures the behaviour we want to change?</li>
+<li class="task todo">Have we computed the break-even volume, including the fixed cost and upkeep?</li>
+<li class="task todo">Is the release gate defined before training?</li>
+<li class="task todo">Do we have a plan for when the base model changes?</li>
+<li class="task todo">Do we know the licence terms for any data a model wrote?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">RAG vs. long context vs. fine-tuning</a> — which tool for which need.</li>
+<li><a href="../rag-vector-databases/when-to-use-rag.html">When to use RAG, and when not to</a> — the decision tree for knowledge.</li>
+<li><a href="../generative-ai/build-buy-or-fine-tune.html">Build, buy or fine-tune</a> — the product-level view.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — the levers around the model.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — building the test first.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Hinton, Vinyals and Dean, <em>Distilling the Knowledge in a Neural Network</em>, 2015 (<a href="https://arxiv.org/abs/1503.02531">arxiv.org/abs/1503.02531</a>).</li>
+<li>Ouyang et al., <em>Training language models to follow instructions with human feedback</em>, NeurIPS 2022 (<a href="https://arxiv.org/abs/2203.02155">arxiv.org/abs/2203.02155</a>): a smaller tuned model preferred over a much larger base model.</li>
+<li>Hu et al., <em>LoRA</em>, ICLR 2022 (<a href="https://arxiv.org/abs/2106.09685">arxiv.org/abs/2106.09685</a>): the cost of adapters.</li>
+<li>The prices, volumes and every number are invented. They come from <code>fine-tuning/code/lesson6_decide.py</code>. This module's sources were not re-opened during the build, and its fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="the-dataset.html"><span class="lbl">← Previous</span><span class="ttl">The dataset: quality, duplicates, contamination and synthetic data</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> Tuning is a small push on a model that already knows most of what it knows, so it changes behaviour well, adds facts badly, and needs a test and a break-even before you start.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-fixed-cost-against-a-per-request-saving">The mental model: a fixed cost against a per-request saving</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#when-tuning-fits">When tuning fits</a><a class="h3" href="#the-cost-model">The cost model</a><a class="h3" href="#distillation">Distillation</a><a class="h3" href="#the-release-gate">The release gate</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-when-a-fine-tune-pays-back">Worked example: when a fine-tune pays back</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=fine-tuning%2Fdeciding-costing-and-checking-a-fine-tune.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="fine-tuning/deciding-costing-and-checking-a-fine-tune.html"</script><script defer src="../assets/glossary.js"></script></body></html>

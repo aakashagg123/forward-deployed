@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Business acumen — recap &amp; real-world examples — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink active" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
+    <h1>Business acumen — recap &amp; real-world examples</h1>
+  </div>
+  <div class="MarkdownContent"><h2 id="real-world-examples">Real-world examples</h2>
+<p><strong>A marketplace that reports its take rate (DoorDash).</strong> DoorDash reports a "net revenue margin": its revenue divided by the value of orders on its marketplaces. Its 10-K put it at 13.4% for 2024. Most of each order's value passes through to merchants, couriers, taxes and tips. 🎯 <em>Takeaway:</em> order volume is not revenue. Know your take rate and what each order costs to serve. See <a href="foundations-and-assessment.html#why-domain-depth-compounds">foundations</a>.</p>
+<p><strong>An insurer's loss ratio falls with scale and data (Lemonade).</strong> Lemonade's 2020 10-K shows its gross loss ratio at 161% in 2017, 113% in 2018, 79% in 2019 and 71% in 2020. In its early years, claims cost more than the premium it earned. 🎯 <em>Takeaway:</em> in insurance, you learn whether your price was right only after the claims come in. See <a href="performance-and-growth.html#insurance-loss-development">insurance loss development</a>.</p>
+<p><strong>A lender's funding dries up (Upstart).</strong> Upstart's 10-K for 2022 says that, in response to constrained loan funding, it increased the use of its own balance sheet to fund loans. A lending platform needs capital partners as much as borrowers. 🎯 <em>Takeaway:</em> in Lending, the funding side is a product dependency. See <a href="the-language-of-money.html#the-balance-sheet">the balance sheet</a>, and <a href="business-cases-and-valuation.html#funding-and-capital-in-regulated-businesses">how lenders fund loans</a>.</p>
+<p><strong>Buying a bank to lower the cost of funds (SoFi).</strong> In 2021 SoFi agreed to acquire Golden Pacific Bancorp, a community bank, to accelerate its pursuit of a national bank charter. Its own application for a new bank was already under way, with preliminary conditional approval in October 2020 from the Office of the Comptroller of the Currency (OCC), the US national bank regulator. A charter lets a lender fund loans with deposits. 🎯 <em>Takeaway (general principle, not a claim from the release):</em> buying a licensed entity is one route to a capability. It can be faster than building that capability alone. See <a href="portfolio-strategy-and-allocation.html">portfolio strategy and capital allocation</a>.</p>
+<p><strong>A big bet reversed in about a year (Shopify).</strong> Shopify agreed to buy Deliverr in 2022 to build its logistics business. In 2023 it agreed to sell most of the logistics business to Flexport. Shopify's results release said it would receive a 13% equity interest in Flexport, on top of its existing stake, and that Flexport would become its official logistics partner. 🎯 <em>Takeaway:</em> set stop criteria for big bets, and know your partner alternative. See <a href="portfolio-strategy-and-allocation.html">portfolio strategy and capital allocation</a>.</p>
+<p><strong>A cheap cost to serve as a strategy (Nubank).</strong> Nubank reports monthly revenue and monthly cost to serve per active customer. In Q2 2023 it said the first passed $9 while the second stayed below $1. 🎯 <em>Takeaway:</em> a low cost to serve lets a digital bank profit from customers others cannot serve. See <a href="unit-economics.html#neobanks-per-customer">neobanks per customer</a>.</p>
+<p><strong>The partner that was never consulted (an illustration).</strong> A fintech builds a new savings feature for six months. A week before launch, its partner bank's compliance team asks for changes to the disclosures and a new review. The launch slips a quarter. Nothing was wrong with the product. The approver was not on the org chart. 🎯 <em>Takeaway:</em> map every approval, including outside partners, before you build. See <a href="navigating-the-organization.html">navigating the organization</a>. This story is invented.</p>
+<p><strong>Growth that made the loss bigger (an illustration).</strong> An insurer with a 102% combined ratio sets a premium growth target. The growth team hits it. The underwriting loss grows from $1.0 million to $1.1 million. 🎯 <em>Takeaway:</em> every growth target needs a quality guardrail inside it. See <a href="performance-and-growth.html#worked-example-which-lever-moves-an-insurers-profit">which lever moves an insurer's profit</a>. This story is invented.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The question it makes you ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="foundations-and-assessment.html">Foundations</a></td>
+<td>Acumen is breadth over domain depth. Diagnose gaps with evidence, then close the two that block a decision.</td>
+<td>Which of my gaps blocks a decision I face this quarter?</td>
+</tr>
+<tr>
+<td><a href="the-language-of-money.html">The language of money</a></td>
+<td>Three statements, one story. Profit is not cash: working capital, float and capex sit in between.</td>
+<td>How much cash does this feature tie up, and who funds it?</td>
+</tr>
+<tr>
+<td><a href="unit-economics.html">Unit economics</a></td>
+<td>Build the economics of one unit, layer by layer, then follow a cohort. Payback and lifetime value only count on paid acquisition cost and real cohorts.</td>
+<td>What does one unit contribute after every variable cost, and when does a paid cohort pay back?</td>
+</tr>
+<tr>
+<td><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a></td>
+<td>Rank bets by NPV against the counterfactual. Funding cost and capital are product costs in lending and insurance.</td>
+<td>What happens if we do nothing, and does the case survive the worst bar of the tornado?</td>
+</tr>
+<tr>
+<td><a href="data-and-decisions.html">Data and decisions</a></td>
+<td>Ask for the base rate, price every error, and cap what a test is worth before you fund it.</td>
+<td>What result would make us choose differently, and what is that worth?</td>
+</tr>
+<tr>
+<td><a href="markets-and-strategy.html">Markets and customers</a></td>
+<td>Size the revenue pool bottom-up, segment by need and economics, and position against the real alternative.</td>
+<td>How much of this market's revenue can we reach and keep?</td>
+</tr>
+<tr>
+<td><a href="competitive-advantage-and-strategy.html">Competitive advantage and strategy</a></td>
+<td>Find the force that caps profit, follow the profit pool, and claim an advantage only with a benefit and a barrier.</td>
+<td>Why can a rival not copy this, and what will we not do?</td>
+</tr>
+<tr>
+<td><a href="monetization-and-business-models.html">Pricing and business models</a></td>
+<td>Pick a value metric that tracks value and cost. Judge a price change against its break-even volume loss, and deals on pocket price.</td>
+<td>How much volume can this price change lose before it destroys contribution?</td>
+</tr>
+<tr>
+<td><a href="products-and-marketing.html">Products and go-to-market</a></td>
+<td>Match the go-to-market motion to deal size. Fund marketing on incremental, not attributed, conversions. Outsource work, never accountability.</td>
+<td>How many of these conversions would have happened anyway?</td>
+</tr>
+<tr>
+<td><a href="performance-and-growth.html">Performance and growth</a></td>
+<td>Split growth into flows, read gross retention first, compare vintages at the same age, and put the guardrail inside the target.</td>
+<td>If this metric rose 10%, which profit line moves, and what stops us gaming it?</td>
+</tr>
+<tr>
+<td><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a></td>
+<td>Judge each horizon by its own standard. Stage big bets, count shared dependencies, and plan sunsets.</td>
+<td>What evidence, by when, would make us stop this?</td>
+</tr>
+<tr>
+<td><a href="navigating-the-organization.html">Navigating the organization</a></td>
+<td>Know who holds which lever, get asks into the plan before targets lock, and work with Risk through risk acceptance.</td>
+<td>Who outside this room can stop this?</td>
+</tr>
+<tr>
+<td><a href="teams-and-collaboration.html">Teams and collaboration</a></td>
+<td>Design team types, interaction modes and decision rights. Handoffs into overloaded teams cost weeks.</td>
+<td>Who is accountable for this decision, and how loaded is the team we depend on?</td>
+</tr>
+<tr>
+<td><a href="leading-leaders-and-org-design.html">Leading leaders and org design</a></td>
+<td>The system mirrors the org. Design from criteria, and reorganize only if the structure will outlast its payback.</td>
+<td>How many teams must change to move our top goal?</td>
+</tr>
+<tr>
+<td><a href="executive-influence-and-stakeholders.html">Executive influence and stakeholders</a></td>
+<td>Answer first. Bring the board decisions. Compute both sides' walk-away points before you negotiate.</td>
+<td>Does the first paragraph hold the ask, the answer and the cost?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line:</strong> every product decision at leadership level is also a business decision. It moves revenue, cost, risk or cash, and it needs people who do not report to you. The domain decides which of those moves matter most. In Payments it is interchange and disputes. In Lending it is losses and funding. In eCommerce it is take rate and cost per order. In Insurance it is the loss ratio. In Retail it is margin and stock. In FinTech it is cost to serve, partners and rules. A leader with acumen can trace any decision to those numbers, and bring the right people along.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"For my biggest bet this year: which line of the financial statements does it move, what does the case look like if the key assumption is half as good, who outside my team must agree, and what would make me stop it?"</em></p>
+</blockquote>
+<p>If you can answer all four, you are speaking the business's language. If not, re-take the <a href="assessment.html">self-assessment</a> and start with your largest gap.</p>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>A leader moves from eCommerce to Lending. Which kind of acumen transfers, and which must be rebuilt?</strong>
+ <br />
+<details><summary>Answer</summary>General breadth transfers: statements, strategy tools, org skills. Domain depth must be rebuilt: credit losses arrive months after the decision, the price must cover the cost of funds and expected loss, and lending rules limit what data and prices you may use. (<a href="foundations-and-assessment.html">Foundations</a>)</details></p>
+</li>
+<li>
+<p><strong>A marketplace team reports $500 million of GMV as revenue. Why is that wrong?</strong>
+ <br />
+<details><summary>Answer</summary>GMV is the value of goods sold through the platform. Revenue is only the share the company earns, such as its take rate and fees. Compare companies on gross profit, not on GMV or revenue. (<a href="the-language-of-money.html#what-counts-as-revenue-the-domain-traps">The language of money</a>)</details></p>
+</li>
+<li>
+<p><strong>Sales wants to offer net-60 terms. The model shows profit up $1.77 million a year. Why might Finance still say no?</strong>
+ <br />
+<details><summary>Answer</summary>Profit is not cash. In the lesson's example, receivables rise by about $13 million, so operating cash in year 1 is about −$11.25 million. Someone must fund that gap, usually with a credit line. Ask how much cash the feature ties up, and who funds it. (<a href="the-language-of-money.html#worked-example-offering-net-60-payment-terms">The language of money</a>)</details></p>
+</li>
+<li>
+<p><strong>A business unit says it is "EBITDA-positive, so it funds itself." What do you ask for?</strong>
+ <br />
+<details><summary>Answer</summary>Free cash flow. Interest, tax, working capital, capex and capitalized software sit between adjusted EBITDA and cash. In the lesson's example, adjusted EBITDA is $25 million and free cash flow is $7 million. (<a href="the-language-of-money.html#from-profit-to-cash-the-ebitda-free-cash-flow-bridge">The language of money</a>)</details></p>
+</li>
+<li>
+<p><strong>A growth pitch shows a 6-month payback and lifetime value near 6 times acquisition cost. What do you check before you fund it?</strong>
+ <br />
+<details><summary>Answer</summary>Whether it uses blended or paid acquisition cost, simple or cohort payback, and an LTV with no horizon. In the lesson's acquiring example, the paid channel has a cohort payback of about 17 months and returns about 1.5 times its acquisition cost over 36 months. (<a href="unit-economics.html#worked-example-an-smb-acquiring-cohort-from-one-payment-to-payback">Unit economics</a>)</details></p>
+</li>
+<li>
+<p><strong>The average personal loan contributes $1,301. Risk proposes a riskier band that contributes $944 per loan. Do you approve it because both are positive?</strong>
+ <br />
+<details><summary>Answer</summary>Not on that basis alone. Judge the band on its own marginal economics, not the average. A riskier band also carries more uncertainty, more fraud and worse recoveries than the model may show. Approve it as a limited, measured test, and set a stop rule on its early losses. (<a href="unit-economics.html#worked-example-one-personal-loan">Unit economics</a>)</details></p>
+</li>
+<li>
+<p><strong>A neobank's simple payback is 15 months. What should you stress-test first?</strong>
+ <br />
+<details><summary>Answer</summary>The revenue line it depends on most, often interchange, which a rule or a partner bank controls. In the lesson's example, halving interchange pushes payback to 60 months and each new customer loses money. (<a href="unit-economics.html#neobanks-per-customer">Unit economics</a>)</details></p>
+</li>
+<li>
+<p><strong>A business case has a positive NPV of $95,000 on a $900,000 investment. Is it a good case?</strong>
+ <br />
+<details><summary>Answer</summary>It depends on its sensitivity. In the lesson's example, savings only 7.6% below the estimate make NPV zero. A thin case is better staged as a pilot, which also buys information. (<a href="business-cases-and-valuation.html#worked-example-a-business-case-for-a-fraud-model">Business cases, capital and valuation</a>)</details></p>
+</li>
+<li>
+<p><strong>Bet A has an IRR of 40%. Bet B has an IRR of 20%. You can fund only one. Which do you pick?</strong>
+ <br />
+<details><summary>Answer</summary>Compare NPV, not IRR. IRR ignores size. In the lesson's example, the 40% bet creates $27,273 of NPV and the 20% bet creates $90,909. Rank by NPV and communicate with IRR. (<a href="business-cases-and-valuation.html#irr-and-when-it-misleads">Business cases, capital and valuation</a>)</details></p>
+</li>
+<li>
+<p><strong>A launch deck credits a new buy now, pay later (BNPL) option with $10 million of new sales. What is missing?</strong>
+    <details><summary>Answer</summary>The counterfactual. Most of those orders would have paid by card anyway. In the lesson's example, a holdout shows only 15% were new, and the net gain after the higher fee on shifted sales is about $62,500 a year. (<a href="business-cases-and-valuation.html#incrementality-and-the-counterfactual">Business cases, capital and valuation</a>)</details></p>
+</li>
+<li><strong>A fraud model has 90% recall and a 2% false-alarm rate. Fraud is 0.2% of transactions. What share of flags are real fraud?</strong>
+    <details><summary>Answer</summary>About 8.3%. Of 1,000,000 transactions, the model catches 1,800 frauds but also flags 19,960 good ones. Eleven of every twelve flags are good customers. Always ask for the base rate before any accuracy claim. (<a href="data-and-decisions.html#base-rates-why-accurate-models-raise-mostly-false-alarms">Data and decisions</a>)</details></li>
+<li><strong>A data vendor offers a $1.5 million insight into a credit band. Perfect information about that band is worth $1.2 million. Do you buy?</strong>
+    <details><summary>Answer</summary>No. No test or data source can be worth more than the expected value of perfect information. Above that cap, decide now, or run a cheaper test. (<a href="data-and-decisions.html#value-of-information-what-a-test-is-worth">Data and decisions</a>)</details></li>
+<li><strong>Your weighted scoring puts option A at 3.85 and option B at 3.80. What do you do?</strong>
+    <details><summary>Answer</summary>Treat it as a tie. Test the weights, find the criterion the result depends on, and decide that question directly, or fund a small test of the runner-up. (<a href="data-and-decisions.html#the-decision-matrix">Data and decisions</a>)</details></li>
+<li><strong>A team sizes a payments market as the total card volume in the country. What is wrong?</strong>
+    <details><summary>Answer</summary>Volume is not revenue. Size the revenue pool: multiply volume by the net take rate you can keep. Then cap your obtainable share by how many customers your sales, partners or marketing can reach. (<a href="markets-and-strategy.html#market-sizing-done-right">Markets and customers</a>)</details></li>
+<li><strong>Which growth-matrix cell is a renters insurer adding pet insurance for its existing customers, and what is the main risk?</strong>
+    <details><summary>Answer</summary>Product development: a new product for an existing market. The main risk is pricing with no loss history, so the loss ratio may be far off for a year or more. (<a href="markets-and-strategy.html#worked-example-growth-options-for-a-renters-insurer">Markets and customers</a>)</details></li>
+<li><strong>A pitch says the product "has network effects." How do you test the claim?</strong>
+    <details><summary>Answer</summary>Ask for density data: does value or retention rise with network density in your own data? Also check how cheap it is for users to use several networks at once. If value does not rise with density, call it scale. (<a href="competitive-advantage-and-strategy.html#network-effects-in-depth">Competitive advantage and strategy</a>)</details></li>
+<li><strong>Your strategy document lists eight goals and rules nothing out. What is wrong?</strong>
+    <details><summary>Answer</summary>It is a list of goals, not a strategy. A strategy names a diagnosis, a guiding policy and coherent actions, and it says what you will not do. (<a href="competitive-advantage-and-strategy.html#structuring-a-strategy">Competitive advantage and strategy</a>)</details></li>
+<li><strong>You plan to raise a price from $29 to $35. Contribution per customer is $20 today. A test suggests you will lose 8% of customers. Do you proceed?</strong>
+    <details><summary>Answer</summary>The break-even volume loss is $6 ÷ ($20 + $6) = 23.1%. An 8% loss is well inside it, and contribution rises about 19.6%. Proceed, but roll it out in cohorts with notice, and measure churn against a held-back group. (<a href="monetization-and-business-models.html#worked-example-a-20-price-rise">Pricing and business models</a>)</details></li>
+<li><strong>Sales asks you to approve a deal at a small discount off the headline rate. What do you look at?</strong>
+    <details><summary>Answer</summary>The pocket price: what remains after rebates, waived fees, free months and other off-invoice leakage. Approve discounts on pocket price and pocket margin, never on the headline rate. (<a href="monetization-and-business-models.html#the-price-waterfall-and-discount-governance">Pricing and business models</a>)</details></li>
+<li><strong>A channel reports 1,000 attributed conversions. A holdout shows 300 were incremental. What is the true acquisition cost?</strong>
+    <details><summary>Answer</summary>3.3 times the reported figure. Treat attributed conversions as a ceiling, and fund marketing on incremental acquisition cost. (<a href="products-and-marketing.html#worked-example-attributed-versus-incremental-cac">Products and go-to-market</a>)</details></li>
+<li><strong>A fintech buys identity verification from a vendor. What does it still own?</strong>
+    <details><summary>Answer</summary>The regulatory responsibility. Buying moves the work, not the accountability, so it needs due diligence, monitoring, a fallback and a tested exit plan. (<a href="products-and-marketing.html#make-buy-or-partner">Products and go-to-market</a>)</details></li>
+<li><strong>Net revenue retention is 100%. Is the customer base healthy?</strong>
+    <details><summary>Answer</summary>Not necessarily. Read gross retention first. In the lesson's example, NRR is 100% but GRR is 85%, so 15% of revenue leaks each year and expansion hides it. (<a href="performance-and-growth.html#retention-economics-gross-and-net-revenue-retention">Performance and growth</a>)</details></li>
+<li><strong>An insurer has a combined ratio of 102%. Should it push premium growth?</strong>
+    <details><summary>Answer</summary>Not at the same ratios. Above 100%, growth makes the underwriting loss bigger. Fix the loss or expense ratio first, or grow only new business priced below 100%. (<a href="performance-and-growth.html#worked-example-which-lever-moves-an-insurers-profit">Performance and growth</a>)</details></li>
+<li><strong>Why is a staged investment often worth more than committing everything up front?</strong>
+    <details><summary>Answer</summary>Staging buys the option to stop after the pilot. That limits the loss if the bet fails. In the lesson's example, staging raised expected value from $6 million to $9 million. (<a href="portfolio-strategy-and-allocation.html#worked-example-staging-a-buy-now-pay-later-bet">Portfolio strategy and capital allocation</a>)</details></li>
+<li><strong>Three bets in your portfolio each depend on the same partner bank. How many bets do you have?</strong>
+    <details><summary>Answer</summary>Effectively one. Bets that share one partner, one rule or one channel fail together. Count shared dependencies, and diversify or hedge the one that matters most. (<a href="portfolio-strategy-and-allocation.html#portfolio-construction-correlation-and-concentration">Portfolio strategy and capital allocation</a>)</details></li>
+<li><strong>What must a lender handle when it sunsets a loan product?</strong>
+    <details><summary>Answer</summary>Existing loans must still be serviced until they are repaid or sold. A sunset stops new loans, not the obligations on the old ones. Price that run-off into the decision. (<a href="portfolio-strategy-and-allocation.html#double-down-or-sunset">Portfolio strategy and capital allocation</a>)</details></li>
+<li><strong>Your launch cannot meet a risk policy on day one, because a control is not built yet. What do you ask Risk for?</strong>
+    <details><summary>Answer</summary>A documented, time-limited risk acceptance with a fix plan and an owner. Do not ask Risk to change the policy, and do not settle for an exception by email. (<a href="navigating-the-organization.html#risk-acceptance">Navigating the organization</a>)</details></li>
+<li><strong>What is the difference between a mentor and a sponsor?</strong>
+    <details><summary>Answer</summary>A mentor gives you advice. A sponsor spends their own political capital to argue for you in rooms you are not in, such as promotion and staffing decisions. (<a href="navigating-the-organization.html#the-informal-organization-trust-capital-and-sponsors">Navigating the organization</a>)</details></li>
+<li><strong>A platform team runs at 90% load. A request needs 2 days of work. Why does it take a month to come back?</strong>
+    <details><summary>Answer</summary>At 90% load, the wait is about 9 times the work, so one handoff takes about 20 working days. Cutting load below about 80%, or removing a handoff, often beats adding a person. (<a href="teams-and-collaboration.html#the-cost-of-a-handoff">Teams and collaboration</a>)</details></li>
+<li><strong>A launch decision has five "approvers." What is wrong, and how do you fix it?</strong>
+    <details><summary>Answer</summary>Nobody is accountable. Give each decision one accountable owner, and make the others consulted or informed. Put hard-to-reverse decisions with a senior owner. (<a href="teams-and-collaboration.html#decision-rights-who-decides-what">Teams and collaboration</a>)</details></li>
+<li><strong>A reorg pays back in about 22 months. Another reorg is likely within two years. Do you go ahead?</strong>
+    <details><summary>Answer</summary>No. If the structure will not outlast its payback, the reorg destroys value. Commit to keep the new structure for longer than its payback, or try clearer decision rights first. (<a href="leading-leaders-and-org-design.html#worked-example-reorganizing-a-lending-product-org">Leading leaders and org design</a>)</details></li>
+<li><strong>Your top goal needs changes from four teams. What does the system-mirrors-the-org principle suggest?</strong>
+    <details><summary>Answer</summary>The product will keep the handoffs your structure creates. Consider grouping teams around the outcome, so one team owns most of the goal, and fund the cleanup of the old interfaces. (<a href="leading-leaders-and-org-design.html#mental-model-the-system-mirrors-the-org">Leading leaders and org design</a>)</details></li>
+<li><strong>A partner bank asks for a larger revenue share. How do you prepare?</strong>
+    <details><summary>Answer</summary>Compute your walk-away point from your best alternative, not your break-even. Estimate the bank's walk-away point from its own costs. Then trade across issues where the two sides' costs differ, so the zone of agreement grows. (<a href="executive-influence-and-stakeholders.html#negotiation-in-numbers-the-zone-of-agreement">Executive influence and stakeholders</a>)</details></li>
+</ol></div>
+  <div class="pagenav"><a class="navcard prev" href="executive-influence-and-stakeholders.html"><span class="lbl">← Previous</span><span class="ttl">Executive influence: narrative, the board and the negotiating table</span></a><a class="navcard next" href="assessment.html"><span class="lbl">→ Next</span><span class="ttl">Self-assessment</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples">Real-world examples</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

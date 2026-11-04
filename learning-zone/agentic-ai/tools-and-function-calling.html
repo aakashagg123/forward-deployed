@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>an agents module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-agent.html">1 · What is an agent?</a><a class="modlink active" href="tools-and-function-calling.html">2 · Tools &amp; function calling</a><a class="modlink" href="context-and-memory.html">3 · Context &amp; memory</a><a class="modlink" href="planning-and-reasoning.html">4 · Planning &amp; reasoning</a><a class="modlink" href="multi-agent-and-protocols.html">5 · Multi-agent systems &amp; protocols</a><a class="modlink" href="reliability-and-evals.html">6 · Reliability &amp; evals</a><a class="modlink" href="safety-security-and-governance.html">7 · Safety, security &amp; governance</a><a class="modlink" href="agentic-ai-as-a-product.html">8 · Agentic AI as a product</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
@@ -150,7 +159,8 @@ final result, instead of emitting one tool call per turn with each result round-
 through the context. This collapses token cost and latency on multi-tool workflows, and
 makes the code sandbox the orchestration surface. <strong>Skills</strong>: packaged procedural
 knowledge — a folder with instructions, scripts, and resources the agent loads when
-relevant — is now a third primitive alongside tools and prompts. Tools give the agent
+relevant — is now a third primitive alongside tools and prompts. Anthropic published the format as
+an open standard (agentskills.io) in December 2025, and other vendors have adopted it. Tools give the agent
 <em>capabilities</em>; skills give it <em>know-how</em> about when and how to use them. Both matter to
 the PM the same way: the toolbox review now covers what code the agent can run and what
 procedures it has been handed, not just which APIs it can call.</p>
@@ -186,7 +196,12 @@ real, widely adopted, and the piece of the much-hyped protocol landscape most wo
 knowing (<a href="multi-agent-and-protocols.html">the honest protocol map</a> comes in lesson 5).
 An ecosystem note that becomes a product note: an MCP server someone else wrote is
 <em>third-party code your agent trusts</em> — its tool results enter your context. Vet servers
-like dependencies, not like plugins.</p>
+like dependencies, not like plugins. Two attacks are specific to MCP. In <strong>tool
+poisoning</strong>, hidden instructions sit in a tool's description. The user sees a harmless
+function, but the model reads and follows the hidden text. In a <strong>rug pull</strong>, a tool passes
+review and then changes its definition later. Most clients check tools only at install
+time. Pin tool definitions by hash, and re-review when they change. The OWASP MCP Top 10
+lists tool poisoning as MCP03:2025.</p>
 <p><strong>Containment</strong> is the other half of integration. The working defaults:</p>
 <ul>
 <li><strong>Sandboxes</strong> — code execution happens in an isolated, disposable environment with no
@@ -229,7 +244,7 @@ like dependencies, not like plugins.</p>
 <li><a href="safety-security-and-governance.html">Safety, security &amp; governance</a></li>
 <li><a href="multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a></li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="what-is-an-agent.html"><span class="lbl">← Previous</span><span class="ttl">What is an agent?</span></a><a class="navcard next" href="context-and-memory.html"><span class="lbl">→ Next</span><span class="ttl">Context &amp; memory</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="what-is-an-agent.html"><span class="lbl">← Previous</span><span class="ttl">What is an agent?</span></a><a class="navcard next" href="context-and-memory.html"><span class="lbl">→ Next</span><span class="ttl">Context &amp; memory</span></a></div><footer class="foot"><strong>Core insight:</strong> Teams win with agents by matching autonomy to stakes, making the work verifiable, and earning trust one tier at a time.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mechanics">The mechanics</a><a class="h2" href="#tool-design-is-ux-design-for-a-model">Tool design is UX design (for a model)</a><a class="h2" href="#integration-and-containment">Integration and containment</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

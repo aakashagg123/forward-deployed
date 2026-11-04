@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Specs and the context file — AI-assisted development</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI-assisted development</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-an-agent-writes-the-code.html">1 · When an agent writes the code: where the bottleneck goes</a><a class="modlink active" href="specs-and-the-context-file.html">2 · Specs and the context file</a><a class="modlink" href="verification-is-the-product.html">3 · Verification is the product</a><a class="modlink" href="control-permissions-modes-and-hooks.html">4 · Control: permissions, modes and hooks</a><a class="modlink" href="running-at-scale.html">5 · Running at scale: sessions, subagents and fan-out</a><a class="modlink" href="measuring-and-governing.html">6 · Measuring and governing</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <h1>Specs and the context file</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>An agent starts every session knowing nothing about your project. Two things fix that. A <strong>spec</strong> tells it what to do in this task. A <strong>context file</strong> tells it what is always true about the project. In Claude Code the context file is called <code>CLAUDE.md</code>. Other tools use similar files.</p>
+<p>A good spec has four parts: the goal, the scope (which files and which not), the constraint that matters, and <strong>how the agent can check its own work</strong>. The last part is the one that most changes the result.</p>
+<p>A good context file is short. The documentation says to aim for under 200 lines. It loads into every session, so each line costs tokens every time, and a long file lowers how well the agent follows it. Put in what the agent cannot work out from the code: build and test commands, naming rules that differ from the default, and traps. Leave out what it can read for itself.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — The context file is the cheapest lever on agent quality. It is also shared by every engineer, so a bad line costs the whole team.</p>
+<p><strong>What it changes in your decisions</strong> — You treat the file as reviewed code, with an owner. You ask for specs that include a check. You move rarely needed instructions out of the file.</p>
+<p><strong>Ask your eng team</strong> — <em>"Who owns the context file, when was it last pruned, and what is the test command it gives the agent?"</em></p>
+<p><strong>Risk if ignored</strong> — A 600-line file nobody reads, with contradictions the agent resolves at random. Four times the token cost of a lean file, and worse results.</p>
+</blockquote>
+<h2 id="the-mental-model-a-briefing-for-a-capable-stranger">The mental model: a briefing for a capable stranger</h2>
+<p>Picture a skilled contractor who joins your team each morning with no memory of yesterday. You hand them two documents. One is the standing brief: how we build, test and name things. The other is today's job card. Neither can be long, or the contractor skims.</p>
+<style>
+.dgm-sp{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-sp-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-sp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-sp-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-sp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dgm-sp-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-sp-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-sp-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-sp-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-sp-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-sp-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-sp-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-sp-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-sp-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-sp-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-sp-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-sp-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-sp-note b{color:var(--color-text)}
+.dgm-sp-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-sp{padding:22px 14px 18px}.dgm-sp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-sp-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-sp">
+  <span class="dgm-sp-chip">Two documents</span>
+  <h4>A briefing for a capable stranger</h4>
+  <p class="dgm-sp-sub">The agent remembers nothing between sessions, so it needs both every time.</p>
+  <div class="dgm-sp-grid">
+    <div class="dgm-sp-c dgm-sp-info"><h5><span class="dgm-sp-n">1</span>Context file</h5><span class="dgm-sp-t">always true · short</span><p>Build and test commands, traps. Under about 200 lines.</p></div>
+    <div class="dgm-sp-c dgm-sp-discovery"><h5><span class="dgm-sp-n">2</span>Path rules and skills</h5><span class="dgm-sp-t">loaded when relevant</span><p>Part-of-codebase rules and multi-step procedures.</p></div>
+    <div class="dgm-sp-c dgm-sp-caution"><h5><span class="dgm-sp-n">3</span>Spec for this task</h5><span class="dgm-sp-t">goal · scope · constraint · check</span><p>The check is the part most often missing.</p></div>
+    <div class="dgm-sp-c dgm-sp-success"><h5><span class="dgm-sp-n">4</span>Session starts, agent works</h5><p>With the standing brief and the job card.</p></div>
+  </div>
+  <p class="dgm-sp-foot">Imports organize a file but do not cut its context cost.</p>
+</div>
+
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="what-goes-in-the-file">What goes in the file</h3>
+<p>Per the Claude Code documentation, include things the agent cannot infer: commands to build, test and lint, style rules that differ from defaults, repository etiquette such as branch names, and known traps. Leave out what the code already says, long explanations, and advice that cannot be tested, such as "write clean code".</p>
+<h3 id="keep-it-short-and-move-the-rest">Keep it short, and move the rest</h3>
+<p>The file loads in every session. Splitting it into imported files helps organization but does <strong>not</strong> cut the context cost, because imported files load at launch too. To cut cost, move content that matters for only part of the codebase into path-scoped rules, which load only when the agent touches matching files. Move multi-step procedures into <strong>skills</strong>, which load when needed or when you call them.</p>
+<h3 id="the-spec-for-one-task">The spec for one task</h3>
+<p>A useful spec answers four questions.</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Goal</td>
+<td>"Add a retry to the invoice email sender."</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>"Only <code>billing/email.py</code> and its tests. Do not change the queue."</td>
+</tr>
+<tr>
+<td>Constraint</td>
+<td>"Retries must not send duplicates. Use the existing idempotency key."</td>
+</tr>
+<tr>
+<td>Check</td>
+<td>"<code>pytest billing -x</code> must pass, and add a test that fails without the fix."</td>
+</tr>
+</tbody>
+</table>
+<p>For large or unclear work, use <strong>plan mode</strong> first. The agent reads and proposes a plan, and cannot edit until you approve it. The documented flow is explore, plan, implement, then commit.</p>
+<h3 id="specs-from-product-people">Specs from product people</h3>
+<p>A product leader can write specs that engineers and agents both use. Put the user problem, the acceptance examples and the out-of-scope list in the ticket. Examples with expected outputs double as tests.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Short file vs. complete file.</strong> Every line costs tokens in every session. Include only what changes behaviour.</li>
+<li><strong>Shared vs. personal.</strong> The project file is for the team. Personal preferences belong in a user-level file.</li>
+<li><strong>Rules vs. enforcement.</strong> A line in the file is advice. A hook enforces (<a href="control-permissions-modes-and-hooks.html">lesson 4</a>). Put must-never rules in hooks or permissions.</li>
+<li><strong>Emphasis.</strong> Shouting works on one or two lines. On ten, it works on none.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Bloat.</strong> The file grows with every incident and is never pruned.</li>
+<li><strong>Contradictions.</strong> One line says tabs and another says spaces. The agent picks one.</li>
+<li><strong>Describing the code.</strong> A line that says what a file contains goes stale on the next commit.</li>
+<li><strong>Vague advice.</strong> "Be careful with the database" cannot be followed or checked.</li>
+<li><strong>No command.</strong> The agent cannot find out how to run the tests, so it guesses or skips them.</li>
+<li><strong>A spec with no check.</strong> The agent finishes when it feels finished.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>ai-assisted-development/code/lesson2_context_file.py</code>. It is a small lint for a context file, with rules taken from the documentation's advice. It flags vague lines, duplicates, lines that describe the code, too much emphasis, contradictions, a missing command and excess length.</p>
+<pre><code class="language-python">def lint(text, max_lines=200):
+    ...
+    if any(v in body for v in VAGUE):
+        findings.append((&quot;vague advice&quot;, l))
+    if body in seen:
+        findings.append((&quot;duplicate&quot;, l))
+    ...
+</code></pre>
+<p>A second function prices the file: lines times tokens per line, times sessions, developers and days.</p>
+<h2 id="worked-example-a-sample-file-and-its-price">Worked example: a sample file and its price</h2>
+<p><em>The file and prices are invented. The numbers come from <code>ai-assisted-development/code/lesson2_context_file.py</code>.</em></p>
+<p><strong>The lint.</strong> An 11-line sample file gets seven findings: three vague lines ("Write clean code", "Follow best practices", "Be careful with the database"), one duplicate, one line that describes the code, one warning for four shouted words, and one contradiction (tabs and spaces both required).</p>
+<p><strong>The price.</strong> Assume 14 tokens per line, 40 sessions per developer per day, 25 developers and 22 working days, at $3 per million input tokens.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Tokens added per session</th>
+<th>Cost per month, no cache</th>
+<th>Cost per month, cache reads at 0.1×</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>150 lines</td>
+<td>2,100</td>
+<td>$139</td>
+<td>$14</td>
+</tr>
+<tr>
+<td>600 lines</td>
+<td>8,400</td>
+<td>$554</td>
+<td>$55</td>
+</tr>
+</tbody>
+</table>
+<p>The dollar figures are small beside salaries. The cost that matters is attention. A longer file lowers adherence, so the larger loss is in quality, not in the bill.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is the context file under about 200 lines, and does it name build, test and lint commands?</li>
+<li class="task todo">Does it hold only what the agent cannot work out from the code?</li>
+<li class="task todo">Is it free of duplicates, contradictions and untestable advice?</li>
+<li class="task todo">Are rarely needed rules in path-scoped rules or skills?</li>
+<li class="task todo">Do must-never rules live in hooks or permissions, not only in prose?</li>
+<li class="task todo">Do task specs name a way to check the result?</li>
+<li class="task todo">Does the file have an owner and a pruning date?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="when-an-agent-writes-the-code.html">When an agent writes the code</a> — why the spec matters more.</li>
+<li><a href="verification-is-the-product.html">Verification is the product</a> — the check named in the spec.</li>
+<li><a href="../context-engineering/index.html">Context engineering</a> — what belongs in a context window.</li>
+<li><a href="../prompt-engineering/index.html">Prompt engineering</a> — writing clear instructions.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — caching and token budgets.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Claude Code documentation, <em>How Claude remembers your project</em> (memory), code.claude.com/docs/en/memory, read 2026-10: the target of under 200 lines, what to include, imports not reducing context cost, and path-scoped rules.</li>
+<li>Claude Code documentation, <em>Extend Claude with skills</em>, code.claude.com/docs/en/skills, read 2026-10: skills for procedures that do not belong in the always-loaded file.</li>
+<li>Claude Code documentation, <em>Permission modes</em>, code.claude.com/docs/en/permission-modes, read 2026-10: plan mode.</li>
+<li>The sample file, the token counts and the prices are invented. They come from <code>ai-assisted-development/code/lesson2_context_file.py</code>. The cache-read multiplier of 0.1 matches most Claude models; some newer models differ. This module's sources were not re-opened after the first reading, and its fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="when-an-agent-writes-the-code.html"><span class="lbl">← Previous</span><span class="ttl">When an agent writes the code: where the bottleneck goes</span></a><a class="navcard next" href="verification-is-the-product.html"><span class="lbl">→ Next</span><span class="ttl">Verification is the product</span></a></div><footer class="foot"><strong>Core insight:</strong> When an agent writes the code, the scarce work is specifying and verifying, so speed comes from the checks you build, not from the agent.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-briefing-for-a-capable-stranger">The mental model: a briefing for a capable stranger</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#what-goes-in-the-file">What goes in the file</a><a class="h3" href="#keep-it-short-and-move-the-rest">Keep it short, and move the rest</a><a class="h3" href="#the-spec-for-one-task">The spec for one task</a><a class="h3" href="#specs-from-product-people">Specs from product people</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-sample-file-and-its-price">Worked example: a sample file and its price</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=ai-assisted-development%2Fspecs-and-the-context-file.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="ai-assisted-development/specs-and-the-context-file.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Transformers — recap &amp; real-world examples — Transformers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Transformers</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="the-shape-of-a-transformer.html">1 · The shape of a transformer</a><a class="modlink" href="attention.html">2 · Attention</a><a class="modlink" href="the-block.html">3 · The block: heads, the feed-forward layer and the residual stream</a><a class="modlink" href="position-and-the-cost-of-context.html">4 · Position, and the cost of context</a><a class="modlink" href="generating-text-and-the-kv-cache.html">5 · Generating text and the KV cache</a><a class="modlink" href="variants-and-reading-a-model-card.html">6 · Variants, and reading a model card</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
+    <h1>Transformers — recap &amp; real-world examples</h1>
+  </div>
+  <div class="MarkdownContent"><h2 id="real-world-examples">Real-world examples</h2>
+<p><strong>The paper that started it (2017).</strong> Eight researchers, most of them at Google, published <em>Attention Is All You Need</em>. It dropped the recurrent networks that read text one word at a time and used attention alone. The block they described, attention plus a feed-forward layer, is the one in almost every language model today. 🎯 <em>Takeaway:</em> the <a href="the-shape-of-a-transformer.html">shape</a> has barely changed. Most progress since is scale, data, and the tricks in <a href="variants-and-reading-a-model-card.html">lesson 6</a>.</p>
+<p><strong>Heads that copy (2022).</strong> Anthropic researchers studied small trained models and found attention heads with clear jobs. One kind looks at the previous token. Another finishes a repeated pattern. They linked these heads to how models learn from examples in the prompt. 🎯 <em>Takeaway:</em> <a href="attention.html">attention</a> does real, nameable work. But its weights are not a safe explanation of an answer, as Jain and Wallace showed.</p>
+<p><strong>Tiled attention (2022).</strong> The FlashAttention authors kept the exact same maths and changed where the numbers live. They process attention in small tiles in fast memory and never store the full score matrix. Models trained and served faster, and longer inputs became practical. 🎯 <em>Takeaway:</em> <a href="position-and-the-cost-of-context.html">the score matrix is the cost of length</a>. A kernel change cut it without changing the answer.</p>
+<p><strong>Sharing key and value heads (2023).</strong> The Llama 2 paper reports that its larger models use grouped-query attention, which shrinks the cache for keys and values. The motive was serving: a smaller cache means more requests per machine. 🎯 <em>Takeaway:</em> <a href="generating-text-and-the-kv-cache.html">the cache sets concurrency</a>. An architecture choice became a capacity choice.</p>
+<p><strong>Experts (2024).</strong> The Mixtral model uses 8 feed-forward experts and sends each token to 2. Its authors report about 47 billion parameters in total and about 13 billion in use for each token. 🎯 <em>Takeaway:</em> a <a href="variants-and-reading-a-model-card.html">model card</a> has two sizes. One sets memory and the other sets compute.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Lesson</th>
+<th>The one idea</th>
+<th>The question it makes you ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="the-shape-of-a-transformer.html">The shape of a transformer</a></td>
+<td>Five numbers on a spec sheet give parameters, memory and compute</td>
+<td>What are the layers, width, heads, vocabulary and context, and what do they cost?</td>
+</tr>
+<tr>
+<td><a href="attention.html">Attention</a></td>
+<td>Each token blends the values of the tokens it matches</td>
+<td>For our failures on long inputs, was the information missing or ignored?</td>
+</tr>
+<tr>
+<td><a href="the-block.html">The block</a></td>
+<td>Heads and feed-forward layers write notes into a shared stream, and the feed-forward layer holds two thirds of the weights</td>
+<td>Where was this model compressed, and what did we test?</td>
+</tr>
+<tr>
+<td><a href="position-and-the-cost-of-context.html">Position and context</a></td>
+<td>Order must be added, and attention cost grows with the square of the length</td>
+<td>What do latency, cost and accuracy look like at our longest input?</td>
+</tr>
+<tr>
+<td><a href="generating-text-and-the-kv-cache.html">Generation and the KV cache</a></td>
+<td>Keys and values are kept, so memory per request sets how many fit</td>
+<td>How many requests fit beside the weights at our context length?</td>
+</tr>
+<tr>
+<td><a href="variants-and-reading-a-model-card.html">Variants and the model card</a></td>
+<td>Total parameters set memory, active parameters set compute, and key and value heads set the cache</td>
+<td>What are total and active parameters and cache per token for each candidate?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line.</strong> A transformer is a stack of one repeated block, and almost every question about it is a counting question. Count the parameters, then the multiply-adds, then the cache. Spec sheets hide four different sizes behind one name. The leaders who choose well turn the card into bytes and operations before they compare models.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"For the model we plan to serve, can I state its total and active parameters, its cache per token, and how many requests fit on one machine at our context length?"</em></p>
+</blockquote>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>GPT-2 small has 12 layers, a hidden size of 768, a vocabulary of 50,257 and 1,024 positions. About how many parameters does it have, and what share is in the embeddings?</strong>
+ <br />
+<details><summary>Answer</summary>About 124 million: 124,439,808 by formula. The embeddings (tokens and positions) hold 39,383,808, which is 31.6%. (<a href="the-shape-of-a-transformer.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>In one block, which holds more parameters, attention or the feed-forward layer, and by how much?</strong>
+ <br />
+<details><summary>Answer</summary>The feed-forward layer. Attention has four matrices of d by d, which is 4d². The feed-forward layer has two matrices of d by 4d, which is 8d². So the feed-forward layer holds two thirds of a block. (<a href="the-shape-of-a-transformer.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>A team doubles a model's hidden size. What happens to the size of a block?</strong>
+ <br />
+<details><summary>Answer</summary>It multiplies by four, because block parameters grow with d². Doubling the number of layers only doubles it. (<a href="the-shape-of-a-transformer.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>What are queries, keys and values, in one sentence each?</strong>
+ <br />
+<details><summary>Answer</summary>A query says what a token is looking for. A key says what a token offers. A value is what the token hands over when matched. (<a href="attention.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Why are attention scores divided by the square root of the key length?</strong>
+ <br />
+<details><summary>Answer</summary>A dot product of d_k numbers has variance proportional to d_k. Large scores push the softmax toward one-hot and its gradient toward zero. In the lesson's test at d_k = 256, the largest weight over 8 keys averages 0.92 without the scale and 0.34 with it. (<a href="attention.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>What does the causal mask do, and what goes wrong without it in training?</strong>
+ <br />
+<details><summary>Answer</summary>It sets the score for every later token to minus infinity, so those weights are zero. Without it, a token could read the one it is meant to predict, so training would look perfect and the model would fail when serving. (<a href="attention.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Why can a new block be added to a trained model without breaking it?</strong>
+ <br />
+<details><summary>Answer</summary>Residual connections add each part's output to its input. A block whose output matrices are zero returns its input exactly, so it starts as a no-op. (<a href="the-block.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>A model is compressed, and it still passes short tests. Why test long, multi-step tasks?</strong>
+ <br />
+<details><summary>Answer</summary>The feed-forward layers hold most of the weights and much of the stored knowledge, so cuts there can lose rare facts. Long and multi-step tasks use many layers in sequence and expose small losses that short tests hide. (<a href="the-block.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>At what input length does attention start to cost more than the rest of a block, for a hidden size of 4,096?</strong>
+ <br />
+<details><summary>Answer</summary>At about 6 times the hidden size, which is 24,576 tokens. Attention costs 2n²d multiply-adds and the rest costs 12nd², so they are equal at n = 6d. This assumes a feed-forward width of 4d. (<a href="position-and-the-cost-of-context.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>A vendor says a model supports 128,000 tokens. What do you ask?</strong>
+ <br />
+<details><summary>Answer</summary>What latency, cost and accuracy are at that length, with the answer at the start, middle and end. Whether the limit is native or extended. And whether the serving stack uses tiled attention. A full score matrix at 131,072 tokens, 32 heads and 16-bit numbers would take 1 TiB per layer. (<a href="position-and-the-cost-of-context.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>What does a KV cache hold, and what is its size?</strong>
+ <br />
+<details><summary>Answer</summary>One key and one value vector for each token in each layer. The size is 2 × layers × key-value heads × head size × tokens × bytes per number. For a 7B-class shape (32 layers, 32 heads of 128) at 8,192 tokens and 16-bit, that is 4.0 GiB per sequence. (<a href="generating-text-and-the-kv-cache.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>Why is decode limited by memory speed and prefill by compute?</strong>
+ <br />
+<details><summary>Answer</summary>Decode makes one token per pass, so each 2-byte weight does one multiply-add: about 1 FLOP per byte. Prefill over 512 tokens reuses each weight 512 times: about 512 FLOPs per byte. (<a href="generating-text-and-the-kv-cache.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>One card has 32 key and value heads and another has 8, all else equal. What changes in serving?</strong>
+ <br />
+<details><summary>Answer</summary>The cache per token falls to a quarter. On an 80 GiB accelerator in the lesson's example, 16 long requests fit with 32 heads and 68 with 8, which also trims the weights a little. (<a href="variants-and-reading-a-model-card.html">Lesson 6</a>)</details></p>
+</li>
+<li>
+<p><strong>A mixture-of-experts model has 47 billion total and 13 billion active parameters. What does each number set?</strong>
+ <br />
+<details><summary>Answer</summary>Total parameters set the memory needed to hold the weights. Active parameters set the compute per token. It needs the memory of a 47 billion model and computes like a 13 billion one. (<a href="variants-and-reading-a-model-card.html">Lesson 6</a>)</details>
+</p>
+</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Vaswani et al., <em>Attention Is All You Need</em>, NeurIPS 2017 (<a href="https://arxiv.org/abs/1706.03762">arxiv.org/abs/1706.03762</a>).</li>
+<li>Olsson et al., <em>In-context Learning and Induction Heads</em>, Anthropic, 2022 (<a href="https://arxiv.org/abs/2209.11895">arxiv.org/abs/2209.11895</a>).</li>
+<li>Jain and Wallace, <em>Attention is not Explanation</em>, NAACL 2019 (<a href="https://arxiv.org/abs/1902.10186">arxiv.org/abs/1902.10186</a>).</li>
+<li>Dao et al., <em>FlashAttention</em>, NeurIPS 2022 (<a href="https://arxiv.org/abs/2205.14135">arxiv.org/abs/2205.14135</a>).</li>
+<li>Touvron et al., <em>Llama 2: Open Foundation and Fine-Tuned Chat Models</em>, 2023 (<a href="https://arxiv.org/abs/2307.09288">arxiv.org/abs/2307.09288</a>): grouped-query attention in the larger models.</li>
+<li>Jiang et al., <em>Mixtral of Experts</em>, 2024 (<a href="https://arxiv.org/abs/2401.04088">arxiv.org/abs/2401.04088</a>).</li>
+<li>The numbers in the questions come from <code>transformers/code/</code>. They are invented or illustrative. This module's sources were not re-opened during the build, and its fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="variants-and-reading-a-model-card.html"><span class="lbl">← Previous</span><span class="ttl">Variants, and reading a model card</span></a><span></span></div><footer class="foot"><strong>Core insight:</strong> A transformer is one block repeated, so almost every question about it is a counting question: parameters, multiply-adds and cache.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples">Real-world examples</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=transformers%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="transformers/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Measuring and governing — AI-assisted development</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI-assisted development</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-an-agent-writes-the-code.html">1 · When an agent writes the code: where the bottleneck goes</a><a class="modlink" href="specs-and-the-context-file.html">2 · Specs and the context file</a><a class="modlink" href="verification-is-the-product.html">3 · Verification is the product</a><a class="modlink" href="control-permissions-modes-and-hooks.html">4 · Control: permissions, modes and hooks</a><a class="modlink" href="running-at-scale.html">5 · Running at scale: sessions, subagents and fan-out</a><a class="modlink active" href="measuring-and-governing.html">6 · Measuring and governing</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
+    <h1>Measuring and governing</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Every vendor says its agent makes developers faster. Your question is whether yours does, and at what cost and risk. The honest answer comes from a few outcome metrics, read with care.</p>
+<p>Pick metrics that measure delivery, not activity: lead time from start to production, change failure rate, rework within 30 days, and review time per change. Lines of code and pull-request counts measure activity, and an agent inflates both.</p>
+<p>Then watch for <strong>mix shifts</strong>. When agents take the easy work, the average cycle time falls, even if hard work got no faster. The headline can point up while the truth is flat or down. Compare like with like: split by difficulty, by team and by kind of change.</p>
+<p>Governing is the other half. A short policy covers which tools are approved, which data may reach them, what must be reviewed by a person, and who owns the context file and the settings.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — You will be asked for the return on this spend. A bad metric gives a confident wrong answer.</p>
+<p><strong>What it changes in your decisions</strong> — You baseline before you roll out. You report outcomes split by task type. You tie the policy to the metrics, not to opinion.</p>
+<p><strong>Ask your eng team</strong> — <em>"Compared with before, for the same kind of work: lead time, change failure rate, rework and review time?"</em></p>
+<p><strong>Risk if ignored</strong> — A dashboard that shows a 3× gain while rework doubles on the hard changes.</p>
+</blockquote>
+<h2 id="the-mental-model-a-rate-and-a-mix">The mental model: a rate and a mix</h2>
+<style>
+.dgm-mx{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-mx-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-mx h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-mx-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-mx-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dgm-mx-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary)}
+.dgm-mx-c h5{margin:0 0 6px;font-size:12px;font-weight:700}
+.dgm-mx-c p{margin:2px 0;font-size:11px;color:var(--color-text-secondary)}
+.dgm-mx-c b{color:var(--color-text)}
+.dgm-mx-h{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-mx-e{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-mx-d{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-mx-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-mx{padding:22px 14px 18px}.dgm-mx-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-mx">
+  <span class="dgm-mx-chip">Headline versus split</span>
+  <h4>A 3.2× gain that is mostly a change in the mix of work</h4>
+  <p class="dgm-mx-sub">Invented pull-request data from the lesson. Cycle time and rework, before and with the agent.</p>
+  <div class="dgm-mx-grid">
+    <div class="dgm-mx-c dgm-mx-h"><h5>All work · 200 → 350 PRs</h5><p>Cycle time <b>23.0 h → 7.1 h</b></p><p>Rework <b>7.5% → 9.7%</b></p></div>
+    <div class="dgm-mx-c dgm-mx-e"><h5>Easy work · 50% → 86% of PRs</h5><p>Cycle time <b>6.0 h → 3.0 h</b></p><p>Rework <b>5% → 8%</b></p></div>
+    <div class="dgm-mx-c dgm-mx-d"><h5>Hard work · 50% → 14% of PRs</h5><p>Cycle time <b>40 h → 32 h</b></p><p>Rework <b>10% → 20%</b></p></div>
+  </div>
+  <p class="dgm-mx-foot">Split by difficulty before you report a number. The average hides what moved.</p>
+</div>
+
+<p>An average mixes two things: how fast each kind of work is done, and how much of each kind there is. Agents change both. Split the average to see which moved.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="outcome-metrics">Outcome metrics</h3>
+<ul>
+<li><strong>Lead time.</strong> From first commit or ticket start to running in production.</li>
+<li><strong>Change failure rate.</strong> The share of changes that cause a failure or rollback.</li>
+<li><strong>Rework.</strong> The share of changes that need a fix within 30 days.</li>
+<li><strong>Review time.</strong> Reviewer time per change, and queue wait.</li>
+<li><strong>Cost per accepted change.</strong> Tokens and seats over changes that stayed merged.</li>
+</ul>
+<p>These follow the delivery metrics popularized by the DORA research. Use them as a set. A gain in one with a loss in another is the signal.</p>
+<h3 id="baselines-and-comparisons">Baselines and comparisons</h3>
+<p>Measure before rollout. Compare the same team or the same kind of work. Randomized rollouts, where some teams start later, give the cleanest comparison. Controlled studies exist: one found developers finished a task faster with an assistant. Another found experienced developers on familiar codebases were slower, despite expecting to be faster. Results depend on the task, the people and the tools.</p>
+<h3 id="perception-versus-measurement">Perception versus measurement</h3>
+<p>Developers feel faster when the tool removes tedious work, and that feeling is real value. It is not a measurement of delivery. Collect both and do not confuse them.</p>
+<h3 id="a-policy-on-one-page">A policy on one page</h3>
+<ul>
+<li>Approved tools, and who adds new ones.</li>
+<li>Data rules: what may go to a model, and what may never.</li>
+<li>Review rules: which changes need a human, such as security, payments, migrations.</li>
+<li>Settings and context-file ownership.</li>
+<li>Cost limits and who sees the report.</li>
+<li>An incident path: how to report and review an agent mistake.</li>
+</ul>
+<h3 id="skills-and-training">Skills and training</h3>
+<p>Skill with these tools varies a lot between engineers. Share what works: good context files, hooks and specs. Run a short internal guide.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Few metrics vs. many.</strong> A few, read together, beat a wall of charts.</li>
+<li><strong>Speed vs. quality.</strong> Make the goal explicit: faster at equal quality.</li>
+<li><strong>Central policy vs. team choice.</strong> A shared floor, with room above it.</li>
+<li><strong>Seat cost vs. usage cost.</strong> Track both.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Measuring activity.</strong> Commits and lines rise.</li>
+<li><strong>Simpson's paradox.</strong> The mix of work hides the real rates.</li>
+<li><strong>No baseline.</strong></li>
+<li><strong>Survivor bias.</strong> Only counting tasks the agent finished.</li>
+<li><strong>Goodhart's law.</strong> A target turns into a game.</li>
+<li><strong>A policy nobody can find.</strong></li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>ai-assisted-development/code/lesson6_metrics.py</code>. It holds a table of invented pull requests by difficulty and by group, and computes the blended average and the per-difficulty rates.</p>
+<pre><code class="language-python">def summarize(rows):
+    n = sum(r[2] for r in rows)
+    return dict(prs=n, cycle=sum(r[2] * r[3] for r in rows) / n, rework=sum(r[2] * r[4] for r in rows) / n)
+</code></pre>
+<p>It asserts that the headline gain is above 3 times while the hard work improved by under 25% and its rework doubled.</p>
+<h2 id="worked-example-a-3-headline-that-is-a-mix-shift">Worked example: a 3× headline that is a mix shift</h2>
+<p><em>The data is invented. The numbers come from <code>ai-assisted-development/code/lesson6_metrics.py</code>.</em></p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>PRs</th>
+<th>Mean cycle time</th>
+<th>Rework</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Before</td>
+<td>200</td>
+<td>23.0 h</td>
+<td>7.5%</td>
+</tr>
+<tr>
+<td>With agent</td>
+<td>350</td>
+<td>7.1 h</td>
+<td>9.7%</td>
+</tr>
+</tbody>
+</table>
+<p>The headline says 3.2 times faster, with more output. Now split by difficulty.</p>
+<table>
+<thead>
+<tr>
+<th>Work</th>
+<th>Before</th>
+<th>With agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Easy: cycle time, rework</td>
+<td>6.0 h, 5%</td>
+<td>3.0 h, 8%</td>
+</tr>
+<tr>
+<td>Hard: cycle time, rework</td>
+<td>40.0 h, 10%</td>
+<td>32.0 h, 20%</td>
+</tr>
+</tbody>
+</table>
+<p>Easy work got twice as fast. Hard work got 20% faster, and its rework doubled. And the mix moved: easy work went from 50% of pull requests to 86%. Most of the 3.2 times is the mix. The agent did help, mostly on easy work. On hard work, the cost is hidden in rework. A leader who read only the first table would expand to hard work and be surprised.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Did we measure a baseline before rollout?</li>
+<li class="task todo">Do we report lead time, failure rate, rework, review time and cost together?</li>
+<li class="task todo">Do we split results by difficulty and type of work?</li>
+<li class="task todo">Do we compare like with like, or use a staged rollout?</li>
+<li class="task todo">Do we ask developers, and also measure?</li>
+<li class="task todo">Is there a one-page policy with an owner?</li>
+<li class="task todo">Do we review agent-caused incidents?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="running-at-scale.html">Running at scale</a> — cost and review capacity.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — measuring AI systems.</li>
+<li><a href="../product-sense/index.html">Product sense</a> — judging a claim before you act on it.</li>
+<li><a href="../technical-product-management/index.html">Technical product management</a> — delivery metrics.</li>
+<li><a href="../ai-security-and-guardrails/index.html">AI security and guardrails</a> — the data side of the policy.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Forsgren, Humble and Kim, <em>Accelerate</em>, 2018, and the DORA reports (dora.dev): lead time, deployment frequency, change failure rate and time to restore.</li>
+<li>Peng et al., <em>The Impact of AI on Developer Productivity: Evidence from GitHub Copilot</em>, 2023 (<a href="https://arxiv.org/abs/2302.06590">arxiv.org/abs/2302.06590</a>): a controlled trial with a faster task time.</li>
+<li>METR, <em>Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity</em>, 2025 (<a href="https://arxiv.org/abs/2507.09089">arxiv.org/abs/2507.09089</a>): experienced developers were slower with AI tools on their own repositories.</li>
+<li>Claude Code documentation, <em>Manage costs effectively</em>, code.claude.com/docs/en/costs, read 2026-10: usage tracking.</li>
+<li>The pull-request data is invented. It comes from <code>ai-assisted-development/code/lesson6_metrics.py</code>. Study results are quoted from memory and were not re-opened. This module's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="running-at-scale.html"><span class="lbl">← Previous</span><span class="ttl">Running at scale: sessions, subagents and fan-out</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> When an agent writes the code, the scarce work is specifying and verifying, so speed comes from the checks you build, not from the agent.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-rate-and-a-mix">The mental model: a rate and a mix</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#outcome-metrics">Outcome metrics</a><a class="h3" href="#baselines-and-comparisons">Baselines and comparisons</a><a class="h3" href="#perception-versus-measurement">Perception versus measurement</a><a class="h3" href="#a-policy-on-one-page">A policy on one page</a><a class="h3" href="#skills-and-training">Skills and training</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-3-headline-that-is-a-mix-shift">Worked example: a 3× headline that is a mix shift</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=ai-assisted-development%2Fmeasuring-and-governing.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="ai-assisted-development/measuring-and-governing.html"</script><script defer src="../assets/glossary.js"></script></body></html>

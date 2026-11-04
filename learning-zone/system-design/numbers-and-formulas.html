@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Numbers, formulas and papers to know — System Design</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink active" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
+    <h1>Numbers, formulas and papers to know</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Good design starts with arithmetic. A few numbers let you say, in a minute, whether a design needs one machine or a thousand. You need five kinds of figure. <strong>Latency orders of magnitude</strong> tell you what is cheap and what is slow. <strong>Availability tables</strong> turn "three nines" into minutes of downtime. <strong>Estimation shortcuts</strong> turn "a billion requests a day" into a rate per second. <strong>Size facts</strong> give you bytes per ID and per record. <strong>Classic papers</strong> name the ideas that real systems still use.</p>
+<p>None of these numbers is exact. Say "roughly", show your working, and round hard. Being right to a factor of two is enough. Being wrong by a factor of a thousand is the failure to avoid.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — Most scope and cost arguments are really arithmetic arguments. A PM who can do the arithmetic can tell a reasonable plan from a fantasy in the room.</p>
+<p><strong>What it changes in your decisions</strong> — You turn an availability promise into a downtime budget. You turn a growth forecast into queries per second. You spot a design that needs a hundred times more capacity than the forecast supports.</p>
+<p><strong>Ask your eng team</strong> — <em>"What are the peak requests per second, the storage per year and the downtime this SLO allows? How did you get each number?"</em></p>
+<p><strong>Risk if ignored</strong> — A promise of "five nines" that allows 26 seconds of outage a month, with no way to meet it. Or a design reviewed for the wrong scale.</p>
+</blockquote>
+<h2 id="the-mental-model-a-ladder-of-costs">The mental model: a ladder of costs</h2>
+<p>Each rung is about a thousand times slower than the one above it. A memory read is nanoseconds. A network round trip in a data center is a fraction of a millisecond. A disk seek is milliseconds. A trip across an ocean is hundreds of milliseconds. Design means keeping the hot path on the upper rungs.</p>
+<style>
+.dgm-nf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-nf-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-nf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-nf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-nf-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-nf-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-nf-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-nf-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-nf-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-nf-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-nf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-nf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-nf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-nf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-nf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-nf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-nf-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-nf-note b{color:var(--color-text)}
+.dgm-nf-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-nf{padding:22px 14px 18px}.dgm-nf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-nf-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-nf">
+  <span class="dgm-nf-chip">Ladder of costs</span>
+  <h4>Each rung is roughly a thousand times slower</h4>
+  <p class="dgm-nf-sub">Keep the hot path on the upper rungs.</p>
+  <div class="dgm-nf-grid">
+    <div class="dgm-nf-c dgm-nf-success"><h5><span class="dgm-nf-n">1</span>Memory</h5><span class="dgm-nf-t">about 100 ns</span><p>A cache or in-process read.</p></div>
+    <div class="dgm-nf-c dgm-nf-info"><h5><span class="dgm-nf-n">2</span>SSD read</h5><span class="dgm-nf-t">16 to 100 µs</span><p>Random read, order of magnitude.</p></div>
+    <div class="dgm-nf-c dgm-nf-discovery"><h5><span class="dgm-nf-n">3</span>Data center round trip</h5><span class="dgm-nf-t">about 0.5 ms</span><p>One network hop.</p></div>
+    <div class="dgm-nf-c dgm-nf-caution"><h5><span class="dgm-nf-n">4</span>Disk seek</h5><span class="dgm-nf-t">about 10 ms</span><p>A spinning disk.</p></div>
+    <div class="dgm-nf-c dgm-nf-danger"><h5><span class="dgm-nf-n">5</span>Ocean crossing</h5><span class="dgm-nf-t">about 150 ms</span><p>California to Europe.</p></div>
+  </div>
+  <p class="dgm-nf-foot">Exact values vary by hardware. The ratios are what matter.</p>
+</div>
+
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="latency-orders-of-magnitude">Latency orders of magnitude</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Roughly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1 cache reference</td>
+<td>1 ns</td>
+</tr>
+<tr>
+<td>Main memory reference</td>
+<td>100 ns</td>
+</tr>
+<tr>
+<td>SSD random read (NVMe, order of magnitude)</td>
+<td>16 to 100 µs</td>
+</tr>
+<tr>
+<td>Round trip within a data center</td>
+<td>0.5 ms</td>
+</tr>
+<tr>
+<td>Hard disk seek</td>
+<td>10 ms</td>
+</tr>
+<tr>
+<td>Round trip California to Europe</td>
+<td>150 ms</td>
+</tr>
+</tbody>
+</table>
+<p>Exact values change with hardware. The ratios are what matter.</p>
+<h3 id="availability-allowed-downtime">Availability: allowed downtime</h3>
+<table>
+<thead>
+<tr>
+<th>Availability</th>
+<th>Per year</th>
+<th>Per 30-day month</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>99%</td>
+<td>3.65 days</td>
+<td>7.2 hours</td>
+</tr>
+<tr>
+<td>99.9%</td>
+<td>8.77 hours</td>
+<td>43.2 minutes</td>
+</tr>
+<tr>
+<td>99.99%</td>
+<td>52.6 minutes</td>
+<td>4.32 minutes</td>
+</tr>
+<tr>
+<td>99.999%</td>
+<td>5.26 minutes</td>
+<td>26 seconds</td>
+</tr>
+</tbody>
+</table>
+<p>Services in series multiply: two 99.9% services give about 99.8%. Independent copies in parallel multiply the failure chances: two 99.9% replicas give 1 − 0.001² = 99.9999%, but only if their failures are truly independent, and they rarely are.</p>
+<h3 id="estimation-shortcuts">Estimation shortcuts</h3>
+<table>
+<thead>
+<tr>
+<th>Fact</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seconds in a day</td>
+<td>86,400, close to 10⁵</td>
+</tr>
+<tr>
+<td>1 million requests a day</td>
+<td>about 12 per second</td>
+</tr>
+<tr>
+<td>1 billion requests a day</td>
+<td>about 11,600 per second</td>
+</tr>
+<tr>
+<td>Peak against average</td>
+<td>plan for 2 to 3 times the average, and measure yours</td>
+</tr>
+<tr>
+<td>Powers of two</td>
+<td>2¹⁰ is about a thousand (KB), 2²⁰ a million (MB), 2³⁰ a billion (GB), 2⁴⁰ a trillion (TB)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sizes">Sizes</h3>
+<p>A UUID is 16 bytes. A 64-bit ID is 8 bytes. An ASCII character is 1 byte. A short code of 6 Base62 characters gives about 56.8 billion values. 7 characters give about 3.52 trillion.</p>
+<h3 id="classic-papers-worth-knowing">Classic papers worth knowing</h3>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Paper</th>
+<th>Why it still matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2003</td>
+<td>The Google File System</td>
+<td>Distributed storage on cheap machines</td>
+</tr>
+<tr>
+<td>2004</td>
+<td>MapReduce</td>
+<td>Batch processing as map and reduce steps</td>
+</tr>
+<tr>
+<td>2006</td>
+<td>Bigtable</td>
+<td>A wide-column store</td>
+</tr>
+<tr>
+<td>2006</td>
+<td>Chubby</td>
+<td>A lock service built on consensus</td>
+</tr>
+<tr>
+<td>2007</td>
+<td>Dynamo</td>
+<td>A leaderless, highly available key-value store</td>
+</tr>
+<tr>
+<td>2010</td>
+<td>Haystack</td>
+<td>Photo storage that avoids extra disk seeks</td>
+</tr>
+<tr>
+<td>2011</td>
+<td>Kafka</td>
+<td>A distributed log</td>
+</tr>
+<tr>
+<td>2012</td>
+<td>Spanner</td>
+<td>A globally consistent database</td>
+</tr>
+<tr>
+<td>2013</td>
+<td>TAO</td>
+<td>A social-graph store</td>
+</tr>
+<tr>
+<td>2014</td>
+<td>Raft</td>
+<td>Consensus designed to be understood</td>
+</tr>
+<tr>
+<td>2015</td>
+<td>Borg</td>
+<td>Cluster management, the ancestor of Kubernetes</td>
+</tr>
+<tr>
+<td>2016</td>
+<td>Deep Neural Networks for YouTube Recommendations</td>
+<td>The two-stage recommender</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Precision vs. speed.</strong> More decimals rarely change the design. Stop when the next digit would not.</li>
+<li><strong>Average vs. peak.</strong> Sizing for the average fails at the peak. Sizing for the worst peak wastes money.</li>
+<li><strong>Nines vs. cost.</strong> Each extra nine costs far more than the last.</li>
+<li><strong>Memorized numbers vs. measured numbers.</strong> Use the table to start. Replace it with your own measurements.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>No units.</strong> "A lot of storage" is not an estimate.</li>
+<li><strong>Peak ignored.</strong> A plan that holds on average and fails at the daily peak.</li>
+<li><strong>Nines in the contract, not in the design.</strong> An SLA that no architecture can meet.</li>
+<li><strong>Independent failures assumed.</strong> Two replicas in the same rack are not independent.</li>
+<li><strong>Latency numbers from 2005.</strong> Disks and networks have changed. Use the ratios, not the digits.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>system-design/code/estimator.py</code>. It is the same file as in the <a href="foundations-and-framework.html">foundations lesson</a>, and it also holds the availability and Base62 functions.</p>
+<pre><code class="language-python">def downtime_minutes(availability, days=30):
+    return (1 - availability) * days * 24 * 60
+
+def series(*avail):
+    out = 1.0
+    for a in avail:
+        out *= a
+    return out
+
+def parallel(*avail):
+    out = 1.0
+    for a in avail:
+        out *= (1 - a)
+    return 1 - out
+</code></pre>
+<h2 id="worked-example-three-promises-checked">Worked example: three promises, checked</h2>
+<p><em>The numbers come from <code>system-design/code/estimator.py</code>.</em></p>
+<p><strong>An availability promise.</strong> A product page promises 99.99% a month. That is 4.32 minutes. A single bad deploy that takes five minutes to roll back breaks the promise on its own.</p>
+<p><strong>Two dependencies.</strong> A checkout depends on a payment service and an inventory service, each at 99.9%. In series they give 99.8%, which allows about 86 minutes of downtime in a 30-day month, double what either promises alone.</p>
+<p><strong>A memory estimate.</strong> A reverse image search holds 100 billion images as 128-dimension vectors of 4-byte numbers: 100 billion × 128 × 4 bytes = 51.2 TB. Compressing each vector to 32 bytes gives 3.2 TB, which fits on a handful of machines.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Are the inputs to every estimate written down, with units?</li>
+<li class="task todo">Is peak traffic estimated, not only the average?</li>
+<li class="task todo">Is every availability promise converted to minutes of allowed downtime?</li>
+<li class="task todo">Are series dependencies multiplied?</li>
+<li class="task todo">Are failures in a redundant pair checked for independence?</li>
+<li class="task todo">Are the latency numbers replaced by measurements before launch?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="foundations-and-framework.html">Foundations and framework</a> — the four-step framework and a full estimate.</li>
+<li><a href="core-building-blocks.html">Core building blocks</a> — IDs and Base62 in practice.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — turning capacity into money.</li>
+<li><a href="../transformers/generating-text-and-the-kv-cache.html">Generating text and the KV cache</a> — the same counting habit for model serving.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — measuring the real numbers.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Jeff Dean, "Numbers everyone should know", and the widely circulated "latency numbers every programmer should know": the latency orders of magnitude. Exact values vary by hardware.</li>
+<li>Betsy Beyer et al., <em>Site Reliability Engineering</em>, O'Reilly, 2016 (sre.google/sre-book): SLIs, SLOs and error budgets.</li>
+<li>Martin Kleppmann, <em>Designing Data-Intensive Applications</em>, O'Reilly, 2017: the standard reference for the papers above.</li>
+<li>The Google File System (SOSP 2003), MapReduce (OSDI 2004), Bigtable (OSDI 2006), Chubby (OSDI 2006), Dynamo (SOSP 2007), Haystack (OSDI 2010), Kafka (NetDB 2011), Spanner (OSDI 2012), TAO (USENIX ATC 2013), Raft (USENIX ATC 2014), Borg (EuroSys 2015) and Covington et al., <em>Deep Neural Networks for YouTube Recommendations</em> (RecSys 2016).</li>
+<li>The availability and size figures are computed. They come from <code>system-design/code/estimator.py</code>. These sources were not re-opened during this revision, and the lesson's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="foundations-and-framework.html"><span class="lbl">← Previous</span><span class="ttl">Foundations &amp; framework</span></a><a class="navcard next" href="traffic-caching-apis-and-storage-choice.html"><span class="lbl">→ Next</span><span class="ttl">Traffic, caching, APIs and storage choice</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-ladder-of-costs">The mental model: a ladder of costs</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#latency-orders-of-magnitude">Latency orders of magnitude</a><a class="h3" href="#availability-allowed-downtime">Availability: allowed downtime</a><a class="h3" href="#estimation-shortcuts">Estimation shortcuts</a><a class="h3" href="#sizes">Sizes</a><a class="h3" href="#classic-papers-worth-knowing">Classic papers worth knowing</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-three-promises-checked">Worked example: three promises, checked</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=system-design%2Fnumbers-and-formulas.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="system-design/numbers-and-formulas.html"</script><script defer src="../assets/glossary.js"></script></body></html>
