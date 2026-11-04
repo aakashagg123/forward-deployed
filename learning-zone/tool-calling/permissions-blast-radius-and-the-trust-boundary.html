@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Tool calling</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-tool-calling-is.html">1 · What tool calling is</a><a class="modlink" href="tool-contracts-and-reliability.html">2 · Tool contracts &amp; reliability</a><a class="modlink active" href="permissions-blast-radius-and-the-trust-boundary.html">3 · Permissions, blast radius &amp; the trust boundary</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
@@ -211,9 +220,12 @@ question. An MCP server you didn't write is third-party code your agent's contex
 depends on: its tool descriptions shape what the model does, and its results enter your
 agent's context the same way a retrieved document would. The practical response is to vet
 an external MCP server with the same seriousness as a new software dependency — not with
-the casualness of installing a browser extension. The integration-economics side of this
+the casualness of installing a browser extension. The MCP specification itself says tools represent arbitrary code execution. It says there should always be a human in the loop with the ability to deny tool invocations. It also says clients must treat tool annotations, such as a "read-only" hint, as untrusted unless the server is trusted. A server's own label for its tool is a claim, not a guarantee.</p>
+<p>Security researchers named the main attacks. Invariant Labs described <strong>tool poisoning</strong> in April 2025: hidden instructions in a tool description that the user does not see but the model follows. Two variants matter for a toolbox review. A <strong>rug pull</strong> is a server that changes a tool's description after you approved it. <strong>Shadowing</strong> is a malicious server whose description changes how the model uses a different, trusted server's tools, such as redirecting every email. Proposed defences include pinning and hashing tool descriptions and re-approving when they change. The integration-economics side of this
 decision — when adopting the standard is worth it for a given system — is developed in
 <a href="../api-integrations/mcp-and-standard-connectors.html">MCP &amp; standard connectors</a>.</p>
+<h2 id="the-lethal-trifecta">The lethal trifecta</h2>
+<p>Simon Willison names three capabilities that are dangerous together: access to private data, exposure to untrusted content, and a way to send data out. An agent with all three can be tricked into reading private data and sending it to an attacker. A tool list is where you can see this. Count the tools by these three labels. If one agent holds all three, remove one, or split the work across agents with separate permissions. Willison also warns that guardrail products cannot reliably block these attacks, so structure is the safer defence.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Authorization trusted from the model's own claim</strong> — a permission check that relies on
@@ -223,6 +235,8 @@ decision — when adopting the standard is worth it for a given system — is de
 <li><strong>No approval tier for irreversible actions</strong> — every tool call fires immediately,
   including the ones that delete, send, or spend, with no confirmation step anyone decided
   to add.</li>
+<li><strong>All three trifecta capabilities in one agent</strong> — it reads private data, reads untrusted web or email content, and can send messages or make web requests.</li>
+<li><strong>Approving a tool once, forever</strong> — a server changes its tool descriptions later, and nothing re-checks them.</li>
 <li><strong>An unvetted third-party MCP server granted full trust</strong> — a community tool server added
   like a browser extension, given a seat inside the agent's trust boundary without the
   scrutiny a new dependency would get.</li>
@@ -235,6 +249,8 @@ decision — when adopting the standard is worth it for a given system — is de
       anything the model itself asserts?</li>
 <li class="task todo">Do destructive or outward-facing actions require confirmation or human approval, by
       deliberate design rather than default?</li>
+<li class="task todo">Does any single agent combine private data, untrusted content, and an outbound channel? If so, which one can you remove?</li>
+<li class="task todo">Are tool descriptions from third-party servers pinned, and does a change trigger a fresh review?</li>
 <li class="task todo">Has every third-party MCP server in use been vetted with the same rigor as a new
       software dependency?</li>
 </ul>
@@ -251,8 +267,8 @@ decision — when adopting the standard is worth it for a given system — is de
 <li><a href="../api-integrations/mcp-and-standard-connectors.html">MCP &amp; standard connectors</a> — the
   integration-economics question behind adopting third-party tool servers.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="tool-contracts-and-reliability.html"><span class="lbl">← Previous</span><span class="ttl">Tool contracts &amp; reliability</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-every-tool-sits-at-a-tier">The mental model: every tool sits at a tier</a><a class="h2" href="#the-model-can-never-be-the-enforcement-point">The model can never be the enforcement point</a><a class="h2" href="#least-privilege-and-graduated-irreversibility">Least privilege and graduated irreversibility</a><a class="h2" href="#what-changes-when-the-tool-comes-from-someone-else">What changes when the tool comes from someone else</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="tool-contracts-and-reliability.html"><span class="lbl">← Previous</span><span class="ttl">Tool contracts &amp; reliability</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> Tool calling moves the risk from wrong words to wrong actions, so every safeguard that matters sits between the model&#x27;s request and the real world.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-every-tool-sits-at-a-tier">The mental model: every tool sits at a tier</a><a class="h2" href="#the-model-can-never-be-the-enforcement-point">The model can never be the enforcement point</a><a class="h2" href="#least-privilege-and-graduated-irreversibility">Least privilege and graduated irreversibility</a><a class="h2" href="#what-changes-when-the-tool-comes-from-someone-else">What changes when the tool comes from someone else</a><a class="h2" href="#the-lethal-trifecta">The lethal trifecta</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

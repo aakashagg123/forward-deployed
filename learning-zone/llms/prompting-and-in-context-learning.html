@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>LLMs</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-llm.html">1 · What an LLM actually is</a><a class="modlink" href="the-context-window.html">2 · The context window</a><a class="modlink" href="capabilities-and-the-jagged-frontier.html">3 · Capabilities &amp; the jagged frontier</a><a class="modlink active" href="prompting-and-in-context-learning.html">4 · Prompting &amp; in-context learning</a><a class="modlink" href="temperature-sampling-and-determinism.html">5 · Temperature, sampling &amp; determinism</a><a class="modlink" href="choosing-a-model.html">6 · Choosing a model</a><a class="modlink" href="prompting-vs-rag-vs-finetuning.html">7 · Prompting vs. RAG vs. fine-tuning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
@@ -162,8 +171,16 @@ retrain anything. They are all ways of using the one request you have more effec
 <li><strong>Let it reason before it answers.</strong> For anything with more than one logical step, asking
   for reasoning first and a final answer last tends to produce better final answers than
   asking for the answer alone. You are giving the prediction mechanism more steps to build
-  on, rather than forcing the best guess in one shot.</li>
+  on, rather than forcing the best guess in one shot. Many current models now do this
+  themselves (see <a href="what-is-an-llm.html#reasoning-models-more-tokens-before-the-answer">reasoning models</a>).
+  Anthropic's guidance for them is to prefer a general instruction such as "think
+  thoroughly" over a hand-written step list, and to raise the effort setting if reasoning
+  is too shallow. Asking for step-by-step work in the prompt is a fallback for when
+  thinking is off.</li>
 </ul>
+<p>A tip on examples: Anthropic suggests three to five, and they should be relevant and
+diverse, so the model does not copy an accidental pattern. Wrap them in clear tags to keep
+them apart from your instructions. Examples also shape how a thinking model reasons.</p>
 <h2 id="why-this-is-a-product-skill-not-just-an-engineering-one">Why this is a product skill, not just an engineering one</h2>
 <p>A prompt is closer to a piece of copy than a line of code: its wording, tone, and structure
 directly shape what a user experiences, and small changes can have an outsized effect. Yet
@@ -205,9 +222,17 @@ no new infrastructure and no model change.</p>
   other lever that shapes what comes back from the same prompt.</li>
 <li><a href="../agentic-ai/planning-and-reasoning.html">Planning &amp; reasoning</a> — chain-of-thought and
   related techniques, applied inside an agent's loop.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">Prompting best practices</a>:
+  3-5 relevant, diverse, tagged examples; general instructions over prescriptive steps for
+  thinking models; manual step-by-step prompting as a fallback when thinking is off.
+  Read 2026-10-25.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="capabilities-and-the-jagged-frontier.html"><span class="lbl">← Previous</span><span class="ttl">Capabilities &amp; the jagged frontier</span></a><a class="navcard next" href="temperature-sampling-and-determinism.html"><span class="lbl">→ Next</span><span class="ttl">Temperature, sampling &amp; determinism</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-instructions-to-a-new-extremely-capable-temp">The mental model: instructions to a new, extremely capable temp</a><a class="h2" href="#in-context-learning-teaching-without-training">In-context learning: teaching without training</a><a class="h2" href="#three-habits-that-carry-most-of-the-benefit">Three habits that carry most of the benefit</a><a class="h2" href="#why-this-is-a-product-skill-not-just-an-engineering-one">Why this is a product skill, not just an engineering one</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="capabilities-and-the-jagged-frontier.html"><span class="lbl">← Previous</span><span class="ttl">Capabilities &amp; the jagged frontier</span></a><a class="navcard next" href="temperature-sampling-and-determinism.html"><span class="lbl">→ Next</span><span class="ttl">Temperature, sampling &amp; determinism</span></a></div><footer class="foot"><strong>Core insight:</strong> Everything an LLM does follows from next-token prediction: a limited window, uneven skill, and answers that are sampled rather than computed.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-instructions-to-a-new-extremely-capable-temp">The mental model: instructions to a new, extremely capable temp</a><a class="h2" href="#in-context-learning-teaching-without-training">In-context learning: teaching without training</a><a class="h2" href="#three-habits-that-carry-most-of-the-benefit">Three habits that carry most of the benefit</a><a class="h2" href="#why-this-is-a-product-skill-not-just-an-engineering-one">Why this is a product skill, not just an engineering one</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

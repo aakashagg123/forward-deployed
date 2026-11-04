@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Model intuition — Building AI-native products</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Building AI-native products</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="designing-for-ambiguity.html">1 · Designing for ambiguity</a><a class="modlink" href="ux-practice-the-ai-feature-spec.html">2 · Practice: the AI feature spec</a><a class="modlink active" href="model-intuition.html">3 · Model intuition</a><a class="modlink" href="model-intuition-practice.html">4 · Practice: probing and choosing models</a><a class="modlink" href="from-pixels-to-evals.html">5 · From pixels to evals</a><a class="modlink" href="hill-climbing-in-practice.html">6 · Practice: hill climbing</a><a class="modlink" href="designing-agentic-flows.html">7 · Designing agentic flows</a><a class="modlink" href="agentic-flows-practice.html">8 · Practice: the agent spec and risk register</a><a class="modlink" href="how-users-behave-with-agents.html">9 · How users behave with agents</a><a class="modlink" href="researching-agent-interactions.html">10 · Practice: researching agent interactions</a><a class="modlink" href="capstone-ship-one-ai-native-feature.html">11 · Capstone: ship one AI-native feature</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <h1>Model intuition</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Model intuition is a feel for what a model will do before you run it. It tells you which task is easy, which is risky and which is out of reach. It tells you which model to try first, how a change in wording will shift the output, and when the problem needs a different tool. It is the knowledge that separates a competent AI PM from one who is still guessing.</p>
+<p>It is not magic. It comes from three habits: <strong>probing</strong> many models on your own tasks, <strong>reading the failures</strong> closely, and <strong>tracking the trade-offs</strong> between quality, speed and cost. Capabilities are uneven, so a model can do something hard and fail at something that looks easy. That is the <em>jagged frontier</em>. You learn where it runs for your product by testing, not by reading a leaderboard.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI product leader</strong></p>
+<p><strong>Why it matters</strong> — Every feature rests on a bet about what the model can do. A wrong bet costs months. A right bet gives a product competitors cannot copy by adding a button.</p>
+<p><strong>What it changes in your decisions</strong> — You test a task on real inputs before you promise it. You choose models by task, not by brand. You keep a short list of "what this model cannot do" and update it.</p>
+<p><strong>Ask your team</strong> — <em>"On our real inputs, where does each model fail, and how did you find out?"</em></p>
+<p><strong>Risk if ignored</strong> — A roadmap built on a capability that works in a demo and fails on live data.</p>
+</blockquote>
+<h2 id="the-mental-model-a-jagged-edge-mapped-by-probing">The mental model: a jagged edge, mapped by probing</h2>
+<p>Picture the set of tasks as a landscape. The model's ability is a ragged coastline, not a smooth line. Some hard tasks sit inside it. Some easy-looking tasks sit outside. You find the coast by walking along it with test cases.</p>
+<style>
+.dgm-mi{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-mi-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-mi h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-mi-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-mi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-mi-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-mi-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-mi-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-mi-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-mi-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-mi-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-mi-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-mi-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-mi-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-mi-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-mi-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-mi-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-mi-note b{color:var(--color-text)}
+.dgm-mi-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-mi{padding:22px 14px 18px}.dgm-mi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-mi-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-mi">
+  <span class="dgm-mi-chip">Mapping the jagged edge</span>
+  <h4>Probe, read failures, then decide</h4>
+  <p class="dgm-mi-sub">Capability is uneven, so test your own task.</p>
+  <div class="dgm-mi-grid">
+    <div class="dgm-mi-c dgm-mi-info"><h5><span class="dgm-mi-n">1</span>Probe on real inputs</h5><span class="dgm-mi-t">easy · typical · awkward</span><p>Not demo prompts.</p></div>
+    <div class="dgm-mi-c dgm-mi-discovery"><h5><span class="dgm-mi-n">2</span>Read the failures</h5><span class="dgm-mi-t">name the cause</span><p>Missing fact, misread, too much context, needs a tool.</p></div>
+    <div class="dgm-mi-c dgm-mi-success"><h5><span class="dgm-mi-n">3</span>Inside the edge</h5><span class="dgm-mi-t">build, then evaluate</span><p>Viable as stated.</p></div>
+    <div class="dgm-mi-c dgm-mi-caution"><h5><span class="dgm-mi-n">4</span>Near the edge</h5><span class="dgm-mi-t">change prompt, context or model</span><p>Then probe again.</p></div>
+    <div class="dgm-mi-c dgm-mi-danger"><h5><span class="dgm-mi-n">5</span>Outside the edge</h5><span class="dgm-mi-t">change the task or the tool</span><p>Do not promise it.</p></div>
+  </div>
+  <p class="dgm-mi-foot">Re-run the probe whenever the model changes.</p>
+</div>
+
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="what-models-do-well-and-badly">What models do well and badly</h3>
+<p>Models are strong at language tasks with fuzzy boundaries: drafting, summarizing, rewriting, classifying, extracting, translating and explaining. They are weaker at exact arithmetic without a tool, long chains of strict logic, facts they were not trained on, and tasks where one tiny error ruins the result. They can sound sure when wrong. <a href="../llms/capabilities-and-the-jagged-frontier.html">Capabilities and the jagged frontier</a> goes deeper.</p>
+<h3 id="the-three-dials-quality-speed-cost">The three dials: quality, speed, cost</h3>
+<p>A larger model usually answers better, slower and at a higher price. A smaller one is faster and cheaper and fails sooner on hard cases. A model choice is a position on those three dials, set by the product. A reply drafted while an agent waits must be fast. An overnight report can be slow. See <a href="../llms/choosing-a-model.html">Choosing a model</a>.</p>
+<h3 id="prompt-retrieve-or-tune">Prompt, retrieve or tune</h3>
+<p>When a model falls short, there are three levers, in this order of cost:</p>
+<ol>
+<li><strong>Prompt and examples.</strong> Cheap and fast. Fixes format, tone and many mistakes.</li>
+<li><strong>Retrieval and context.</strong> Give the model the facts it lacks. Fixes missing knowledge.</li>
+<li><strong>Tuning.</strong> Change the model itself. Fixes consistent behaviour, and costs the most.</li>
+</ol>
+<p><a href="../llms/prompting-vs-rag-vs-finetuning.html">Prompting vs. RAG vs. fine-tuning</a> covers the decision in depth.</p>
+<h3 id="reading-failures">Reading failures</h3>
+<p>A failure has a cause. Common ones: the model lacked a fact, it misread the instruction, the context was too long or messy, the task needed a tool, or the question had no clear answer. Naming the cause tells you the fix. "The model is bad" tells you nothing.</p>
+<h3 id="models-change">Models change</h3>
+<p>New versions arrive often, and behaviour shifts. A prompt that worked on one model may fail on the next. Keep your probe set, and rerun it on every new model.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Best model vs. right model.</strong> The strongest model may be too slow or costly for the job.</li>
+<li><strong>One model vs. several.</strong> Routing easy cases to a cheap model saves money and adds complexity.</li>
+<li><strong>Prompting vs. tuning.</strong> Prompts are quick to change. Tuning gives stable behaviour and is slower to redo.</li>
+<li><strong>Leaderboard vs. your data.</strong> A public score says little about your inputs.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Demo bias.</strong> Choosing from five hand-picked prompts.</li>
+<li><strong>Brand loyalty.</strong> Using one vendor for every task.</li>
+<li><strong>Treating fluency as correctness.</strong> A smooth answer is not a true one.</li>
+<li><strong>Ignoring cost until the bill.</strong> Quality tested at one price and shipped at another.</li>
+<li><strong>No re-test.</strong> A model update changes behaviour and nobody notices.</li>
+<li><strong>Fixing the wrong layer.</strong> Tuning a model to fix a retrieval bug.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The template for this lesson is the <strong>model boundary log</strong>. Keep one per feature.</p>
+<pre><code class="language-text">Task:                                   Date:       Model + version:
+Probe inputs (n = ___): easy ___  typical ___  awkward ___
+Pass rate by group:   easy ___%  typical ___%  awkward ___%
+Failure causes (count):
+  missing fact ___   misread instruction ___   too much context ___
+  needs a tool ___   no clear answer ___      other ___
+Fix tried:             Prompt / context / model / tool / change the task
+Result after fix:
+&quot;This model cannot do ...&quot; (update the running list):
+Re-test due:
+</code></pre>
+<h2 id="worked-example-relay-finds-its-edge">Worked example: Relay finds its edge</h2>
+<p><em>Relay is invented. All numbers are made up for teaching.</em></p>
+<p>The Relay team probed a mid-size model on 60 real tickets: 20 easy, 25 typical and 15 awkward. Pass rates were 95%, 72% and 33%. The failures sorted into four causes: 9 missing policy facts, 6 misread instructions, 4 wrong order details and 3 where the right answer was "ask the customer".</p>
+<p>This told the team three things. The model was fine for easy and typical tickets, so the feature was viable. Policy facts were the biggest gap, so retrieval would help more than a bigger model. And for awkward tickets, the right design was to ask a question, not to guess. They added policy retrieval and an "ask first" rule. A re-run lifted typical tickets to 84% and awkward ones to 53%. They wrote a one-line limit into the spec: <em>Relay does not handle multi-order disputes.</em></p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Have we probed on real inputs, not demo prompts?</li>
+<li class="task todo">Are failures sorted by cause?</li>
+<li class="task todo">Do we know the quality, speed and cost position of each candidate?</li>
+<li class="task todo">Did we try prompt and context fixes before tuning?</li>
+<li class="task todo">Is there a written list of what the model cannot do?</li>
+<li class="task todo">Is the probe set re-run on every model change?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="model-intuition-practice.html">Practice: probing and choosing models</a> — run the probe and the bake-off.</li>
+<li><a href="../llms/capabilities-and-the-jagged-frontier.html">Capabilities and the jagged frontier</a> — the idea in depth.</li>
+<li><a href="../llms/choosing-a-model.html">Choosing a model</a> — comparing candidates.</li>
+<li><a href="../prompt-engineering/index.html">Prompt engineering</a> — the working skill.</li>
+<li><a href="../transformers/variants-and-reading-a-model-card.html">Variants and reading a model card</a> — what a spec sheet tells you.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Fabrizio Dell'Acqua et al., <em>Navigating the Jagged Technological Frontier</em>, Harvard Business School working paper, 2023: the term and the evidence that capability is uneven. Not re-opened.</li>
+<li>Anthropic, "Building effective agents", anthropic.com/engineering/building-effective-agents, 2024-12-19, read 2026-10: the advice to start with the simplest solution and to optimize single calls with retrieval and examples before adding complexity.</li>
+<li>Relay and its numbers are invented for teaching. This track's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="ux-practice-the-ai-feature-spec.html"><span class="lbl">← Previous</span><span class="ttl">Practice: the AI feature spec</span></a><a class="navcard next" href="model-intuition-practice.html"><span class="lbl">→ Next</span><span class="ttl">Practice: probing and choosing models</span></a></div><footer class="foot"><strong>Core insight:</strong> An AI-native product is designed around uncertainty: you decide what the model should do, measure it with evals, and shape the flow so people can trust and correct it.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-jagged-edge-mapped-by-probing">The mental model: a jagged edge, mapped by probing</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#what-models-do-well-and-badly">What models do well and badly</a><a class="h3" href="#the-three-dials-quality-speed-cost">The three dials: quality, speed, cost</a><a class="h3" href="#prompt-retrieve-or-tune">Prompt, retrieve or tune</a><a class="h3" href="#reading-failures">Reading failures</a><a class="h3" href="#models-change">Models change</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-relay-finds-its-edge">Worked example: Relay finds its edge</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=building-ai-native-products%2Fmodel-intuition.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="building-ai-native-products/model-intuition.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Building AI-native products — recap &amp; real-world examples — Building AI-native products</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Building AI-native products</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="designing-for-ambiguity.html">1 · Designing for ambiguity</a><a class="modlink" href="ux-practice-the-ai-feature-spec.html">2 · Practice: the AI feature spec</a><a class="modlink" href="model-intuition.html">3 · Model intuition</a><a class="modlink" href="model-intuition-practice.html">4 · Practice: probing and choosing models</a><a class="modlink" href="from-pixels-to-evals.html">5 · From pixels to evals</a><a class="modlink" href="hill-climbing-in-practice.html">6 · Practice: hill climbing</a><a class="modlink" href="designing-agentic-flows.html">7 · Designing agentic flows</a><a class="modlink" href="agentic-flows-practice.html">8 · Practice: the agent spec and risk register</a><a class="modlink" href="how-users-behave-with-agents.html">9 · How users behave with agents</a><a class="modlink" href="researching-agent-interactions.html">10 · Practice: researching agent interactions</a><a class="modlink" href="capstone-ship-one-ai-native-feature.html">11 · Capstone: ship one AI-native feature</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
+    <h1>Building AI-native products — recap &amp; real-world examples</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="real-world-examples">Real-world examples</h2>
+<p><strong>Eighteen guidelines for human-AI interaction (2019).</strong> Researchers at Microsoft proposed 18 design guidelines for human-AI interaction and published them as an interactive library. They include "Make clear what the system can do", "Make clear how well the system can do what it can do", "Support efficient correction" and "Scope services when in doubt". 🎯 <em>Takeaway:</em> the practices in <a href="designing-for-ambiguity.html">designing for ambiguity</a> are written down and testable. Use them as a review checklist.</p>
+<p><strong>Workflows and agents are different things (2024).</strong> Anthropic's engineering team describes workflows as systems where models and tools follow code paths set in advance, and agents as systems where the model directs its own process and tool use. It advises finding the simplest solution and adding complexity only when it demonstrably improves outcomes, and notes that agents bring higher costs and the potential for compounding errors. 🎯 <em>Takeaway:</em> <a href="designing-agentic-flows.html">start with a workflow</a>, and add agent freedom where the task needs it.</p>
+<p><strong>Tool design is interface design (2024).</strong> The same post reports that, for a coding benchmark, changing a tool so that it always required absolute file paths made the model use it flawlessly. It also advises giving tools the same prompt-engineering care as prompts and making mistakes hard. 🎯 <em>Takeaway:</em> the <a href="agentic-flows-practice.html">tool table</a> is a design artifact, not an engineering detail.</p>
+<p><strong>Capability is uneven (2023).</strong> A Harvard Business School working paper on consultants using a language model described a "jagged technological frontier": tasks that look similar can fall on either side of what the model does well. This source was not re-opened for this track. 🎯 <em>Takeaway:</em> <a href="model-intuition-practice.html">probe on your own tasks</a>, because a general score will not tell you where your edge lies.</p>
+<h2 id="module-recap">Module recap</h2>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Judgement lesson</th>
+<th>Practice lesson</th>
+<th>The question it makes you ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Vision and opinionated UX</td>
+<td><a href="designing-for-ambiguity.html">Designing for ambiguity</a></td>
+<td><a href="ux-practice-the-ai-feature-spec.html">The AI feature spec</a></td>
+<td>What does the user see first, and what happens when the model is wrong?</td>
+</tr>
+<tr>
+<td>2. Model intuition</td>
+<td><a href="model-intuition.html">Model intuition</a></td>
+<td><a href="model-intuition-practice.html">Probing and choosing models</a></td>
+<td>Where does this model fail on our inputs, and what does the fix cost?</td>
+</tr>
+<tr>
+<td>3. Pixels to evals to hill climbing</td>
+<td><a href="from-pixels-to-evals.html">From pixels to evals</a></td>
+<td><a href="hill-climbing-in-practice.html">Hill climbing</a></td>
+<td>Which user action tells us the output was right, and is the gain bigger than the noise?</td>
+</tr>
+<tr>
+<td>4. Agentic flows</td>
+<td><a href="designing-agentic-flows.html">Designing agentic flows</a></td>
+<td><a href="agentic-flows-practice.html">The agent spec and risk register</a></td>
+<td>What is the worst thing it can do, and what stops it?</td>
+</tr>
+<tr>
+<td>5. User understanding for agents</td>
+<td><a href="how-users-behave-with-agents.html">How users behave with agents</a></td>
+<td><a href="researching-agent-interactions.html">Researching agent interactions</a></td>
+<td>When the agent is wrong, do users notice?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The through-line.</strong> An AI-native product is designed around uncertainty. You decide what the model should do. You measure it with evals and improve it step by step. You shape the flow so that people can trust it, check it and correct it. And you keep watching how real people behave, because their trust moves.</p>
+<blockquote>
+<p><strong>Walk-away question:</strong> <em>"For our feature, can I show the spec, the model choice, the eval set with a holdout, the agent's limits and risks, the research findings and the launch gate, and name the weakest of the five?"</em></p>
+</blockquote>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>A new AI feature opens with a blank chat box. What is the likely problem, and what do you do first?</strong>
+ <br />
+<details><summary>Answer</summary>Users do not know what to ask or what the system can do. Make it opinionated: set the scope, offer a starting point such as a ready draft, and design how uncertainty and correction appear. (<a href="designing-for-ambiguity.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>Name the parts of a one-page AI feature spec that a classic spec leaves out.</strong>
+ <br />
+<details><summary>Answer</summary>Examples of accepted and rejected outputs, what happens when the model is unsure or wrong, a quality bar with a definition of pass, and a launch gate. (<a href="ux-practice-the-ai-feature-spec.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>What is the jagged frontier, and how do you find it for your product?</strong>
+ <br />
+<details><summary>Answer</summary>Capability is uneven: a model can do a hard task and fail at an easy-looking one. You find the edge by probing on real inputs and reading the failures. (<a href="model-intuition.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>A model fails because it lacks a policy fact. What is the first lever to try?</strong>
+ <br />
+<details><summary>Answer</summary>Retrieval and context, not tuning and not a bigger model. Name the failure cause before you choose the fix. (<a href="model-intuition.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>In a bake-off, what do you set before you look at any result?</strong>
+ <br />
+<details><summary>Answer</summary>The constraints: the quality bar, the latency the user will tolerate, the cost per use, and the must-not-fail cases. Then pick the cheapest model that meets all of them. (<a href="model-intuition-practice.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>61% of drafts are sent with no edit. Is that good?</strong>
+ <br />
+<details><summary>Answer</summary>Not necessarily. It may mean the output is good or that users did not look. Sample and read the no-edit cases. In the example, 6 of 40 held a wrong detail. (<a href="from-pixels-to-evals.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>Why is a 2-point gain on a 200-case eval not a win?</strong>
+ <br />
+<details><summary>Answer</summary>With 200 cases and an 80% pass rate, the rough 95% band is about plus or minus 5.5 points, so 2 points is inside the noise. Add cases or compare pairs. (<a href="from-pixels-to-evals.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>Why use offline evals and A/B tests together?</strong>
+ <br />
+<details><summary>Answer</summary>Offline evals are fast and controlled, so they pick what to try. A/B tests measure real value, so they confirm what ships. (<a href="from-pixels-to-evals.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>The dev score rose from 80% to 88%, and the holdout barely moved. What happened?</strong>
+ <br />
+<details><summary>Answer</summary>The prompt was overfitted to the dev set, in the example by copying dev-like cases into it. Trust the holdout, refresh the dev set from production and keep the log. (<a href="hill-climbing-in-practice.html">Lesson 6</a>)</details></p>
+</li>
+<li>
+<p><strong>Workflow or agent: how do you choose?</strong>
+    <details><summary>Answer</summary>Use a workflow when you can write the steps in advance. Use an agent when the number of steps is unknown and the path cannot be fixed. Add complexity only when it demonstrably helps. (<a href="designing-agentic-flows.html">Lesson 7</a>)</details></p>
+</li>
+<li><strong>What are the four levels of autonomy, and how does a product move up?</strong>
+    <details><summary>Answer</summary>Suggest, act with approval, act and notify, act silently. Move up only on evidence, such as approval and edit rates and zero severe errors over a stated volume. (<a href="designing-agentic-flows.html">Lesson 7</a>)</details></li>
+<li><strong>What makes an approval prompt protect users?</strong>
+    <details><summary>Answer</summary>A plain preview of who, what and how much, with the reason and source, a safe default and no prompts on low-risk actions. Track approval and edit rates. (<a href="agentic-flows-practice.html">Lesson 8</a>)</details></li>
+<li><strong>Define over-reliance and under-reliance, and say what the goal is.</strong>
+    <details><summary>Answer</summary>Over-reliance is accepting output without checking. Under-reliance is ignoring or redoing good output. The goal is calibrated trust: reliance that matches reliability on each task. (<a href="how-users-behave-with-agents.html">Lesson 9</a>)</details></li>
+<li><strong>Why ask "tell me about the last time the agent was wrong" instead of "do you trust it"?</strong>
+    <details><summary>Answer</summary>Specific past episodes show real behaviour. Opinions about trust do not predict what people do. (<a href="researching-agent-interactions.html">Lesson 10</a>)</details></li>
+<li><strong>What are the three parts of a launch gate?</strong>
+    <details><summary>Answer</summary>Ship, widen and roll back, each with numbers: quality on the holdout, severe incidents, rates such as light-edit, cost and latency, and a named kill-switch owner. (<a href="capstone-ship-one-ai-native-feature.html">Capstone</a>)</details></li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Saleema Amershi et al., <em>Guidelines for Human-AI Interaction</em>, CHI 2019, and Microsoft's HAX Toolkit design library (microsoft.com/en-us/haxtoolkit/library), read 2026-10.</li>
+<li>Anthropic, "Building effective agents", anthropic.com/engineering/building-effective-agents, 2024-12-19, read 2026-10. The page notes that much of its tooling description has changed since December 2024.</li>
+<li>Fabrizio Dell'Acqua et al., <em>Navigating the Jagged Technological Frontier</em>, Harvard Business School working paper, 2023. Not re-opened.</li>
+<li>Relay and all numbers in the questions come from invented teaching examples. This track's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="capstone-ship-one-ai-native-feature.html"><span class="lbl">← Previous</span><span class="ttl">Capstone: ship one AI-native feature</span></a><span></span></div><footer class="foot"><strong>Core insight:</strong> An AI-native product is designed around uncertainty: you decide what the model should do, measure it with evals, and shape the flow so people can trust and correct it.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples">Real-world examples</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=building-ai-native-products%2Frecap.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="building-ai-native-products/recap.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Competitive advantage and strategy — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink active" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 07</span>
+    <h1>Competitive advantage and strategy</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Some markets leave profit on the table. Others grind every player down to thin margins. The difference is structure, and you can analyse it. This lesson gives you four tools, used in order.</p>
+<p>First, the <strong>five competitive forces</strong> tell you how much profit the industry can hold, and which force caps it. Second, the <strong>value chain and profit pool</strong> show who in the chain keeps that profit today. Third, the <strong>seven sources of advantage</strong> tell you whether <em>you</em> can keep a share of it once rivals copy you. Fourth, a <strong>strategy</strong> turns all of this into a short set of choices: a diagnosis, a guiding policy, and actions that fit together.</p>
+<p>The core tradeoff is focus against optionality. A real advantage comes from committing to a position and refusing the work that does not fit. That refusal costs you revenue you could have had. Without it, you have a list of goals, not a strategy.</p>
+<p>The scale matters. In payments, lending and insurance, many products look the same to the customer. A small, durable edge in cost of funds, switching costs or claims handling decides who earns a return and who does not.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Your roadmap spends capital to build a position. If the position has no barrier, rivals copy it and the margin goes to customers or suppliers. You did the work, and someone else kept the value.</p>
+<p><strong>What it changes in your decisions</strong> — You name the force that caps profit before you size a feature. You state which source of advantage each big bet builds, and the evidence that it is working. You write down what the team will not do this year.</p>
+<p><strong>Ask your team</strong> — <em>"If our best-funded rival copied this in six months, why would a customer still stay with us? Where would we see that in our data?"</em></p>
+<p><strong>Risk if ignored</strong> — Growth without margin. Volume rises while net take rate, spread or underwriting margin falls, because buyers or suppliers hold the power and nothing stops a rival from matching you.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li><strong>Before you enter a market, find the binding force.</strong> Name the one force that caps profit, and the move that would shift it.</li>
+<li><strong>Follow the margin, not the revenue.</strong> Map the profit pool. The player with the most revenue is often not the one with the most profit.</li>
+<li><strong>Claim an advantage only with a benefit and a barrier.</strong> You need a lower cost or a higher price, <em>and</em> a reason a rival cannot copy it.</li>
+<li><strong>Prove a network effect with density data.</strong> If value or retention does not rise with network density in your own data, call it scale.</li>
+<li><strong>Measure switching costs in dollars and weeks.</strong> Compare them with the saving a rival offers. If the saving is bigger, you have no lock-in.</li>
+<li><strong>A strategy must say what you will not do.</strong> If it excludes nothing, it is a list of goals.</li>
+<li><strong>Respond to a low-end entrant with a separate unit</strong> when copying the entrant would damage your core business.</li>
+</ul>
+<h2 id="mental-model-the-pool-your-share-your-choices">Mental model: the pool, your share, your choices</h2>
+<pre class="mermaid">flowchart LR
+  F[&quot;Five forces&lt;br/&gt;how much profit&lt;br/&gt;the industry can hold&quot;] --&gt; P[&quot;Profit pool&lt;br/&gt;who in the chain&lt;br/&gt;keeps it today&quot;]
+  P --&gt; A[&quot;Sources of advantage&lt;br/&gt;what share you can keep&lt;br/&gt;after rivals copy&quot;]
+  A --&gt; S[&quot;Strategy&lt;br/&gt;diagnosis · guiding policy&lt;br/&gt;coherent actions&quot;]
+  S -.-&gt;|&quot;your moves change&lt;br/&gt;the forces over time&quot;| F</pre>
+<p>Think of an industry as a lake of profit. The five forces decide how big the lake is. The value chain decides who has a bucket in it. Your advantage decides how big your bucket is, and whether others can take it. Strategy is the set of choices that grows and protects your bucket.</p>
+<p><strong>Where the model breaks.</strong> The lake is not fixed. A new technology or a new rule can drain it or fill it in a year. A real-time payment scheme, an interchange cap, or a new licence type changes the forces. So run the analysis again when the rules change, not once.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-five-competitive-forces-run-as-a-method">The five competitive forces, run as a method</h3>
+<p>The five forces describe the pressure on profit in an industry. <strong>Rivalry</strong> is how hard current players fight. <strong>Buyer power</strong> is how much customers can push prices down. <strong>Supplier power</strong> is how much your inputs can push costs up. The <strong>threat of new entrants</strong> caps prices, because high profits attract newcomers. The <strong>threat of substitutes</strong> caps prices too, because customers can solve the need another way.</p>
+<p>The stronger the forces, the less profit any player keeps. A list of the forces is not an analysis. Run them as a method, in five steps.</p>
+<p><strong>Step 1. Draw the industry boundary.</strong> An industry is a product, a geography and a customer type. "Payments" is not an industry. "Card acquiring for small US restaurants" is. Draw the boundary too wide, and you average away the forces that matter. Draw it too narrow, and you miss the substitutes. A good test: would a customer in this boundary consider the same set of rivals?</p>
+<p><strong>Step 2. List each force's drivers.</strong> Each force has known drivers. Write evidence for each one, not an opinion.</p>
+<table>
+<thead>
+<tr>
+<th>Force</th>
+<th>Drivers to check</th>
+<th>What makes the force strong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Buyer power</strong></td>
+<td>Buyer concentration, the price as a share of the buyer's costs, switching costs, price transparency, the buyer's ability to build it in-house</td>
+<td>Few large buyers, a visible cost line, easy comparison, cheap switching</td>
+</tr>
+<tr>
+<td><strong>Supplier power</strong></td>
+<td>Supplier concentration, unique inputs, your cost to switch suppliers, the supplier's option to sell direct</td>
+<td>One or two suppliers of a critical input, such as a card network, a sponsor bank or a reinsurer</td>
+</tr>
+<tr>
+<td><strong>New entrants</strong></td>
+<td>Scale needed to compete, capital, licences, access to distribution, network effects, expected retaliation</td>
+<td>Low licence and capital needs, rented infrastructure, no network effects</td>
+</tr>
+<tr>
+<td><strong>Substitutes</strong></td>
+<td>The price and performance of other ways to meet the need, and the buyer's cost to switch to them</td>
+<td>A substitute that is cheaper and good enough, such as an account-to-account payment</td>
+</tr>
+<tr>
+<td><strong>Rivalry</strong></td>
+<td>Number and balance of rivals, industry growth, fixed costs, exit barriers, how alike the products are</td>
+<td>Many equal rivals, slow growth, high fixed costs, identical products</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3. Quantify where you can.</strong> Numbers turn a debate into a decision. Five measures cover most of it:</p>
+<ul>
+<li><strong>Concentration.</strong> Compute a concentration index: the sum of each player's squared market share in percent. Four acquirers with 30%, 25%, 20% and 15%, plus ten with 1% each, give 900 + 625 + 400 + 225 + 10 = <strong>2,160</strong>. A higher number means fewer, larger players. A higher number usually means calmer rivalry.</li>
+<li><strong>Price trend.</strong> Track the net price over three years: net take rate, loan spread, or premium per unit of risk. A falling net price with flat costs means a force is taking your margin.</li>
+<li><strong>Supplier share.</strong> Divide what you pay key suppliers by your gross revenue. In the card example below, the issuer and network keep $1.95 of a $2.50 merchant fee. That is <strong>78%</strong>.</li>
+<li><strong>Switching cost.</strong> Estimate the customer's cost to switch in dollars and weeks. Compare it with the saving a rival offers.</li>
+<li><strong>Entry cost.</strong> Estimate the months and capital a newcomer needs: licences, integrations, a minimum book of business.</li>
+</ul>
+<p><strong>Step 4. Find the binding force.</strong> One or two forces usually cap profit. The others matter less right now. To find the binding force, follow the margin. Ask where the value you created over the last three years went. If your net price fell while your customers' prices did not, buyers took it. If supplier fees rose, suppliers took it. If prices fell as new names appeared, entrants and rivalry took it.</p>
+<p><strong>Step 5. Name the move that shifts it.</strong> Each force has typical counter-moves.</p>
+<table>
+<thead>
+<tr>
+<th>Binding force</th>
+<th>Moves that can shift it</th>
+<th>What the move costs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Buyer power</td>
+<td>Raise switching costs through integration; target less price-sensitive segments; bundle</td>
+<td>Integration work; a smaller target segment</td>
+</tr>
+<tr>
+<td>Supplier power</td>
+<td>Add a second supplier; integrate backward; route volume to cheaper options where rules allow</td>
+<td>A second integration; capital; lower volume discounts</td>
+</tr>
+<tr>
+<td>New entrants</td>
+<td>Build scale or network effects; secure licences early</td>
+<td>Capital and time before revenue</td>
+</tr>
+<tr>
+<td>Substitutes</td>
+<td>Offer the substitute yourself, or bundle against it</td>
+<td>It may cannibalize your own product</td>
+</tr>
+<tr>
+<td>Rivalry</td>
+<td>Differentiate; specialize in a segment; avoid price wars</td>
+<td>Revenue from the segments you leave</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Common misreading 1: growth means attractive.</strong> A fast-growing market can still be unprofitable. Many equal rivals can chase the growth with price cuts.</p>
+<p><strong>Common misreading 2: add up five scores.</strong> A total of five scores hides the one force that matters. One very strong force can cap profit on its own, even if the other four are weak. Name the binding force. Do not average it away.</p>
+<p><strong>Common misreading 3: regulation is a sixth force.</strong> Regulation is not a force. It changes the forces. An interchange cap moves profit from issuers to merchants. A licence requirement raises the barrier to entry. Ask which force each rule changes.</p>
+<p>The binding force often follows a pattern by domain. Use this as a starting hypothesis, not an answer:</p>
+<table>
+<thead>
+<tr>
+<th>Domain and segment</th>
+<th>Force that often binds</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Payments</strong>, small-merchant acquiring</td>
+<td>Buyer power and rivalry</td>
+<td>Fees are a visible cost line, rivals sell similar flat rates, and switching takes days</td>
+</tr>
+<tr>
+<td><strong>Lending</strong>, prime unsecured loans</td>
+<td>Supplier power (cost of funds) and rivalry</td>
+<td>A lender with cheap deposits can underprice a lender funded by credit lines</td>
+</tr>
+<tr>
+<td><strong>InsurTech</strong>, personal lines</td>
+<td>Buyer power and supplier power</td>
+<td>Comparison sites make price visible; small carriers depend on reinsurance capacity</td>
+</tr>
+<tr>
+<td><strong>eCommerce</strong>, marketplaces</td>
+<td>Supplier power of traffic sources, and rivalry</td>
+<td>Paid search and app stores sell the customer's attention</td>
+</tr>
+<tr>
+<td><strong>Retail</strong>, general merchandise</td>
+<td>Buyer power and substitutes</td>
+<td>Shoppers compare prices online; online channels substitute for the store</td>
+</tr>
+</tbody>
+</table>
+<p>A public example of supplier power: Lemonade's Form 10-K for fiscal 2020 describes how it relies on reinsurance. Under its reinsurance programme, it typically retains a fixed fee, and reinsurers carry much of the claims risk. A young insurer depends on that capacity, so reinsurers hold real power over its economics.</p>
+<h3 id="value-chain-and-profit-pools">Value chain and profit pools</h3>
+<p>A <strong>value chain</strong> lists the steps that deliver a product to a customer, and who performs each step. A <strong>profit pool</strong> is the total profit earned across the chain, split by who earns it. Revenue share and profit share are not the same. A player can touch most of the money and keep little of it.</p>
+<p>To map a profit pool, take one unit of the product. List every party that touches it. Write each party's revenue and its variable cost for that unit. The difference is that party's share of the pool. Then ask which force protects each share.</p>
+<p><strong>Card payments.</strong> A card payment involves five parties. The <strong>cardholder</strong> pays. The <strong>issuer</strong> is the cardholder's bank. The <strong>merchant</strong> sells. The <strong>acquirer</strong> is the merchant's payment provider. The <strong>card network</strong> connects issuers and acquirers and sets many of the rules.</p>
+<pre class="mermaid">flowchart LR
+  CH[&quot;Cardholder&quot;] --&gt;|&quot;pays $100&quot;| M[&quot;Merchant&lt;br/&gt;receives $97.50&quot;]
+  M --&gt;|&quot;MDR $2.50&quot;| ACQ[&quot;Acquirer&lt;br/&gt;keeps $0.55&quot;]
+  ACQ --&gt;|&quot;interchange $1.80&quot;| ISS[&quot;Issuer&lt;br/&gt;keeps $1.80&quot;]
+  ACQ --&gt;|&quot;scheme fees $0.15&quot;| NET[&quot;Card network&lt;br/&gt;keeps $0.15&quot;]
+  NET -.-&gt;|&quot;routes and settles&quot;| ISS</pre>
+<p><em>All numbers are illustrative and assumed. Real rates vary by card type, merchant category, country and contract.</em></p>
+<p>The merchant pays a <strong>merchant discount rate</strong> (MDR): the total fee on a card sale. On a $100 purchase, assume an MDR of 2.5%, or $2.50. The acquirer pays <strong>interchange</strong> of $1.80 to the issuer, and <strong>scheme fees</strong> of $0.15 to the network. The acquirer keeps $0.55. In reality, networks also charge issuers. This sketch shows one fee line to keep the arithmetic simple.</p>
+<p>Now subtract each party's assumed variable cost for this payment:</p>
+<table>
+<thead>
+<tr>
+<th>Party</th>
+<th>Revenue</th>
+<th>Variable costs (assumed)</th>
+<th>Profit</th>
+<th>Share of revenue</th>
+<th>Share of profit</th>
+<th>Margin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Issuer</td>
+<td>$1.80</td>
+<td>Rewards $1.00, fraud $0.10, servicing $0.20</td>
+<td>$0.50</td>
+<td>72%</td>
+<td>62.5%</td>
+<td>28%</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>$0.15</td>
+<td>Operations $0.05</td>
+<td>$0.10</td>
+<td>6%</td>
+<td>12.5%</td>
+<td>67%</td>
+</tr>
+<tr>
+<td>Acquirer</td>
+<td>$0.55</td>
+<td>Processing $0.12, fraud and disputes $0.05, sales and support $0.18</td>
+<td>$0.20</td>
+<td>22%</td>
+<td>25%</td>
+<td>36%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$2.50</strong></td>
+<td></td>
+<td><strong>$0.80</strong></td>
+<td>100%</td>
+<td>100%</td>
+<td>32%</td>
+</tr>
+</tbody>
+</table>
+<p>Three lessons follow. First, the issuer gets most of the money but spends much of it on rewards to win cardholders. Second, the network earns the smallest fee and the highest margin, because network effects and scale protect it. Third, the acquirer sits in the most crowded part of the chain. Its $0.55 is the part merchants negotiate hardest.</p>
+<p>Regulation moves this pool. In the US, Regulation II caps debit interchange for large issuers. It covers debit cards, not credit cards. The rule is being challenged in federal court, so check its current status before you rely on it. The EU caps interchange on consumer debit and credit cards. A cap moves profit from issuers toward merchants and acquirers. The details live in <a href="monetization-and-business-models.html">Pricing and business models</a>. The per-transaction economics live in <a href="unit-economics.html">Unit economics</a>.</p>
+<p><strong>Lending.</strong> A loan passes through four roles. One company can play all four, or each can be a different firm.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>What it does</th>
+<th>How it earns</th>
+<th>What it bears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Originator</strong></td>
+<td>Markets, underwrites and approves the loan</td>
+<td>Origination fees, or a gain when it sells the loan</td>
+<td>Acquisition cost; reputation if underwriting is poor</td>
+</tr>
+<tr>
+<td><strong>Funder</strong></td>
+<td>Provides the money: deposits, credit lines or investors</td>
+<td>Interest above its cost of funds</td>
+<td>Credit losses and interest-rate risk</td>
+</tr>
+<tr>
+<td><strong>Servicer</strong></td>
+<td>Collects payments and handles customer contact</td>
+<td>A servicing fee, often a small share of the balance each year</td>
+<td>Operating cost</td>
+</tr>
+<tr>
+<td><strong>Collector</strong></td>
+<td>Recovers money from borrowers who fall behind</td>
+<td>A share of what it recovers, or the gap between the price it paid for bad debt and what it collects</td>
+<td>Recovery risk and conduct risk</td>
+</tr>
+</tbody>
+</table>
+<p>The funder holds the largest pool, because it earns the spread over the life of the loan. It also bears the credit loss. An originator that sells every loan earns less per loan, but it needs far less capital. Where to sit in this chain is a strategic choice. The funding side lives in <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a>.</p>
+<p><strong>Insurance.</strong> A policy also passes through several roles.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>What it does</th>
+<th>How it earns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent or broker</strong></td>
+<td>Sells the policy and advises the customer</td>
+<td>A commission, a share of the premium</td>
+</tr>
+<tr>
+<td><strong>Managing general agent (MGA)</strong></td>
+<td>Underwrites and sells on a carrier's behalf, under delegated authority</td>
+<td>A commission, sometimes plus a share of underwriting profit</td>
+</tr>
+<tr>
+<td><strong>Carrier</strong></td>
+<td>Holds the licence and the capital, and pays claims</td>
+<td>Underwriting profit plus investment income on premiums it holds</td>
+</tr>
+<tr>
+<td><strong>Reinsurer</strong></td>
+<td>Takes part of the carrier's risk</td>
+<td>A share of the premium</td>
+</tr>
+</tbody>
+</table>
+<p>Distribution earns a commission whether claims are high or low. The carrier and reinsurer earn only if claims stay below premium. So distribution can look like the safer business. But it has the weaker barrier, because comparison sites and direct sales compete for the same customer.</p>
+<p><strong>How to use a profit pool.</strong> Ask three questions. Where is the profit today? Which force protects it? What would move it? Some products move a step of the chain to you, such as a move from referral fees to underwriting. That puts you in a different pool, with different risks.</p>
+<h3 id="seven-sources-of-advantage">Seven sources of advantage</h3>
+<p>A <strong>competitive advantage</strong> lets you earn more than your rivals for a long time. It needs two parts. The <strong>benefit</strong> is a lower cost or a higher price than rivals. The <strong>barrier</strong> is the reason a rival cannot copy the benefit, even when it wants to. A benefit with no barrier is a head start, not an advantage.</p>
+<p>There are seven generic sources. Each one creates a benefit through a different mechanism, and each one erodes in a different way.</p>
+<style>
+.ba-adv{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-2xl);
+  padding:24px 22px 20px;margin:26px 0;font-family:inherit;text-align:left}
+.ba-adv-title{font-size:var(--font-text-2xs-size);letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+  color:var(--color-text-secondary);margin:0 0 4px}
+.ba-adv-sub{font-size:var(--font-text-sm-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-adv-fam{margin:0 0 14px}
+.ba-adv-fam:last-child{margin-bottom:0}
+.ba-adv-fam-head{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.ba-adv-chip{display:inline-block;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  border-radius:var(--radius-full);padding:3px 10px;border:1px solid transparent}
+.ba-adv-fam-note{font-size:var(--font-text-xs-size);color:var(--color-text-secondary)}
+.ba-adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.ba-adv-card{border-radius:var(--radius-lg);padding:12px 12px 10px;border:1px solid var(--color-border);background:var(--color-surface)}
+.ba-adv-name{font-size:var(--font-text-sm-size);font-weight:650;color:var(--color-text);margin:0 0 6px}
+.ba-adv-row{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 3px;line-height:1.4}
+.ba-adv-row b{color:var(--color-text);font-weight:600}
+.ba-adv-cost .ba-adv-chip{background:var(--color-background-success-surface);color:var(--color-text-success);border-color:var(--color-border-success-surface)}
+.ba-adv-cost .ba-adv-card{border-top:3px solid var(--color-border-success-outline)}
+.ba-adv-demand .ba-adv-chip{background:var(--color-background-info-surface);color:var(--color-text-info);border-color:var(--color-border-info-surface)}
+.ba-adv-demand .ba-adv-card{border-top:3px solid var(--color-border-info-outline)}
+.ba-adv-struct .ba-adv-chip{background:var(--color-background-discovery-surface);color:var(--color-text-discovery);border-color:var(--color-border-discovery-surface)}
+.ba-adv-struct .ba-adv-card{border-top:3px solid var(--color-border-discovery-outline)}
+.ba-adv-foot{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:14px 0 0;padding-top:10px;border-top:1px solid var(--color-border)}
+</style>
+<div class="ba-adv" role="figure" aria-label="Seven sources of competitive advantage in three families, each with its benefit, barrier and test">
+  <p class="ba-adv-title">Seven sources of advantage</p>
+  <p class="ba-adv-sub">Each needs a benefit (lower cost or higher price) and a barrier (why rivals cannot copy it).</p>
+
+  <div class="ba-adv-fam ba-adv-cost">
+    <div class="ba-adv-fam-head"><span class="ba-adv-chip">Cost advantages</span><span class="ba-adv-fam-note">you deliver the same thing for less</span></div>
+    <div class="ba-adv-grid">
+      <div class="ba-adv-card"><p class="ba-adv-name">Scale economies</p>
+        <p class="ba-adv-row"><b>Barrier:</b> a rival needs your volume</p>
+        <p class="ba-adv-row"><b>Test:</b> cost per unit falls with volume</p>
+        <p class="ba-adv-row"><b>Erodes:</b> rivals rent scale as a service</p></div>
+      <div class="ba-adv-card"><p class="ba-adv-name">Process power</p>
+        <p class="ba-adv-row"><b>Barrier:</b> routines built over years</p>
+        <p class="ba-adv-row"><b>Test:</b> rivals tried for 2+ years and fell short</p>
+        <p class="ba-adv-row"><b>Erodes:</b> vendors package the process</p></div>
+    </div>
+  </div>
+
+  <div class="ba-adv-fam ba-adv-demand">
+    <div class="ba-adv-fam-head"><span class="ba-adv-chip">Demand advantages</span><span class="ba-adv-fam-note">customers value you more or stay longer</span></div>
+    <div class="ba-adv-grid">
+      <div class="ba-adv-card"><p class="ba-adv-name">Network effects</p>
+        <p class="ba-adv-row"><b>Barrier:</b> a rival needs your network</p>
+        <p class="ba-adv-row"><b>Test:</b> retention rises with density</p>
+        <p class="ba-adv-row"><b>Erodes:</b> cheap multi-homing</p></div>
+      <div class="ba-adv-card"><p class="ba-adv-name">Switching costs</p>
+        <p class="ba-adv-row"><b>Barrier:</b> the customer's cost to move</p>
+        <p class="ba-adv-row"><b>Test:</b> cost to switch &gt; rival's saving</p>
+        <p class="ba-adv-row"><b>Erodes:</b> portability rules, standard APIs</p></div>
+      <div class="ba-adv-card"><p class="ba-adv-name">Brand</p>
+        <p class="ba-adv-row"><b>Barrier:</b> years of trust</p>
+        <p class="ba-adv-row"><b>Test:</b> better conversion at equal price</p>
+        <p class="ba-adv-row"><b>Erodes:</b> a breach or a scandal</p></div>
+    </div>
+  </div>
+
+  <div class="ba-adv-fam ba-adv-struct">
+    <div class="ba-adv-fam-head"><span class="ba-adv-chip">Structural advantages</span><span class="ba-adv-fam-note">access or a model rivals cannot or will not copy</span></div>
+    <div class="ba-adv-grid">
+      <div class="ba-adv-card"><p class="ba-adv-name">Cornered resource</p>
+        <p class="ba-adv-row"><b>Barrier:</b> exclusive access</p>
+        <p class="ba-adv-row"><b>Test:</b> would the partner sign your rival?</p>
+        <p class="ba-adv-row"><b>Erodes:</b> licences open up, contracts end</p></div>
+      <div class="ba-adv-card"><p class="ba-adv-name">Counter-positioning</p>
+        <p class="ba-adv-row"><b>Barrier:</b> copying harms the incumbent</p>
+        <p class="ba-adv-row"><b>Test:</b> the incumbent's best response loses it money</p>
+        <p class="ba-adv-row"><b>Erodes:</b> the old business shrinks</p></div>
+    </div>
+  </div>
+
+  <p class="ba-adv-foot">A benefit with no barrier is a head start, not an advantage.</p>
+</div>
+
+<p><strong>1. Scale economies.</strong> <em>Mechanism:</em> your fixed costs are spread over more units, so your cost per unit falls. In payments, compliance, fraud teams and network connections are largely fixed. Assume they cost $30 million a year. At 1 billion transactions, that is 3 cents each. A rival with 200 million transactions pays 15 cents each. In insurance, a larger book of policies also makes losses more predictable, so each policy needs less capital as a buffer. <em>Test:</em> Does your cost per unit fall with volume? Would a rival need years and heavy losses to reach your volume? <em>Erosion:</em> Cloud services and "processing as a service" let small rivals rent scale. The fixed cost turns into a variable cost, and your edge shrinks. <em>Misreading:</em> Being big is not the same as having scale economies. If your costs are mostly variable, size does not help.</p>
+<p><strong>2. Network effects.</strong> <em>Mechanism:</em> each new user makes the product more valuable to other users. A card network is worth more to cardholders when more merchants accept it, and more to merchants when more people carry it. <em>Test:</em> Does retention or value per user rise with network density in your own data? <em>Erosion:</em> Customers use several networks at once. Rules force interoperability. The network is local, so a rival can win one city at a time. This source gets its own section below.</p>
+<p><strong>3. Switching costs.</strong> <em>Mechanism:</em> the customer would lose money, time or data to move to a rival. So you can charge somewhat more, or keep customers longer, than an equal rival. Switching costs come in three kinds. <strong>Financial:</strong> exit fees, or losing a rate or a reward balance. <strong>Procedural:</strong> new integrations, staff training, data migration. <strong>Relational:</strong> trust in a person or a team. A merchant whose point-of-sale (POS) software, payments and payroll run on one platform faces high procedural costs. A business with direct deposit and bill pay on one account does too. <em>Test:</em> Estimate the cost to switch in dollars and weeks. Compare it with the annual saving a rival offers. If the saving is bigger, the switching cost does not hold. <em>Erosion:</em> Data portability and open-banking rules. Account-switching services that some countries run for current accounts. Standard APIs that make integrations cheap. <em>Misreading:</em> Friction you add on purpose is not an advantage. Customers resent it, and regulators notice it. A good switching cost comes from value the customer has built inside your product.</p>
+<p><strong>4. Brand.</strong> <em>Mechanism:</em> customers pay more, or trust you sooner, because of a reputation built over years. In financial services, trust matters more than in most markets, because customers hand over their money or their claims. <em>Test:</em> At the same price, do you convert better than an unknown rival? Can you charge a premium and keep retention? <em>Erosion:</em> One security breach, a claims scandal or a frozen-funds story can undo years. Comparison sites also reduce a brand to a price on a list. <em>Misreading:</em> Awareness is not brand advantage. Many people know a name and still choose on price.</p>
+<p><strong>5. Cornered resource.</strong> <em>Mechanism:</em> you have access to something valuable on better terms than rivals. Examples include a bank charter, licences in every US state, an exclusive partner bank deal, proprietary data, or an exclusive distribution deal with a large retailer. A bank charter lets a lender fund loans with deposits, which usually cost less than credit lines. <em>Test:</em> Is the resource truly exclusive? Would it still be valuable if a rival had a similar one? <em>Erosion:</em> Licences become easier to get. Partner banks sign more fintechs. Contracts expire. Data becomes available from vendors. <em>Misreading:</em> A partner deal anyone can sign is not cornered. Ask whether the partner would sign the same deal with your rival next quarter.</p>
+<p><strong>6. Process power.</strong> <em>Mechanism:</em> your organisation does something better through many small, linked routines that took years to build. In lending, a collections operation that recovers more per dollar of bad debt is an example. In insurance, a claims team that settles faster with less leakage is another. Rivals can see the result but cannot copy it quickly, because the know-how is spread across people, data and tools. <em>Test:</em> Have rivals tried to copy it for two years or more and still fallen short? <em>Erosion:</em> Vendors package the process and sell it to everyone. Key staff leave. Automation makes the old routine irrelevant. <em>Misreading:</em> A good process that a consultant could document in a month is not process power.</p>
+<p><strong>7. Counter-positioning.</strong> <em>Mechanism:</em> a newcomer adopts a model that the incumbent could copy but chooses not to, because copying would damage its existing business. Low-fee index funds against active managers is the classic pattern. A fee-free account against banks that earn overdraft fees is another. A direct-to-consumer insurer against carriers that sell through agents is a third. <em>Test:</em> Does the incumbent's best response cost it more than it gains? <em>Erosion:</em> The incumbent's old business shrinks until copying becomes cheap. Or the incumbent launches a separate brand with its own cost base. <em>Misreading:</em> A cheaper price is not counter-positioning if the incumbent can match it without harm.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Benefit</th>
+<th>Barrier</th>
+<th>Strongest in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scale economies</td>
+<td>Lower cost per unit</td>
+<td>Rival needs your volume</td>
+<td>Processing, insurance, retail buying</td>
+</tr>
+<tr>
+<td>Network effects</td>
+<td>Higher value per user</td>
+<td>Rival needs your network</td>
+<td>Card networks, marketplaces, peer-to-peer (P2P) payments</td>
+</tr>
+<tr>
+<td>Switching costs</td>
+<td>Higher price or retention</td>
+<td>Customer's cost to move</td>
+<td>Merchant software with payments, business banking</td>
+</tr>
+<tr>
+<td>Brand</td>
+<td>Higher price or conversion</td>
+<td>Years of trust</td>
+<td>Insurance, consumer banking</td>
+</tr>
+<tr>
+<td>Cornered resource</td>
+<td>Lower cost or exclusive access</td>
+<td>Exclusivity</td>
+<td>Charters, licences, exclusive deals</td>
+</tr>
+<tr>
+<td>Process power</td>
+<td>Lower cost or better product</td>
+<td>Hard-to-copy routines</td>
+<td>Underwriting, collections, claims</td>
+</tr>
+<tr>
+<td>Counter-positioning</td>
+<td>Lower price or better terms</td>
+<td>Incumbent's self-harm if it copies</td>
+<td>New models against fee-based incumbents</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decision rule.</strong> For each big bet, write which source it builds, the evidence that the source exists today, and the signal that it is eroding. If you cannot name a source, the bet may still be worth doing. But price it as a feature that rivals will match.</p>
+<h3 id="network-effects-in-depth">Network effects in depth</h3>
+<p>Network effects are easy to claim and hard to prove. Test them before you rely on them.</p>
+<p><strong>Same-side and cross-side.</strong> A <strong>same-side</strong> (direct) effect means users on one side benefit from more users on the same side. A P2P payment app is more useful when more of your friends use it. A <strong>cross-side</strong> (indirect) effect means one side benefits from more users on the other side. Buyers want more sellers. Merchants want more cardholders. Cross-side networks must grow both sides in balance.</p>
+<p><strong>Local and global.</strong> Many networks are local. A food-delivery marketplace in one city does not help a diner in another city. A P2P app helps only within your circle of contacts. A local network is easier to attack, because a rival can win one city or one community at a time. A card network is more global. A traveller values acceptance in other countries.</p>
+<p><strong>Cold start and the smallest viable network.</strong> A new network has no value at the start, so nobody joins. The fix is to find the <strong>smallest viable network</strong>: the smallest group in which the product is useful on its own. That might be one city, one campus, or one industry's suppliers and buyers. Win that group fully before you expand. Many marketplaces seed the harder side first, often the supply side, with subsidies or with a single-player tool that is useful without the network.</p>
+<p><strong>Multi-homing.</strong> <strong>Multi-homing</strong> means users join several networks at once. Merchants accept several card brands and wallets. Drivers work on two delivery apps. Sellers list on several marketplaces. When multi-homing is cheap, a network effect is a weak barrier. A rival needs only to be good enough to be added, not to replace you.</p>
+<p><strong>Negative network effects.</strong> More users can also make the product worse. <strong>Congestion</strong> happens when too many sellers compete for the same buyers. <strong>Fraud</strong> grows with the network, because a larger network attracts more fraudsters. <strong>Quality dilution</strong> happens when a flood of low-quality sellers drags down the buyer's experience. Each needs a control: ranking, fees, verification or limits.</p>
+<p><strong>Data network effects.</strong> Teams often say "more data makes our model better, so we have a network effect." Two things can break that claim. First, the data must come from usage <em>and</em> improve the product for other users. Second, the gain usually plateaus. A fraud model may improve a lot from 1 million to 100 million transactions, then barely move after that. Once a rival reaches the plateau, the advantage stops growing. Treat data as scale or a cornered resource unless you can show the curve is still rising.</p>
+<p><strong>How to measure it.</strong> Plot value or retention against <strong>network density</strong>. Density is how much network a user can reach: contacts on the app, sellers in a category, merchants within a mile. Illustrative data for a P2P app:</p>
+<table>
+<thead>
+<tr>
+<th>Contacts on the app at day 30</th>
+<th>Share of users (assumed)</th>
+<th>90-day retention (assumed)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>40%</td>
+<td>20%</td>
+</tr>
+<tr>
+<td>1 to 4</td>
+<td>35%</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>5 or more</td>
+<td>25%</td>
+<td>70%</td>
+</tr>
+</tbody>
+</table>
+<p>Retention rises with density, which supports a same-side effect. Be careful. Engaged users may add contacts <em>because</em> they are engaged. So look for a cleaner test, such as comparing cities launched at different times, or users invited by a contact against users who arrived alone. For a marketplace, track <strong>liquidity</strong>: the share of listings that sell, or the share of searches that end in a purchase, by city and category.</p>
+<p><strong>Decision rule.</strong> Invest in a network effect only where you can define the smallest viable network, show value rising with density, and keep multi-homing costly or unattractive. Otherwise, plan for a market where several players coexist.</p>
+<h3 id="structuring-a-strategy">Structuring a strategy</h3>
+<p>A strategy is a set of choices that fit together and give you an advantage. It is not a vision, a goal or a plan. Three structures help.</p>
+<p><strong>The kernel: diagnosis, guiding policy, coherent actions.</strong></p>
+<ul>
+<li>A <strong>diagnosis</strong> names the crux of the situation: the one or two problems that matter most. <em>"Our net take rate falls 5 basis points a year because merchants can switch in a week"</em> is a diagnosis. <em>"We need to grow"</em> is not.</li>
+<li>A <strong>guiding policy</strong> is the overall approach to the crux. It rules options out. <em>"Win where payments are embedded in the merchant's daily software"</em> rules out competing for every merchant on price.</li>
+<li><strong>Coherent actions</strong> are a small set of moves that support each other and carry out the policy. Each action makes the others work better.</li>
+</ul>
+<p>Watch for four signs of a weak strategy. Fluff: big words with no choices. Goals posing as strategy: "grow 30%". A long list of unrelated initiatives. A diagnosis that avoids the real problem.</p>
+<p><strong>The choice cascade.</strong> A second structure links the strategy to the organisation. It asks five questions in order. Each answer constrains the next.</p>
+<pre class="mermaid">flowchart TB
+  W[&quot;Aspiration&lt;br/&gt;what winning means&quot;] --&gt; P[&quot;Where to play&lt;br/&gt;segments · geographies · channels · products&quot;]
+  P --&gt; H[&quot;How to win&lt;br/&gt;the advantage in those places&quot;]
+  H --&gt; C[&quot;Capabilities&lt;br/&gt;what we must be great at&quot;]
+  C --&gt; M[&quot;Management systems&lt;br/&gt;metrics · budgets · reviews that support it&quot;]
+  M -.-&gt;|&quot;evidence feeds back&quot;| P</pre>
+<p><strong>Where to play</strong> and <strong>how to win</strong> are the heart of it. They must match. "Small restaurants" (where to play) and "lowest price" (how to win) only fit if you have the lowest cost. "Small restaurants" and "payments built into the restaurant's software" fit if you have the partnerships.</p>
+<p><strong>Fit and trade-offs.</strong> Rivals can copy one activity. They struggle to copy a system of activities that reinforce each other. A lender whose underwriting data, collections process and product design all target one niche is harder to copy than a lender with one clever model. Fit also requires <strong>trade-offs</strong>: things you choose not to do because they would weaken the system. Write them down. "We will not serve merchants that do not use a partner's software" is a real trade-off. It costs revenue. That cost is the sign that it is a choice.</p>
+<p><strong>A one-page strategy.</strong> Use this structure for a product line:</p>
+<ol>
+<li><strong>Diagnosis:</strong> the crux, in two sentences, with one number.</li>
+<li><strong>Guiding policy:</strong> one sentence that rules options out.</li>
+<li><strong>Where to play:</strong> segments, geographies and channels in and out.</li>
+<li><strong>How to win:</strong> the source of advantage you will build.</li>
+<li><strong>Coherent actions:</strong> three to five, each with an owner.</li>
+<li><strong>What we will not do:</strong> at least three items.</li>
+<li><strong>Signals:</strong> the metrics that show the advantage is building, and the date of the next review.</li>
+</ol>
+<h3 id="strategic-moves">Strategic moves</h3>
+<p>Four moves come up often in financial and commerce products.</p>
+<p><strong>Bundling and unbundling.</strong> Bundle when customers value the set more than the parts, and when the bundle lowers your cost to serve. Unbundle when a specialist can do one part much better than the bundle does. Fintech first unbundled the bank into single products: payments, loans, savings. Many fintechs now rebundle, because a second product lowers churn and spreads acquisition cost. <em>Cost:</em> a bundle is harder to price and can hide a weak product.</p>
+<p><strong>Embedding.</strong> Embedding puts a financial product inside software the customer already uses. Payments inside restaurant or salon software is the common case. Lending at the checkout of a commerce site is another. The software partner owns the customer relationship. You get distribution and higher switching costs. <em>Cost:</em> you share revenue with the partner, and you depend on it.</p>
+<p><strong>Platform or pipeline.</strong> A <strong>pipeline</strong> creates value in a line: you build, you sell. A <strong>platform</strong> lets others create value on top of you, through APIs, marketplaces or partner programmes. A platform can build network effects. <em>Cost:</em> you give up control of the experience, and you must police quality and fraud.</p>
+<p><strong>Response to a low-end entrant.</strong> A low-end entrant offers a simpler, cheaper product to customers you serve least well. You have four options. <strong>Ignore it</strong> if it serves customers you do not want. <strong>Move upmarket</strong> if your best customers are safe, but know that you are giving up the base. <strong>Launch a separate unit</strong> with its own brand and cost structure if the entrant counter-positions you. <strong>Acquire it</strong> if it is cheaper than building. The worst response is to cut prices in the core business, because that lowers your margin on every existing customer.</p>
+<h2 id="worked-example-strategy-for-a-small-merchant-acquirer">Worked example: strategy for a small-merchant acquirer</h2>
+<p><em>This example is invented, to show the method. The company and all numbers are illustrative, and every input is assumed.</em></p>
+<p>A US acquirer serves 40,000 small merchants. It processes $8 billion of card volume a year, or total payment volume (TPV). Its net take rate, after interchange and scheme fees, fell from 0.75% to 0.60% over three years. Net revenue is $8 billion × 0.60% = <strong>$48 million</strong>. At 0.75% it would be $60 million, so the fall costs $12 million a year.</p>
+<p><strong>Step 1: draw the boundary.</strong> The industry is card acquiring for small US merchants that sell in person and online. Large merchants are out. They negotiate custom pricing and face different forces.</p>
+<p><strong>Step 2: run the forces.</strong></p>
+<ul>
+<li><strong>Buyer power: strong.</strong> Card fees are a visible cost line for a small merchant. Rivals send rate quotes. Switching takes about a week: a new terminal and new bank details.</li>
+<li><strong>Rivalry: strong.</strong> Many acquirers and payment facilitators sell near-identical flat rates. Concentration in the small-merchant segment is low.</li>
+<li><strong>Supplier power: medium.</strong> Interchange and scheme fees take 78% of the merchant fee, but they pass through to the merchant. They squeeze the acquirer only when it sells a fixed flat rate.</li>
+<li><strong>New entrants: medium to strong.</strong> Payment facilitator models let a software company start acquiring without building the whole stack.</li>
+<li><strong>Substitutes: weak today, rising.</strong> Account-to-account payments matter more online than in store.</li>
+</ul>
+<p><strong>Step 3: find the binding force.</strong> Follow the margin. Merchant prices did not fall, and pass-through costs did not rise much. The 15 basis points went to merchants, through quotes from rivals. Buyer power and rivalry bind.</p>
+<p><strong>Step 4: audit the advantage.</strong> Run the seven sources against evidence:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Evidence</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scale economies</td>
+<td>Processing cost per transaction is in line with rivals; larger rivals are cheaper</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Network effects</td>
+<td>No user benefits from other merchants joining</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Switching costs</td>
+<td>One week and no exit fee; most churned merchants leave within a month of a rival quote</td>
+<td><strong>Low: the gap</strong></td>
+</tr>
+<tr>
+<td>Brand</td>
+<td>Unaided awareness low; wins are on price</td>
+<td>Weak</td>
+</tr>
+<tr>
+<td>Cornered resource</td>
+<td>Standard sponsor-bank deal; no exclusive data</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Process power</td>
+<td>Onboarding in one day; rivals are similar</td>
+<td>Weak</td>
+</tr>
+<tr>
+<td>Counter-positioning</td>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 5: write the diagnosis.</strong> <em>"We are a commoditized acquirer. We lose net take rate because merchants can switch in a week, and every rival sells the same flat rate."</em></p>
+<p><strong>Step 6: set the guiding policy.</strong> <em>"Win where payments are embedded in the software the merchant runs on."</em> Inside vertical software, payments are part of a system the merchant uses all day. Switching means changing the software, which is costly.</p>
+<p><strong>Step 7: check the economics by segment.</strong> Average TPV per merchant is $8 billion ÷ 40,000 = $200,000 a year, or about $16,667 a month. Compare a direct merchant with one signed through a software partner:</p>
+<table>
+<thead>
+<tr>
+<th>Per merchant per month (assumed)</th>
+<th>Direct</th>
+<th>Embedded</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Net take rate</td>
+<td>0.60%</td>
+<td>0.80%</td>
+</tr>
+<tr>
+<td>Net revenue</td>
+<td>$100.00</td>
+<td>$133.33</td>
+</tr>
+<tr>
+<td>Revenue share to software partner (30%)</td>
+<td>$0</td>
+<td>$40.00</td>
+</tr>
+<tr>
+<td>Variable cost to serve</td>
+<td>$40.00</td>
+<td>$40.00</td>
+</tr>
+<tr>
+<td><strong>Contribution per month</strong></td>
+<td><strong>$60.00</strong></td>
+<td><strong>$53.33</strong></td>
+</tr>
+<tr>
+<td>Monthly churn</td>
+<td>2%</td>
+<td>1%</td>
+</tr>
+<tr>
+<td>Expected life (1 ÷ churn)</td>
+<td>50 months</td>
+<td>100 months</td>
+</tr>
+<tr>
+<td>Lifetime contribution (undiscounted)</td>
+<td>$3,000</td>
+<td>$5,333</td>
+</tr>
+<tr>
+<td>Acquisition cost (CAC)</td>
+<td>$1,500</td>
+<td>$400</td>
+</tr>
+<tr>
+<td>Simple payback</td>
+<td>25 months</td>
+<td>7.5 months</td>
+</tr>
+</tbody>
+</table>
+<p>The embedded merchant earns <em>less</em> each month. It is still worth far more, because it stays twice as long and costs far less to acquire. The partner does the selling. This is a simplified, undiscounted view. <a href="unit-economics.html">Unit economics</a> shows how to do it with cohorts and discounting.</p>
+<p><strong>Step 8: choose coherent actions.</strong></p>
+<ol>
+<li><strong>Vertical-software partnerships.</strong> Sign three software platforms in salons, restaurants and field services. Offer a 30% revenue share and a one-week integration.</li>
+<li><strong>Bundled working-capital loans.</strong> Offer merchant loans repaid from a share of daily card sales. The loan uses the acquirer's sales data for underwriting. It also raises switching costs, because the repayment runs through settlement. Disclosure rules for small-business financing vary by state. Check with Legal early.</li>
+<li><strong>Payout speed priced against float.</strong> Offer instant payouts for a fee. Price the fee against the float the company gives up when it pays faster. The float logic lives in <a href="the-language-of-money.html">The language of money</a>.</li>
+</ol>
+<p>Each action reinforces the others. Partners bring merchants. Merchant data improves loan underwriting. Loans and instant payouts make the platform harder to leave.</p>
+<p><strong>Step 9: write what you will not do.</strong> No price matches below 0.55% net for direct merchants. No new countries this year. No large-merchant sales team. These choices cost revenue. The direct book will shrink as merchants leave for price.</p>
+<p><strong>Step 10: set the signals.</strong> Share of new merchants from partners. Churn of embedded merchants against direct. Net take rate by segment. Review in two quarters.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Focus vs. optionality.</strong> A clear position builds an advantage. It costs the revenue from segments you leave, and it makes a pivot slower.</li>
+<li><strong>Own the step vs. partner for it.</strong> Owning the funding or the risk step earns a larger profit pool. It costs capital and brings credit or insurance risk onto your balance sheet.</li>
+<li><strong>Embed vs. go direct.</strong> Embedding lowers acquisition cost and raises switching costs. It costs a revenue share, and the partner can switch providers or build payments in-house.</li>
+<li><strong>Build switching costs vs. customer trust.</strong> Integration raises the cost to leave. Exit fees and data lock-in do too, but they cost goodwill and invite regulation.</li>
+<li><strong>Open platform vs. controlled product.</strong> A platform can build network effects. It costs control of quality, fraud and the customer experience.</li>
+<li><strong>Match the low-end entrant vs. let it have the low end.</strong> Matching protects volume. It costs margin on every existing customer.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The feature as moat.</strong> A team calls a feature an advantage. A rival ships it in six months. You see it as rising churn after the rival's launch, and falling win rates in sales.</li>
+<li><strong>Volume without a pool.</strong> The product grows TPV or loan volume in the part of the chain where buyers or suppliers keep the profit. You see it as rising volume and flat or falling contribution.</li>
+<li><strong>The imagined network effect.</strong> A pitch claims a network effect. Retention does not rise with density. You see it when a rival with a smaller network grows just as fast.</li>
+<li><strong>The data plateau.</strong> A team keeps investing in "more data" after model gains flatten. You see it as model metrics that stop improving while data costs grow.</li>
+<li><strong>Hostile lock-in.</strong> Switching costs come from exit fees and hard-to-export data, not from value. You see it in complaint volume, regulator questions and churn spikes when contracts end.</li>
+<li><strong>The strategy with no "no".</strong> Every segment and every request stays in scope. You see it as a roadmap that changes every quarter and teams spread across too many bets.</li>
+<li><strong>Fighting the entrant inside the core.</strong> The incumbent cuts its core price to stop a low-end rival. You see it as margin falling on the whole book while the entrant keeps growing.</li>
+<li><strong>Ignoring the supplier.</strong> A fintech builds volume on one sponsor bank or one reinsurer. The supplier reprices or exits. You see it as a sudden jump in cost or a forced pause in growth.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p><strong>An advantage audit.</strong> Keep one entry per source you claim. Review it each quarter. The <code>erosion_signal</code> field is the most important line, because it tells you when to stop counting on the advantage.</p>
+<pre><code class="language-yaml">product: merchant-acquiring-embedded
+review_date: 2027-04
+binding_force: buyer_power
+advantages:
+  - source: switching_costs
+    benefit: &quot;Lower churn: embedded merchants churn 1%/month vs 2% direct&quot;
+    barrier: &quot;Leaving means changing the merchant's daily software&quot;
+    evidence:
+      - metric: monthly_churn_embedded
+        value: 0.010
+      - metric: share_of_churners_citing_price
+        value: 0.15
+    cost_to_copy: &quot;12-18 months and 3+ software partnerships&quot;
+    erosion_signal: &quot;Partner announces own payments, or embedded churn &gt; 1.5%/month for 2 quarters&quot;
+    owner: partnerships-lead
+  - source: process_power
+    benefit: &quot;Merchant loan losses below market&quot;
+    barrier: &quot;Underwriting on daily settlement data we hold&quot;
+    evidence:
+      - metric: loan_loss_rate_vs_benchmark
+        value: -0.02
+    cost_to_copy: &quot;Needs our settlement data; not available to rivals&quot;
+    erosion_signal: &quot;Rivals' loss rates converge within 0.5 points&quot;
+    owner: credit-lead
+not_doing:
+  - &quot;Price matches below 0.55% net for direct merchants&quot;
+  - &quot;New countries this year&quot;
+  - &quot;Large-merchant sales team&quot;
+</code></pre>
+<p><strong>The numbers in this lesson, reproduced.</strong></p>
+<pre><code class="language-python"># Profit pool on a $100 card payment (all inputs assumed)
+pool = {  # party: (revenue, variable cost)
+    &quot;issuer&quot;:   (1.80, 1.00 + 0.10 + 0.20),
+    &quot;network&quot;:  (0.15, 0.05),
+    &quot;acquirer&quot;: (0.55, 0.12 + 0.05 + 0.18),
+}
+total_rev = sum(r for r, c in pool.values())
+total_profit = sum(r - c for r, c in pool.values())
+for party, (rev, cost) in pool.items():
+    profit = rev - cost
+    print(f&quot;{party:9} revenue {rev/total_rev:5.1%}  profit {profit/total_profit:5.1%}  margin {profit/rev:5.1%}&quot;)
+print(f&quot;supplier share of MDR: {(1.80 + 0.15) / total_rev:.0%}&quot;)   # 78%
+
+# Concentration index: four large players plus ten with 1% each
+shares = [30, 25, 20, 15] + [1] * 10
+print(&quot;concentration index:&quot;, sum(s ** 2 for s in shares))                       # 2160
+
+# Direct vs embedded merchant (worked example)
+monthly_tpv = 8e9 / 40_000 / 12
+def merchant(net_take, rev_share, cost, churn, cac):
+    revenue = monthly_tpv * net_take
+    cm = revenue * (1 - rev_share) - cost
+    return round(cm, 2), round(cm / churn), round(cac / cm, 1)
+print(&quot;direct   (CM/month, lifetime CM, payback months):&quot;, merchant(0.006, 0.0, 40, 0.02, 1500))
+print(&quot;embedded (CM/month, lifetime CM, payback months):&quot;, merchant(0.008, 0.3, 40, 0.01, 400))
+</code></pre>
+<p>The script prints revenue shares of 72%, 6% and 22%, and profit shares of 62.5%, 12.5% and 25%. It prints a concentration index of 2,160. For the direct merchant, it prints a contribution of 60.0 a month, a lifetime contribution of 3000 and a payback of 25.0 months. For the embedded merchant, it prints 53.33, 5333 and 7.5.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Draw the industry boundary for your product: product, geography and customer type.</li>
+<li class="task todo">Run the five forces with evidence. Name the binding force and the move that shifts it.</li>
+<li class="task todo">Map the profit pool for one unit of your product. Mark where you sit.</li>
+<li class="task todo">For each big bet, name the source of advantage, its benefit, its barrier and its erosion signal.</li>
+<li class="task todo">If you claim a network effect, show retention or value by network density.</li>
+<li class="task todo">Measure switching costs in dollars and weeks, and compare them with a rival's offer.</li>
+<li class="task todo">Write a one-page strategy: diagnosis, guiding policy, coherent actions.</li>
+<li class="task todo">List at least three things you will not do, and the revenue each one costs.</li>
+<li class="task todo">Decide in advance how you will respond to a low-end entrant.</li>
+<li class="task todo">Set a review date, and rerun the forces when a rule or technology changes.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="markets-and-strategy.html">Markets and customers: segments, sizing and positioning</a> — choosing the segment before choosing how to win in it.</li>
+<li><a href="unit-economics.html">Unit economics</a> — per-transaction, per-loan and per-policy economics behind the profit pool.</li>
+<li><a href="monetization-and-business-models.html">Pricing and business models</a> — interchange rules and the business-model table.</li>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> — funding models and how advantage shows up in value.</li>
+<li><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> — funding several strategic bets at once.</li>
+<li><a href="../system-design/transactional-and-financial.html">Transactional and financial systems</a> — the ledgers and settlement flows behind a card payment.</li>
+<li><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a> — turning coherent actions into a roadmap.</li>
+<li><a href="../first-principles/mental-models-latticework.html">Mental models latticework</a> — reasoning tools for building a diagnosis.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="markets-and-strategy.html"><span class="lbl">← Previous</span><span class="ttl">Markets and customers: segments, sizing and positioning</span></a><a class="navcard next" href="monetization-and-business-models.html"><span class="lbl">→ Next</span><span class="ttl">Pricing and business models</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-the-pool-your-share-your-choices">Mental model: the pool, your share, your choices</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-five-competitive-forces-run-as-a-method">The five competitive forces, run as a method</a><a class="h3" href="#value-chain-and-profit-pools">Value chain and profit pools</a><a class="h3" href="#seven-sources-of-advantage">Seven sources of advantage</a><a class="h3" href="#network-effects-in-depth">Network effects in depth</a><a class="h3" href="#structuring-a-strategy">Structuring a strategy</a><a class="h3" href="#strategic-moves">Strategic moves</a><a class="h2" href="#worked-example-strategy-for-a-small-merchant-acquirer">Worked example: strategy for a small-merchant acquirer</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fcompetitive-advantage-and-strategy.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/competitive-advantage-and-strategy.html"</script><script defer src="../assets/glossary.js"></script></body></html>

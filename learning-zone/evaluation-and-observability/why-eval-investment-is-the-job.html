@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Evaluation &amp; observability</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="why-eval-investment-is-the-job.html">1 · Why eval investment is the job</a><a class="modlink" href="building-the-eval-stack-in-the-right-order.html">2 · Building the eval stack in the right order</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
@@ -193,11 +202,22 @@ quality drift nobody can point to a cause for, or as a single sharp regression t
 demo-sized manual check would never have caught. By the time it's visible to users, it's
 already an incident — the eval set that would have caught it in a code review didn't
 exist yet.</p>
+<h2 id="a-score-is-an-estimate-not-a-fact">A score is an estimate, not a fact</h2>
+<p>An eval score is a measurement with noise. The model can answer the same input differently on each run. The test set is also only a sample of real traffic. So a two-point gain on 50 cases may be luck.</p>
+<p>Three habits keep the number honest:</p>
+<ul>
+<li><strong>Run each case more than once</strong> when the output varies. Anthropic separates <em>pass@k</em> (at least one of k tries succeeds) from <em>pass^k</em> (all k tries succeed). At a 75% pass rate per try, three tries all pass only about 42% of the time. Users who need the same behavior every time care about the second number.</li>
+<li><strong>Report the error bar</strong> next to the score. Evan Miller's paper "Adding Error Bars to Evals" argues that evals are experiments and should use standard errors and paired comparisons between two models.</li>
+<li><strong>Balance the set.</strong> The widely cited claim that GPT-4 "got worse" in 2023 used a prime-number test where every number was prime. Critics showed that the score swing mostly tracked a shift in the model's guess, not lost skill. A balanced set measures what the task needs.</li>
+</ul>
+<h2 id="offline-evals-are-one-layer-of-three">Offline evals are one layer of three</h2>
+<p>Evals run before a change ships, on a fixed set. They miss what only real traffic shows. Anthropic's guidance on agent evals names three layers: automated evals before release, production monitoring after release, and A/B tests that measure user outcomes. Monitoring finds real behavior at scale but reacts after users see a problem. A/B tests take days or weeks to reach significance. No single layer catches everything.</p>
+<p>The September 2025 Anthropic postmortem shows why. Three infrastructure bugs degraded Claude responses for weeks. Anthropic said its evals were too noisy to separate working from broken, and that Claude "often recovers well from isolated mistakes." It added more sensitive evals and continuous quality checks on production systems. A pre-release suite alone would not have caught these bugs.</p>
 <h2 id="the-minimum-viable-version-is-smaller-than-most-teams-assume">The minimum viable version is smaller than most teams assume</h2>
 <p>The bar for starting is much lower than "build a metrics dashboard." A spreadsheet of
 real production traces, a pass/fail label on each one, and a note on why it failed
 already beats a scoring infrastructure nobody has validated against real behavior yet.
-The habit that actually matters is reading the traces before building anything to grade
+Anthropic suggests that "20-50 simple tasks drawn from real failures is a great start" and that you do not need hundreds. The habit that actually matters is reading the traces before building anything to grade
 them automatically — most teams over-invest in scoring tooling and under-invest in the
 hours of looking at real transcripts that reveal what's actually worth measuring. That
 sequencing question — what to build first, and in what order to grow it — is the subject
@@ -208,7 +228,13 @@ of the next lesson in this module.</p>
   when the eval set is the only reliable way to know whether the feature is actually
   working in the first place.</li>
 <li><strong>Shipping on vibes</strong> — a change goes out because it "felt better" in a handful of
-  manual tries, with no representative check behind that impression.</li>
+  manual tries, with no representative check behind that impression. OpenAI's evaluation
+  guide calls vibe-based evals, and adding evals only after launch, anti-patterns.</li>
+<li><strong>Generic metrics as the spec</strong> — off-the-shelf "helpfulness" or "coherence" scores, or
+  text-overlap scores such as ROUGE, give false confidence. They do not encode what good
+  means for your feature.</li>
+<li><strong>One run, no error bar</strong> — a small score change on a small set is treated as a real
+  gain, when run-to-run noise could explain it.</li>
 <li><strong>Scoring infrastructure before anyone read a trace</strong> — a polished dashboard built
   before anyone spent the hours understanding what real failures actually look like.</li>
 <li><strong>No regression gate</strong> — evals exist, but nothing stops a change from shipping when the
@@ -223,6 +249,10 @@ of the next lesson in this module.</p>
 <li class="task todo">Has anyone actually spent hours reading real production traces before building a
       grading pipeline?</li>
 <li class="task todo">Do evals gate the release, or are they a report that gets checked after the fact?</li>
+<li class="task todo">Does each score come with an error bar, and do you run non-deterministic cases more
+      than once?</li>
+<li class="task todo">Beyond pre-release evals, is there production monitoring and a way to compare
+      user outcomes (A/B test) for changes that matter?</li>
 </ul>
 <h2 id="related-lessons">Related lessons</h2>
 <ul>
@@ -233,8 +263,8 @@ of the next lesson in this module.</p>
 <li><a href="../technical-product-management/tpm-for-ai-products.html">Eval-driven development</a> — the
   operating discipline this lesson's argument leads to at full maturity.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="building-the-eval-stack-in-the-right-order.html"><span class="lbl">→ Next</span><span class="ttl">Building the eval stack in the right order</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-spec-for-a-system-with-no-exact-answer">The mental model: a spec for a system with no exact answer</a><a class="h2" href="#what-skipping-this-actually-costs">What skipping this actually costs</a><a class="h2" href="#the-minimum-viable-version-is-smaller-than-most-teams-assume">The minimum viable version is smaller than most teams assume</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="building-the-eval-stack-in-the-right-order.html"><span class="lbl">→ Next</span><span class="ttl">Building the eval stack in the right order</span></a></div><footer class="foot"><strong>Core insight:</strong> An AI system&#x27;s biggest risk is failing quietly. The defence is measurement built in the right order, starting with reading real failures.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-spec-for-a-system-with-no-exact-answer">The mental model: a spec for a system with no exact answer</a><a class="h2" href="#what-skipping-this-actually-costs">What skipping this actually costs</a><a class="h2" href="#a-score-is-an-estimate-not-a-fact">A score is an estimate, not a fact</a><a class="h2" href="#offline-evals-are-one-layer-of-three">Offline evals are one layer of three</a><a class="h2" href="#the-minimum-viable-version-is-smaller-than-most-teams-assume">The minimum viable version is smaller than most teams assume</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

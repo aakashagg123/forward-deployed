@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>APIs &amp; integrations</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="the-request-response-contract.html">1 · The request/response contract</a><a class="modlink" href="calling-an-llm-api.html">2 · Calling an LLM API</a><a class="modlink" href="structured-output-and-json-mode.html">3 · Structured output &amp; JSON mode</a><a class="modlink" href="webhooks-and-async-patterns.html">4 · Webhooks &amp; async patterns</a><a class="modlink active" href="integrating-into-existing-systems.html">5 · Integrating into existing systems</a><a class="modlink" href="mcp-and-standard-connectors.html">6 · MCP &amp; standard connectors</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
@@ -176,8 +185,7 @@ can cause that action to happen twice. Idempotency solves this by designing the 
 that repeating it, deliberately or accidentally, has the same effect as doing it once —
 often through an idempotency key that lets the receiving system recognize and ignore a
 repeat. The mechanics of this pattern are developed in full in
-<a href="../ai/02-reliable-outputs.html#function-calling">Function calling</a>, and it deserves
-the same care here: any AI-driven action with a real-world side effect needs this design
+<a href="../ai/02-reliable-outputs.html#function-calling">Function calling</a>, and it deserves the same care here. Stripe's API shows the pattern. The client sends an <code>Idempotency-Key</code> header, and a retry with the same key returns the saved result instead of repeating the action. In Stripe's v1 API, keys may be pruned after 24 hours, so a very late retry can run again. Apply the same care in your own side-effect endpoints: any AI-driven action with a real-world side effect needs this design
 from the start, not as an afterthought once a duplicate has already happened.</p>
 <h2 id="failure-isolation-containing-a-bad-day">Failure isolation: containing a bad day</h2>
 <p>A model provider will, at some point, have a slow or degraded period — every external
@@ -219,7 +227,7 @@ failure is a degraded experience, not a blocked one.</p>
 <li><a href="../technical-product-sense/reliability-and-failure.html">Reliability &amp; failure</a> — the
   broader systems-reliability instincts this lesson applies to AI specifically.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="webhooks-and-async-patterns.html"><span class="lbl">← Previous</span><span class="ttl">Webhooks &amp; async patterns</span></a><a class="navcard next" href="mcp-and-standard-connectors.html"><span class="lbl">→ Next</span><span class="ttl">MCP &amp; standard connectors</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="webhooks-and-async-patterns.html"><span class="lbl">← Previous</span><span class="ttl">Webhooks &amp; async patterns</span></a><a class="navcard next" href="mcp-and-standard-connectors.html"><span class="lbl">→ Next</span><span class="ttl">MCP &amp; standard connectors</span></a></div><footer class="foot"><strong>Core insight:</strong> A model is a slower, less predictable dependency. Proven integration discipline, not a cleverer model, makes AI features reliable.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-new-employee-joining-an-existing-team">The mental model: a new employee joining an existing team</a><a class="h2" href="#latency-budgeting-deciding-how-much-time-is-allowed">Latency budgeting: deciding how much time is allowed</a><a class="h2" href="#idempotency-making-a-retry-safe">Idempotency: making a retry safe</a><a class="h2" href="#failure-isolation-containing-a-bad-day">Failure isolation: containing a bad day</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

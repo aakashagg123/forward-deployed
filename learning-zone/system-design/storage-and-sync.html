@@ -41,16 +41,26 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink active" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink active" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 08</span>
     <h1>Storage &amp; sync</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
 <p>Cloud storage systems solve two distinct problems. <strong>File sync</strong> (Google Drive) keeps user files consistent across devices. It splits them into content-addressed blocks, syncs only deltas, and resolves conflicts. <strong>Object storage</strong> (S3) stores immutable blobs at planetary scale, with extreme durability guarantees through replication or erasure coding. Both split metadata from data, but for different reasons: file sync needs fast tree traversal and conflict detection, while object storage needs petabyte-scale durability at minimal overhead. Understanding the boundary between these two models determines whether your product stores files that users edit or objects that services consume.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the technical PM</strong></p>
@@ -597,6 +607,23 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <li>Abort incomplete multipart uploads after N days.</li>
 </ul>
 <hr />
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>system-design/code/block_sync.py</code>. It splits a file into 4 KB blocks, hashes each block, and uploads only the blocks the server does not already hold.</p>
+<pre><code class="language-python">def upload(self, data):
+    sent = skipped = 0
+    for b in blocks(data):
+        d = digest(b)
+        if d in self.store:
+            skipped += 1
+        else:
+            self.store[d] = b
+            sent += 1
+    return sent, skipped
+</code></pre>
+<h2 id="worked-example-a-one-byte-edit">Worked example: a one-byte edit</h2>
+<p><em>The file is random bytes. The numbers come from <code>block_sync.py</code>.</em></p>
+<p>A 400 KB file is 100 blocks. The first upload sends all 100. The user then changes one byte in block 51. The second upload sends 1 block and skips 99. Another user uploads an identical copy of the original file. It sends 0 blocks and skips 100.</p>
+<p>This is why sync clients feel fast, and why storage providers can deduplicate across users. It also shows the cost: the server must hash and look up every block.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Split-brain in file sync</strong> — two devices both believe they have the latest version, producing irreconcilable changes. The conflict-copy approach is safe but creates user friction.</li>
@@ -625,9 +652,17 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — back-of-envelope estimation for storage at petabyte scale</li>
 <li><a href="data-infrastructure.html">Data infrastructure</a> — the WAL-based append model reappears in distributed message queues</li>
 <li><a href="web-scale-services.html">Web-scale services</a> — notification patterns (long polling, push) from the notification system design</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Doug Beaver et al., <em>Finding a Needle in Haystack: Facebook's Photo Storage</em>, OSDI 2010.</li>
+<li>Subramanian Muralidhar et al., <em>f4: Facebook's Warm BLOB Storage System</em>, OSDI 2014: erasure coding for warm data.</li>
+<li>Sanjay Ghemawat, Howard Gobioff and Shun-Tak Leung, <em>The Google File System</em>, SOSP 2003.</li>
+<li>Alex Xu, <em>System Design Interview</em>, volume 2: Google Drive and S3-like object storage chapters.</li>
+<li>These sources were not re-opened during this revision, and the lesson's fact-check is pending. Numbers in the worked examples are invented or estimated, and come from the code in <code>system-design/code/</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="real-time-systems.html"><span class="lbl">← Previous</span><span class="ttl">Real-time systems</span></a><a class="navcard next" href="location-and-geo-services.html"><span class="lbl">→ Next</span><span class="ttl">Location &amp; geo services</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#google-drive-cloud-file-storage">Google Drive: cloud file storage</a><a class="h3" href="#scale-and-requirements">Scale and requirements</a><a class="h3" href="#the-block-server-splitting-files-into-blocks">The block server: splitting files into blocks</a><a class="h3" href="#metadata-vs-data-the-separation-principle">Metadata vs. data: the separation principle</a><a class="h3" href="#upload-flow">Upload flow</a><a class="h3" href="#download-and-sync-flow">Download and sync flow</a><a class="h3" href="#conflict-resolution">Conflict resolution</a><a class="h3" href="#notification-service-long-polling">Notification service: long polling</a><a class="h3" href="#storage-tiering">Storage tiering</a><a class="h2" href="#s3-like-object-storage">S3-like object storage</a><a class="h3" href="#scale-and-requirements_1">Scale and requirements</a><a class="h3" href="#core-data-model-buckets-and-objects">Core data model: buckets and objects</a><a class="h3" href="#architecture-metadata-store-data-store">Architecture: metadata store + data store</a><a class="h3" href="#the-small-file-problem-and-wal-style-merging">The small-file problem and WAL-style merging</a><a class="h3" href="#durability-replication-vs-erasure-coding">Durability: replication vs. erasure coding</a><a class="h3" href="#multipart-upload">Multipart upload</a><a class="h3" href="#garbage-collection-and-compaction">Garbage collection and compaction</a><a class="h3" href="#object-versioning-and-lifecycle">Object versioning and lifecycle</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="real-time-systems.html"><span class="lbl">← Previous</span><span class="ttl">Real-time systems</span></a><a class="navcard next" href="location-and-geo-services.html"><span class="lbl">→ Next</span><span class="ttl">Location &amp; geo services</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#google-drive-cloud-file-storage">Google Drive: cloud file storage</a><a class="h3" href="#scale-and-requirements">Scale and requirements</a><a class="h3" href="#the-block-server-splitting-files-into-blocks">The block server: splitting files into blocks</a><a class="h3" href="#metadata-vs-data-the-separation-principle">Metadata vs. data: the separation principle</a><a class="h3" href="#upload-flow">Upload flow</a><a class="h3" href="#download-and-sync-flow">Download and sync flow</a><a class="h3" href="#conflict-resolution">Conflict resolution</a><a class="h3" href="#notification-service-long-polling">Notification service: long polling</a><a class="h3" href="#storage-tiering">Storage tiering</a><a class="h2" href="#s3-like-object-storage">S3-like object storage</a><a class="h3" href="#scale-and-requirements_1">Scale and requirements</a><a class="h3" href="#core-data-model-buckets-and-objects">Core data model: buckets and objects</a><a class="h3" href="#architecture-metadata-store-data-store">Architecture: metadata store + data store</a><a class="h3" href="#the-small-file-problem-and-wal-style-merging">The small-file problem and WAL-style merging</a><a class="h3" href="#durability-replication-vs-erasure-coding">Durability: replication vs. erasure coding</a><a class="h3" href="#multipart-upload">Multipart upload</a><a class="h3" href="#garbage-collection-and-compaction">Garbage collection and compaction</a><a class="h3" href="#object-versioning-and-lifecycle">Object versioning and lifecycle</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-one-byte-edit">Worked example: a one-byte edit</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

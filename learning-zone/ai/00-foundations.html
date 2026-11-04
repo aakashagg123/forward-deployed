@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink active" href="00-foundations.html"><span class="num">00</span>Foundations</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#harness-engineering">Harness engineering, not just prompt engineering</a><a href="#context-engineering">Context engineering, not just long prompts</a><a href="#infra-not-demos">Shipping LLM systems as infrastructure, not demos</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Module 00</span>
@@ -286,6 +295,24 @@ request. That pipeline is this lesson's subject. The prompt is just its last mil
   turns) is a potential <a href="05-safety-multitenancy.html#safety-engineering">prompt-injection</a>
   vector. More context = larger attack surface.</li>
 </ul>
+<h2 id="long-running-agents-context-rot-compaction-and-just-in-time-retrieval">Long-running agents: context rot, compaction, and just-in-time retrieval</h2>
+<p>Anthropic's September 2025 engineering post on context engineering names the
+problem <strong>context rot</strong>. As the token count grows, the model recalls the context
+less accurately. Treat context as a finite attention budget, even when the window
+is large. The post lists four moves for agents that run for many steps:</p>
+<ul>
+<li><strong>Compaction.</strong> Summarize a conversation that nears the limit and start a new
+  window from the summary. Clearing old tool results is the lightest form.</li>
+<li><strong>Structured note-taking.</strong> The agent writes notes outside the window, such as
+  a to-do list or a NOTES.md file, and reads them back later.</li>
+<li><strong>Just-in-time retrieval.</strong> The agent keeps light references (file paths,
+  stored queries) and loads data only when needed. This replaces some up-front
+  embedding retrieval, and it trades speed for freshness.</li>
+<li><strong>Sub-agents.</strong> A sub-agent works in a clean window and returns a short summary.</li>
+</ul>
+<p>Each move has a cost. Compaction can drop a detail you needed later, so test it
+with evals. See <a href="../memory-and-context/index.html">memory and context</a> for the
+memory side.</p>
 <h2 id="the-components-of-a-well-engineered-context">The components of a well-engineered context</h2>
 <p>A typical context is assembled from layered sources, each with its own budget:</p>
 <pre><code>[ system / role + policy ]      ← stable, cache-friendly prefix

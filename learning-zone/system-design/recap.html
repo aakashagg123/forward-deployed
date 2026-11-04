@@ -41,16 +41,26 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
     <h1>Recap &amp; real-world examples</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
 <p>This track covered <strong>28 real-world systems</strong> across eight lessons, from single-server scaling patterns to microsecond-latency stock exchanges. The systems span six categories: web-scale services, real-time communication, storage, geospatial, data infrastructure, and financial/transactional. But the same dozen patterns appear again and again. This recap maps every system at a glance. It names the recurring patterns that connect them, and distills the practitioner-level takeaways that cut across all 28 designs.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the technical PM</strong></p>
@@ -432,19 +442,198 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <h3 id="the-gap-between-works-and-works-correctly-at-scale-is-where-careers-are-made">The gap between "works" and "works correctly at scale" is where careers are made</h3>
 <p>A URL shortener, a chat system, or a payment flow can be built in a weekend hackathon. Making it handle 100M users, survive node failures, reconcile every transaction, and maintain sub-200ms latency — that's the work this track is about. The designs here aren't clever algorithms. They're decades of production experience encoded as patterns and checklists.</p>
 <hr />
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>Adding an 11th server to 10 moves 91% of keys with hash mod N. How many move on a ring with 100 virtual nodes per server?</strong>
+ <br />
+<details><summary>Answer</summary>About 9.7%, close to the ideal 1/11. Virtual nodes also even out the load: the busiest server held 1.08 times the average, against 2.69 times with one point per server. (<a href="core-building-blocks.html">Core building blocks</a>)</details></p>
+</li>
+<li>
+<p><strong>A token bucket has a rate of 5 per second and a capacity of 10. What do 20 simultaneous requests get?</strong>
+ <br />
+<details><summary>Answer</summary>10 are allowed and 10 are refused. The bucket holds 10 tokens, and refills are too slow to help within the same instant. (<a href="core-building-blocks.html">Core building blocks</a>)</details></p>
+</li>
+<li>
+<p><strong>Why can a fixed-window rate limiter allow twice the limit?</strong>
+ <br />
+<details><summary>Answer</summary>Requests just before and just after a window boundary count in different windows. In the example, 200 requests in a burst were all allowed, against 101 for a sliding-window counter. (<a href="core-building-blocks.html">Core building blocks</a>)</details></p>
+</li>
+<li>
+<p><strong>With 3 replicas, which of W = 1 R = 1, W = 2 R = 2 and W = 3 R = 1 always read the latest write?</strong>
+ <br />
+<details><summary>Answer</summary>W = 2 R = 2 and W = 3 R = 1. Both satisfy R + W > N, so every read set overlaps every write set. W = 1 R = 1 does not. (<a href="core-building-blocks.html">Core building blocks</a>)</details></p>
+</li>
+<li>
+<p><strong>What should a Snowflake-style ID generator do if its clock moves back?</strong>
+ <br />
+<details><summary>Answer</summary>Refuse to issue IDs, or wait, until time passes the last timestamp. Issuing IDs would risk duplicates. (<a href="core-building-blocks.html">Core building blocks</a>)</details></p>
+</li>
+<li>
+<p><strong>A feed has 100 celebrity accounts with 20 million followers each. Why is pure fan-out on write a poor fit?</strong>
+ <br />
+<details><summary>Answer</summary>The celebrities alone caused 98% of about 10.2 billion daily feed writes. A hybrid, which pulls celebrity posts at read time, cost about 1.7 billion operations. (<a href="web-scale-services.html">Web-scale services</a>)</details></p>
+</li>
+<li>
+<p><strong>1,000 requests arrive at the moment a hot cache key expires. How do you keep the database safe?</strong>
+ <br />
+<details><summary>Answer</summary>Coalesce requests so one request refills the cache and the rest wait: 1 read instead of 1,000. Add jitter to expiry times so keys do not expire together. (<a href="web-scale-services.html">Web-scale services</a>)</details></p>
+</li>
+<li>
+<p><strong>At 100 million new links a day, how long do 7 Base62 characters last?</strong>
+ <br />
+<details><summary>Answer</summary>About 96 years. 62 to the 7th power is about 3.52 trillion codes. (<a href="numbers-and-formulas.html">Numbers and formulas</a>)</details></p>
+</li>
+<li>
+<p><strong>A message log delivers at least once, and a consumer crashes after processing a message but before committing its offset. What protects you?</strong>
+ <br />
+<details><summary>Answer</summary>An idempotent consumer. Without it the example charged 80 instead of 60. (<a href="data-infrastructure.html">Data infrastructure</a>)</details></p>
+</li>
+<li>
+<p><strong>A user retries a chat send because the ack was lost. How do you avoid a duplicate message?</strong>
+ <br />
+<details><summary>Answer</summary>The client sends the same message ID, and the server returns the stored sequence number instead of storing the message again. (<a href="real-time-systems.html">Real-time systems</a>)</details></p>
+</li>
+<li>
+<p><strong>A user edits one byte of a 400 KB file. How much does a block-based sync client upload?</strong>
+ <br />
+<details><summary>Answer</summary>One 4 KB block, because the client hashes blocks and skips the 99 the server already has. (<a href="storage-and-sync.html">Storage and sync</a>)</details></p>
+</li>
+<li>
+<p><strong>How does a grid index make nearby search fast?</strong>
+ <br />
+<details><summary>Answer</summary>It maps each location to a cell and searches only the rider's cell and its neighbours. In the example, 190 of 50,000 drivers were examined and none was missed. (<a href="location-and-geo-services.html">Location and geo services</a>)</details></p>
+</li>
+<li>
+<p><strong>A payment is retried. What stops the ledger from posting it twice, and what invariant catches a malformed entry?</strong>
+ <br />
+<details><summary>Answer</summary>An idempotent transaction ID, and the rule that debits and credits in a transaction sum to zero. (<a href="transactional-and-financial.html">Transactional and financial systems</a>)</details></p>
+</li>
+<li>
+<p><strong>A 99.99% SLO allows how much downtime in a 30-day month, and what do two 99.9% services in series give?</strong>
+ <br />
+<details><summary>Answer</summary>About 4.32 minutes. In series, two 99.9% services give about 99.8%. (<a href="numbers-and-formulas.html">Numbers and formulas</a>)</details></p>
+</li>
+<li>
+<p><strong>For 200 million daily users with 2 posts each, what write rate and yearly storage do you estimate?</strong>
+ <br />
+<details><summary>Answer</summary>About 4,630 writes per second on average and about 43.8 TB a year for 300-byte posts. Reads, at 100 times writes, are about 463,000 per second. (<a href="foundations-and-framework.html">Foundations and framework</a>)</details></p>
+</li>
+<li>
+<p><strong>Round robin and least connections are compared with every third request slow. What happens?</strong>
+ <br />
+<details><summary>Answer</summary>Round robin sends all the slow requests to one server, which reached 17 open connections. Least connections peaked at 6. (<a href="traffic-caching-apis-and-storage-choice.html">Traffic, caching, APIs and storage choice</a>)</details></p>
+</li>
+<li>
+<p><strong>A write-back cache flushes every 100 writes and crashes after write 457. What is lost?</strong>
+ <br />
+<details><summary>Answer</summary>The 58 acknowledged writes that were not yet flushed. A write-through cache would lose none, at the cost of slower writes. (<a href="traffic-caching-apis-and-storage-choice.html">Traffic, caching, APIs and storage choice</a>)</details></p>
+</li>
+<li>
+<p><strong>Two new rows arrive while a user reads a feed. Why does offset paging repeat rows, and cursor paging not?</strong>
+ <br />
+<details><summary>Answer</summary>An offset counts positions, so inserting rows at the front shifts every row down. A cursor asks for rows older than the last one seen, so it does not move. (<a href="traffic-caching-apis-and-storage-choice.html">Traffic, caching, APIs and storage choice</a>)</details></p>
+</li>
+<li>
+<p><strong>A user changes a photo and refreshes half a second later and sees the old one. Name the violated guarantee and a fix.</strong>
+ <br />
+<details><summary>Answer</summary>Read-your-writes. Read from the leader for a short window after the user's own write. (<a href="distributed-data-and-consistency.html">Distributed data and consistency</a>)</details></p>
+</li>
+<li>
+<p><strong>A trip saga reserves a flight and a hotel and then the card charge fails. What happens next?</strong>
+ <br />
+<details><summary>Answer</summary>The saga compensates in reverse order: it cancels the hotel, then the flight. (<a href="distributed-data-and-consistency.html">Distributed data and consistency</a>)</details></p>
+</li>
+<li>
+<p><strong>Why does a transactional outbox beat updating the database and then publishing an event?</strong>
+ <br />
+<details><summary>Answer</summary>A crash between the two steps loses the event. With an outbox the event is stored in the same transaction, and a relay publishes it later. In the example, 9 of 10 events were published with a dual write and 10 of 10 with an outbox. (<a href="distributed-data-and-consistency.html">Distributed data and consistency</a>)</details></p>
+</li>
+<li>
+<p><strong>Why can last-write-wins by wall-clock timestamp drop the newest write?</strong>
+ <br />
+<details><summary>Answer</summary>Clocks drift. A server running 2 seconds fast stamps an earlier write later than a later write on a correct clock. Logical clocks order by cause and effect instead. (<a href="distributed-data-and-consistency.html">Distributed data and consistency</a>)</details></p>
+</li>
+<li>
+<p><strong>A service handles 100 requests per second and is offered 90. A one-second blip makes every call fail, and clients retry three times. Why does it not recover?</strong>
+ <br />
+<details><summary>Answer</summary>The retries raise the offered load to 360 per second, so the service stays overloaded. Backoff, jitter and a retry budget kept the peak at 96 per second. (<a href="reliability-and-operations.html">Reliability and operations</a>)</details></p>
+</li>
+<li>
+<p><strong>What did the Cloudflare 2019 outage and the GitLab 2017 outage have in common with a missing safeguard?</strong>
+ <br />
+<details><summary>Answer</summary>Cloudflare pushed a rule to the whole network with no staged rollout and no CPU check in the tests. GitLab had four recovery mechanisms and none worked, because nobody owned testing the restore. (<a href="reliability-and-operations.html">Reliability and operations</a>)</details></p>
+</li>
+<li>
+<p><strong>Why does a funnel retrieve 500 of 20,000 items before the heavy model runs, and what is the risk?</strong>
+ <br />
+<details><summary>Answer</summary>It cut the cost from 2,000,000 units to 70,000, about 29 times less. The risk is that an item dropped at retrieval can never be recovered, so measure the recall of the retrieval stage. (<a href="ml-system-design.html">ML system design</a>)</details></p>
+</li>
+<li>
+<p><strong>A model's click probabilities are all three times too high. Does the ad order change, and does it matter?</strong>
+ <br />
+<details><summary>Answer</summary>The order does not change, and it still matters: predicted clicks are three times actual clicks, and every impression is mispriced. Calibration matters as much as ranking when the score sets a price. (<a href="ml-system-design.html">ML system design</a>)</details></p>
+</li>
+<li>
+<p><strong>What do you trade when you probe more buckets in an approximate nearest-neighbour index?</strong>
+ <br />
+<details><summary>Answer</summary>Recall against work. In the example, probing 1, 4 and 16 of 64 buckets scanned 2%, 6% and 26% of the vectors and found 24%, 60% and 94% of the true top 10. (<a href="ml-system-design.html">ML system design</a>)</details></p>
+</li>
+<li>
+<p><strong>Why does grouped-query attention let one accelerator serve more long conversations?</strong>
+ <br />
+<details><summary>Answer</summary>It shrinks the KV cache per conversation. In the example, 16 conversations fit with 32 key-value heads and 68 with 8. (<a href="genai-and-agent-platforms.html">GenAI and agent platforms</a>)</details></p>
+</li>
+<li>
+<p><strong>Why is continuous batching faster than static batching?</strong>
+ <br />
+<details><summary>Answer</summary>A finished request leaves at once and a waiting one takes its slot, so the accelerator does not idle waiting for the longest request. In the example, 1,887 steps against 2,890. (<a href="genai-and-agent-platforms.html">GenAI and agent platforms</a>)</details></p>
+</li>
+<li>
+<p><strong>An agent crashes after its third of five tool calls. How do you avoid repeating paid calls?</strong>
+ <br />
+<details><summary>Answer</summary>Checkpoint progress after each committed step and resume from it. In the example, five calls were made in total with no repeats. Also add budgets, per-tool permissions and a kill switch. (<a href="genai-and-agent-platforms.html">GenAI and agent platforms</a>)</details></p>
+</li>
+<li>
+<p><strong>50,000 likes arrive in one second on a viral post. How do you avoid a hot row?</strong>
+ <br />
+<details><summary>Answer</summary>Shard the counter and sum the shards on read. In the example, the busiest row fell from 50,000 writes to 3,195 with 16 shards. Deduplicate (user, post) pairs so double taps count once. (<a href="social-and-media-systems.html">Social and media systems</a>)</details></p>
+</li>
+<li>
+<p><strong>How can you count unique viewers of a post in a few kilobytes?</strong>
+ <br />
+<details><summary>Answer</summary>With a HyperLogLog. Redis's version uses up to 12 KB and has a standard error of 0.81%. In the example, 100,000 distinct items were counted with an error of 0.42%. (<a href="social-and-media-systems.html">Social and media systems</a>)</details>
+</p>
+</li>
+</ol>
+<p>For more practice, use the <a href="question-bank.html">question bank</a>.</p>
+<hr />
 <h2 id="the-full-track">The full track</h2>
 <ol>
-<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — scaling, estimation, and the four-step design process</li>
+<li><a href="foundations-and-framework.html">Foundations &amp; framework</a> — scaling, estimation, the four-step design process, and a practice plan</li>
+<li><a href="numbers-and-formulas.html">Numbers, formulas and papers</a> — latency, nines, estimation shortcuts and classic papers</li>
+<li><a href="traffic-caching-apis-and-storage-choice.html">Traffic, caching, APIs and storage choice</a> — load balancers, caches, CDNs, stores and APIs</li>
 <li><a href="core-building-blocks.html">Core building blocks</a> — rate limiting, consistent hashing, key-value stores, unique ID generation</li>
+<li><a href="distributed-data-and-consistency.html">Distributed data and consistency</a> — replication, consistency, consensus, sagas and clocks</li>
 <li><a href="web-scale-services.html">Web-scale services</a> — URL shortener, web crawler, notification system, news feed</li>
 <li><a href="real-time-systems.html">Real-time systems</a> — chat, search autocomplete, video streaming</li>
 <li><a href="storage-and-sync.html">Storage &amp; sync</a> — Google Drive file sync, S3-like object storage</li>
 <li><a href="location-and-geo-services.html">Location &amp; geo services</a> — proximity service, nearby friends, Google Maps</li>
 <li><a href="data-infrastructure.html">Data infrastructure</a> — message queues, metrics monitoring, ad click aggregation, email</li>
 <li><a href="transactional-and-financial.html">Transactional &amp; financial systems</a> — hotel reservation, leaderboard, payments, digital wallet, stock exchange</li>
-</ol></div>
-  <div class="pagenav"><a class="navcard prev" href="transactional-and-financial.html"><span class="lbl">← Previous</span><span class="ttl">Transactional &amp; financial systems</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-systems-at-a-glance">The systems at a glance</a><a class="h2" href="#recurring-patterns">Recurring patterns</a><a class="h3" href="#1-separate-metadata-from-data">1. Separate metadata from data</a><a class="h3" href="#2-append-only-logs-wal">2. Append-only logs (WAL)</a><a class="h3" href="#3-idempotency-keys">3. Idempotency keys</a><a class="h3" href="#4-consistent-hashing-for-shard-distribution">4. Consistent hashing for shard distribution</a><a class="h3" href="#5-event-sourcing-for-auditability">5. Event sourcing for auditability</a><a class="h3" href="#6-pubsub-for-fan-out">6. Pub/sub for fan-out</a><a class="h3" href="#7-tiered-storage-hotwarmcold">7. Tiered storage (hot/warm/cold)</a><a class="h3" href="#8-geospatial-indexing">8. Geospatial indexing</a><a class="h3" href="#9-real-time-via-persistent-connections">9. Real-time via persistent connections</a><a class="h3" href="#10-exactly-once-via-idempotent-processing">10. Exactly-once via idempotent processing</a><a class="h2" href="#the-practitioners-takeaway">The practitioner&#x27;s takeaway</a><a class="h3" href="#start-with-the-constraints-not-the-technology">Start with the constraints, not the technology</a><a class="h3" href="#correctness-and-performance-are-in-tension-pick-explicitly">Correctness and performance are in tension — pick explicitly</a><a class="h3" href="#the-metadata-store-is-always-the-critical-path">The metadata store is always the critical path</a><a class="h3" href="#every-retry-is-a-potential-duplicate">Every retry is a potential duplicate</a><a class="h3" href="#scaling-is-a-sequence-not-a-choice">Scaling is a sequence, not a choice</a><a class="h3" href="#the-gap-between-works-and-works-correctly-at-scale-is-where-careers-are-made">The gap between &quot;works&quot; and &quot;works correctly at scale&quot; is where careers are made</a><a class="h2" href="#the-full-track">The full track</a></div></aside></div><script>
+<li><a href="ml-system-design.html">ML system design</a> — recommendation funnels, ads click prediction, search and vector indexes</li>
+<li><a href="genai-and-agent-platforms.html">GenAI and agent platforms</a> — LLM serving, continuous batching, agent runtimes and safety</li>
+<li><a href="social-and-media-systems.html">Social and media systems</a> — likes, graph search, matching, photo tiers, video and live streaming</li>
+<li><a href="reliability-and-operations.html">Reliability and operations</a> — SLOs, resilience, safe change, recovery and incident case studies</li>
+<li><a href="question-bank.html">Question bank</a> — 50 design questions mapped to the lessons</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Alex Xu, <em>System Design Interview</em>, volumes 1 and 2, and Martin Kleppmann, <em>Designing Data-Intensive Applications</em>, O'Reilly, 2017.</li>
+<li>The sources for each system are at the end of its lesson. The numbers in the questions come from <code>system-design/code/</code>. They are invented or estimated. These sources were not re-opened during this revision, and the module's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="question-bank.html"><span class="lbl">← Previous</span><span class="ttl">Question bank: 50 design questions mapped to the lessons</span></a><span></span></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-systems-at-a-glance">The systems at a glance</a><a class="h2" href="#recurring-patterns">Recurring patterns</a><a class="h3" href="#1-separate-metadata-from-data">1. Separate metadata from data</a><a class="h3" href="#2-append-only-logs-wal">2. Append-only logs (WAL)</a><a class="h3" href="#3-idempotency-keys">3. Idempotency keys</a><a class="h3" href="#4-consistent-hashing-for-shard-distribution">4. Consistent hashing for shard distribution</a><a class="h3" href="#5-event-sourcing-for-auditability">5. Event sourcing for auditability</a><a class="h3" href="#6-pubsub-for-fan-out">6. Pub/sub for fan-out</a><a class="h3" href="#7-tiered-storage-hotwarmcold">7. Tiered storage (hot/warm/cold)</a><a class="h3" href="#8-geospatial-indexing">8. Geospatial indexing</a><a class="h3" href="#9-real-time-via-persistent-connections">9. Real-time via persistent connections</a><a class="h3" href="#10-exactly-once-via-idempotent-processing">10. Exactly-once via idempotent processing</a><a class="h2" href="#the-practitioners-takeaway">The practitioner&#x27;s takeaway</a><a class="h3" href="#start-with-the-constraints-not-the-technology">Start with the constraints, not the technology</a><a class="h3" href="#correctness-and-performance-are-in-tension-pick-explicitly">Correctness and performance are in tension — pick explicitly</a><a class="h3" href="#the-metadata-store-is-always-the-critical-path">The metadata store is always the critical path</a><a class="h3" href="#every-retry-is-a-potential-duplicate">Every retry is a potential duplicate</a><a class="h3" href="#scaling-is-a-sequence-not-a-choice">Scaling is a sequence, not a choice</a><a class="h3" href="#the-gap-between-works-and-works-correctly-at-scale-is-where-careers-are-made">The gap between &quot;works&quot; and &quot;works correctly at scale&quot; is where careers are made</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#the-full-track">The full track</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

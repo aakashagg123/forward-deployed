@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>an agents module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-agent.html">1 · What is an agent?</a><a class="modlink" href="tools-and-function-calling.html">2 · Tools &amp; function calling</a><a class="modlink" href="context-and-memory.html">3 · Context &amp; memory</a><a class="modlink active" href="planning-and-reasoning.html">4 · Planning &amp; reasoning</a><a class="modlink" href="multi-agent-and-protocols.html">5 · Multi-agent systems &amp; protocols</a><a class="modlink" href="reliability-and-evals.html">6 · Reliability &amp; evals</a><a class="modlink" href="safety-security-and-governance.html">7 · Safety, security &amp; governance</a><a class="modlink" href="agentic-ai-as-a-product.html">8 · Agentic AI as a product</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
@@ -188,7 +197,10 @@ patterns with plumbing — evaluate them on the plumbing, because the patterns t
 are a page of prompting.</p>
 <h2 id="test-time-compute-thinking-as-a-budget">Test-time compute: thinking as a budget</h2>
 <p>Reasoning models (o-series, Claude's extended thinking, R1, Gemini thinking) generate
-internal chains of thought before answering. Accuracy on hard problems climbs with
+internal chains of thought before answering. Newer models often manage this
+themselves. Claude's <em>adaptive thinking</em> decides per request whether to think and how
+much, and an <strong>effort</strong> setting (<code>low</code> to <code>max</code>) steers it. So the budget you set is an
+intent, not a fixed token count. Accuracy on hard problems climbs with
 thinking time — a new scaling axis that happens at <em>inference</em>, on your bill, per
 request. Three product consequences follow:</p>
 <ul>
@@ -247,7 +259,7 @@ ask what the agent would <em>see</em> if it were wrong.</p>
 <li><a href="multi-agent-and-protocols.html">Multi-agent systems &amp; protocols</a></li>
 <li><a href="../first-principles/the-method.html">First principles: the method</a> — the human version of decompose, challenge, rebuild</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="context-and-memory.html"><span class="lbl">← Previous</span><span class="ttl">Context &amp; memory</span></a><a class="navcard next" href="multi-agent-and-protocols.html"><span class="lbl">→ Next</span><span class="ttl">Multi-agent systems &amp; protocols</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="context-and-memory.html"><span class="lbl">← Previous</span><span class="ttl">Context &amp; memory</span></a><a class="navcard next" href="multi-agent-and-protocols.html"><span class="lbl">→ Next</span><span class="ttl">Multi-agent systems &amp; protocols</span></a></div><footer class="foot"><strong>Core insight:</strong> Teams win with agents by matching autonomy to stakes, making the work verifiable, and earning trust one tier at a time.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-patterns">The patterns</a><a class="h2" href="#test-time-compute-thinking-as-a-budget">Test-time compute: thinking as a budget</a><a class="h2" href="#feedback-beats-brilliance">Feedback beats brilliance</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

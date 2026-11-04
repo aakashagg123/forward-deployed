@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Tool calling</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-tool-calling-is.html">1 · What tool calling is</a><a class="modlink active" href="tool-contracts-and-reliability.html">2 · Tool contracts &amp; reliability</a><a class="modlink" href="permissions-blast-radius-and-the-trust-boundary.html">3 · Permissions, blast radius &amp; the trust boundary</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
@@ -198,6 +207,10 @@ product call — what capability to expose, and at what altitude — even though
 the schema itself is engineering. The full craft of tool design, including how to write
 descriptions a model reads well, is developed in
 <a href="../agentic-ai/tools-and-function-calling.html">Tools &amp; function calling</a>.</p>
+<p>Tool count has a hard cost too. Every definition sits in the context window on every request. Anthropic's docs describe a five-server setup (GitHub, Slack, Sentry, Grafana, Splunk) that can use about 55,000 tokens of definitions before any work starts. The same docs say tool selection accuracy degrades once a model has more than 30 to 50 tools. For large toolboxes, vendors now offer tool search: the model finds and loads only the 3 to 5 tools it needs. Anthropic reports that this cut definition tokens by about 85% and raised MCP evaluation accuracy for Opus 4 from 49% to 74% (vendor figures, not independent tests). Treat "how many tools" as both a quality decision and a cost decision. See <a href="../cost-optimization/index.html">Cost optimization</a> for how input tokens add up.</p>
+<p>Two more design habits come from Anthropic's tool-writing guidance. First, prefix names by service (<code>github_list_prs</code>, <code>slack_send_message</code>) so tools from different systems do not blur together. Second, return only the fields the model needs, with readable names instead of raw IDs. A concise-versus-detailed response option cut tokens to about a third in Anthropic's own Slack example.</p>
+<h2 id="strict-mode-valid-shape-is-not-the-same-as-correct">Strict mode: valid shape is not the same as correct</h2>
+<p>Vendors can now force a tool call to match its schema. Anthropic calls this strict tool use: it constrains the model's output so a field typed as an integer is always an integer, and the tool name is always a real one. That removes a whole class of hallucinated-argument bugs. It does not check meaning. The model can still pick the wrong order ID or the wrong tool. Strict mode reduces retries. It does not replace your own validation, authorization, or tests.</p>
 <h2 id="idempotency-a-promise-not-an-implementation-detail">Idempotency: a promise, not an implementation detail</h2>
 <p>Models retry. Networks fail and retry. Agents re-issue a call that looked like it didn't
 go through. None of that is a bug — it's normal operation — which means every tool with a
@@ -210,6 +223,7 @@ every demo and only shows the gap the first time a real retry hits it in product
 engineering pattern (idempotency keys, separating reads from writes) is developed in full
 in <a href="../ai/02-reliable-outputs.html#function-calling">Function calling reliability</a>.</p>
 <h2 id="errors-are-part-of-the-product-not-an-engineering-afterthought">Errors are part of the product, not an engineering afterthought</h2>
+<p>The MCP specification separates two kinds of failure. A protocol error means the request itself was broken, such as an unknown tool. A tool execution error (<code>isError: true</code>) carries a message the model can act on, such as a bad date format or a value out of range. The spec says clients should pass execution errors back to the model so it can correct itself.</p>
 <p>A tool that fails with an opaque "error 500" produces a model that either gives up or
 retries the same broken call. A tool that fails with "date must be YYYY-MM-DD, e.g.
 2026-07-01" produces a model that corrects itself and moves on. The difference between
@@ -226,6 +240,7 @@ in production.</p>
   duplicates a real action.</li>
 <li><strong>Errors that don't teach</strong> — a tool whose failures give the model nothing to act on,
   producing repeated identical failed calls instead of a self-correction.</li>
+<li><strong>Tool sprawl across servers</strong> — several connected servers expose hundreds of tools, definitions eat the context window, and selection accuracy falls. Nobody owns the total.</li>
 <li><strong>Schema drift from the real system</strong> — a tool's contract stops matching what the
   underlying system actually accepts or returns, and nobody notices until calls start
   failing unpredictably.</li>
@@ -236,6 +251,8 @@ in production.</p>
       just accumulate one API wrapper at a time?</li>
 <li class="task todo">For every tool with a real-world side effect: is it safe to call twice, and if not,
       does it have an idempotency key?</li>
+<li class="task todo">Do you know how many tokens your tool definitions use per request, and have you tested accuracy as the tool count grows?</li>
+<li class="task todo">Is strict mode on where the vendor supports it, with validation still in place for meaning (right customer, right order)?</li>
 <li class="task todo">Do tool error messages give the model something it can act on, not just a failure
       code?</li>
 <li class="task todo">Has anyone actually tested what happens when a network retry hits each
@@ -253,8 +270,8 @@ in production.</p>
 <li><a href="../agentic-ai/tools-and-function-calling.html">Tools &amp; function calling</a> — the tool-design
   craft behind the granularity decision.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="what-tool-calling-is.html"><span class="lbl">← Previous</span><span class="ttl">What tool calling is</span></a><a class="navcard next" href="permissions-blast-radius-and-the-trust-boundary.html"><span class="lbl">→ Next</span><span class="ttl">Permissions, blast radius &amp; the trust boundary</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-every-tool-call-passes-four-checkpoints">The mental model: every tool call passes four checkpoints</a><a class="h2" href="#the-granularity-decision-how-many-tools-how-big-each-one-is">The granularity decision: how many tools, how big each one is</a><a class="h2" href="#idempotency-a-promise-not-an-implementation-detail">Idempotency: a promise, not an implementation detail</a><a class="h2" href="#errors-are-part-of-the-product-not-an-engineering-afterthought">Errors are part of the product, not an engineering afterthought</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="what-tool-calling-is.html"><span class="lbl">← Previous</span><span class="ttl">What tool calling is</span></a><a class="navcard next" href="permissions-blast-radius-and-the-trust-boundary.html"><span class="lbl">→ Next</span><span class="ttl">Permissions, blast radius &amp; the trust boundary</span></a></div><footer class="foot"><strong>Core insight:</strong> Tool calling moves the risk from wrong words to wrong actions, so every safeguard that matters sits between the model&#x27;s request and the real world.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-every-tool-call-passes-four-checkpoints">The mental model: every tool call passes four checkpoints</a><a class="h2" href="#the-granularity-decision-how-many-tools-how-big-each-one-is">The granularity decision: how many tools, how big each one is</a><a class="h2" href="#strict-mode-valid-shape-is-not-the-same-as-correct">Strict mode: valid shape is not the same as correct</a><a class="h2" href="#idempotency-a-promise-not-an-implementation-detail">Idempotency: a promise, not an implementation detail</a><a class="h2" href="#errors-are-part-of-the-product-not-an-engineering-afterthought">Errors are part of the product, not an engineering afterthought</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>LLMs</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-llm.html">1 · What an LLM actually is</a><a class="modlink" href="the-context-window.html">2 · The context window</a><a class="modlink" href="capabilities-and-the-jagged-frontier.html">3 · Capabilities &amp; the jagged frontier</a><a class="modlink" href="prompting-and-in-context-learning.html">4 · Prompting &amp; in-context learning</a><a class="modlink active" href="temperature-sampling-and-determinism.html">5 · Temperature, sampling &amp; determinism</a><a class="modlink" href="choosing-a-model.html">6 · Choosing a model</a><a class="modlink" href="prompting-vs-rag-vs-finetuning.html">7 · Prompting vs. RAG vs. fine-tuning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
@@ -165,10 +174,26 @@ time. <strong>Higher temperature</strong> suits tasks where variety is the point
 drafting several different taglines to choose from, writing in a more exploratory,
 creative voice. A single default temperature applied to every feature in a product,
 regardless of what each feature actually needs, is a missed lever, not a neutral choice.</p>
+<h2 id="some-current-models-take-the-dial-away">Some current models take the dial away</h2>
+<p>Check your vendor's API before you plan around this lesson's dials. Anthropic's current
+models no longer accept them. On Claude Fable 5.1, Opus 5.5, Sonnet 5.5, Haiku 5.5 and
+several earlier models, a non-default <code>temperature</code>, <code>top_p</code> or <code>top_k</code> returns a 400
+error. From API version <code>2026-10-21</code>, sending any of the three returns a 400 error on every
+model. These models also think before they answer (see
+<a href="what-is-an-llm.html#reasoning-models-more-tokens-before-the-answer">What an LLM actually is</a>),
+and the vendor now steers quality with a different control: <strong>effort</strong>. A higher effort
+level spends more tokens on thinking. A lower level is faster and cheaper. Other vendors
+differ, so read each model's page. The product point stays the same: variety and
+consistency are still decisions. On these models you make them with prompt wording, with
+effort, and with checks on the output, not with the sampling dial. A feature whose spec
+says "temperature 0.2" needs a new spec when the team moves to such a model.</p>
 <h2 id="determinism-is-a-spectrum-not-a-switch">Determinism is a spectrum, not a switch</h2>
 <p>Even at the lowest possible temperature, a model is not guaranteed to be perfectly
 deterministic — some implementation details in how a request is processed can introduce
-tiny variations. Treat determinism as a spectrum you move along with the dial, not a
+tiny variations. Research from Thinking Machines Lab traces much of this to the server,
+not the model: the answer can depend on how many other requests share the same batch, and
+that changes with load. Their team removed the effect in an open inference engine, at some
+cost in speed. A hosted API gives you no such control. Treat determinism as a spectrum you move along with the dial, not a
 switch you can flip fully on. If your feature genuinely requires the exact same output for
 the exact same input every time, the honest answer is usually a cache or a rule-based
 check layered on top of the model, not an assumption that temperature alone gets you all
@@ -194,6 +219,8 @@ the way to zero variation.</p>
       whether that actually gives us the reliability we need?</li>
 <li class="task todo">For features that benefit from variety, have we tried a higher setting and compared
       the results?</li>
+<li class="task todo">Have we checked whether our chosen model still accepts <code>temperature</code>, <code>top_p</code> and
+      <code>top_k</code>, and what replaces them if it does not?</li>
 <li class="task todo">If a feature needs guaranteed exact reproducibility, do we have a cache or a rule-based
       check, rather than relying on temperature alone?</li>
 </ul>
@@ -205,9 +232,23 @@ the way to zero variation.</p>
   lever that shapes what the model produces.</li>
 <li><a href="../ai/04-evals-observability.html#evals">Evals</a> — measuring output quality across
   many runs, given that no single run is guaranteed to represent the rest.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/thinking">Thinking</a>: non-default
+  <code>temperature</code>, <code>top_p</code> or <code>top_k</code> return a 400 error on the listed current models; from
+  API version <code>2026-10-21</code> any value returns a 400 error on every model. Read 2026-10-25.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/effort">Effort</a>: effort controls
+  all output tokens, including thinking; the default differs by model. Read 2026-10-25.</li>
+<li>Thinking Machines Lab,
+  <a href="https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/">Defeating Nondeterminism in LLM Inference</a>:
+  batch-dependent kernels cause the variation at temperature 0; with batch-invariant kernels,
+  1,000 completions were identical. Read 2026-10-25.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="prompting-and-in-context-learning.html"><span class="lbl">← Previous</span><span class="ttl">Prompting &amp; in-context learning</span></a><a class="navcard next" href="choosing-a-model.html"><span class="lbl">→ Next</span><span class="ttl">Choosing a model</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-loaded-die-with-an-adjustable-weighting">The mental model: a loaded die, with an adjustable weighting</a><a class="h2" href="#two-related-dials-worth-knowing-by-name">Two related dials worth knowing by name</a><a class="h2" href="#setting-the-dial-deliberately">Setting the dial deliberately</a><a class="h2" href="#determinism-is-a-spectrum-not-a-switch">Determinism is a spectrum, not a switch</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="prompting-and-in-context-learning.html"><span class="lbl">← Previous</span><span class="ttl">Prompting &amp; in-context learning</span></a><a class="navcard next" href="choosing-a-model.html"><span class="lbl">→ Next</span><span class="ttl">Choosing a model</span></a></div><footer class="foot"><strong>Core insight:</strong> Everything an LLM does follows from next-token prediction: a limited window, uneven skill, and answers that are sampled rather than computed.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-loaded-die-with-an-adjustable-weighting">The mental model: a loaded die, with an adjustable weighting</a><a class="h2" href="#two-related-dials-worth-knowing-by-name">Two related dials worth knowing by name</a><a class="h2" href="#setting-the-dial-deliberately">Setting the dial deliberately</a><a class="h2" href="#some-current-models-take-the-dial-away">Some current models take the dial away</a><a class="h2" href="#determinism-is-a-spectrum-not-a-switch">Determinism is a spectrum, not a switch</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

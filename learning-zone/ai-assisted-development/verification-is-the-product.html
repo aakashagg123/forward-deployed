@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Verification is the product — AI-assisted development</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI-assisted development</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-an-agent-writes-the-code.html">1 · When an agent writes the code: where the bottleneck goes</a><a class="modlink" href="specs-and-the-context-file.html">2 · Specs and the context file</a><a class="modlink active" href="verification-is-the-product.html">3 · Verification is the product</a><a class="modlink" href="control-permissions-modes-and-hooks.html">4 · Control: permissions, modes and hooks</a><a class="modlink" href="running-at-scale.html">5 · Running at scale: sessions, subagents and fan-out</a><a class="modlink" href="measuring-and-governing.html">6 · Measuring and governing</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <h1>Verification is the product</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A coding agent reports success in words. Words are not evidence. The agent may say "all tests pass" without running them, or fix a test by weakening it. If the only check is the agent's own summary, you have no check.</p>
+<p>The fix is to move the check out of the agent's judgment and into a command that exits with a pass or a fail. Tests, type checks, linters and builds all work. Then make the agent run that command before it may stop. In Claude Code, a <strong>Stop hook</strong> does this: a script that runs when the agent tries to finish, and can refuse.</p>
+<p>The result is a small contract. The agent is done when the check passes, not when it feels done. The rest of the work, which includes review, becomes a smaller job: confirming that the check tests the right thing.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Verification decides whether agent speed turns into delivered value or into rework. Teams with fast, trusted checks get large gains. Teams without them get plausible-looking bugs.</p>
+<p><strong>What it changes in your decisions</strong> — You invest in test speed and reliability as a product feature. You require a runnable check on every agent task. You review the check, not just the diff.</p>
+<p><strong>Ask your eng team</strong> — <em>"What command proves a change works, how long does it take, and does the agent have to run it before it stops?"</em></p>
+<p><strong>Risk if ignored</strong> — Green summaries over red builds. Tests rewritten to pass. A release process that trusts a sentence.</p>
+</blockquote>
+<h2 id="the-mental-model-the-agents-word-versus-an-exit-code">The mental model: the agent's word versus an exit code</h2>
+<style>
+.dgm-vg{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-vg-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-vg h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-vg-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-vg-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+.dgm-vg-st{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-vg-st h5{margin:0;font-size:12px;font-weight:700}
+.dgm-vg-st p{margin:0;font-size:10.5px;line-height:1.35;color:var(--color-text-secondary)}
+.dgm-vg-a{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-vg-b{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-vg-ok{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-vg-no{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-vg-res{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.dgm-vg-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-vg{padding:22px 14px 18px}.dgm-vg-flow,.dgm-vg-res{grid-template-columns:1fr}}
+</style>
+<div class="dgm-vg">
+  <span class="dgm-vg-chip">The Stop-hook gate</span>
+  <h4>The agent's word versus an exit code</h4>
+  <p class="dgm-vg-sub">The check runs when the agent tries to finish. Only a pass lets it stop.</p>
+  <div class="dgm-vg-flow">
+    <div class="dgm-vg-st dgm-vg-a"><h5>Agent says "done"</h5><p>A sentence. It may not have run the tests.</p></div>
+    <div class="dgm-vg-st dgm-vg-b"><h5>Stop hook runs the check</h5><p>One command: tests, types, lint. Fast and deterministic.</p></div>
+    <div class="dgm-vg-st"><h5>Guards</h5><p><b>stop_hook_active</b> set: exit 0, no trap. After 8 blocks in a row Claude Code lets the agent stop.</p></div>
+  </div>
+  <div class="dgm-vg-res">
+    <div class="dgm-vg-st dgm-vg-ok"><h5>Exit 0</h5><p>The check passed. The agent may stop.</p></div>
+    <div class="dgm-vg-st dgm-vg-no"><h5>Exit 2 + message</h5><p>The agent keeps working and sees the failure text.</p></div>
+  </div>
+  <p class="dgm-vg-foot">Review then confirms the check tests the right thing, and that no test was weakened.</p>
+</div>
+
+<p>An exit code cannot be argued with. The hook gives the agent the failure text and sends it back to work.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="what-counts-as-a-check">What counts as a check</h3>
+<p>A good check is fast, deterministic and meaningful. Fast: the agent will run it many times. Deterministic: a flaky test teaches the agent to ignore failures. Meaningful: it fails when the behaviour is wrong. A type check and a linter catch some errors. Tests catch behaviour. A test written before the change, from the acceptance examples, is the strongest.</p>
+<h3 id="the-stop-hook">The Stop hook</h3>
+<p>Per the Claude Code hooks documentation, a hook is a command that runs at a point in the agent's life. Hooks are deterministic: they run every time, unlike a line in the context file. A Stop hook runs when the agent finishes a turn. It can block the stop by exiting with code 2 and writing a reason to stderr, or by returning JSON with <code>"decision": "block"</code> and a <code>reason</code>. Claude Code then keeps the agent working and shows it the reason.</p>
+<p>Two guards matter.</p>
+<ul>
+<li><strong><code>stop_hook_active</code>.</strong> The hook input carries this flag when the agent is already continuing because of a Stop hook. A good script exits 0 when it is set, so a check that cannot be fixed does not trap the agent.</li>
+<li><strong>A block cap.</strong> The documentation describes a cap on consecutive blocks, eight by default, after which Claude Code lets the agent stop.</li>
+</ul>
+<h3 id="review-still-matters">Review still matters</h3>
+<p>A passing check does not mean the right change. Review the diff for scope, for deleted or weakened tests, and for changes to the check itself. Protect test files and the check command with permissions (<a href="control-permissions-modes-and-hooks.html">lesson 4</a>), so the agent cannot edit the referee.</p>
+<h3 id="independent-checks">Independent checks</h3>
+<p>Where a second pair of eyes helps, use a fresh session or a subagent to review the change. A reviewer with no memory of the writing has no stake in it. It is still a model, and it still errs.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Check time vs. coverage.</strong> A full suite is slow. A fast subset runs in the hook, and the full suite runs in CI.</li>
+<li><strong>Hook vs. CI.</strong> A hook gives the agent feedback in seconds. CI is the final gate for everyone.</li>
+<li><strong>Strict vs. loose.</strong> A strict gate stops bad work and also stops good work on a flaky test.</li>
+<li><strong>Agent-written tests.</strong> Useful, and weak if the same session writes the code and its only test. Require some tests from the spec.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Trust in the summary.</strong> "All tests pass" with no run.</li>
+<li><strong>Weakened checks.</strong> The agent deletes a failing test or loosens an assertion.</li>
+<li><strong>Flaky gate.</strong> A test that fails at random sends the agent into a loop.</li>
+<li><strong>A loop with no exit.</strong> A hook that always blocks, with no <code>stop_hook_active</code> guard.</li>
+<li><strong>Slow gate.</strong> A 20-minute check the agent runs on every turn.</li>
+<li><strong>Checking the wrong thing.</strong> The gate passes and the feature is wrong.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Two files. <code>ai-assisted-development/code/stop_gate.py</code> is a real hook script. It reads the event from stdin, runs <code>GATE_COMMAND</code>, and exits 0 or 2.</p>
+<pre><code class="language-python">event = json.load(sys.stdin)
+if event.get(&quot;stop_hook_active&quot;):
+    return 0
+result = subprocess.run(command, shell=True, capture_output=True, text=True)
+if result.returncode == 0:
+    return 0
+sys.stderr.write(f&quot;The check `{command}` failed (exit {result.returncode}). Fix it before you finish.\n{tail}\n&quot;)
+return 2
+</code></pre>
+<p>To use it, register the script under <code>hooks.Stop</code> in <code>.claude/settings.json</code>. Check the hooks reference for the current format. <code>lesson3_verification.py</code> runs the script as Claude Code would, with a passing and a failing command, and simulates the block cap.</p>
+<h2 id="worked-example-a-gate-that-holds-and-a-loop-that-ends">Worked example: a gate that holds, and a loop that ends</h2>
+<p><em>The commands are stand-ins. The numbers come from <code>ai-assisted-development/code/lesson3_verification.py</code>.</em></p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Hook result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Check passes</td>
+<td>exit 0, the agent stops</td>
+</tr>
+<tr>
+<td>Check fails</td>
+<td>exit 2, and the agent receives "The check … failed (exit 1). Fix it before you finish."</td>
+</tr>
+<tr>
+<td>Check fails on re-entry (<code>stop_hook_active</code> set)</td>
+<td>exit 0, no trap</td>
+</tr>
+</tbody>
+</table>
+<p>The turn loop, simulated: if the agent fixes the problem after 2 blocks, it stops with the check passing. If it never fixes it, the cap ends the loop after 8 blocks with the check still failing. That last case is the dangerous one. Count how often your gate hits the cap. Each hit is a task that needs a person.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is there one command that proves a change works, and does it run in seconds?</li>
+<li class="task todo">Is the agent required to run it before stopping?</li>
+<li class="task todo">Is the check deterministic, with flaky tests quarantined?</li>
+<li class="task todo">Are test files and the check command protected from agent edits?</li>
+<li class="task todo">Does the hook handle <code>stop_hook_active</code>?</li>
+<li class="task todo">Do we count tasks that hit the block cap?</li>
+<li class="task todo">Does review look at deleted or weakened tests?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="control-permissions-modes-and-hooks.html">Control: permissions, modes and hooks</a> — protecting the check.</li>
+<li><a href="running-at-scale.html">Running at scale</a> — what the gate does across many tasks.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — checks that measure quality.</li>
+<li><a href="../agentic-ai/index.html">Agentic AI</a> — agents that act on their own reports.</li>
+<li><a href="../tool-calling/index.html">Tool calling</a> — how a hook sits beside tool calls.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Claude Code documentation, <em>Hooks reference</em> and <em>Automate workflows with hooks</em>, code.claude.com/docs/en/hooks and /hooks-guide, read 2026-10: deterministic hooks, the Stop event, exit code 2 and the JSON <code>decision</code> form, the <code>stop_hook_active</code> input and the cap on consecutive blocks.</li>
+<li>The commands, the turn loop and the counts are invented stand-ins. They come from <code>ai-assisted-development/code/stop_gate.py</code> and <code>lesson3_verification.py</code>. The cap of eight is the documented default as read in 2026-10 and may change. This module's sources were not re-opened after the first reading, and its fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="specs-and-the-context-file.html"><span class="lbl">← Previous</span><span class="ttl">Specs and the context file</span></a><a class="navcard next" href="control-permissions-modes-and-hooks.html"><span class="lbl">→ Next</span><span class="ttl">Control: permissions, modes and hooks</span></a></div><footer class="foot"><strong>Core insight:</strong> When an agent writes the code, the scarce work is specifying and verifying, so speed comes from the checks you build, not from the agent.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-agents-word-versus-an-exit-code">The mental model: the agent&#x27;s word versus an exit code</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#what-counts-as-a-check">What counts as a check</a><a class="h3" href="#the-stop-hook">The Stop hook</a><a class="h3" href="#review-still-matters">Review still matters</a><a class="h3" href="#independent-checks">Independent checks</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-gate-that-holds-and-a-loop-that-ends">Worked example: a gate that holds, and a loop that ends</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=ai-assisted-development%2Fverification-is-the-product.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="ai-assisted-development/verification-is-the-product.html"</script><script defer src="../assets/glossary.js"></script></body></html>

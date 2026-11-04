@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>an agents module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-agent.html">1 · What is an agent?</a><a class="modlink" href="tools-and-function-calling.html">2 · Tools &amp; function calling</a><a class="modlink" href="context-and-memory.html">3 · Context &amp; memory</a><a class="modlink" href="planning-and-reasoning.html">4 · Planning &amp; reasoning</a><a class="modlink" href="multi-agent-and-protocols.html">5 · Multi-agent systems &amp; protocols</a><a class="modlink active" href="reliability-and-evals.html">6 · Reliability &amp; evals</a><a class="modlink" href="safety-security-and-governance.html">7 · Safety, security &amp; governance</a><a class="modlink" href="agentic-ai-as-a-product.html">8 · Agentic AI as a product</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 06</span>
@@ -186,7 +195,11 @@ one via eleven wasted tool calls and a lucky guess. Grade both:</p>
 </ul>
 <p>Two agent-specific measurement traps deserve attention. <strong>Non-determinism</strong>: run each
 eval task several times and report pass rates with spread, since a single green run
-proves little. <strong>Environment drift</strong>: agent evals need stable sandboxed environments
+proves little. Report consistency, not just best-case success. The τ-bench benchmark
+separates <em>pass@k</em> (at least one of k tries succeeds) from <em>pass^k</em> (all k tries
+succeed). Customer-facing agents need the second number. In the τ-bench paper, a
+top function-calling agent of its day passed under 50% of tasks and fell below 25% on
+pass^8 in retail. <strong>Environment drift</strong>: agent evals need stable sandboxed environments
 (seeded data, frozen APIs). An eval that flakes because the test environment changed
 teaches teams to ignore evals.</p>
 <p>There's also a multi-turn debugging discipline, since agent failures rarely live where
@@ -238,7 +251,7 @@ quality signal you have, and it arrives before churn does.</p>
 <li><a href="agentic-ai-as-a-product.html">Agentic AI as a product</a></li>
 <li><a href="../ai/04-evals-observability.html#evals">Evals &amp; observability</a> — the general eval stack under the agent-specific layer</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="multi-agent-and-protocols.html"><span class="lbl">← Previous</span><span class="ttl">Multi-agent systems &amp; protocols</span></a><a class="navcard next" href="safety-security-and-governance.html"><span class="lbl">→ Next</span><span class="ttl">Safety, security &amp; governance</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="multi-agent-and-protocols.html"><span class="lbl">← Previous</span><span class="ttl">Multi-agent systems &amp; protocols</span></a><a class="navcard next" href="safety-security-and-governance.html"><span class="lbl">→ Next</span><span class="ttl">Safety, security &amp; governance</span></a></div><footer class="foot"><strong>Core insight:</strong> Teams win with agents by matching autonomy to stakes, making the work verifiable, and earning trust one tier at a time.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-compounding-law">The compounding law</a><a class="h2" href="#evals-grade-the-journey-not-just-the-destination">Evals: grade the journey, not just the destination</a><a class="h2" href="#observability-every-run-replayable">Observability: every run replayable</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

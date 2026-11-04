@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Practice: researching agent interactions — Building AI-native products</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Building AI-native products</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="designing-for-ambiguity.html">1 · Designing for ambiguity</a><a class="modlink" href="ux-practice-the-ai-feature-spec.html">2 · Practice: the AI feature spec</a><a class="modlink" href="model-intuition.html">3 · Model intuition</a><a class="modlink" href="model-intuition-practice.html">4 · Practice: probing and choosing models</a><a class="modlink" href="from-pixels-to-evals.html">5 · From pixels to evals</a><a class="modlink" href="hill-climbing-in-practice.html">6 · Practice: hill climbing</a><a class="modlink" href="designing-agentic-flows.html">7 · Designing agentic flows</a><a class="modlink" href="agentic-flows-practice.html">8 · Practice: the agent spec and risk register</a><a class="modlink" href="how-users-behave-with-agents.html">9 · How users behave with agents</a><a class="modlink active" href="researching-agent-interactions.html">10 · Practice: researching agent interactions</a><a class="modlink" href="capstone-ship-one-ai-native-feature.html">11 · Capstone: ship one AI-native feature</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 10</span>
+    <h1>Practice: researching agent interactions</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>You cannot learn how people supervise an agent by asking what they like. Stated opinions and real behaviour differ most for tools that act for the user. The research has to watch what people do: what they hand off, what they check, what they undo, and when they stop trusting the output. It also has to look at the agent's own record, because the logs show behaviour at a scale no interview can.</p>
+<p>This lesson gives you five methods that suit agents. <strong>Log analysis</strong> shows what happens at scale. <strong>Shadowing and think-aloud sessions</strong> show why. <strong>Wizard-of-Oz tests</strong> let you try an agent before you build it. <strong>Diary studies</strong> show trust over weeks. <strong>Structured interviews</strong> probe mental models and past incidents. You get an interview guide, a research plan and a findings template to reuse.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI product leader</strong></p>
+<p><strong>Why it matters</strong> — Agent products fail at the edges of behaviour: over-trust, abandoned delegation and quiet errors. Surveys miss those. Targeted research finds them before launch, and again after.</p>
+<p><strong>What it changes in your decisions</strong> — You plan research in rounds: before the build, in a sandbox, in early release and in steady use. You make the logs part of the research. You turn every finding into a change or a test case.</p>
+<p><strong>Ask your team</strong> — <em>"What did we see users do, not say, when the agent was wrong?"</em></p>
+<p><strong>Risk if ignored</strong> — A launch based on what users said they would do, followed by behaviour no one planned for.</p>
+</blockquote>
+<h2 id="the-mental-model-say-do-and-record">The mental model: say, do and record</h2>
+<p>Three sources of evidence answer different questions. What users <strong>say</strong> shows beliefs and wishes. What users <strong>do</strong>, watched live, shows habits and surprises. What the system <strong>records</strong> shows scale and rare events. Use all three, and trust agreement between them.</p>
+<style>
+.dgm-ra{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-ra-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-ra h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-ra-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-ra-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dgm-ra-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-ra-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-ra-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-ra-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-ra-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-ra-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-ra-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-ra-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-ra-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-ra-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-ra-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-ra-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-ra-note b{color:var(--color-text)}
+.dgm-ra-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-ra{padding:22px 14px 18px}.dgm-ra-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-ra-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-ra">
+  <span class="dgm-ra-chip">Say, do and record</span>
+  <h4>Three kinds of evidence, one finding</h4>
+  <p class="dgm-ra-sub">Trust agreement between them.</p>
+  <div class="dgm-ra-grid">
+    <div class="dgm-ra-c dgm-ra-info"><h5><span class="dgm-ra-n">1</span>What users say</h5><span class="dgm-ra-t">interviews · diaries</span><p>Beliefs and wishes.</p></div>
+    <div class="dgm-ra-c dgm-ra-discovery"><h5><span class="dgm-ra-n">2</span>What users do</h5><span class="dgm-ra-t">shadowing · Wizard of Oz</span><p>Habits and surprises.</p></div>
+    <div class="dgm-ra-c dgm-ra-caution"><h5><span class="dgm-ra-n">3</span>What the system records</h5><span class="dgm-ra-t">logs · signals</span><p>Scale and rare events.</p></div>
+    <div class="dgm-ra-c dgm-ra-success"><h5><span class="dgm-ra-n">4</span>Finding to action</h5><span class="dgm-ra-t">design · eval case · risk entry</span><p>With an owner.</p></div>
+  </div>
+  <p class="dgm-ra-foot">Repeat the rounds, because trust changes with time.</p>
+</div>
+
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="log-analysis">Log analysis</h3>
+<p>Sample real sessions and read them. Look for: tasks users hand off, tasks they redo, edits after the agent's output, undo and override actions, abandoned runs and repeated attempts at the same goal. Pair numbers with reading: count the pattern, then read ten cases. Respect privacy: de-identify, and limit who reads.</p>
+<h3 id="shadowing-and-think-aloud">Shadowing and think-aloud</h3>
+<p>Watch users work with the agent on real tasks, and ask them to say what they are thinking. Notice where they check, where they hesitate, what they ignore and what surprises them. Do not help. Note the moments when the agent was wrong and whether the user noticed.</p>
+<h3 id="wizard-of-oz">Wizard of Oz</h3>
+<p>A person plays the agent behind the scenes while the user believes, or knows, it is automatic. Kelley used the method in the 1980s. It lets you test the interaction design, the pacing and the trust questions before the model exists, or while it is still weak. Be clear on the ethics: tell participants afterwards, and never test anything with real consequences.</p>
+<h3 id="diary-studies">Diary studies</h3>
+<p>Ask a small group to record each use for two to four weeks: the task, how they checked, what went wrong and how they felt. Diaries show how trust changes with time, which a single session cannot.</p>
+<h3 id="interviews-that-fit-agents">Interviews that fit agents</h3>
+<p>Ask about <strong>specific past episodes</strong>, not general opinions. "Tell me about the last time the agent got something wrong" teaches more than "Do you trust it?" Ask what they believed it could do, what they checked and why, and what would make them stop using it. Probe the edges: money, customers, privacy.</p>
+<h3 id="from-finding-to-action">From finding to action</h3>
+<p>A finding is only useful if it leads somewhere. For each one, write the behaviour, the evidence, the cause and the response: a design change, an eval case, a risk-register entry or a change to the copy. Add failure episodes to the eval set from <a href="hill-climbing-in-practice.html">lesson 6</a>.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Depth vs. scale.</strong> Interviews give why. Logs give how much.</li>
+<li><strong>Realism vs. control.</strong> Live work is realistic and messy. Lab tasks are clean and artificial.</li>
+<li><strong>Early vs. late.</strong> Wizard-of-Oz tests are cheap and early. Logs need a live product.</li>
+<li><strong>Privacy vs. insight.</strong> The best data is the most sensitive. Collect the least that answers the question.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Asking opinions about behaviour.</strong> "Would you trust it?" tells you little.</li>
+<li><strong>Leading questions.</strong> The agent is described as clever, then rated.</li>
+<li><strong>Only happy users.</strong> Early adopters are not the market.</li>
+<li><strong>One-off research.</strong> Trust changes, and a single study goes stale.</li>
+<li><strong>No follow-through.</strong> Findings sit in a deck.</li>
+<li><strong>Over-collecting.</strong> Logs kept without a purpose or a limit.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Three templates.</p>
+<pre><code class="language-text">INTERVIEW GUIDE (45 min)
+1  Warm-up: your role, a typical day with tickets (5)
+2  Last time the agent helped: walk me through it (10)
+3  Last time it got something wrong: what happened, how did you find out? (10)
+4  What do you think it can and cannot do? How do you know? (5)
+5  What do you check before you send, and why? What do you skip? (10)
+6  What would make you stop using it? What would you hand off if it were better? (5)
+Probes: &quot;show me&quot;, &quot;what did you expect&quot;, &quot;what happened next&quot;. Do not describe the agent as accurate.
+</code></pre>
+<pre><code class="language-text">RESEARCH PLAN
+Question to answer:             Decision it informs:
+Method(s): logs / shadow / Wizard of Oz / diary / interviews
+Who (n, roles, experience):     When (round: pre-build / sandbox / early release / steady state)
+Data and privacy limits:        Owner:         Date of readout:
+</code></pre>
+<pre><code class="language-text">FINDING
+Behaviour seen:            Evidence (n, where):       Cause (our guess):
+Response: design change / eval case / risk entry / copy        Owner / due:
+</code></pre>
+<h2 id="worked-example-relays-three-rounds">Worked example: Relay's three rounds</h2>
+<p><em>Relay is invented. All findings and numbers are made up for teaching.</em></p>
+<p><strong>Round 1, before the build: Wizard of Oz.</strong> Two team members drafted replies by hand and showed them in the reply box as "Relay drafts". Five support agents worked normally for two days. Finding: agents read the first line, then skimmed. They did not check order numbers. Response: a risk entry for "wrong detail unnoticed" and a design change to underline facts.</p>
+<p><strong>Round 2, early release: logs and shadowing.</strong> Of 1,200 drafts, 61% were sent unedited. The team read 40 of them. Six held a wrong detail. In shadowing, agents said they "trust the order bit because it's from the system". Response: the source line and the weekly sampling rule from the earlier lessons.</p>
+<p><strong>Round 3, steady state: a diary study.</strong> Eight agents kept a diary for three weeks. Two wrote that they stopped reading drafts after the second week. One wrote: "It's been right so many times that I just hit send." Response: a design change that varies the check. A random 1 in 20 drafts gets a "please confirm the order number" step, and the interview guide gained a question about complacency.</p>
+<blockquote>
+<p><strong>Capstone step 5.</strong> Fill in a research plan for your feature. Write your interview guide using the template and plan one of each: a before-build test, an early-release log review and a diary.</p>
+</blockquote>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is there a written question and a decision it informs?</li>
+<li class="task todo">Does the plan mix say, do and record?</li>
+<li class="task todo">Do interviews ask about specific past episodes?</li>
+<li class="task todo">Is there a Wizard-of-Oz or sandbox test before launch?</li>
+<li class="task todo">Are logs sampled and read, with privacy limits?</li>
+<li class="task todo">Is there a diary or a repeat round to see trust change?</li>
+<li class="task todo">Does every finding have a response and an owner?</li>
+<li class="task todo">Do failure episodes go into the eval set?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="how-users-behave-with-agents.html">How users behave with agents</a> — what to look for.</li>
+<li><a href="hill-climbing-in-practice.html">Practice: hill climbing</a> — turning findings into eval cases.</li>
+<li><a href="../product-sense/user-research.html">User research</a> — the general method.</li>
+<li><a href="../product-sense/communication.html">Communication</a> — sharing findings.</li>
+<li><a href="../ai-agents/running-an-agent-in-production.html">Running an agent in production</a> — logs and monitoring.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>John F. Kelley, <em>An iterative design methodology for user-friendly natural language office information applications</em>, ACM Transactions on Office Information Systems, 1984: the Wizard-of-Oz method. Not re-opened.</li>
+<li>Saleema Amershi et al., <em>Guidelines for Human-AI Interaction</em>, CHI 2019, and the HAX Toolkit library, read 2026-10: the guidelines that user research should check against.</li>
+<li>Relay, its studies, findings and numbers are invented for teaching. This track's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="how-users-behave-with-agents.html"><span class="lbl">← Previous</span><span class="ttl">How users behave with agents</span></a><a class="navcard next" href="capstone-ship-one-ai-native-feature.html"><span class="lbl">→ Next</span><span class="ttl">Capstone: ship one AI-native feature</span></a></div><footer class="foot"><strong>Core insight:</strong> An AI-native product is designed around uncertainty: you decide what the model should do, measure it with evals, and shape the flow so people can trust and correct it.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-say-do-and-record">The mental model: say, do and record</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#log-analysis">Log analysis</a><a class="h3" href="#shadowing-and-think-aloud">Shadowing and think-aloud</a><a class="h3" href="#wizard-of-oz">Wizard of Oz</a><a class="h3" href="#diary-studies">Diary studies</a><a class="h3" href="#interviews-that-fit-agents">Interviews that fit agents</a><a class="h3" href="#from-finding-to-action">From finding to action</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-relays-three-rounds">Worked example: Relay&#x27;s three rounds</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=building-ai-native-products%2Fresearching-agent-interactions.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="building-ai-native-products/researching-agent-interactions.html"</script><script defer src="../assets/glossary.js"></script></body></html>

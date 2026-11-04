@@ -39,9 +39,18 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head><body>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head><body>
 <header class="topbar"><button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="../../../../index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Harness engineering</span></a>
-<nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../../../../../index.html"><span class="ButtonInner">← All courses</span></a></nav></header>
+<nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../../../../../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../../../../../index.html"><span class="ButtonInner">← All courses</span></a></nav></header>
 <div id="sb-scrim"></div>
 <div class="layout">
 <aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="../../../../index.html">← Track overview</a><a class="modlink" href="../../../01-foundations-and-the-loop/README.html">Phase 01 — Foundations and the Loop</a><a class="modlink" href="../../../02-tools/README.html">Phase 02 — Tools</a><a class="modlink" href="../../../03-context-and-memory/README.html">Phase 03 — Context and memory</a><a class="modlink" href="../../../04-prompts-and-instructions/README.html">Phase 04 — Prompts and instructions</a><a class="modlink" href="../../../05-files-and-shell/README.html">Phase 05 — Files and Shell</a><a class="modlink" href="../../../06-permissions-and-security/README.html">Phase 06 — Permissions and Security</a><a class="modlink" href="../../../07-planning-and-subagents/README.html">Phase 07 — Planning and Subagents</a><a class="modlink active" href="../../README.html">Phase 08 — Extending: MCP, Skills, Retrieval</a><div class="sub"><a href="../../01-mcp-protocol-server-client/docs/en.html">The MCP Protocol: Server and Client</a><a href="../../02-official-mcp-sdk/docs/en.html">The Official MCP SDK</a><a class="active" aria-current="page" href="en.html">Skills and Deferred Loading</a><a href="../../04-repo-map/docs/en.html">The Repo Map</a><a href="../../05-search-code-tool/docs/en.html">A search_code Tool</a></div><a class="modlink" href="../../../09-reliability-evals-and-ops/README.html">Phase 09 — Reliability, evals, and ops</a><a class="modlink" href="../../../10-capstone/README.html">Phase 10 — Capstone</a></div></aside>
@@ -84,7 +93,7 @@ el.querySelectorAll('a[href]').forEach(a=>{
        .replace(/(^|\/)harness-engineering\/README\.md/,'$1harness/index.html')
        .replace(/(^|\/)flowable\/README\.md/,'$1flowable/index.html')
        .replace(/(^|\/)harness-engineering\//,'$1harness/')
-       .replace(/(^|\/)(agentic-ai|first-principles|product-sense|technical-product-sense|technical-product-management|knowledge-graphs|generative-ai|llms|api-integrations|rag-vector-databases|memory-and-context|tool-calling|ai-agents|agentic-workflows|evaluation-and-observability|ai-security-and-guardrails|cost-optimization|system-design|access-control|context-engineering|prompt-engineering|learning-paths|machine-learning|tensors|cnns)\/README\.md/,'$1$2/index.html')
+       .replace(/(^|\/)(agentic-ai|first-principles|product-sense|technical-product-sense|technical-product-management|knowledge-graphs|generative-ai|llms|api-integrations|rag-vector-databases|memory-and-context|tool-calling|ai-agents|agentic-workflows|evaluation-and-observability|ai-security-and-guardrails|cost-optimization|system-design|access-control|context-engineering|prompt-engineering|learning-paths|machine-learning|tensors|cnns|transformers|fine-tuning|ai-assisted-development|building-ai-native-products|explainers|business-acumen)\/README\.md/,'$1$2/index.html')
        .replace(/\.md(#|$)/,'.html$1');
   a.setAttribute('href', h);
 });

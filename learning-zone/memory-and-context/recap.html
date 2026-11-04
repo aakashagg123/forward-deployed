@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
@@ -67,17 +76,28 @@ memory feature. Details come from press coverage in search results.</p>
 <p><strong>A planted memory that kept working (2024).</strong> Security researcher Johann Rehberger showed
 that a crafted web page or document could get the ChatGPT macOS app to save a hostile instruction in its
 long-term memory. The instruction sent later conversations to an outside server. OpenAI
-released a partial fix that closed the data-sending route, and the work was published in September 2024. 🎯 <em>Takeaway:</em> if a
-model can write to memory, an injection can outlive the session. Hold writes from
-untrusted content for confirmation. See
+fixed the app in September 2024, and the work was published on September 20, 2024. The
+fix was partial. It closed the data-sending route. The author notes that an untrusted
+page can still get ChatGPT to store memories. 🎯 <em>Takeaway:</em> if a model can write to
+memory, an injection can outlive the session. A vendor patch does not close the write
+path. Hold writes from untrusted content for confirmation. See
 <a href="when-memory-goes-wrong.html#poisoning-a-planted-memory-that-keeps-working">poisoning</a> and
-<a href="writing-and-maintaining-memory.html">the write path</a>. Details come from press coverage
-in search results.</p>
+<a href="writing-and-maintaining-memory.html">the write path</a>. The author's own write-up was opened
+for this edit.</p>
 <p><strong>Who owns the store (Claude API).</strong> The Claude memory tool runs on the developer's side.
 Claude asks for a file operation, and the application performs it. Anthropic's docs say
 memory "lives entirely in your application," and put path checks, size caps and expiry on
 the developer. 🎯 <em>Takeaway:</em> you own the store, and so you own its boundary and its
 deletion duty. See <a href="session-user-and-organizational-memory.html">session, user &amp; organizational memory</a>.</p>
+<p><strong>Deleting the chat does not delete the memory (Claude help page).</strong> Anthropic's help page
+says that deleting a conversation does not delete the memories created from it. The user
+must delete those memories one by one. Memory is on by default for Free, Pro, Max and Ultra
+users. On Team and Enterprise plans, each member starts with it off, and owners cannot view
+members' memories. 🎯 <em>Takeaway:</em> users link a chat to what it taught the product. Decide
+whether deleting the source also deletes the memory, and say which. See
+<a href="when-memory-goes-wrong.html">when memory goes wrong</a> and
+<a href="session-user-and-organizational-memory.html">session, user &amp; organizational memory</a>.
+Checked 2026-11.</p>
 <p><strong>The stale preference (an illustration).</strong> A shopping assistant learns "vegetarian" in
 January. In June the customer starts eating fish and says so, but the store only appends.
 Retrieval returns the January note first, and the assistant keeps offering vegetarian
@@ -187,13 +207,15 @@ lesson to reread.</p>
 <li>OpenAI, <a href="https://openai.com/index/march-20-chatgpt-outage/">March 20 ChatGPT outage: here's what happened</a>
   (Mar 2023). Same status: search results only.</li>
 <li>Johann Rehberger, <a href="https://embracethered.com/blog/posts/2024/chatgpt-macos-app-persistent-data-exfiltration/">ChatGPT macOS app persistent data exfiltration</a>
-  (Sep 2024). Press coverage in search results only; the page could not be opened.</li>
+  (Sep 2024). Opened 2026-11.</li>
+<li>Anthropic, <a href="https://support.claude.com/en/articles/11817273">How does Claude's memory work?</a>
+  (help centre). Opened 2026-11.</li>
 <li>Anthropic, <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Memory tool</a>
-  (Claude API docs). Checked 2026-09.</li>
+  (Claude API docs). Checked 2026-11.</li>
 <li>The stale-preference story is an invented illustration.</li>
 </ul>
 <hr /></div>
-  <div class="pagenav"><a class="navcard prev" href="when-memory-goes-wrong.html"><span class="lbl">← Previous</span><span class="ttl">When memory goes wrong</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="when-memory-goes-wrong.html"><span class="lbl">← Previous</span><span class="ttl">When memory goes wrong</span></a><span></span></div><footer class="foot"><strong>Core insight:</strong> A model does not give you memory. Your product builds it as a set of promises about what it keeps, reads back and forgets.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

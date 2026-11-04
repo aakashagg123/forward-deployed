@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Foundations: business acumen and the T-shaped leader — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
+    <h1>Foundations: business acumen and the T-shaped leader</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p><strong>Business acumen</strong> is the skill of seeing how a decision moves the business. You know how the company makes money. You know which numbers matter. You can predict how a product change will show up in revenue, cost, risk and cash.</p>
+<p>For a product leader, acumen has two parts. <strong>Breadth</strong> is general business knowledge: money, markets, organizations and people. <strong>Depth</strong> is mastery of one domain, such as Payments or Lending. Together they make a <strong>T shape</strong>: a wide bar of business knowledge over one deep stem of domain knowledge.</p>
+<p>The core tradeoff is time. Every hour spent on breadth is an hour not spent on depth. This lesson helps you diagnose your own gaps first, so you spend that time where it pays. The track's <a href="assessment.html">interactive self-assessment</a> scores you on fifteen axes and builds a plan.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — At Group product manager (PM) level and above, your decisions move money directly. You approve bets, set targets and trade one team's capacity for another's. A leader who cannot connect a roadmap to the profit and loss statement gets overruled by someone who can.</p>
+<p><strong>What it changes in your decisions</strong> — You stop picking development goals by comfort. You diagnose your gaps with evidence, pick the two that block your current decisions, and close them on purpose.</p>
+<p><strong>Ask your team</strong> — <em>"If this initiative works, which line of our financial statements moves first, and by roughly how much?"</em></p>
+<p><strong>Risk if ignored</strong> — You win the product argument and lose the business argument. Finance, Risk or Sales leaders make the real call, and your team builds what they decided.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li><strong>Before you debate a product change, say which financial line it moves first, and roughly by how much.</strong></li>
+<li><strong>In any domain, ask the first unit-economics question before you ask about volume.</strong></li>
+<li><strong>Count a self-rating of 4 or 5 only when you can name an artifact that proves it.</strong></li>
+<li><strong>Pick the two gaps that block a decision you face this quarter.</strong> Ignore gaps no current decision needs.</li>
+<li><strong>When you change domain, learn its binding constraints before you propose a roadmap.</strong></li>
+<li><strong>Re-take the assessment after a quarter, and judge it by your next hard decision, not by the score.</strong></li>
+</ul>
+<h2 id="mental-model-the-t-and-where-it-bends">Mental model: the T, and where it bends</h2>
+<pre class="mermaid">flowchart TB
+  subgraph BAR[&quot;BREADTH: how any business works&quot;]
+    direction LR
+    B1[&quot;Money&lt;br/&gt;statements, cash, cases&quot;]
+    B2[&quot;Markets&lt;br/&gt;segments, forces, strategy&quot;]
+    B3[&quot;Organization&lt;br/&gt;power, teams, structure&quot;]
+    B4[&quot;People&lt;br/&gt;influence, leaders, execs&quot;]
+  end
+  BAR --&gt; STEM[&quot;DEPTH: one domain&lt;br/&gt;e.g. Payments&lt;br/&gt;economics · regulation · risk · operations&quot;]</pre>
+<p>The bar is what transfers. A balance sheet reads the same way in a bank and in a shop. The stem is what makes you hard to replace. A Payments leader knows that a lower price can still lose money if dispute rates rise.</p>
+<p><strong>Where the analogy breaks.</strong> A real leader's shape is not fixed. Depth in one domain often transfers to a neighbour. Payments depth helps in Lending, because both deal with fraud, regulation and money movement. And a stem can become a trap. Deep experts can stop questioning the rules of their own domain.</p>
+<h2 id="what-business-acumen-is-in-practice">What business acumen is, in practice</h2>
+<p>Acumen shows up as behaviour, not as vocabulary. A leader with acumen can do four things.</p>
+<ol>
+<li><strong>Explain the money engine.</strong> Say in two sentences how the company earns revenue, what it costs to deliver, and where profit comes from.</li>
+<li><strong>Trace a decision to the numbers.</strong> Say which metric a product change moves, and how that metric reaches revenue, cost or risk.</li>
+<li><strong>Weigh options in a common currency.</strong> Compare a growth bet and a cost cut using cash, margin and risk, not enthusiasm.</li>
+<li><strong>Work the organization.</strong> Know who decides, what each function is paid to protect, and how to build support before a meeting.</li>
+</ol>
+<p>This track groups those abilities into four clusters. Each cluster is a set of lessons.</p>
+<table>
+<thead>
+<tr>
+<th>Cluster</th>
+<th>Lessons</th>
+<th>The question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundations</td>
+<td>This lesson; <a href="data-and-decisions.html">data and decisions</a></td>
+<td>Where am I strong, and how do I decide under uncertainty?</td>
+</tr>
+<tr>
+<td>Business and markets</td>
+<td><a href="the-language-of-money.html">The language of money</a>; <a href="unit-economics.html">unit economics</a>; <a href="business-cases-and-valuation.html">business cases, capital and valuation</a>; <a href="markets-and-strategy.html">markets and customers</a>; <a href="competitive-advantage-and-strategy.html">competitive advantage and strategy</a></td>
+<td>How does this company make money, and where should it compete?</td>
+</tr>
+<tr>
+<td>Product leadership</td>
+<td><a href="monetization-and-business-models.html">Pricing and business models</a>; <a href="products-and-marketing.html">products and go-to-market</a>; <a href="performance-and-growth.html">performance and growth</a>; <a href="portfolio-strategy-and-allocation.html">portfolio strategy and capital allocation</a></td>
+<td>What do we build, how do we price it, and how do we know it works?</td>
+</tr>
+<tr>
+<td>People and influence</td>
+<td><a href="navigating-the-organization.html">Navigating the organization</a>; <a href="teams-and-collaboration.html">teams and collaboration</a>; <a href="leading-leaders-and-org-design.html">leading leaders and org design</a>; <a href="executive-influence-and-stakeholders.html">executive influence</a></td>
+<td>How do I lead teams, leaders and executives?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-domain-depth-compounds">Why domain depth compounds</h2>
+<p>General acumen tells you which questions to ask. Domain depth tells you the answers that are specific to your industry. Each domain has a few <strong>binding constraints</strong>. These are the rules that decide what is possible, whatever the product idea.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>A binding constraint</th>
+<th>What a leader without depth gets wrong</th>
+<th>The first unit-economics question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Payments</strong></td>
+<td>Interchange and dispute economics. The card issuer earns a fee on each card payment. The merchant pays it. The merchant also usually bears the loss when it loses a dispute.</td>
+<td>Prices a new merchant segment on volume alone. Then dispute losses in that segment erase the margin.</td>
+<td>After interchange, network fees, fraud and disputes, what is left from one payment? See <a href="unit-economics.html#payments-per-transaction">payments per transaction</a>.</td>
+</tr>
+<tr>
+<td><strong>Lending</strong></td>
+<td>Credit losses arrive months after the decision. Revenue arrives over the life of the loan.</td>
+<td>Celebrates a rise in approval rate before the first loans have had time to default.</td>
+<td>Do interest and fees on one loan cover the cost of funds, expected loss, servicing and acquisition, for the marginal borrower? See <a href="unit-economics.html#lending-per-loan">lending per loan</a>.</td>
+</tr>
+<tr>
+<td><strong>eCommerce</strong></td>
+<td>A marketplace keeps only its <strong>take rate</strong>, the share of each sale it earns as revenue. Logistics and returns can cost more than that share.</td>
+<td>Reports gross merchandise value as if it were revenue.</td>
+<td>After fulfilment, payment cost, promotions and returns, what does one order contribute? See <a href="unit-economics.html#marketplaces-and-ecommerce-per-order">marketplaces per order</a>.</td>
+</tr>
+<tr>
+<td><strong>InsurTech</strong></td>
+<td>The <strong>loss ratio</strong>, claims paid as a share of premium earned, is only known after claims come in. In the US, states regulate insurance, and many lines need rate filings with state regulators.</td>
+<td>Launches a cheap price to grow fast. The losses on that business show up a year later.</td>
+<td>For one policy, do claims plus all expenses stay below the premium, and what does the premium earn while it is held? See <a href="unit-economics.html#insurance-per-policy">insurance per policy</a>.</td>
+</tr>
+<tr>
+<td><strong>Retail</strong></td>
+<td>Inventory ties up cash. Unsold stock gets marked down.</td>
+<td>Adds range to lift sales and slows stock turns. Cash gets tight in the peak season.</td>
+<td>How much gross margin does each dollar of stock earn in a year? That is the gross margin return on inventory investment (GMROI). See <a href="unit-economics.html#retail-per-category">retail per category</a>.</td>
+</tr>
+<tr>
+<td><strong>FinTech</strong></td>
+<td>Regulation shapes the model. Licences, partner banks and capital rules decide what the company may do.</td>
+<td>Plans a feature that the partner bank's compliance team must approve, and finds out late.</td>
+<td>What does one active customer earn each month, and what does it cost to serve? See <a href="unit-economics.html#neobanks-per-customer">neobanks per customer</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>The last column is the habit to build. Before anyone talks about volume, ask what one unit earns after the costs that come with it. A unit is the thing the business sells once: a payment, a loan, an order, a policy, a shelf of stock or an active customer. If one unit loses money, more volume loses more money. <a href="unit-economics.html">Unit economics</a> shows how to build each of these from one unit up to a cohort of customers.</p>
+<p>Public companies show these constraints in what they choose to report. Two examples:</p>
+<ul>
+<li><strong>eCommerce.</strong> DoorDash reports a "net revenue margin": its revenue as a share of the order value on its marketplace. Its filings put that figure at 13.4% for 2024. The rest of each order's value goes to merchants, couriers, taxes and tips.</li>
+<li><strong>Lending.</strong> Upstart's 10-K for 2022 says funding constraints led it to use its own balance sheet to support loan funding. A lending platform depends on capital partners as much as on borrowers.</li>
+</ul>
+<p>For insurance, a public loss-ratio series, and why the latest year's loss ratio always looks too low, is in <a href="performance-and-growth.html#insurance-loss-development">performance and growth</a>.</p>
+<p>Depth compounds for three reasons. First, each decision reuses the same model, so you get faster. Second, you see second-order effects, such as a growth push that raises losses later. Third, you earn trust with Risk, Finance and Compliance partners. They stop explaining the basics and start debating options with you.</p>
+<h2 id="how-to-self-diagnose">How to self-diagnose</h2>
+<p>Self-ratings are noisy. People tend to rate themselves higher on skills they use often, and lower on skills they rarely see. Three habits make a self-diagnosis useful.</p>
+<ul>
+<li><strong>Rate behaviours, not traits.</strong> "I can explain how a rise in our default rate changes next quarter's profit" is testable. "I understand finance" is not.</li>
+<li><strong>Check against evidence.</strong> For each high score, name an artifact you produced: a business case, a pricing memo, a reorg proposal. No artifact means the score is a guess.</li>
+<li><strong>Ask one honest peer.</strong> A finance or risk partner can tell you in ten minutes where you sound unsure.</li>
+</ul>
+<p>The <a href="assessment.html">self-assessment</a> uses this method. It asks 60 "I can" statements, four for each of the fifteen lessons. It turns your answers into a score per axis and a radar chart. Then it ranks your gaps and suggests a two-week action from the matching lesson.</p>
+<h2 id="worked-example-a-leader-changes-domain">Worked example: a leader changes domain</h2>
+<p><em>This example is invented, to show the method. The person, the scores and the plan are illustrative.</em></p>
+<p>A Group PM has spent six years in eCommerce marketplaces. She moves to a consumer Lending company as Head of Product. In her first week she takes the self-assessment.</p>
+<p><strong>Step 1: score each axis.</strong> Each statement is rated 1 to 5. An axis has four statements, so its raw total runs from 4 to 20. The tool converts that to a percentage: (total − 4) ÷ 16 × 100.</p>
+<table>
+<thead>
+<tr>
+<th>Axis</th>
+<th>Ratings</th>
+<th>Total</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reading the three statements</td>
+<td>4, 4, 3, 3</td>
+<td>14</td>
+<td>(14 − 4) ÷ 16 = 62.5%</td>
+</tr>
+<tr>
+<td>Markets and customers</td>
+<td>4, 4, 4, 3</td>
+<td>15</td>
+<td>68.75%</td>
+</tr>
+<tr>
+<td>Unit economics</td>
+<td>4, 3, 2, 2</td>
+<td>11</td>
+<td>43.75%</td>
+</tr>
+<tr>
+<td>Data and decisions</td>
+<td>3, 2, 2, 3</td>
+<td>10</td>
+<td>37.5%</td>
+</tr>
+<tr>
+<td>Executive influence and stakeholders</td>
+<td>4, 4, 4, 4</td>
+<td>16</td>
+<td>75%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 2: check the low scores against the new domain.</strong> Her unit-economics score is low on the two lending statements. She knows take rates well. She has never built the economics of one loan, where interest and fees must cover the cost of funds and the expected losses. Her data score is low because lending outcomes are slow. A loan approved today may not default for a year.</p>
+<p><strong>Step 3: pick two gaps that block a current decision.</strong> Her first big decision is whether to loosen the credit cutoff to grow volume. That decision needs both weak axes. She picks Unit economics, and Data and decisions.</p>
+<p><strong>Step 4: set a two-week action for each.</strong></p>
+<ul>
+<li>Unit economics: rebuild the unit economics of one loan product with the finance partner. Write down the cost of funds, expected loss, servicing cost and margin per loan. See <a href="unit-economics.html#lending-per-loan">lending per loan</a>.</li>
+<li>Data and decisions: ask the credit risk team for loss curves by monthly cohort of loans. Learn when losses peak. See <a href="performance-and-growth.html#lending-vintage-curves">vintage curves</a> and <a href="data-and-decisions.html">data and decisions</a>.</li>
+</ul>
+<p><strong>Step 5: re-take the assessment in a quarter.</strong> The aim is not a high score. The aim is that the next cutoff decision is one she can defend to the Chief Risk Officer.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Breadth vs. depth.</strong> Breadth makes you mobile across companies. Depth makes you valuable inside one industry. The cost of breadth is shallow judgement on the hard calls. The cost of depth is a narrower market for your skills.</li>
+<li><strong>One domain vs. a neighbour.</strong> Moving from Payments to Lending reuses much of your depth, such as risk, fraud and regulation. Moving from Payments to Retail reuses less. The cost of a far move is a slower first year.</li>
+<li><strong>Acumen vs. craft.</strong> Time spent learning finance is time not spent on discovery or design. At vice president (VP) level the balance shifts toward acumen. Your teams hold the craft, and you hold the tradeoffs.</li>
+<li><strong>Self-study vs. a partner.</strong> Learning with a finance or risk partner is faster and builds a relationship. It costs you some exposure, because they see what you do not know.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Vocabulary without judgement.</strong> The leader says "contribution margin" in every meeting but cannot say which feature lowers it. Finance partners notice quickly.</li>
+<li><strong>Domain capture.</strong> The leader knows the industry so well that they defend its habits. A new competitor wins with the idea they dismissed.</li>
+<li><strong>Finance as a side topic.</strong> Business cases get written by a junior analyst and signed without reading. The first audit question exposes a broken assumption.</li>
+<li><strong>Inflated self-ratings.</strong> The leader scores 5 everywhere and finds no gaps. The plan is empty, and nothing changes.</li>
+<li><strong>Studying the wrong gap.</strong> The leader closes a gap that no current decision needs. The urgent gap stays open.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The self-assessment uses a simple, transparent scoring rule. You can recompute it by hand.</p>
+<pre><code class="language-text">For each axis a with four ratings r1..r4 (each 1 to 5):
+  total(a) = r1 + r2 + r3 + r4               # 4 to 20
+  score(a) = (total(a) - 4) / 16 * 100       # 0% to 100%
+  gap(a)   = 100 - score(a)
+
+Rank axes by gap, largest first.
+  score &lt; 50%        -&gt; &quot;focus&quot;: show the lesson link and one two-week action
+  50% &lt;= score &lt; 75% -&gt; &quot;build&quot;: show the lesson link
+  score &gt;= 75%       -&gt; &quot;maintain or stretch&quot;
+</code></pre>
+<p>The radar chart plots each score as a distance from the centre on fifteen spokes. The spokes are grouped by cluster, so a weak cluster shows as a dent on one side.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Write two sentences on how your company makes money, and check them with a finance partner.</li>
+<li class="task todo">Take the <a href="assessment.html">self-assessment</a> and record your fifteen scores.</li>
+<li class="task todo">For each score of 4 or 5 on a statement, name one artifact that proves it.</li>
+<li class="task todo">List your domain's three binding constraints, and the team that owns each one.</li>
+<li class="task todo">Pick two gaps that block a decision you face this quarter.</li>
+<li class="task todo">Book a 30-minute session with one finance or risk partner to test your weakest area.</li>
+<li class="task todo">Put a date in your calendar to re-take the assessment in one quarter.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="navigating-the-organization.html">Navigating the organization</a> — how the company makes money, and who decides.</li>
+<li><a href="the-language-of-money.html">The language of money</a> — the statements behind every business argument.</li>
+<li><a href="unit-economics.html">Unit economics</a> — the first question in every domain, worked from one unit to a cohort.</li>
+<li><a href="performance-and-growth.html">Performance and growth</a> — vintage curves and loss development, the slow feedback in Lending and Insurance.</li>
+<li><a href="../product-sense/domain-expertise.html">Domain expertise</a> — how domain knowledge becomes product intuition, and the expert trap.</li>
+<li><a href="../first-principles/becoming-a-polymath.html">Becoming a polymath</a> — breadth and depth as a learning strategy.</li>
+<li><a href="../technical-product-management/the-technical-pm-role.html">The technical PM role</a> — the craft side of the job that acumen sits on.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="the-language-of-money.html"><span class="lbl">→ Next</span><span class="ttl">The language of money: reading the three statements</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-the-t-and-where-it-bends">Mental model: the T, and where it bends</a><a class="h2" href="#what-business-acumen-is-in-practice">What business acumen is, in practice</a><a class="h2" href="#why-domain-depth-compounds">Why domain depth compounds</a><a class="h2" href="#how-to-self-diagnose">How to self-diagnose</a><a class="h2" href="#worked-example-a-leader-changes-domain">Worked example: a leader changes domain</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Ffoundations-and-assessment.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/foundations-and-assessment.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -4675,6 +4675,16 @@ hr{border:0;border-top:var(--hairline) solid var(--color-border);margin:var(--sp
 }
 .index-hero h1 em{font-style:normal;color:var(--color-text-secondary)}
 .index-hero .lede{max-width:calc(var(--spacing) * 180);margin:0 auto}
+.index-insight{
+  max-width:calc(var(--spacing) * 180);margin:var(--space-6) auto 0;padding:var(--space-4) var(--space-5);
+  background:var(--color-background-discovery-surface);border:var(--hairline) solid var(--color-border-discovery-surface);
+  border-radius:var(--radius-xl);
+}
+.index-hero .index-insight .Badge{margin-bottom:var(--space-2)}
+.index-insight p{
+  margin:0;color:var(--color-text);
+  font:var(--font-weight-semibold) var(--font-text-lg-size)/var(--font-text-lg-line-height) var(--font-sans);
+}
 .index-meta{display:flex;flex-wrap:wrap;gap:var(--space-2);justify-content:center;margin-top:var(--space-6)}
 
 .pm-band{margin:var(--space-8) auto;max-width:calc(var(--spacing) * 215)}
@@ -4938,6 +4948,12 @@ pre.mermaid svg{max-width:100%;height:auto;display:inline-block;shape-rendering:
 }
 @media (hover:hover) and (pointer:fine){.gloss-term:hover{background:var(--color-background-info-soft-alpha);text-decoration-color:var(--color-text-info)}}
 body.gl-open{overflow:hidden}
+/* A key-term pill with a long name wraps instead of widening the page on a phone. */
+/* The SDK button has a fixed height and no vertical padding. Keep that height as the floor and add
+   vertical padding, so a one-line pill matches other small pills and a wrapped one has even padding. */
+.gl-keyterm{max-width:100%;height:auto;min-height:var(--button-size);padding-block:var(--space-1-5);
+  line-height:var(--font-text-sm-line-height);white-space:normal;text-align:left}
+.gl-keyterm .ButtonInner{white-space:normal}
 #gl-scrim{
   position:fixed;inset:0;z-index:10000;background:var(--modal-backdrop-background);
   opacity:0;visibility:hidden;transition:opacity var(--transition-duration-basic) var(--transition-ease-basic);
@@ -5031,6 +5047,89 @@ html:has(.graph-page){height:100%}
   #legend .lg-h{width:100%}
   #card{max-height:52vh}
 }
+
+/* A pointer from a lesson to the visual explainer that follows one example through the same idea. */
+.explainer-link{margin:0 0 var(--space-6)}
+
+/* Self-assessment page (business-acumen track): rating grid, live axis scores,
+   radar chart and the generated plan. Tokens only. Four cluster families:
+   foundations = info, business = success, product = warning, people = discovery. */
+
+.asm{margin:var(--space-6) 0}
+.asm-intro{color:var(--color-text-secondary)}
+.asm-scale{display:flex;flex-wrap:wrap;gap:var(--space-2);margin:var(--space-3) 0 var(--space-6);
+  font:var(--font-weight-normal) var(--font-text-sm-size)/var(--font-text-sm-line-height) var(--font-sans);color:var(--color-text-secondary)}
+
+/* ---- one axis = one card ---- */
+.asm-axis{
+  margin:0 0 var(--space-5);padding:var(--space-4) var(--space-5);
+  border:var(--hairline) solid var(--color-border);border-left-width:var(--space-1);
+  border-radius:var(--radius-xl);background:var(--color-surface);
+}
+.asm-axis legend{padding:0 var(--space-1);color:var(--color-text);
+  font:var(--font-heading-xs-weight) var(--font-heading-xs-size)/var(--font-heading-xs-line-height) var(--font-sans)}
+.asm-axis-head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-2)}
+.asm-axis-score{font:var(--font-weight-semibold) var(--font-text-sm-size)/var(--font-text-sm-line-height) var(--font-sans);
+  font-variant-numeric:tabular-nums;color:var(--color-text-secondary);white-space:nowrap}
+.asm-axis-link{font:var(--font-weight-normal) var(--font-text-sm-size)/var(--font-text-sm-line-height) var(--font-sans)}
+.asm-item{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2) var(--space-4);
+  padding:var(--space-2-5) 0;border-top:var(--hairline) solid var(--color-border-subtle)}
+.asm-item:first-of-type{border-top:0}
+.asm-stmt{flex:1 1 calc(var(--spacing) * 80);margin:0;color:var(--color-text);
+  font:var(--font-weight-normal) var(--font-text-md-size)/var(--font-text-md-line-height) var(--font-sans)}
+.asm-rate{display:inline-flex;gap:var(--space-1);border:0;margin:0;padding:0}
+.asm-rate label{position:relative;display:inline-flex}
+.asm-rate input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.asm-rate span{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9);
+  border-radius:var(--radius-full);border:var(--hairline) solid var(--color-border-strong);
+  background:var(--color-surface);color:var(--color-text-secondary);
+  font:var(--font-weight-semibold) var(--font-text-sm-size)/1 var(--font-sans);
+  transition:background-color var(--transition-duration-basic) var(--transition-ease-basic);
+}
+.asm-rate input:focus-visible + span{outline:var(--space-0-5) solid var(--color-border-info-outline);outline-offset:var(--space-0-5)}
+.asm-rate input:checked + span{background:var(--color-background-primary-solid);border-color:var(--color-background-primary-solid);color:var(--color-text-inverse)}
+@media (hover:hover) and (pointer:fine){.asm-rate input:not(:checked):hover + span{background:var(--color-background-secondary-soft)}}
+
+/* cluster accents on the card edge */
+.asm-axis[data-cluster="found"]{border-left-color:var(--color-border-info-outline)}
+.asm-axis[data-cluster="biz"]{border-left-color:var(--color-border-success-outline)}
+.asm-axis[data-cluster="prod"]{border-left-color:var(--color-border-warning-outline)}
+.asm-axis[data-cluster="people"]{border-left-color:var(--color-border-discovery-outline)}
+
+/* ---- results: radar + plan ---- */
+.asm-results{
+  margin:var(--space-8) 0;padding:var(--space-5);
+  border-radius:var(--radius-2xl);box-shadow:var(--shadow-hairline);background:var(--color-surface-secondary);
+}
+.asm-legend{display:flex;flex-wrap:wrap;gap:var(--space-2);margin:0 0 var(--space-3)}
+.asm-radar{display:block;width:100%;max-width:calc(var(--spacing) * 140);height:auto;margin:0 auto}
+.asm-radar .ring{fill:none;stroke:var(--color-border)}
+.asm-radar .spoke{stroke:var(--color-border-subtle)}
+.asm-radar .ring-label{fill:var(--color-text-tertiary);font:var(--font-weight-normal) var(--font-text-2xs-size)/1 var(--font-sans)}
+.asm-radar .axis-label{fill:var(--color-text);font:var(--font-weight-semibold) var(--font-text-xs-size)/1 var(--font-sans)}
+.asm-radar .shape{fill:var(--color-background-primary-soft-alpha);stroke:var(--color-text-primary);stroke-width:2;stroke-linejoin:round}
+.asm-radar .wedge{opacity:.55}
+.asm-radar .wedge.found{fill:var(--color-background-info-surface)}
+.asm-radar .wedge.biz{fill:var(--color-background-success-surface)}
+.asm-radar .wedge.prod{fill:var(--color-background-warning-surface)}
+.asm-radar .wedge.people{fill:var(--color-background-discovery-surface)}
+.asm-radar .dot.found{fill:var(--color-background-info-solid)}
+.asm-radar .dot.biz{fill:var(--color-background-success-solid)}
+.asm-radar .dot.prod{fill:var(--color-background-warning-solid)}
+.asm-radar .dot.people{fill:var(--color-background-discovery-solid)}
+
+.asm-plan{list-style:none;margin:var(--space-4) 0 0;padding:0;display:grid;gap:var(--space-3)}
+.asm-plan li{padding:var(--space-3) var(--space-4);border-radius:var(--radius-lg);background:var(--color-surface);
+  border:var(--hairline) solid var(--color-border)}
+.asm-plan .asm-plan-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);margin-bottom:var(--space-1)}
+.asm-plan .asm-plan-title{color:var(--color-text);font:var(--font-weight-semibold) var(--font-text-md-size)/var(--font-text-md-line-height) var(--font-sans)}
+.asm-plan p{margin:var(--space-1) 0 0;color:var(--color-text-secondary);
+  font:var(--font-weight-normal) var(--font-text-sm-size)/var(--font-text-sm-line-height) var(--font-sans)}
+.asm-empty{color:var(--color-text-secondary)}
+.asm-actions{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-4)}
+@media print{.asm-actions{display:none}}
 
 /* Reader preferences, set on <html> by the reader-settings widget:
      data-rf  font family     data-rs  text scale (--rs-scale)     data-rm  column width

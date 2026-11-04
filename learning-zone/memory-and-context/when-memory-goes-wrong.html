@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink active" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
     <h1>When memory goes wrong</h1>
   </div>
-  <div class="MarkdownContent"><p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: fast</em></p>
 <h2 id="tldr">TL;DR</h2>
 <p>A memory feature fails in four predictable ways. Each is a trust problem before it is a
 technical one.</p>
@@ -206,9 +215,10 @@ legal advice, so check the current text and take advice for your case.</p>
   people often call the right to be forgotten. Controllers must erase personal data
   "without undue delay" when specific grounds apply.</li>
 <li><strong>India: Digital Personal Data Protection Act, 2023, Section 12.</strong> A right to
-  correction and erasure of personal data. The Act and its Rules were notified in
-  November 2025 and are being phased in. The rights of data principals are due to take
-  effect about 18 months later, around May 2027. Check the current status.</li>
+  correction and erasure of personal data. The Act's Rules were notified on
+  13–14 November 2025 (sources differ on the day) and start in phases. The rights of data
+  principals sit in the group of rules due 18 months after notification, around May 2027.
+  Check the current status.</li>
 <li><strong>California: California Consumer Privacy Act (CCPA).</strong> A right to request deletion of
   personal information that a business collected.</li>
 </ul>
@@ -218,6 +228,10 @@ embeddings, cached prompts, backups on their retention schedule, and copies give
 vendors. A memory system built without provenance makes this hard. Record where each
 memory came from, and what was derived from it. See also the same problem for inferred
 facts in <a href="../knowledge-graphs/governance-quality-and-trust.html">Knowledge graphs</a>.</p>
+<p>Deleting the source does not always delete the memory. Anthropic's Claude help page says
+that deleting a conversation does not delete the memories made from it. The user must
+delete those memories one by one. Decide which way your product works, and tell the user.
+Test it, because users will assume that deleting a chat erases what it taught the product.</p>
 <p>The practical bar: a user can ask "what do you remember about me?" and get a true,
 specific answer with a way to act on it.</p>
 <h2 id="poisoning-a-planted-memory-that-keeps-working">Poisoning: a planted memory that keeps working</h2>
@@ -229,8 +243,10 @@ effect.</p>
 <p>Security researcher Johann Rehberger showed a version against the ChatGPT macOS app in 2024. A crafted
 web page or document could get ChatGPT to save a hostile instruction into its long-term
 memory. The instruction told it to send later conversations to an outside server. OpenAI
-released a partial fix that closed the data-sending route, and the research was published
-in September 2024.</p>
+fixed the app in September 2024, and the research was published on September 20, 2024.
+The fix was partial. It closed the data-sending route. The author notes that a website or
+untrusted document can still get ChatGPT to store memories. So the write path stays the
+weak point, even after a vendor patch.</p>
 <p>The defences follow from the write path.</p>
 <ul>
 <li><strong>Treat content from outside as data, not instructions.</strong> Web pages, inbound email and
@@ -355,20 +371,23 @@ model, the store or the write policy changes.</p>
   Confirmed through search-result excerpts of press coverage; the page could not be opened
   when this lesson was written.</li>
 <li>OWASP GenAI Security Project, <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/">Top 10 for Agentic Applications for 2026</a>
-  (Dec 2025): memory and context poisoning as a named risk. Confirmed through search
-  results and secondary summaries; the page could not be opened when this lesson was
-  written.</li>
-<li>Johann Rehberger, ChatGPT long-term memory prompt-injection research (disclosed Sep
-  2024, later presented at Black Hat Europe in December 2024, about the ChatGPT macOS app). Confirmed through press coverage in search
-  results; the primary write-up could not be opened when this lesson was written.</li>
+  (published Dec 9, 2025, page date opened 2026-11). The entry name, "Memory &amp; Context
+  Poisoning" (ASI06), comes from secondary summaries in search results. The page text
+  did not list the ten risks.</li>
+<li>Johann Rehberger, <a href="https://embracethered.com/blog/posts/2024/chatgpt-macos-app-persistent-data-exfiltration/">ChatGPT macOS app persistent data exfiltration</a>
+  (disclosed Sep 20, 2024). Opened 2026-11: the fix was in ChatGPT version 1.2024.247, it
+  was partial, and memory can still be written by an untrusted page. A Black Hat Europe
+  talk by the same author was seen only in search results and is no longer claimed here.</li>
+<li>Anthropic, <a href="https://support.claude.com/en/articles/11817273">How does Claude's memory work?</a>
+  (help centre). Opened 2026-11: deleting a conversation does not delete its memories.</li>
 <li>Regulation (EU) 2016/679 (GDPR), Article 17; Digital Personal Data Protection Act, 2023
-  (India), Section 12, with commencement of the rights about May 2027 per secondary
-  reports; California Consumer Privacy Act, right to delete (Cal. Civ. Code 1798.105).
+  (India), Section 12, with the Rules notified 13–14 Nov 2025 and the rights due about
+  May 2027, per secondary law-firm reports (the official PDF could not be read); California Consumer Privacy Act, right to delete (Cal. Civ. Code 1798.105).
   Cited from general knowledge and secondary summaries. The official pages could not be opened when this lesson
   was written. Check the current text before relying on them.</li>
 <li>The launch-day test run and the test code are invented and illustrative.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="retrieval-as-memory.html"><span class="lbl">← Previous</span><span class="ttl">Retrieval as memory</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="retrieval-as-memory.html"><span class="lbl">← Previous</span><span class="ttl">Retrieval as memory</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> A model does not give you memory. Your product builds it as a set of promises about what it keeps, reads back and forgets.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-four-ways-a-filing-system-betrays-its-owner">The mental model: four ways a filing system betrays its owner</a><a class="h2" href="#staleness-acting-on-what-used-to-be-true">Staleness: acting on what used to be true</a><a class="h2" href="#leakage-the-boundary-that-matters-most">Leakage: the boundary that matters most</a><a class="h2" href="#no-path-to-correction-or-deletion">No path to correction or deletion</a><a class="h2" href="#poisoning-a-planted-memory-that-keeps-working">Poisoning: a planted memory that keeps working</a><a class="h2" href="#testing-memory-before-launch">Testing memory before launch</a><a class="h2" href="#worked-example-a-launch-day-test-run">Worked example: a launch-day test run</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

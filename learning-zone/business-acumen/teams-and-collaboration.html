@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Teams and collaboration: structures, rhythms and decision rights — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink active" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 13</span>
+    <h1>Teams and collaboration: structures, rhythms and decision rights</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>Above the individual-contributor level, your job changes. You stop being the person in every meeting. You design the system that lets teams decide well without you. That system has three parts: <strong>structure</strong> (which teams exist and how they work together), <strong>rhythm</strong> (when teams meet, review and decide) and <strong>decision rights</strong> (who decides what).</p>
+<p>The core tradeoff is autonomy against alignment. Autonomous teams move fast and drift apart. Tightly aligned teams stay together and move slowly. Clear team types, declared ways of working together and explicit decision rights let you have more of both.</p>
+<p>There is also hidden arithmetic. Every handoff to a busy team adds a wait. The wait grows slowly at first, then explodes as that team nears full load. A team at 90% load makes a two-day request wait about eighteen days.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — In Payments, Lending and Insurance, many decisions cross Product, Risk, Compliance and Operations. Many features also need a shared platform, such as the ledger or the fraud model. Without clear structure and rights, every decision becomes a meeting and every feature waits in someone else's queue.</p>
+<p><strong>What it changes in your decisions</strong> — You give each outcome one team. You declare how teams work together. You keep platform teams below about 80% load, and you treat handoffs as a cost. You write down who is accountable for each recurring decision.</p>
+<p><strong>Ask your team</strong> — <em>"How loaded is each team we depend on, and how many days of our lead time is waiting rather than work?"</em></p>
+<p><strong>Risk if ignored</strong> — Six days of work takes twelve weeks. Launches wait for the last person to agree. When a launch goes wrong, five people approved it and nobody owns it.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li><strong>Give every important outcome one journey team and one leader whose attention is not split.</strong></li>
+<li><strong>Declare one interaction mode for every pair of teams that work together.</strong> Give every collaboration an end date.</li>
+<li><strong>Keep platform and specialist teams below about 80% load.</strong> Past that, waits explode.</li>
+<li><strong>Before you ask for headcount, check load and handoffs.</strong> Less load or one fewer handoff often beats one more person.</li>
+<li><strong>One accountable owner per decision.</strong> Reversible decisions go low in the org. Hard-to-reverse decisions go high.</li>
+<li><strong>No business review without a written pre-read and a list of decisions.</strong></li>
+</ul>
+<h2 id="mental-model-three-dials">Mental model: three dials</h2>
+<pre class="mermaid">flowchart LR
+  S[&quot;STRUCTURE&lt;br/&gt;team types,&lt;br/&gt;how teams interact&quot;] --&gt; O[&quot;Outcomes&lt;br/&gt;speed · quality · ownership&quot;]
+  R[&quot;RHYTHM&lt;br/&gt;when it plans,&lt;br/&gt;reviews, decides&quot;] --&gt; O
+  D[&quot;DECISION RIGHTS&lt;br/&gt;who decides,&lt;br/&gt;who is consulted&quot;] --&gt; O</pre>
+<p>Think of a team system as three dials. Turning one changes what the others must do. A team that owns a whole customer journey (structure) needs fewer cross-team approvals (rights). A team that depends on many others needs a tighter rhythm.</p>
+<p><strong>Where the analogy breaks.</strong> Dials suggest you can tune each one alone and see the effect at once. Real changes take a quarter to show results. People also adapt to the system in ways you did not plan.</p>
+<h2 id="structure-four-team-types">Structure: four team types</h2>
+<p>Most product organizations use four types of team. Each has a different job and a different measure of success.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>What it owns</th>
+<th>How you know it works</th>
+<th>Example in a domain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Journey team</strong></td>
+<td>A customer outcome or journey, end to end. Most teams should be this type.</td>
+<td>It ships changes to its journey without waiting on others</td>
+<td>In a lender, the team that owns the application from first visit to decision</td>
+</tr>
+<tr>
+<td><strong>Platform team</strong></td>
+<td>A shared capability that journey teams use through a clear interface</td>
+<td>Journey teams adopt it without help. Time to first use is short.</td>
+<td>In a payments company, the ledger or the payment-routing service</td>
+</tr>
+<tr>
+<td><strong>Specialist team</strong></td>
+<td>A part that needs rare expertise, such as a model or a pricing engine</td>
+<td>Other teams use its output without learning the specialism</td>
+<td>In an insurer, the pricing actuaries' rating engine. In payments, the fraud model.</td>
+</tr>
+<tr>
+<td><strong>Enabling team</strong></td>
+<td>Helps other teams gain a skill, then moves on</td>
+<td>The teams it helped no longer need it</td>
+<td>A compliance group that teaches journey teams to build disclosures and records correctly</td>
+</tr>
+</tbody>
+</table>
+<p>A good team owns no more than it can hold in its head. A common rule of thumb is a team of roughly five to nine people. When one team owns too many systems, it slows on all of them.</p>
+<p><strong>The common misreading.</strong> "A platform team owns all the shared code." A platform is a product with internal customers. If journey teams cannot use it without filing a ticket, it is a queue, not a platform.</p>
+<p>Amazon has written about its "two-pizza teams" on its Amazon Web Services (AWS) blog. The point it makes is less about team size and more about autonomy and a <strong>single-threaded leader</strong>: one leader who focuses only on a specific product or outcome. The lesson for any company is to give each important outcome one leader whose attention is not split.</p>
+<h2 id="structure-three-ways-teams-work-together">Structure: three ways teams work together</h2>
+<p>Teams that depend on each other need a declared way of working together. There are three useful modes.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>What it looks like</th>
+<th>When to use it</th>
+<th>Its cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Collaborate</strong></td>
+<td>Two teams work side by side on one problem</td>
+<td>Discovery: the interface is not known yet</td>
+<td>High. Both teams slow down. Ownership blurs.</td>
+</tr>
+<tr>
+<td><strong>Provide a service</strong></td>
+<td>One team uses the other's capability through a documented interface</td>
+<td>The interface is known and stable</td>
+<td>Low, once the interface exists. Changes to it are slow.</td>
+</tr>
+<tr>
+<td><strong>Facilitate</strong></td>
+<td>One team coaches another, then steps back</td>
+<td>A skill gap, such as compliance or experiment design</td>
+<td>Medium, and temporary</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decision rule.</strong> Declare one mode for each pair of teams that work together. Give every collaboration an end date. Collaboration with no end date turns into two teams that own one thing.</p>
+<p><strong>Domain application.</strong> A lender builds a new point-of-sale credit product. For three months, the journey team and the decision-engine specialist team collaborate on the credit model's inputs. After that, the decision engine provides a service: the journey team calls it and gets a decision. A compliance enabling team facilitates for six weeks, so the journey team can produce adverse-action notices itself.</p>
+<h2 id="the-cost-of-a-handoff">The cost of a handoff</h2>
+<p>A <strong>handoff</strong> is any point where work must pass to another team. Each handoff adds waiting time and a chance of error. The waiting time depends on how loaded the other team is.</p>
+<h3 id="how-it-works">How it works</h3>
+<p>Think of a team as a queue. Requests arrive at random. Each takes some work. The share of the team's time spent working is its <strong>load</strong>, or utilization. A simple, standard queueing result gives the average wait before work starts:</p>
+<p><strong>wait ≈ work × load ÷ (1 − load)</strong></p>
+<p>So the full lead time for one handoff is work + wait, which simplifies to <strong>work ÷ (1 − load)</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Load</th>
+<th>Wait as a multiple of the work</th>
+<th>Lead time for 2 days of work</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>50%</td>
+<td>1</td>
+<td>4 days</td>
+</tr>
+<tr>
+<td>70%</td>
+<td>2.3</td>
+<td>6.7 days</td>
+</tr>
+<tr>
+<td>80%</td>
+<td>4</td>
+<td>10 days</td>
+</tr>
+<tr>
+<td>90%</td>
+<td>9</td>
+<td>20 days</td>
+</tr>
+<tr>
+<td>95%</td>
+<td>19</td>
+<td>40 days</td>
+</tr>
+</tbody>
+</table>
+<style>
+.ba-q{background:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;
+  padding:var(--space-6,24px) var(--space-5,20px);margin:26px 0;font-family:inherit;text-align:left}
+.ba-q-title{font-size:var(--font-text-xs-size);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--color-text-secondary);font-weight:700;margin:0 0 4px}
+.ba-q-sub{font-size:var(--font-text-sm-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-q-rows{display:flex;flex-direction:column;gap:8px}
+.ba-q-row{display:grid;grid-template-columns:3.5em 1fr 5.5em;align-items:center;gap:10px}
+.ba-q-load{font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text)}
+.ba-q-track{background:var(--color-surface-tertiary);border-radius:8px;height:22px;overflow:hidden;display:flex}
+.ba-q-work{background:var(--color-background-info-solid);height:100%}
+.ba-q-wait{height:100%}
+.ba-q-row.ok .ba-q-wait{background:var(--color-background-success-surface);border-left:1px solid var(--color-border-success-surface)}
+.ba-q-row.warn .ba-q-wait{background:var(--color-background-caution-surface);border-left:1px solid var(--color-border-caution-outline)}
+.ba-q-row.bad .ba-q-wait{background:var(--color-background-danger-surface);border-left:1px solid var(--color-border-danger-outline)}
+.ba-q-days{font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text);text-align:right}
+.ba-q-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;font-size:var(--font-text-xs-size);color:var(--color-text-secondary)}
+.ba-q-key{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:5px}
+.ba-q-key.work{background:var(--color-background-info-solid)}
+.ba-q-key.wait{background:var(--color-background-danger-surface);border:1px solid var(--color-border-danger-outline)}
+.ba-q-note{margin-top:10px;font-size:var(--font-text-xs-size);color:var(--color-text-secondary)}
+</style>
+<div class="ba-q" role="img" aria-label="Bar chart. Lead time for two days of work by load of the receiving team: 50% load 4 days, 70% load 6.7 days, 80% load 10 days, 90% load 20 days, 95% load 40 days.">
+  <div class="ba-q-title">The cost of a handoff</div>
+  <p class="ba-q-sub">Lead time for 2 days of work, by load of the receiving team. Lead time = work ÷ (1 − load).</p>
+  <div class="ba-q-rows">
+    <div class="ba-q-row ok"><span class="ba-q-load">50%</span><div class="ba-q-track"><div class="ba-q-work" style="width:5%"></div><div class="ba-q-wait" style="width:5%"></div></div><span class="ba-q-days">4 days</span></div>
+    <div class="ba-q-row ok"><span class="ba-q-load">70%</span><div class="ba-q-track"><div class="ba-q-work" style="width:5%"></div><div class="ba-q-wait" style="width:11.7%"></div></div><span class="ba-q-days">6.7 days</span></div>
+    <div class="ba-q-row warn"><span class="ba-q-load">80%</span><div class="ba-q-track"><div class="ba-q-work" style="width:5%"></div><div class="ba-q-wait" style="width:20%"></div></div><span class="ba-q-days">10 days</span></div>
+    <div class="ba-q-row bad"><span class="ba-q-load">90%</span><div class="ba-q-track"><div class="ba-q-work" style="width:5%"></div><div class="ba-q-wait" style="width:45%"></div></div><span class="ba-q-days">20 days</span></div>
+    <div class="ba-q-row bad"><span class="ba-q-load">95%</span><div class="ba-q-track"><div class="ba-q-work" style="width:5%"></div><div class="ba-q-wait" style="width:95%"></div></div><span class="ba-q-days">40 days</span></div>
+  </div>
+  <div class="ba-q-legend"><span><span class="ba-q-key work"></span>Work (2 days)</span><span><span class="ba-q-key wait"></span>Waiting in the queue</span></div>
+  <div class="ba-q-note">Keep platform and specialist teams below about 80% load. Past that point, waits grow faster than load.</div>
+</div>
+
+<p>The curve is flat at first, then steep. Going from 50% to 80% load multiplies the wait by four. Going from 80% to 95% multiplies it by almost five again.</p>
+<p>This formula assumes requests arrive at random and vary in size. Real teams differ. Smaller, more even requests wait less. The shape still holds: waits rise sharply as a team nears full load.</p>
+<p><strong>Decision rule.</strong> Keep platform and specialist teams below about 80% load. That spare capacity is not waste. It is what keeps other teams' lead times short.</p>
+<p><strong>The common misreading.</strong> "A team at 100% utilization is efficient." It is efficient for that team. Everyone who depends on it waits.</p>
+<h3 id="worked-example-a-payments-feature-with-three-handoffs">Worked example: a payments feature with three handoffs</h3>
+<p><em>An illustrative example. All inputs are assumed.</em></p>
+<p>A journey team at a payments company wants to launch split payouts for marketplace sellers. It needs three changes from other teams. Each is about two days of work:</p>
+<ul>
+<li>the ledger platform team, to add a new entry type;</li>
+<li>the fraud model specialist team, to add a feature;</li>
+<li>Compliance, to review the seller disclosures.</li>
+</ul>
+<p>All three run at 90% load. Assume the handoffs happen one after another.</p>
+<p><strong>Step 1: lead time today.</strong> Each handoff takes 2 ÷ (1 − 0.9) = 20 working days. Three handoffs take 60 working days, about twelve weeks. The actual work is 6 days. So only 6 ÷ 60 = 10% of the lead time is work.</p>
+<p><strong>Step 2: compare four fixes.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What changes</th>
+<th>Lead time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. Do nothing</td>
+<td>Three handoffs at 90%</td>
+<td>60 days</td>
+</tr>
+<tr>
+<td>B. Add one person to the ledger team</td>
+<td>Ledger load drops to 75%: 2 ÷ 0.25 = 8 days</td>
+<td>8 + 20 + 20 = 48 days</td>
+</tr>
+<tr>
+<td>C. Remove the compliance handoff</td>
+<td>An enabling team teaches the journey team a disclosure checklist. Two handoffs remain.</td>
+<td>40 days</td>
+</tr>
+<tr>
+<td>D. Cap intake on all three at 75%</td>
+<td>Each team declines low-value requests</td>
+<td>8 × 3 = 24 days</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3: choose.</strong> Option D cuts lead time by 60% with no new people. It costs something real: other teams' low-value requests now wait or get declined. The leader combines C and D. Two handoffs at 75% give 16 days.</p>
+<p><strong>What this shows.</strong> Load is the biggest lever. Removing handoffs is the second. Adding a person to one team helps that team, but the other queues still dominate.</p>
+<h2 id="rhythm-the-operating-cadence">Rhythm: the operating cadence</h2>
+<p>A rhythm is the set of recurring meetings and documents that keep teams aligned. A good rhythm is short, written and predictable.</p>
+<table>
+<thead>
+<tr>
+<th>Cadence</th>
+<th>Purpose</th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Weekly</td>
+<td>Unblock and adjust</td>
+<td>Team updates, risks</td>
+<td>Decisions on blockers</td>
+</tr>
+<tr>
+<td>Weekly or monthly business review</td>
+<td>Check metrics against plan</td>
+<td>A written pre-read with the key metrics</td>
+<td>Actions with owners</td>
+</tr>
+<tr>
+<td>Quarterly planning</td>
+<td>Set goals and trade capacity</td>
+<td>Results, strategy, proposals</td>
+<td>Goals, staffing, bets</td>
+</tr>
+<tr>
+<td>Annual planning</td>
+<td>Set budget and headcount</td>
+<td>Strategy and financial plan</td>
+<td>The plan. See <a href="navigating-the-organization.html">navigating the organization</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>Goals and their scoring live in <a href="../technical-product-management/prioritization-and-roadmaps.html">prioritization and roadmaps</a>. The metric tree behind a review lives in <a href="../technical-product-management/metrics-and-experimentation.html">metrics and experimentation</a>.</p>
+<p><strong>Write before you meet.</strong> A written pre-read forces clear thinking. It lets people disagree with facts, not impressions. Amazon has described replacing slide decks with six-page narrative memos, read at the start of meetings, in its 2017 shareholder letter.</p>
+<h3 id="the-business-review">The business review</h3>
+<p>A <strong>business review</strong> compares results with plan, explains the gaps and assigns actions. Most reviews fail in one of two ways. They read numbers aloud, or they debate the numbers' definitions. A fixed template prevents both.</p>
+<pre><code class="language-markdown"># &lt;Area&gt; business review — &lt;period&gt;
+
+## Headline (three lines)
+- What went better than plan, and why
+- What went worse than plan, and why
+- The one decision we need today
+
+## Metrics against plan
+| Metric | Owner | Actual | Plan | Last period | Variance explained? |
+| Output: net revenue per active merchant | ... | ... | ... | ... | yes / no |
+| Input: approval rate at onboarding        | ... | ... | ... | ... | yes / no |
+
+## Variances (only those outside the agreed band)
+- What changed, why we think so, what we will do, by when
+
+## Anomalies and risks
+- Anything that crossed an early-warning level
+
+## Actions from last review
+| Action | Owner | Due | Status |
+
+## Decisions needed
+| Decision | Options | Recommendation | Accountable owner |
+</code></pre>
+<p>The template separates two kinds of metric. <strong>Output metrics</strong> are results the team cannot move directly, such as revenue. <strong>Input metrics</strong> are things the team can move this week, such as approval rate or time to first payout. Spend most of the review on input metrics. They are where action is possible.</p>
+<p><strong>Pre-read rules that work:</strong></p>
+<ul>
+<li>The document goes out a set time before the meeting, or the meeting starts with silent reading.</li>
+<li>Every metric has one owner and one fixed definition.</li>
+<li>Comments go in the document before the meeting.</li>
+<li>The meeting starts with questions, not a presentation.</li>
+<li>Only variances outside an agreed band get discussion time.</li>
+<li>The meeting ends with a list of decisions and actions, each with one owner.</li>
+</ul>
+<p><strong>Domain application.</strong> In a lending business review, the output metric is net credit loss for the book. Input metrics include approval rate by risk band, early delinquency on the newest loans and the share of applications sent to manual review. The review spends its time on early delinquency. That is the first place a credit problem shows.</p>
+<h2 id="decision-rights-who-decides-what">Decision rights: who decides what</h2>
+<p>A <strong>decision-rights matrix</strong> lists recurring decisions and gives each person or function one of four roles.</p>
+<ul>
+<li><strong>Responsible</strong>: does the work to reach the decision.</li>
+<li><strong>Accountable</strong>: makes the final call and owns the result. Only one per decision.</li>
+<li><strong>Consulted</strong>: gives input before the decision. Two-way conversation.</li>
+<li><strong>Informed</strong>: told after the decision. One-way.</li>
+</ul>
+<p>The most important rule is <strong>one accountable owner per decision</strong>. Two accountable owners means none.</p>
+<p>Decisions also differ in how hard they are to undo. Amazon's 2015 shareholder letter called hard-to-reverse decisions "one-way doors" and reversible ones "two-way doors". Treat them differently:</p>
+<ul>
+<li><strong>Reversible decisions</strong> (a copy change, a pilot with a small group) belong low in the organization. Decide fast and fix later.</li>
+<li><strong>Hard-to-reverse decisions</strong> (a pricing model, a credit policy, a partner contract) need wider input and a senior owner.</li>
+</ul>
+<h3 id="decision-rights-across-the-six-domains">Decision rights across the six domains</h3>
+<p>The hard-to-reverse decisions differ by domain. So does the function that usually holds them.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>A hard-to-reverse decision</th>
+<th>Usually accountable</th>
+<th>Product's role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Payments</strong></td>
+<td>Fraud rules that block or allow payments</td>
+<td>Risk</td>
+<td>Consulted on customer impact and false declines</td>
+</tr>
+<tr>
+<td><strong>Lending</strong></td>
+<td>The credit cutoff and pricing by risk band</td>
+<td>Credit Risk</td>
+<td>Consulted on volume and experience</td>
+</tr>
+<tr>
+<td><strong>eCommerce</strong></td>
+<td>Seller fees and marketplace policies</td>
+<td>Marketplace or category leader</td>
+<td>Responsible for the analysis</td>
+</tr>
+<tr>
+<td><strong>InsurTech</strong></td>
+<td>Rates and underwriting rules, which may need regulator filings</td>
+<td>Pricing or underwriting lead</td>
+<td>Consulted on quote flow and conversion</td>
+</tr>
+<tr>
+<td><strong>Retail</strong></td>
+<td>The range and the stock budget</td>
+<td>Merchandising</td>
+<td>Consulted on digital shelf and search</td>
+</tr>
+<tr>
+<td><strong>FinTech</strong></td>
+<td>Customer disclosures and new account features</td>
+<td>Compliance, often with a partner bank</td>
+<td>Responsible for the design</td>
+</tr>
+</tbody>
+</table>
+<p>Knowing this map saves weeks. You stop asking the wrong person for a yes.</p>
+<h2 id="high-trust-collaboration-and-communities-of-practice">High-trust collaboration and communities of practice</h2>
+<p>Trust makes collaboration cheap. In a high-trust team, people raise bad news early, admit mistakes and challenge each other without fear. You build it through behaviour, not slogans:</p>
+<ul>
+<li>Respond to bad news with questions, not blame.</li>
+<li>Share your own mistakes first.</li>
+<li>Close the loop on every decision. Say what was decided and why.</li>
+<li>Protect people who raised a risk that came true.</li>
+</ul>
+<p>A <strong>community of practice</strong> is a group that shares a skill across teams. Examples: all PMs who work on pricing, or all teams that touch fraud models. It meets regularly, shares methods and keeps standards. It does not own a roadmap. In a retailer, every team touching promotions needs the same rules for discount stacking. A promotions community keeps those rules consistent.</p>
+<h2 id="worked-example-decision-rights-for-a-buy-now-pay-later-launch">Worked example: decision rights for a buy now, pay later launch</h2>
+<p><em>This example is invented, to show the method. The company and the decisions are illustrative.</em></p>
+<p>An eCommerce company plans to offer a buy now, pay later (BNPL) option at checkout through a lending partner. The first draft plan listed nine people as "approvers." Every decision waited for all nine.</p>
+<p><strong>Step 1: list the recurring decisions.</strong> The team found six.</p>
+<p><strong>Step 2: assign one accountable owner to each.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Product</th>
+<th>Risk</th>
+<th>Legal and Compliance</th>
+<th>Finance</th>
+<th>Lending partner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Which checkout pages show the option</td>
+<td><strong>A</strong></td>
+<td>C</td>
+<td>C</td>
+<td>I</td>
+<td>I</td>
+</tr>
+<tr>
+<td>Which customers are eligible</td>
+<td>C</td>
+<td>R</td>
+<td>C</td>
+<td>I</td>
+<td><strong>A</strong></td>
+</tr>
+<tr>
+<td>Customer disclosures and terms</td>
+<td>C</td>
+<td>C</td>
+<td><strong>A</strong></td>
+<td>I</td>
+<td>C</td>
+</tr>
+<tr>
+<td>Fee paid to the partner per order</td>
+<td>R</td>
+<td>I</td>
+<td>C</td>
+<td><strong>A</strong></td>
+<td>C</td>
+</tr>
+<tr>
+<td>Launch date and rollout size</td>
+<td><strong>A</strong></td>
+<td>C</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+</tr>
+<tr>
+<td>Pause the option if losses rise</td>
+<td>C</td>
+<td><strong>A</strong></td>
+<td>I</td>
+<td>I</td>
+<td>C</td>
+</tr>
+</tbody>
+</table>
+<p><em>A = accountable, R = responsible, C = consulted, I = informed.</em></p>
+<p><strong>Step 3: check the hard-to-reverse calls.</strong> Eligibility and disclosures are hard to reverse once customers have loans. Those two owners hold the final call. The page placement is reversible. Product decides alone and tests it.</p>
+<p><strong>Step 4: declare the interaction modes.</strong> Product and the lending partner collaborate for the first eight weeks, until the integration is stable. After that, the partner provides a service through its interface. Legal and Compliance facilitate: they give the team a disclosure checklist, then review only changes to terms.</p>
+<p><strong>Step 5: count the effect.</strong> Before, each of six decisions needed nine approvals: 54 sign-offs. After, each decision has one accountable owner. Six owners make six calls, with consultation built in. The plan is faster, and each outcome has a name on it.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Autonomy vs. consistency.</strong> Autonomous teams choose their own methods. Customers then see inconsistent experiences. Communities of practice reduce this, at the cost of time.</li>
+<li><strong>Journey teams vs. platform teams.</strong> Journey teams move fast on outcomes. Platform teams keep shared systems sound. Too few platform teams and shared systems decay. Too many and every feature needs a handoff.</li>
+<li><strong>Spare capacity vs. utilization.</strong> Keeping platform teams at 75% load costs a quarter of their time in reserve. It buys much shorter waits for every team that depends on them.</li>
+<li><strong>Collaboration vs. service.</strong> Collaboration finds the right interface. It is slow and blurs ownership. Service is fast, once the interface exists.</li>
+<li><strong>Written rhythm vs. live discussion.</strong> Pre-reads improve thinking. They cost writing time, and some leaders resist reading.</li>
+<li><strong>Wide consultation vs. speed.</strong> More consulted roles reduce surprises and slow decisions. Consult on hard-to-reverse calls. Inform on reversible ones.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The platform queue.</strong> A platform team runs at 95% load and takes requests by ticket. Every journey team waits weeks, and starts building workarounds.</li>
+<li><strong>The endless collaboration.</strong> Two teams "collaborate" for a year. Neither owns the result, and both slow down.</li>
+<li><strong>Approval sprawl.</strong> Every function wants to be an approver. Nobody is accountable.</li>
+<li><strong>The two-owner decision.</strong> Product and Risk both think they own the credit cutoff. The cutoff never changes, or it changes twice.</li>
+<li><strong>Rhythm without decisions.</strong> The business review reads metrics aloud and ends with no actions.</li>
+<li><strong>Platform starvation.</strong> All headcount goes to visible journey teams. The ledger or data platform falls behind, and every team slows.</li>
+<li><strong>Trust broken by blame.</strong> A leader punishes bad news once. Problems now surface late.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The script reproduces the queue table and the split-payouts example. The formula is the simplest standard queue model: random arrivals, random work sizes, one server.</p>
+<pre><code class="language-python">def lead_time(work_days, load):
+    &quot;&quot;&quot;Work plus average wait: work / (1 - load).&quot;&quot;&quot;
+    return work_days / (1 - load)
+
+for load in (0.5, 0.7, 0.8, 0.9, 0.95):
+    wait_multiple = load / (1 - load)
+    print(f&quot;load {load:.0%}: wait x{wait_multiple:.1f}, 2 days of work -&gt; {lead_time(2, load):.1f} days&quot;)
+
+work = 2
+options = {
+    &quot;A. do nothing&quot;:            [0.9, 0.9, 0.9],
+    &quot;B. +1 person on ledger&quot;:   [0.75, 0.9, 0.9],
+    &quot;C. remove compliance&quot;:     [0.9, 0.9],
+    &quot;D. cap intake at 75%&quot;:     [0.75, 0.75, 0.75],
+    &quot;C + D&quot;:                    [0.75, 0.75],
+}
+for name, loads in options.items():
+    total = sum(lead_time(work, u) for u in loads)
+    print(f&quot;{name}: {total:.0f} days, work share {work * len(loads) / total:.0%}&quot;)
+
+# Adding one person to a 5-person team at 90% load: same work, more people
+print(f&quot;new ledger load: {5 * 0.9 / 6:.0%}&quot;)   # 75%
+</code></pre>
+<p>A decision log turns rights into a record. Keep it in a shared file.</p>
+<pre><code class="language-yaml">- id: D-2026-031
+  decision: &quot;Pause BNPL for orders above $1,000&quot;
+  type: reversible           # reversible | hard-to-reverse
+  accountable: Head of Risk
+  consulted: [Product, Lending partner]
+  informed: [Finance, Support]
+  options_considered: [pause, lower limit, keep]
+  chosen: pause
+  reason: &quot;Early delinquency in the band above $1,000 was above the agreed cap&quot;
+  review_on: 2026-12-01
+</code></pre>
+<p>Review the log each quarter. Look for decisions with no owner, decisions that were reversed, and hard-to-reverse decisions made too fast.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Label every team in your area as journey, platform, specialist or enabling.</li>
+<li class="task todo">For each pair of teams that work together, write the declared mode. Put an end date on each collaboration.</li>
+<li class="task todo">Ask each platform and specialist team you depend on for its load. Flag any above 80%.</li>
+<li class="task todo">For your next feature, count the handoffs and estimate the share of lead time that is waiting.</li>
+<li class="task todo">Give each of your ten most frequent cross-team decisions a single accountable owner, and publish the list.</li>
+<li class="task todo">Mark each decision as reversible or hard to reverse.</li>
+<li class="task todo">Move your business review to the template above. Mark each metric as input or output.</li>
+<li class="task todo">Start a decision log and review it next quarter.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="navigating-the-organization.html">Navigating the organization</a> — the planning cycle, risk decisions and conflict between functions.</li>
+<li><a href="leading-leaders-and-org-design.html">Leading leaders and org design</a> — structure at the scale of a whole product org.</li>
+<li><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a> — goals, scoring and the roadmap behind quarterly planning.</li>
+<li><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a> — the metric tree and guardrails behind a business review.</li>
+<li><a href="../technical-product-management/working-with-engineering.html">Working with engineering</a> — the product and engineering partnership.</li>
+<li><a href="../technical-product-sense/how-systems-are-built.html">How systems are built</a> — the platforms and services that team boundaries create.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="navigating-the-organization.html"><span class="lbl">← Previous</span><span class="ttl">Navigating the organization: how the company really works</span></a><a class="navcard next" href="leading-leaders-and-org-design.html"><span class="lbl">→ Next</span><span class="ttl">Leading leaders and designing the product org</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-three-dials">Mental model: three dials</a><a class="h2" href="#structure-four-team-types">Structure: four team types</a><a class="h2" href="#structure-three-ways-teams-work-together">Structure: three ways teams work together</a><a class="h2" href="#the-cost-of-a-handoff">The cost of a handoff</a><a class="h3" href="#how-it-works">How it works</a><a class="h3" href="#worked-example-a-payments-feature-with-three-handoffs">Worked example: a payments feature with three handoffs</a><a class="h2" href="#rhythm-the-operating-cadence">Rhythm: the operating cadence</a><a class="h3" href="#the-business-review">The business review</a><a class="h2" href="#decision-rights-who-decides-what">Decision rights: who decides what</a><a class="h3" href="#decision-rights-across-the-six-domains">Decision rights across the six domains</a><a class="h2" href="#high-trust-collaboration-and-communities-of-practice">High-trust collaboration and communities of practice</a><a class="h2" href="#worked-example-decision-rights-for-a-buy-now-pay-later-launch">Worked example: decision rights for a buy now, pay later launch</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fteams-and-collaboration.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/teams-and-collaboration.html"</script><script defer src="../assets/glossary.js"></script></body></html>

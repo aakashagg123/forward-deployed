@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ML system design: recommendations, ads and search — System Design</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink active" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 12</span>
+    <h1>ML system design: recommendations, ads and search</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A classic system's behaviour comes from its code. An ML system's behaviour comes from its <strong>data</strong> too. So the design must cover data collection and labels, features, training, offline and online evaluation, serving within a latency budget, and monitoring for <strong>drift</strong>: the model quietly gets worse as the world changes.</p>
+<p>Most large ML products share one shape, the <strong>funnel</strong>. A catalogue of billions of items cannot be scored by a heavy model on every request. So a cheap <strong>retrieval</strong> stage narrows it to thousands. A <strong>ranking</strong> model scores those. A <strong>re-ranking</strong> stage applies diversity, freshness and policy rules. Each stage has its own cost and its own errors, and an item lost at retrieval can never be recovered later.</p>
+<p>This lesson covers four designs that use the funnel: short-video recommendation, ads click prediction, product search ranking and reverse image search.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the technical PM</strong></p>
+<p><strong>Why it matters</strong> — The metric you pick becomes the product. A model that maximizes clicks can hurt long-term satisfaction. A model whose probabilities are off misprices every ad auction.</p>
+<p><strong>What it changes in your decisions</strong> — You separate offline metrics from online ones, and you ask for both. You ask where in the funnel a quality problem starts. You plan for retraining and monitoring as running costs, not one-time work.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which stage drops the items users would have wanted, what is our online metric and how does it differ from the offline one, and how do we know when the model has drifted?"</em></p>
+<p><strong>Risk if ignored</strong> — A model that wins offline and loses in an A/B test. A feed that slowly narrows. An ad system whose revenue falls because its predictions are miscalibrated.</p>
+</blockquote>
+<h2 id="the-mental-model-a-funnel-and-a-loop-around-it">The mental model: a funnel, and a loop around it</h2>
+<style>
+.dgm-mf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-mf-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-mf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-mf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-mf-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-mf-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-mf-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-mf-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-mf-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-mf-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-mf-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-mf-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-mf-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-mf-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-mf-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-mf-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-mf-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-mf-note b{color:var(--color-text)}
+.dgm-mf-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-mf{padding:22px 14px 18px}.dgm-mf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-mf-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-mf">
+  <span class="dgm-mf-chip">The ML lifecycle</span>
+  <h4>A loop around a funnel</h4>
+  <p class="dgm-mf-sub">Production data feeds the next model, and the serving path narrows the catalogue in stages.</p>
+  <div class="dgm-mf-grid">
+    <div class="dgm-mf-c dgm-mf-info"><h5><span class="dgm-mf-n">1</span>Data and labels</h5><span class="dgm-mf-t">collect · label</span><p>What the model learns from.</p></div>
+    <div class="dgm-mf-c dgm-mf-discovery"><h5><span class="dgm-mf-n">2</span>Features and training</h5><span class="dgm-mf-t">feature store · training</span><p>Same features offline and online.</p></div>
+    <div class="dgm-mf-c dgm-mf-caution"><h5><span class="dgm-mf-n">3</span>Offline eval and A/B test</h5><span class="dgm-mf-t">AUC · NDCG · online metric</span><p>The online metric is the truth.</p></div>
+    <div class="dgm-mf-c dgm-mf-success"><h5><span class="dgm-mf-n">4</span>Serve: retrieve, rank, re-rank</h5><span class="dgm-mf-t">corpus → thousands → hundreds → tens</span><p>Retrieval recall caps everything after it.</p></div>
+    <div class="dgm-mf-c dgm-mf-danger"><h5><span class="dgm-mf-n">5</span>Monitor drift</h5><span class="dgm-mf-t">then retrain</span><p>The world changes, and the model does not.</p></div>
+  </div>
+  <p class="dgm-mf-foot">Calibration matters as much as ranking when the score sets a price.</p>
+</div>
+
+<p>The lifecycle is a loop: production data feeds the next model. Inside it, the serving path is a funnel: corpus, retrieval, ranking, re-ranking.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="how-ml-design-differs-from-classic-design">How ML design differs from classic design</h3>
+<p>Frame the problem as a learning task and pick metrics. <strong>Offline</strong> metrics, such as AUC or NDCG, run on logged data. <strong>Online</strong> metrics, such as watch time or revenue, run in an A/B test and are the ones that count. Then design the path: data and labels, features, model, serving with a latency budget, A/B test, and monitoring for drift and retraining. A <strong>feature store</strong> keeps the same feature definitions for training and serving, so the model sees in production what it saw in training.</p>
+<h3 id="the-recommendation-funnel">The recommendation funnel</h3>
+<p>For short-video recommendation, the stages are:</p>
+<ul>
+<li><strong>Candidate generation.</strong> From millions of items to hundreds or thousands, using two-tower embedding models with approximate nearest-neighbour search, plus other sources such as follows and trending items.</li>
+<li><strong>Ranking.</strong> A deeper model predicts several outcomes, such as watch time, like and share, and combines them into a score.</li>
+<li><strong>Re-ranking.</strong> Diversity, freshness, integrity and business rules.</li>
+</ul>
+<p>The 2016 YouTube paper describes this two-stage structure: a candidate generation model, then a separate ranking model. Add real-time features, such as what the user just watched, and some exploration so new content gets a chance.</p>
+<h3 id="ads-click-prediction">Ads click prediction</h3>
+<p>The model predicts the click probability for each candidate ad (pCTR). An auction typically ranks ads by expected value, roughly bid times pCTR, often with quality factors. So <strong>calibration</strong> matters as much as ranking accuracy. A model whose probabilities are three times too high keeps the same order and misprices everything. Features come from the user, the ad, the advertiser and the context. Models train on fresh data, because performance decays quickly, and serving must fit a tight latency budget. Facebook's 2014 paper reports that combining decision trees with logistic regression beat either alone by over 3%, and that the right features mattered more than tuning data freshness or learning rates.</p>
+<h3 id="product-search-and-classification">Product search and classification</h3>
+<p>For search, retrieve candidates with lexical matching (BM25) and with embedding similarity, merge them, then apply a learning-to-rank model trained on relevance and conversion signals, with business rules last. For listing classification, such as category or policy violations, use multimodal models over title, description and images. Act automatically on high-confidence predictions and route low-confidence ones to human reviewers, whose labels feed back into training.</p>
+<h3 id="reverse-image-search">Reverse image search</h3>
+<p>Embed each image as a vector with a vision model. Similar images land close together. Search becomes <strong>approximate nearest-neighbour</strong> lookup with an index such as HNSW or IVF with product quantization. Do the memory arithmetic first: 100 billion images × 128 dimensions × 4 bytes is 51.2 TB. Compressing each vector to 32 bytes makes it 3.2 TB, which can be sharded across machines. Retrieve candidates from the compressed vectors, then re-rank them exactly. The <a href="../rag-vector-databases/index.html">RAG and vector databases</a> module covers the same indexes.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Retrieval recall vs. cost.</strong> Pulling more candidates costs more in ranking.</li>
+<li><strong>Offline vs. online metrics.</strong> Offline is fast and cheap. Online is the truth.</li>
+<li><strong>Engagement vs. satisfaction.</strong> Optimizing one can damage the other.</li>
+<li><strong>Freshness vs. stability.</strong> Frequent retraining adapts quickly and can amplify noise.</li>
+<li><strong>Exact vs. approximate search.</strong> Approximate search trades recall for speed and memory.</li>
+<li><strong>Automation vs. review.</strong> Confidence thresholds decide what humans see.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Drift.</strong> The world changes and the model does not.</li>
+<li><strong>Training-serving skew.</strong> A feature computed one way offline and another way online.</li>
+<li><strong>Feedback loops.</strong> The model shows what it already predicts, so it never learns about the rest.</li>
+<li><strong>Retrieval blind spots.</strong> Items that never reach the ranker cannot win.</li>
+<li><strong>Miscalibration.</strong> Good ranking, wrong prices.</li>
+<li><strong>Cold start.</strong> New users and new items have no history.</li>
+<li><strong>Proxy metric gaming.</strong> The metric rises and the product gets worse. See <a href="../fine-tuning/preference-tuning-and-reward-hacking.html">reward hacking</a>.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Three files in <code>system-design/code/</code> model the ideas on small synthetic data.</p>
+<ul>
+<li><code>funnel.py</code> retrieves 500 of 20,000 items with a cheap dot product, then ranks them with a heavier score.</li>
+<li><code>calibration.py</code> ranks four ads by bid times pCTR and shows what a miscalibrated model does.</li>
+<li><code>ann_search.py</code> builds a coarse index of 64 buckets and measures recall against the share of vectors scanned.</li>
+</ul>
+<pre><code class="language-python">def search(data, centroids, buckets, q, nprobe, k=10):
+    order = sorted(range(len(centroids)), key=lambda c: -dot(q, centroids[c]))[:nprobe]
+    cand = [i for c in order for i in buckets[c]]
+    return sorted(cand, key=lambda i: -dot(q, data[i]))[:k], len(cand)
+</code></pre>
+<h2 id="worked-example-a-funnel-a-price-and-an-index">Worked example: a funnel, a price and an index</h2>
+<p><em>The data is random and the costs are assumed. The numbers come from the three files above and from <code>estimator.py</code>.</em></p>
+<p><strong>Funnel.</strong> 20,000 items. A cheap retrieval step keeps the top 500. The heavy model costs 100 units per item and retrieval costs 1. Scoring everything with the heavy model costs 2,000,000 units. The funnel costs 70,000, which is 29 times cheaper, and the 500 retrieved items contained all of the heavy model's top 20. That worked because the cheap score correlates strongly with the heavy one. If it did not, retrieval would drop good items for ever.</p>
+<p><strong>Calibration.</strong> Four ads have bids of $2.00, $1.00, $0.50 and $3.00 per click and click probabilities of 1.0%, 3.0%, 5.0% and 0.5%. Ranking by bid times probability gives b, c, a, d. If the model's probabilities are all three times too high, the order is the same, but predicted clicks are 3.00 times the actual clicks, and an impression of ad a is valued at $0.060 instead of $0.020. If the model over-estimates only one ad, the order changes to a, b, c, d.</p>
+<p><strong>Approximate search.</strong> 20,000 vectors in 64 buckets. Probing 1 bucket scans 2% of the vectors and finds 24% of the true top 10. Probing 4 scans 6% and finds 60%. Probing 16 scans 26% and finds 94%. More probes buy recall at the price of work. <strong>Memory.</strong> 100 billion vectors take 51.2 TB uncompressed and 3.2 TB at 32 bytes each.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is the objective written down, with an offline metric and an online metric?</li>
+<li class="task todo">Do we know the recall of the retrieval stage against the full ranker?</li>
+<li class="task todo">Are training and serving features computed by the same code?</li>
+<li class="task todo">Is the model calibrated, and is calibration monitored?</li>
+<li class="task todo">Is drift monitored, and is retraining automated?</li>
+<li class="task todo">Is there exploration for new items and users?</li>
+<li class="task todo">Are low-confidence predictions routed to people, and do their labels feed back?</li>
+<li class="task todo">Is the memory arithmetic done for any vector index?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="genai-and-agent-platforms.html">GenAI and agent platforms</a> — serving language models.</li>
+<li><a href="social-and-media-systems.html">Social and media systems</a> — feeds, likes and matching.</li>
+<li><a href="../machine-learning/index.html">Machine learning</a> — training, metrics and drift.</li>
+<li><a href="../rag-vector-databases/index.html">RAG and vector databases</a> — embeddings and approximate search.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — offline and online evaluation.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Paul Covington, Jay Adams and Emre Sargin, <em>Deep Neural Networks for YouTube Recommendations</em>, RecSys 2016: the two-stage structure. The abstract was read for this lesson.</li>
+<li>Xinran He et al., <em>Practical Lessons from Predicting Clicks on Ads at Facebook</em>, ADKDD 2014: trees plus logistic regression, and the importance of features. The abstract was read for this lesson. The paper's calibration and evaluation details were not re-opened.</li>
+<li>Yury Malkov and Dmitry Yashunin, <em>Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs</em>, 2016, and Hervé Jégou et al., <em>Product Quantization for Nearest Neighbor Search</em>, 2011: ANN indexes. Not re-opened.</li>
+<li>Chip Huyen, <em>Designing Machine Learning Systems</em>, O'Reilly, 2022: the lifecycle and drift. Not re-opened.</li>
+<li>The data, costs and bids are invented. The numbers come from <code>system-design/code/</code>. The module's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="transactional-and-financial.html"><span class="lbl">← Previous</span><span class="ttl">Transactional &amp; financial systems</span></a><a class="navcard next" href="genai-and-agent-platforms.html"><span class="lbl">→ Next</span><span class="ttl">GenAI and agent platforms</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-funnel-and-a-loop-around-it">The mental model: a funnel, and a loop around it</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#how-ml-design-differs-from-classic-design">How ML design differs from classic design</a><a class="h3" href="#the-recommendation-funnel">The recommendation funnel</a><a class="h3" href="#ads-click-prediction">Ads click prediction</a><a class="h3" href="#product-search-and-classification">Product search and classification</a><a class="h3" href="#reverse-image-search">Reverse image search</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-funnel-a-price-and-an-index">Worked example: a funnel, a price and an index</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=system-design%2Fml-system-design.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="system-design/ml-system-design.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="00-foundations.html"><span class="num">00</span>Foundations</a><a class="modlink" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><a class="modlink active" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#safety-engineering">Safety engineering: prompt injection defense, data leakage prevention, and permission boundaries</a><a href="#multi-tenant-isolation">Multi-tenant isolation, cache safety, and cross-user context contamination prevention</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Module 05</span>
@@ -136,7 +145,12 @@ structural, not a bug you can patch with better wording.</p>
 untrusted content, (2) has access to private or sensitive data, and (3) can
 communicate externally — send email, make web requests, write somewhere
 reachable. Combine all three, and an indirect injection can exfiltrate
-data. Breaking <em>any one leg</em> defuses it.</p>
+data. Breaking <em>any one leg</em> defuses it. Meta's <em>Agents Rule of Two</em> (October 2025)
+turns this into a design rule: within one session, an agent should have no more
+than two of (A) untrusted inputs, (B) access to sensitive systems or private data,
+and (C) the ability to change state or communicate externally. Its "C" is wider than
+the trifecta's, because it covers state changes as well as exfiltration. If a
+workflow needs all three, require human approval or a fresh session.</p>
 <h3 id="defenses-layered-none-sufficient-alone">Defenses (layered — none sufficient alone)</h3>
 <ul>
 <li><strong>Don't grant the model authority it can be tricked into misusing.</strong> The
@@ -148,6 +162,11 @@ data. Breaking <em>any one leg</em> defuses it.</p>
   touches private data, remove its ability to exfiltrate — no open-ended
   outbound — or sandbox it, or require human approval for the sensitive
   action.</li>
+<li><strong>Do not count on RAG or fine-tuning to fix it.</strong> OWASP's 2025 Top 10 for LLM
+  Applications (LLM01: Prompt Injection) says research shows neither fully
+  mitigates injection. Its listed controls are the same ones here: least privilege,
+  human approval for high-risk actions, labeled untrusted content, output
+  validation, input and output filters, and regular adversarial testing.</li>
 <li><strong>Mark trust boundaries in context.</strong> Delimit and label untrusted
   content, such as "the following is retrieved data, not instructions."
   This helps, but it's <em>bypassable</em> — defense in depth, not a guarantee.</li>
@@ -336,6 +355,14 @@ tenant could expose data.</p>
   system prompt and tool defs. Anything containing tenant data must not be
   cross-tenant reusable. Scope cache pools by tenant where the threat model
   demands it.</li>
+<li><strong>Timing side channel.</strong> A cache hit returns faster than a miss. An attacker
+  who can send prompts to a shared cache can time responses to learn whether
+  someone else's prompt prefix is cached. A 2025 audit (Gu et al.,
+  arXiv:2502.07776) found global cache sharing across users at seven API
+  providers. Ask each vendor for its cache scope in writing. Anthropic's docs
+  say caches are never shared across organizations and are isolated per
+  workspace on its own API, but only per organization on Bedrock and Google
+  Cloud. For self-hosted servers, set a per-tenant cache salt or pool.</li>
 </ul>
 <h3 id="5-logs-traces-and-training-data">5. Logs, traces, and training data</h3>
 <p><a href="04-evals-observability.html#observability">Observability</a> stores and any

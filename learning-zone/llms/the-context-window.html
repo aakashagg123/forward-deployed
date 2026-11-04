@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>LLMs</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-llm.html">1 · What an LLM actually is</a><a class="modlink active" href="the-context-window.html">2 · The context window</a><a class="modlink" href="capabilities-and-the-jagged-frontier.html">3 · Capabilities &amp; the jagged frontier</a><a class="modlink" href="prompting-and-in-context-learning.html">4 · Prompting &amp; in-context learning</a><a class="modlink" href="temperature-sampling-and-determinism.html">5 · Temperature, sampling &amp; determinism</a><a class="modlink" href="choosing-a-model.html">6 · Choosing a model</a><a class="modlink" href="prompting-vs-rag-vs-finetuning.html">7 · Prompting vs. RAG vs. fine-tuning</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
@@ -57,8 +66,8 @@ conversation so far, any documents you supply — has to fit inside that one win
 because the model genuinely cannot see anything outside it. This is not a policy choice a
 vendor could relax with a setting. It follows from how the model computes: comparing every
 token to every other token gets more expensive the more tokens there are, so the window has
-a real, engineered ceiling. Windows have grown from a few thousand tokens to hundreds of
-thousands over a few years, and that growth changed what products are possible — but it
+a real, engineered ceiling. Windows have grown from a few thousand tokens to a million over a few
+years (as of October 2026, Anthropic lists 1M tokens for all its current models), and that growth changed what products are possible — but it
 did not remove the limit, and it introduced a new problem: a model can technically fit a
 huge amount of text in its window and still perform worse than you'd expect, because
 attention spread across more text is attention divided. This lesson is about the window
@@ -159,6 +168,18 @@ it equally well. Information placed at the very start or the very end tends to g
 reliable attention than information buried in the middle of a long stuffed prompt. A window
 technically large enough to fit everything is not the same as a window that will use
 everything equally well.</p>
+<p>That 2023 result came from older models. Newer work shows a wider problem. Chroma tested
+18 models in 2025. Accuracy fell as the input grew, even on simple tasks. Distractors made
+it worse, and every model did better on a short, focused prompt than on a long one that
+held the same facts. Anthropic's documentation now calls this <strong>context rot</strong>. The lesson
+for a product leader: do not rely on position tricks alone. Measure quality at your real
+input sizes.</p>
+<p>Three more facts shape the budget. Everything counts toward the window: the system prompt,
+tool definitions, tool results, and the model's own output. For a model that thinks before
+it answers, the thinking tokens count too. Long inputs can also cost more per token on some
+models; Anthropic's pricing page notes a higher rate above 100,000 tokens on Haiku 5.5.
+Finally, for long-running agents, vendors now offer automatic compaction, which summarizes
+older turns on the server. It saves space, and it can lose detail, so test it.</p>
 <h2 id="the-product-consequence-window-size-is-a-budget-not-a-target">The product consequence: window size is a budget, not a target</h2>
 <p>Treat the window the way you'd treat any limited, costed resource: a budget to spend
 deliberately, not a target to fill because it's available. A lean, well-chosen set of
@@ -190,6 +211,9 @@ see, and does adding more help or quietly hurt?"</p>
       whether trimming helps quality as well as cost?</li>
 <li class="task todo">Are our most important instructions placed at the start or end of the prompt, not
       buried in the middle?</li>
+<li class="task todo">Have we measured answer quality at our largest real input, not only at a typical one?</li>
+<li class="task todo">For long conversations or agents, do we know what is dropped or summarized when the
+      window fills?</li>
 <li class="task todo">When we picked a model partly for its window size, did we verify our feature actually
       benefits from that size?</li>
 </ul>
@@ -201,9 +225,28 @@ see, and does adding more help or quietly hurt?"</p>
   deciding what to put in the window once you know its size.</li>
 <li><a href="../agentic-ai/context-and-memory.html">Memory &amp; context</a> — the agent-side view of
   managing a window across a long-running task.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/build-with-claude/context-windows">Context windows</a>:
+  1M-token windows on current models; everything in the request counts, including thinking
+  tokens; "context rot"; server-side compaction in beta. Read 2026-10-25.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/models/overview">Models overview</a>: 1M context for
+  Fable 5.1, Opus 5.5, Sonnet 5.5 and Haiku 5.5. Read 2026-10-25.</li>
+<li>Anthropic, Claude documentation,
+  <a href="https://platform.claude.com/docs/en/about-claude/pricing">Pricing</a>: price table. The
+  Haiku 5.5 long-prompt surcharge is from the Context windows page. Read 2026-10-25.</li>
+<li>Liu et al., <a href="https://arxiv.org/abs/2307.03172">Lost in the Middle</a>, TACL 2023:
+  performance is often highest when relevant information is at the start or end of the
+  input. Read 2026-10-25.</li>
+<li>Chroma, <a href="https://www.trychroma.com/research/context-rot">Context Rot</a> (July 2025): 18
+  models; performance falls with input length; focused prompts beat full prompts.
+  Read 2026-10-25.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="what-is-an-llm.html"><span class="lbl">← Previous</span><span class="ttl">What an LLM actually is</span></a><a class="navcard next" href="capabilities-and-the-jagged-frontier.html"><span class="lbl">→ Next</span><span class="ttl">Capabilities &amp; the jagged frontier</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-desk-not-a-filing-cabinet">The mental model: a desk, not a filing cabinet</a><a class="h2" href="#why-the-limit-exists-at-all">Why the limit exists at all</a><a class="h2" href="#bigger-windows-solved-one-problem-and-revealed-another">Bigger windows solved one problem and revealed another</a><a class="h2" href="#the-product-consequence-window-size-is-a-budget-not-a-target">The product consequence: window size is a budget, not a target</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="what-is-an-llm.html"><span class="lbl">← Previous</span><span class="ttl">What an LLM actually is</span></a><a class="navcard next" href="capabilities-and-the-jagged-frontier.html"><span class="lbl">→ Next</span><span class="ttl">Capabilities &amp; the jagged frontier</span></a></div><footer class="foot"><strong>Core insight:</strong> Everything an LLM does follows from next-token prediction: a limited window, uneven skill, and answers that are sampled rather than computed.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-desk-not-a-filing-cabinet">The mental model: a desk, not a filing cabinet</a><a class="h2" href="#why-the-limit-exists-at-all">Why the limit exists at all</a><a class="h2" href="#bigger-windows-solved-one-problem-and-revealed-another">Bigger windows solved one problem and revealed another</a><a class="h2" href="#the-product-consequence-window-size-is-a-budget-not-a-target">The product consequence: window size is a budget, not a target</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

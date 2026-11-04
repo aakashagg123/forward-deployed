@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Running at scale: sessions, subagents and fan-out — AI-assisted development</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI-assisted development</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-an-agent-writes-the-code.html">1 · When an agent writes the code: where the bottleneck goes</a><a class="modlink" href="specs-and-the-context-file.html">2 · Specs and the context file</a><a class="modlink" href="verification-is-the-product.html">3 · Verification is the product</a><a class="modlink" href="control-permissions-modes-and-hooks.html">4 · Control: permissions, modes and hooks</a><a class="modlink active" href="running-at-scale.html">5 · Running at scale: sessions, subagents and fan-out</a><a class="modlink" href="measuring-and-governing.html">6 · Measuring and governing</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
+    <h1>Running at scale: sessions, subagents and fan-out</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>One agent in one session is a tool. Many agents on many tasks is a system, with its own costs and queues.</p>
+<p>Three facts shape it. First, a session's <strong>context</strong> fills as it runs, and each turn re-reads it. A long session on unrelated work costs more and works worse than several fresh sessions. Clear the context between unrelated tasks. Second, <strong>subagents</strong> run in their own context and return a summary, which keeps noisy research out of the main session. Third, <strong>fan-out</strong>, running the same job over many items, multiplies cost and also multiplies the review queue.</p>
+<p>The arithmetic is simple. Retries raise the success rate and the bill. More accepted work means more review hours. The limit on throughput is usually the humans who check the output, not the agents.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Scale is where agent cost stops being a rounding error and where review becomes the bottleneck.</p>
+<p><strong>What it changes in your decisions</strong> — You budget by task, not by seat. You size the review team before you launch a batch. You design batches with a hand-off for failures.</p>
+<p><strong>Ask your eng team</strong> — <em>"For a batch of 200 tasks: expected cost, expected pass rate, how many go to a person, and how many review hours?"</em></p>
+<p><strong>Risk if ignored</strong> — A batch that finishes overnight and leaves a week of review. Or a bill that surprises finance.</p>
+</blockquote>
+<h2 id="the-mental-model-a-factory-with-a-quality-desk">The mental model: a factory with a quality desk</h2>
+<style>
+.dgm-rs{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-rs-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-rs h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-rs-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-rs-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-rs-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-rs-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-rs-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-rs-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-rs-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-rs-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-rs-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-rs-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-rs-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-rs-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-rs-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-rs-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-rs-note b{color:var(--color-text)}
+.dgm-rs-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-rs{padding:22px 14px 18px}.dgm-rs-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-rs-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-rs">
+  <span class="dgm-rs-chip">A factory with a quality desk</span>
+  <h4>Workers are cheap and parallel. Review is not.</h4>
+  <p class="dgm-rs-sub">Throughput is limited by the slowest station.</p>
+  <div class="dgm-rs-grid">
+    <div class="dgm-rs-c dgm-rs-info"><h5><span class="dgm-rs-n">1</span>Task queue</h5><p>Many independent tasks.</p></div>
+    <div class="dgm-rs-c dgm-rs-discovery"><h5><span class="dgm-rs-n">2</span>Agents</h5><span class="dgm-rs-t">parallel · cheap</span><p>Each in its own worktree.</p></div>
+    <div class="dgm-rs-c dgm-rs-warning"><h5><span class="dgm-rs-n">3</span>Automatic gate</h5><span class="dgm-rs-t">tests · types · lint</span><p>Retries up to a cap.</p></div>
+    <div class="dgm-rs-c dgm-rs-success"><h5><span class="dgm-rs-n">4</span>Review queue</h5><span class="dgm-rs-t">people · slow</span><p>Accepted work waits here.</p></div>
+    <div class="dgm-rs-c dgm-rs-danger"><h5><span class="dgm-rs-n">5</span>Hand-off</h5><span class="dgm-rs-t">failed after retries</span><p>Goes to a person.</p></div>
+  </div>
+  <p class="dgm-rs-foot">200 tasks at 70% pass: 3 attempts add $117, rescue 55 tasks, and add 5 review hours.</p>
+</div>
+
+<p>Workers are cheap and parallel. The review desk is not. A factory is limited by its slowest station.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="context-and-session-cost">Context and session cost</h3>
+<p>Each turn re-reads the whole history, plus new tokens. Prompt caching makes the re-read cheap, but not free: at a cache-read price of 0.1 of normal input, history still adds up. The same task sequence run as one long session costs about 2.8 times as much input as five fresh sessions, in the model below. Use <code>/clear</code> between unrelated tasks. Use a summary (<code>/compact</code>) when you must continue.</p>
+<p>The documentation reports that enterprise cost averages about $13 per developer per active day, $150 to $250 per month, and under $30 per active day for 90% of users. Use it as a rough anchor, then measure your own pilot.</p>
+<h3 id="subagents">Subagents</h3>
+<p>A subagent has its own context window, system prompt, tools and permissions. Use one for work that would flood the main session with output you will not need again, such as searching a large codebase or reading logs. The main session sees only the summary. Subagents are not free: they send their own requests and count toward your usage.</p>
+<h3 id="headless-and-batch-runs">Headless and batch runs</h3>
+<p><code>claude -p "prompt"</code> runs a single task without the interactive screen. Flags such as <code>--allowedTools</code> pre-approve tools, and <code>--output-format</code> gives structured output. Add <code>--bare</code> for scripted calls, which skips auto-discovery of hooks, skills and settings. Without it, a headless run loads the project's hooks and servers as an interactive one would. Run unattended jobs in a sandbox (<a href="control-permissions-modes-and-hooks.html">lesson 4</a>).</p>
+<h3 id="worktrees">Worktrees</h3>
+<p>A git worktree gives an agent its own copy of the files on its own branch. Several agents can work in parallel without overwriting each other. Merging is still a human decision.</p>
+<h3 id="fan-out-arithmetic">Fan-out arithmetic</h3>
+<p>For <code>N</code> tasks with pass chance <code>p</code> per attempt and up to <code>k</code> attempts: expected attempts per task are <code>1 + (1-p) + … + (1-p)^(k-1)</code>. The share left for a person is <code>(1-p)^k</code>. Each accepted task needs review time.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>One long session vs. many short ones.</strong> Long sessions keep context and cost more. Short ones restart cold.</li>
+<li><strong>Retries vs. hand-off.</strong> Retries cost money and rescue tasks. Past a point, a person is cheaper.</li>
+<li><strong>Parallelism vs. merge conflicts.</strong> More agents, more overlap.</li>
+<li><strong>Automation vs. review capacity.</strong> Output you cannot review is a liability.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The giant session.</strong> One session carries a day of unrelated work.</li>
+<li><strong>Runaway loops.</strong> An agent retries a hopeless task all night.</li>
+<li><strong>Review debt.</strong> Hundreds of unreviewed changes.</li>
+<li><strong>Hidden cost.</strong> Subagent and retry costs missing from the estimate.</li>
+<li><strong>Merge storms.</strong> Parallel branches that touch the same files.</li>
+<li><strong>Unattended access.</strong> A headless job with broad credentials.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>ai-assisted-development/code/lesson5_scale.py</code>. <code>session_cost</code> adds a turn's cached history and new tokens. <code>fanout</code> computes cost, accepted tasks, hand-offs and review hours.</p>
+<pre><code class="language-python">def fanout(tasks, p_success, max_attempts, cost_per_attempt, review_minutes):
+    p_fail_all = (1 - p_success) ** max_attempts
+    for k in range(1, max_attempts + 1):
+        reach = (1 - p_success) ** (k - 1)
+        attempts += reach
+        done += reach * p_success
+    ...
+</code></pre>
+<h2 id="worked-example-a-long-session-and-a-batch-of-200">Worked example: a long session and a batch of 200</h2>
+<p><em>The prices and rates are invented. The numbers come from <code>ai-assisted-development/code/lesson5_scale.py</code>.</em></p>
+<p><strong>Session cost.</strong> With a 20,000-token base, 8,000 new tokens per turn, $3 per million input tokens and a 0.1 cache-read price: a 20-turn session costs $1.06 of input. Five unrelated tasks of 20 turns each, run in one 100-turn session, cost $14.88. Run as five fresh sessions, they cost $5.28.</p>
+<p><strong>Batch.</strong> 200 tasks, 70% pass chance per attempt, $1.50 per attempt, 6 review minutes per accepted task.</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Cost</th>
+<th>Accepted</th>
+<th>To a person</th>
+<th>Review hours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One attempt</td>
+<td>$300</td>
+<td>140</td>
+<td>60</td>
+<td>14</td>
+</tr>
+<tr>
+<td>Up to 3 attempts</td>
+<td>$417</td>
+<td>195</td>
+<td>5</td>
+<td>19</td>
+</tr>
+</tbody>
+</table>
+<p>Retries add $117 and rescue 55 tasks, about $2 each. That is cheap against a person's hour. They also add 5 hours of review. The agents were never the constraint.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we clear or summarize context between unrelated tasks?</li>
+<li class="task todo">Do we budget cost per task, with retries and subagents included?</li>
+<li class="task todo">Is there a cap on attempts and a defined hand-off to a person?</li>
+<li class="task todo">Have we sized review hours before launching a batch?</li>
+<li class="task todo">Do parallel agents work in separate worktrees?</li>
+<li class="task todo">Do unattended jobs run in a sandbox with narrow credentials?</li>
+<li class="task todo">Do we track cost per accepted change?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="verification-is-the-product.html">Verification is the product</a> — the gate before the review queue.</li>
+<li><a href="measuring-and-governing.html">Measuring and governing</a> — cost and quality metrics.</li>
+<li><a href="../transformers/generating-text-and-the-kv-cache.html">Generating text and the KV cache</a> — why history is re-read.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — caching and budgets.</li>
+<li><a href="../agentic-workflows/index.html">Agentic workflows</a> — orchestrating many steps.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Claude Code documentation, <em>Manage costs effectively</em>, code.claude.com/docs/en/costs, read 2026-10: the averages of about $13 per developer per active day and $150 to $250 per month, and under $30 per active day for 90% of users.</li>
+<li>Claude Code documentation, <em>Run Claude Code programmatically</em>, code.claude.com/docs/en/headless, read 2026-10: <code>-p</code>, <code>--allowedTools</code>, <code>--output-format</code> and <code>--bare</code>.</li>
+<li>Claude Code documentation, <em>Create custom subagents</em>, code.claude.com/docs/en/sub-agents, read 2026-10: separate context windows, and <code>isolation: worktree</code>.</li>
+<li>The prices, token counts and pass rates are invented. They come from <code>ai-assisted-development/code/lesson5_scale.py</code>. The 0.1 cache-read price matches most Claude models; some newer models charge less. This module's sources were not re-opened after the first reading, and its fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="control-permissions-modes-and-hooks.html"><span class="lbl">← Previous</span><span class="ttl">Control: permissions, modes and hooks</span></a><a class="navcard next" href="measuring-and-governing.html"><span class="lbl">→ Next</span><span class="ttl">Measuring and governing</span></a></div><footer class="foot"><strong>Core insight:</strong> When an agent writes the code, the scarce work is specifying and verifying, so speed comes from the checks you build, not from the agent.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-factory-with-a-quality-desk">The mental model: a factory with a quality desk</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#context-and-session-cost">Context and session cost</a><a class="h3" href="#subagents">Subagents</a><a class="h3" href="#headless-and-batch-runs">Headless and batch runs</a><a class="h3" href="#worktrees">Worktrees</a><a class="h3" href="#fan-out-arithmetic">Fan-out arithmetic</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-long-session-and-a-batch-of-200">Worked example: a long session and a batch of 200</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=ai-assisted-development%2Frunning-at-scale.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="ai-assisted-development/running-at-scale.html"</script><script defer src="../assets/glossary.js"></script></body></html>

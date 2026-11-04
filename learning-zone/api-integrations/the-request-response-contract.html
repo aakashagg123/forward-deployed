@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>APIs &amp; integrations</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-request-response-contract.html">1 · The request/response contract</a><a class="modlink" href="calling-an-llm-api.html">2 · Calling an LLM API</a><a class="modlink" href="structured-output-and-json-mode.html">3 · Structured output &amp; JSON mode</a><a class="modlink" href="webhooks-and-async-patterns.html">4 · Webhooks &amp; async patterns</a><a class="modlink" href="integrating-into-existing-systems.html">5 · Integrating into existing systems</a><a class="modlink" href="mcp-and-standard-connectors.html">6 · MCP &amp; standard connectors</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
@@ -185,8 +194,7 @@ what the receipt will contain — so both sides can build around it reliably.</p
   should be built on, not an afterthought.</li>
 <li><strong>Metadata.</strong> Which exact model version answered, and often a field explaining why
   generation stopped — it finished naturally, it hit a length limit, or it was cut off by
-  a safety filter. This last field is worth watching: a response silently truncated by a
-  length limit looks, at a glance, like a complete answer.</li>
+  a safety filter. This last field is worth watching: a response silently truncated by a length limit looks, at a glance, like a complete answer. Anthropic's field is called <code>stop_reason</code>, and <code>max_tokens</code> and <code>refusal</code> are two of its values. A refusal still comes back as a successful 200 response, and you are billed for the tokens it used.</li>
 </ul>
 <h2 id="why-this-is-a-contract-not-just-a-format">Why this is a contract, not just a format</h2>
 <p>Calling it a contract, not just a data format, matters because contracts have the
@@ -196,14 +204,15 @@ has to handle that), they can <strong>break</strong> (a field renamed or removed
 working, the same as any API), and they carry <strong>implicit promises</strong> about what's guaranteed
 and what isn't. The full discipline of thinking about contracts this way — versioning,
 breaking changes, what a promise actually covers — is developed in
-<a href="../technical-product-sense/apis-and-contracts.html">APIs &amp; contracts</a>, and it applies to a
-model's API exactly the way it applies to any other one your product depends on.</p>
+<a href="../technical-product-sense/apis-and-contracts.html">APIs &amp; contracts</a>, and it applies to a model's API exactly the way it applies to any other one your product depends on.</p>
+<p>Two kinds of change hit model contracts in practice. First, <strong>models retire</strong>. Anthropic gives at least 60 days' notice before it retires a public model, and requests to a retired model fail. For example, <code>claude-sonnet-4-5-20250929</code> is deprecated, with retirement set for 30 November 2026. Second, <strong>parameters change per model</strong>. Anthropic's docs list <code>temperature</code>, <code>top_p</code>, and <code>top_k</code> as removed in API version <code>2026-10-21</code>, and they return a 400 error from that version. Some current models also reject forced tool use (<code>tool_choice</code> of <code>any</code> or <code>tool</code>) and assistant prefill. A model upgrade is therefore a contract change that needs a test run, not a one-line config edit. Export usage by model so you know what still calls old versions.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Treating the response as a black box</strong> — never looking at what fields actually come
   back, and missing that usage or stop-reason data was available all along.</li>
 <li><strong>Ignoring the stop-reason field</strong> — displaying a truncated response as if it were
   complete, because nobody checked why generation actually stopped.</li>
+<li><strong>A model ID with no retirement date on the calendar</strong> — the model works until the day it does not, and the notice email goes to someone who left.</li>
 <li><strong>No plan for a contract change</strong> — a vendor updates the response shape and the
   integration breaks in production, because nobody treated the contract as something that
   could change.</li>
@@ -218,6 +227,7 @@ model's API exactly the way it applies to any other one your product depends on.
 <li class="task todo">Is our cost tracking built on the token-usage data the response already provides?</li>
 <li class="task todo">Do we check the stop-reason field, so a truncated response isn't displayed as
       complete?</li>
+<li class="task todo">Do we know the retirement date of every model ID we call, and who owns the migration?</li>
 <li class="task todo">Do we have a plan — a version pin, a monitoring alert — for when a vendor changes the
       contract's shape?</li>
 </ul>
@@ -230,7 +240,7 @@ model's API exactly the way it applies to any other one your product depends on.
 <li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — why the model itself remembers
   nothing between requests.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="calling-an-llm-api.html"><span class="lbl">→ Next</span><span class="ttl">Calling an LLM API</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="calling-an-llm-api.html"><span class="lbl">→ Next</span><span class="ttl">Calling an LLM API</span></a></div><footer class="foot"><strong>Core insight:</strong> A model is a slower, less predictable dependency. Proven integration discipline, not a cleverer model, makes AI features reliable.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-an-order-form-and-a-receipt">The mental model: an order form and a receipt</a><a class="h2" href="#whats-inside-the-request">What&#x27;s inside the request</a><a class="h2" href="#whats-inside-the-response">What&#x27;s inside the response</a><a class="h2" href="#why-this-is-a-contract-not-just-a-format">Why this is a contract, not just a format</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

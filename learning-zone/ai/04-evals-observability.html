@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="00-foundations.html"><span class="num">00</span>Foundations</a><a class="modlink" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink active" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#evals">Evals: golden sets, regression tests, adversarial tests, LLM-as-judge, and human evals</a><a href="#observability">LLM observability: traces, spans, tokens, latency, errors, and drift</a><a href="#cost-attribution">Cost attribution per feature, workflow, tenant, and user journey — not just per model</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Module 04</span>
@@ -206,14 +215,19 @@ style. It's powerful, but it has failure modes you must control:</p>
 </ul>
 <p>A vocabulary note for eng conversations: public <strong>agent benchmarks</strong> became the
 industry's shared shorthand. <strong>SWE-bench Verified</strong> covers real GitHub issues resolved
-end-to-end. <strong>GAIA</strong> covers general assistant tasks. <strong>OSWorld</strong> covers computer use.
+end-to-end. In February 2026 OpenAI said it had stopped reporting it. Its audit found
+flawed tests in at least 59.4% of a hard subset it reviewed, plus signs of training-data
+contamination, and it pointed to SWE-bench Pro instead. Expect older scores on this
+benchmark to be less meaningful. <strong>GAIA</strong> covers general assistant tasks. <strong>OSWorld</strong> covers computer use.
 <strong>tau-bench</strong> covers tool-using customer-service agents. <strong>Terminal-Bench</strong> covers
 command-line work. Know what each measures, so "we're at X%" means something to you.
 Know the caveat too: public benchmarks saturate and leak into training data. That's why
 serious teams treat them as market signals and run <em>private</em> evals (this lesson) as the
 real gate. On the observability side, <strong>OpenTelemetry's GenAI semantic conventions</strong>
-are standardizing trace formats. That means eval and observability tooling is becoming
-portable across vendors, not a lock-in decision.</p>
+(now maintained in their own repository) are a shared attempt to standardize trace
+formats. We did not confirm their stability level, so treat the attribute names as
+subject to change. Check the repository before you build on them. Where they hold, eval
+and observability tooling can become portable across vendors.</p>
 <h2 id="grading-choices-that-keep-evals-honest">Grading choices that keep evals honest</h2>
 <ul>
 <li><strong>Binary beats Likert.</strong> Prefer pass/fail judgments over 1–5 scales. Forced decisions
@@ -619,12 +633,15 @@ aggregation over instrumented spans, not a separate system.</p>
 <li><a href="06-strategy-tradeoffs.html#inference-stack-tradeoffs">Inference-stack tradeoffs</a></li>
 </ul><a class="totop" href="#top">↑ back to top</a></section>
   <section class="recap MarkdownContent" id="recap"><div class="recap-head"><span class="recap-ic">📌</span><h2>Recap &amp; real-world examples</h2></div><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
-<p><strong>Klarna's AI assistant (2024).</strong> Klarna reported its OpenAI-powered assistant handled
-<strong>~two-thirds of customer-service chats</strong> within months — work it equated to hundreds of
-full-time agents. 🎯 <em>PM takeaway:</em> at that volume you cannot operate on vibes.
-<a href="#cost-attribution">Cost attribution</a> (what does each resolved chat cost?) and
-continuous <a href="#observability">quality monitoring</a> make a number like that safe rather
-than terrifying.</p>
+<p><strong>Klarna's AI assistant (2024–2025).</strong> In early 2024 Klarna reported its OpenAI-powered
+assistant handled <strong>~two-thirds of customer-service chats</strong> within months — work it equated
+to hundreds of full-time agents. In May 2025 the CEO told Bloomberg that cost had been
+weighted too heavily, that the AI produced "lower quality" support, and that Klarna was
+hiring human agents again. 🎯 <em>PM takeaway:</em> containment and cost per chat are not quality.
+A volume number without a quality measure can reverse. <a href="#cost-attribution">Cost attribution</a>
+(what does each resolved chat cost?) and continuous
+<a href="#observability">quality monitoring</a> need to sit side by side, so a cost win never
+hides a quality loss.</p>
 <p><strong>"Did the model change?" (the GPT-4 drift debates).</strong> Practitioners repeatedly reported
 that hosted models <em>behaved differently over time</em> on the same prompts. This sparked
 public debate about silent regressions. 🎯 <em>PM takeaway:</em> you can't control the

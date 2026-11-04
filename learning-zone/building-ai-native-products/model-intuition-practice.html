@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Practice: probing and choosing models — Building AI-native products</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Building AI-native products</span><em>a craft track</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="designing-for-ambiguity.html">1 · Designing for ambiguity</a><a class="modlink" href="ux-practice-the-ai-feature-spec.html">2 · Practice: the AI feature spec</a><a class="modlink" href="model-intuition.html">3 · Model intuition</a><a class="modlink active" href="model-intuition-practice.html">4 · Practice: probing and choosing models</a><a class="modlink" href="from-pixels-to-evals.html">5 · From pixels to evals</a><a class="modlink" href="hill-climbing-in-practice.html">6 · Practice: hill climbing</a><a class="modlink" href="designing-agentic-flows.html">7 · Designing agentic flows</a><a class="modlink" href="agentic-flows-practice.html">8 · Practice: the agent spec and risk register</a><a class="modlink" href="how-users-behave-with-agents.html">9 · How users behave with agents</a><a class="modlink" href="researching-agent-interactions.html">10 · Practice: researching agent interactions</a><a class="modlink" href="capstone-ship-one-ai-native-feature.html">11 · Capstone: ship one AI-native feature</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
+    <h1>Practice: probing and choosing models</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>You build model intuition by running small, careful experiments. This lesson gives you two: a <strong>probe</strong>, which finds where a model fails on your task, and a <strong>bake-off</strong>, which compares candidate models on quality, speed and cost with the same inputs. Both take a day or two, need no code and give you evidence you can show a team.</p>
+<p>The rules are simple. Use real inputs. Use the same inputs for every model. Score with a written rubric, before you look at the outputs. Record the cause of each failure. Then choose the cheapest option that meets your quality bar, and write down what would make you change your mind.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the AI product leader</strong></p>
+<p><strong>Why it matters</strong> — Model choice sets your unit cost, your latency and your quality. A choice made on a hunch becomes expensive to undo.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for a bake-off before you commit to a vendor or a model size. You set the quality bar first, so the result is a decision and not a debate.</p>
+<p><strong>Ask your team</strong> — <em>"Which models did we try on the same inputs, with which rubric, and what did each cost per thousand uses?"</em></p>
+<p><strong>Risk if ignored</strong> — A model chosen because it won a benchmark, then dropped after launch because it is too slow or costs too much.</p>
+</blockquote>
+<h2 id="the-mental-model-the-same-test-three-numbers">The mental model: the same test, three numbers</h2>
+<p>Give every candidate the same test. Measure three numbers: quality, latency and cost. Then read them against your constraints, not against each other.</p>
+<style>
+.dgm-mp{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-mp-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-mp h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-mp-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-mp-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.dgm-mp-c{border-radius:12px;padding:11px 12px;border:1px solid var(--color-border);background:var(--color-surface-secondary);display:flex;flex-direction:column;gap:5px}
+.dgm-mp-c h5{margin:0;font-size:12px;font-weight:700}
+.dgm-mp-c p{margin:0;font-size:10.5px;line-height:1.4;color:var(--color-text-secondary)}
+.dgm-mp-t{line-height:1.3;font-size:10.5px;font-weight:700;color:var(--color-text)}
+.dgm-mp-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;font-size:10px;font-weight:700;background:var(--color-surface);border:1px solid var(--color-border)}
+.dgm-mp-info{background:var(--color-background-info-surface);border-color:var(--color-border-info-surface)}
+.dgm-mp-success{background:var(--color-background-success-surface);border-color:var(--color-border-success-surface)}
+.dgm-mp-caution{background:var(--color-background-caution-surface);border-color:var(--color-border-caution-outline)}
+.dgm-mp-danger{background:var(--color-background-danger-surface);border-color:var(--color-border-danger-surface)}
+.dgm-mp-discovery{background:var(--color-background-discovery-surface);border-color:var(--color-border-discovery-surface)}
+.dgm-mp-warning{background:var(--color-background-warning-surface);border-color:var(--color-border-warning-surface)}
+.dgm-mp-note{margin-top:12px;border-radius:12px;padding:10px 14px;background:var(--color-surface-secondary);border:1px solid var(--color-border);font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.dgm-mp-note b{color:var(--color-text)}
+.dgm-mp-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:760px){.dgm-mp{padding:22px 14px 18px}.dgm-mp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dgm-mp-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-mp">
+  <span class="dgm-mp-chip">The same test, three numbers</span>
+  <h4>Quality, latency and cost for every candidate</h4>
+  <p class="dgm-mp-sub">Set the constraints before you see the results.</p>
+  <div class="dgm-mp-grid">
+    <div class="dgm-mp-c dgm-mp-info"><h5><span class="dgm-mp-n">1</span>Probe set</h5><span class="dgm-mp-t">same inputs for all</span><p>40 to 60 real cases.</p></div>
+    <div class="dgm-mp-c dgm-mp-discovery"><h5><span class="dgm-mp-n">2</span>Quality</h5><span class="dgm-mp-t">rubric pass rate</span><p>Yes-or-no checks, written first.</p></div>
+    <div class="dgm-mp-c dgm-mp-caution"><h5><span class="dgm-mp-n">3</span>Latency</h5><span class="dgm-mp-t">p50 and p95</span><p>Not just the average.</p></div>
+    <div class="dgm-mp-c dgm-mp-warning"><h5><span class="dgm-mp-n">4</span>Cost</h5><span class="dgm-mp-t">per 1,000 uses</span><p>From real token counts.</p></div>
+    <div class="dgm-mp-c dgm-mp-success"><h5><span class="dgm-mp-n">5</span>Decision</h5><span class="dgm-mp-t">cheapest that meets the bar</span><p>With a re-test date.</p></div>
+  </div>
+  <p class="dgm-mp-foot">If none meets the bar, change the task, the prompt or the context.</p>
+</div>
+
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="step-1-build-the-probe-set">Step 1: build the probe set</h3>
+<p>Collect 40 to 60 real inputs. Split them into easy, typical and awkward. Include the cases that worry you. Do not tune your prompt on these cases and then judge on them. Keep a fresh set aside.</p>
+<h3 id="step-2-write-the-rubric-first">Step 2: write the rubric first</h3>
+<p>For each case, define a pass. Use two or three yes-or-no checks rather than a score out of ten. For example: "uses the real order status", "does not promise a refund", "under 120 words". Binary checks are easier to apply the same way each time.</p>
+<h3 id="step-3-run-and-score">Step 3: run and score</h3>
+<p>Run each model with the same prompt and the same inputs. Score blind if you can: hide which model wrote which output. Record the pass or fail and a failure cause for each fail.</p>
+<h3 id="step-4-measure-speed-and-cost">Step 4: measure speed and cost</h3>
+<p>Measure time to the first token and time to the full answer, at the median and at the 95th percentile. Count input and output tokens. Multiply by the price. Express cost per 1,000 uses.</p>
+<h3 id="step-5-decide">Step 5: decide</h3>
+<p>Write the constraints first: the quality bar, the latency the user will tolerate and the cost per use the business can pay. Pick the cheapest model that meets all three. If none does, decide whether to change the task, the prompt or the context, not only the model.</p>
+<h3 id="step-6-set-the-re-test">Step 6: set the re-test</h3>
+<p>Models update. Note a date to re-run the bake-off, and re-run it whenever a vendor retires or replaces a model.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Sample size vs. effort.</strong> 50 cases catch big gaps. Small differences need more.</li>
+<li><strong>Blind vs. open scoring.</strong> Blind scoring is fairer and takes more setup.</li>
+<li><strong>One prompt vs. a tuned prompt per model.</strong> A shared prompt is fair. A tuned one shows each model's best.</li>
+<li><strong>Average vs. worst case.</strong> A model that is fine on average and awful on one case type may be unfit.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Cherry-picked cases.</strong> The probe set is the team's favourite examples.</li>
+<li><strong>Moving rubric.</strong> The pass rule shifts after seeing the outputs.</li>
+<li><strong>Prompt tuned on the test.</strong> The score is inflated.</li>
+<li><strong>Median only.</strong> A fine average hides a bad 95th percentile.</li>
+<li><strong>Price list, not real use.</strong> Cost computed from list prices, not from real token counts.</li>
+<li><strong>One-off decision.</strong> The result is never re-checked.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Two templates. Fill in the first before you run anything.</p>
+<pre><code class="language-text">PROBE SHEET
+Task:                         n = ___  (easy ___ / typical ___ / awkward ___)
+Rubric (yes/no checks):  1) ___   2) ___   3) ___
+Pass = all checks yes.    Must-not-fail cases: ___
+</code></pre>
+<pre><code class="language-text">BAKE-OFF TABLE
+Constraints: quality bar ___%   p95 latency ≤ ___ s   cost ≤ $___ per 1,000
+Model | Pass rate | Must-not-fail | p50 / p95 latency | Cost per 1,000 | Top failure causes
+  A   |           |               |                   |                |
+  B   |           |               |                   |                |
+  C   |           |               |                   |                |
+Decision:                         Why:
+What would change my mind:        Re-test date:
+</code></pre>
+<h2 id="worked-example-the-relay-bake-off">Worked example: the Relay bake-off</h2>
+<p><em>Relay is invented. All numbers are made up for teaching.</em></p>
+<p>Constraints, set before the run: pass rate at least 80%, no failures on the 8 "must not promise" cases, 95th percentile latency under 3 seconds, and cost under $6 per 1,000 drafts.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Pass rate</th>
+<th>Must-not-fail</th>
+<th>p50 / p95 latency</th>
+<th>Cost per 1,000</th>
+<th>Top failure cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A (mid-size)</td>
+<td>78%</td>
+<td>8 of 8 pass</td>
+<td>1.4 s / 2.1 s</td>
+<td>$4.10</td>
+<td>Missing policy facts</td>
+</tr>
+<tr>
+<td>B (large)</td>
+<td>85%</td>
+<td>8 of 8 pass</td>
+<td>3.1 s / 4.8 s</td>
+<td>$19.00</td>
+<td>Slow and costly</td>
+</tr>
+<tr>
+<td>C (small)</td>
+<td>64%</td>
+<td>5 of 8 pass</td>
+<td>0.5 s / 0.9 s</td>
+<td>$0.60</td>
+<td>Promised refunds</td>
+</tr>
+</tbody>
+</table>
+<p>Model C failed the must-not-fail rule, so it was out. Model B met the quality bar and missed both the latency and the cost limits. Model A was close: 78% against a bar of 80%. The team did not switch to B. It added policy retrieval to A, re-ran, and reached 84%, inside every constraint. The decision record said: <em>Use A with retrieval. Revisit if A's pass rate on the monthly re-test falls below 80%, or if a vendor retires A.</em></p>
+<blockquote>
+<p><strong>Capstone step 2.</strong> Run a probe on your feature's task. Fill the probe sheet and the bake-off table for at least two models. Add the decision and the "what would change my mind" line to your spec.</p>
+</blockquote>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Are there 40 or more real inputs, split into easy, typical and awkward?</li>
+<li class="task todo">Was the rubric written before the run, with yes-or-no checks?</li>
+<li class="task todo">Do all models see the same inputs and the same prompt?</li>
+<li class="task todo">Are failure causes recorded?</li>
+<li class="task todo">Are p50 and p95 latency and cost per 1,000 uses measured?</li>
+<li class="task todo">Were constraints set before the results?</li>
+<li class="task todo">Is there a decision record and a re-test date?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="model-intuition.html">Model intuition</a> — the judgement behind these experiments.</li>
+<li><a href="ux-practice-the-ai-feature-spec.html">Practice: the AI feature spec</a> — where the examples come from.</li>
+<li><a href="hill-climbing-in-practice.html">Hill climbing in practice</a> — improving the winner step by step.</li>
+<li><a href="../llms/choosing-a-model.html">Choosing a model</a> — what to compare.</li>
+<li><a href="../cost-optimization/index.html">Cost optimization</a> — turning tokens into money.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Anthropic, "Building effective agents", anthropic.com/engineering/building-effective-agents, 2024-12-19, read 2026-10: the advice to find the simplest solution and add complexity only when it improves outcomes.</li>
+<li>Relay, the models A, B and C and every number are invented for teaching. This track's fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="model-intuition.html"><span class="lbl">← Previous</span><span class="ttl">Model intuition</span></a><a class="navcard next" href="from-pixels-to-evals.html"><span class="lbl">→ Next</span><span class="ttl">From pixels to evals</span></a></div><footer class="foot"><strong>Core insight:</strong> An AI-native product is designed around uncertainty: you decide what the model should do, measure it with evals, and shape the flow so people can trust and correct it.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-same-test-three-numbers">The mental model: the same test, three numbers</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#step-1-build-the-probe-set">Step 1: build the probe set</a><a class="h3" href="#step-2-write-the-rubric-first">Step 2: write the rubric first</a><a class="h3" href="#step-3-run-and-score">Step 3: run and score</a><a class="h3" href="#step-4-measure-speed-and-cost">Step 4: measure speed and cost</a><a class="h3" href="#step-5-decide">Step 5: decide</a><a class="h3" href="#step-6-set-the-re-test">Step 6: set the re-test</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-the-relay-bake-off">Worked example: the Relay bake-off</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=building-ai-native-products%2Fmodel-intuition-practice.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="building-ai-native-products/model-intuition-practice.html"</script><script defer src="../assets/glossary.js"></script></body></html>

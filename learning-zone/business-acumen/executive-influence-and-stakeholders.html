@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Executive influence: narrative, the board and the negotiating table — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink active" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 15</span>
+    <h1>Executive influence: narrative, the board and the negotiating table</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>At vice president (VP) level, influence is most of the job. You rarely control the resources you need. You win them by making a clear case to executives, aligning peers before decisions, and negotiating with partners and other leaders. The skills are learnable: an <strong>answer-first narrative</strong>, data that makes one point per chart, <strong>pre-wiring</strong> before meetings, a clear view of how the <strong>board</strong> works, and negotiation built on numbers.</p>
+<p>The core tradeoff is clarity against completeness. Executives need the answer, the ask and the risk in the first minute. Your team wants every detail included. A narrative that includes everything persuades nobody. The cost of clarity is leaving out true things that do not change the decision.</p>
+<p>Negotiation has its own arithmetic. Each side has a <strong>walk-away point</strong>, set by its own economics and its best alternative. If the two points overlap, a deal exists. Your job is to compute both before you sit down, and to trade across issues so the overlap grows.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Budgets, headcount, partner terms and launch approvals are decided at the executive table. Some are decided in the boardroom. A strong product case told badly loses to a weaker case told well.</p>
+<p><strong>What it changes in your decisions</strong> — You lead with the ask and the answer. You show the one number the decision depends on. You write board material as a decision, not a status update. You walk into every negotiation with both sides' walk-away points computed.</p>
+<p><strong>Ask your team</strong> — <em>"If the partner refuses our terms, what exactly do we do next, what does it cost us, and at what share does that become the better option?"</em></p>
+<p><strong>Risk if ignored</strong> — Your proposal gets deferred to "next quarter." Or you agree to partner terms you could have improved, because you did not know your own walk-away point. Or you refuse a good deal because you never computed theirs.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li><strong>Put the ask, the answer and the cost in the first paragraph.</strong> If the reader stops there, they can still decide.</li>
+<li><strong>Bring the board a decision, a risk or a change in the scorecard, never a feature list.</strong></li>
+<li><strong>Compute your walk-away point from your best alternative, not from your break-even,</strong> whenever the alternative is better than break-even.</li>
+<li><strong>Estimate the other side's walk-away point from its own costs and alternatives before the first meeting.</strong></li>
+<li><strong>Trade across issues only when the two sides' costs differ.</strong> Move each cost to the side that bears it more cheaply.</li>
+<li><strong>Meet every high-power stakeholder alone before the decision meeting.</strong></li>
+<li><strong>Keep metric definitions fixed for at least a year.</strong> Change one only with a restated history.</li>
+</ul>
+<h2 id="mental-model-answer-first-then-support">Mental model: answer first, then support</h2>
+<pre class="mermaid">flowchart TB
+  A[&quot;THE ASK AND THE ANSWER&lt;br/&gt;what we want, what we recommend&quot;] --&gt; R1[&quot;Reason 1&lt;br/&gt;with one number&quot;]
+  A --&gt; R2[&quot;Reason 2&lt;br/&gt;with one number&quot;]
+  A --&gt; R3[&quot;Reason 3&lt;br/&gt;with one number&quot;]
+  R1 --&gt; E[&quot;Evidence, options, risks&lt;br/&gt;in the appendix&quot;]
+  R2 --&gt; E
+  R3 --&gt; E</pre>
+<p>Put the conclusion at the top. Support it with three reasons, each with one number. Put the evidence below. An executive can stop reading at any level and still know your position.</p>
+<p><strong>Where the model breaks.</strong> Answer-first works when the audience trusts you and the decision is clear. For a contested or emotional issue, starting with the conclusion can make people defensive. Then start with the shared facts, and reach the recommendation together.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="executive-narrative">Executive narrative</h3>
+<p>A good executive narrative follows a simple arc:</p>
+<ol>
+<li><strong>The situation.</strong> What is true today, in one or two sentences everyone agrees with.</li>
+<li><strong>What changed.</strong> The new fact that makes action necessary: a competitor, a rule, a loss trend.</li>
+<li><strong>What we propose.</strong> The recommendation and the ask.</li>
+<li><strong>Why.</strong> Three reasons, each with a number.</li>
+<li><strong>Risks and options.</strong> What could go wrong, and the alternatives you considered.</li>
+</ol>
+<p>Write it before you build slides. Amazon has described its practice of using six-page narrative memos instead of slide decks, read in silence at the start of meetings. Whether or not you adopt that format, writing forces you to find the gaps in your own argument.</p>
+<h3 id="storytelling-with-data">Storytelling with data</h3>
+<ul>
+<li><strong>One chart, one point.</strong> State the point in the chart title: "Loss ratio on new policies is 6 points above the book," not "Loss ratio by cohort."</li>
+<li><strong>Show the comparison that matters.</strong> Against plan, against last year, or against a control group.</li>
+<li><strong>Annotate.</strong> Mark the launch date, the rule change or the outage on the chart.</li>
+<li><strong>Keep definitions stable.</strong> If the metric's definition changed, say so on the chart, and restate the history.</li>
+</ul>
+<p>Consistency builds trust over time. An executive who sees the same metric, defined the same way, every quarter starts to trust the trend. One who sees a new definition each quarter starts to doubt every number. The rules for owning and changing a metric's definition live in <a href="performance-and-growth.html">performance and growth</a>.</p>
+<h3 id="what-executives-ask-by-domain">What executives ask, by domain</h3>
+<p>Each domain has a question the executive team will ask first. Answer it in your first paragraph.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>The first executive question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Payments</strong></td>
+<td>What happens to fraud and dispute rates, and to our net take rate?</td>
+</tr>
+<tr>
+<td><strong>Lending</strong></td>
+<td>What happens to losses by cohort, and to our funding needs?</td>
+</tr>
+<tr>
+<td><strong>eCommerce</strong></td>
+<td>What happens to contribution per order, not only to order volume?</td>
+</tr>
+<tr>
+<td><strong>InsurTech</strong></td>
+<td>What happens to the loss ratio, and do we need new rate filings?</td>
+</tr>
+<tr>
+<td><strong>Retail</strong></td>
+<td>What happens to gross margin and to inventory?</td>
+</tr>
+<tr>
+<td><strong>FinTech</strong></td>
+<td>What do our partner bank and our regulators need to approve?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-the-board-works">How the board works</h3>
+<p>Most product leaders meet the board rarely. They meet its effects often. The board approves the annual plan, the risk appetite and large investments. A product leader who understands the board writes better proposals at every level below it.</p>
+<p><strong>What the board is for.</strong> The board oversees management on behalf of the owners. It does not run the company. In US corporate law, directors owe the company <strong>fiduciary duties</strong>: a <strong>duty of care</strong> (decide on good information, with attention) and a <strong>duty of loyalty</strong> (put the company's interest ahead of their own). The duty of care explains a lot. Directors ask for pre-reads, options and risks because they must show they decided on good information.</p>
+<p><strong>What the board decides.</strong> Boards typically decide five kinds of thing:</p>
+<ul>
+<li><strong>Strategy and the plan.</strong> They approve the annual plan and the big shifts in strategy.</li>
+<li><strong>Capital.</strong> Large investments, acquisitions, fundraising and dividends.</li>
+<li><strong>Risk.</strong> The risk appetite, and whether management keeps the company inside it.</li>
+<li><strong>Leadership.</strong> Hiring, paying and, if needed, replacing the chief executive officer (CEO).</li>
+<li><strong>Reporting and control.</strong> Whether the financial statements are reliable and the controls work.</li>
+</ul>
+<p><strong>Committees do most of the detailed work.</strong> The full board then hears their reports.</p>
+<table>
+<thead>
+<tr>
+<th>Committee</th>
+<th>What it oversees</th>
+<th>Where product shows up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Audit</strong></td>
+<td>Financial reporting, internal controls, internal audit and the external auditor</td>
+<td>Revenue recognition for a new pricing model; controls over a new money flow; capitalized software</td>
+</tr>
+<tr>
+<td><strong>Risk</strong> (common in banks and insurers)</td>
+<td>Risk appetite, limits and the second line's reports</td>
+<td>A launch that moves a credit, fraud or conduct metric toward its limit</td>
+</tr>
+<tr>
+<td><strong>Compensation</strong></td>
+<td>Pay for senior leaders, and the metrics bonuses are tied to</td>
+<td>Which product metrics executives are paid on</td>
+</tr>
+<tr>
+<td><strong>Nominating and governance</strong></td>
+<td>Board membership and governance rules</td>
+<td>Rarely</td>
+</tr>
+</tbody>
+</table>
+<p>Under rules of the US Securities and Exchange Commission (SEC) adopted after the 2002 US corporate-governance law, a listed company's audit committee must be made up of independent directors. Federal Reserve rules require larger bank holding companies to have a board risk committee. In a regulated firm, a new product often needs a management new-product committee first. Its decision then appears in the risk committee's report.</p>
+<p><strong>The board pack.</strong> Directors receive a <strong>board pack</strong> some days before each meeting. Many boards meet about quarterly. A typical pack holds:</p>
+<ol>
+<li>The CEO's letter: what changed, what worries management, what it needs.</li>
+<li>Financial results against plan, and the latest forecast.</li>
+<li>A stable scorecard of key performance indicators (KPIs).</li>
+<li>Strategy papers, each with a decision or a request for advice.</li>
+<li>The risk report: appetite metrics against their limits, and major incidents.</li>
+<li>Committee reports.</li>
+<li>Resolutions to approve, and minutes of the last meeting.</li>
+</ol>
+<p><strong>How product appears in it.</strong> Product rarely gets its own section. It shows up in four places:</p>
+<ul>
+<li><strong>The scorecard,</strong> as the metrics your products move.</li>
+<li><strong>A strategy paper,</strong> when a bet is large enough to need approval or advice.</li>
+<li><strong>The risk report,</strong> when a launch pushes a metric toward amber, or an incident occurs.</li>
+<li><strong>The plan,</strong> as the investment behind your area.</li>
+</ul>
+<p><strong>Writing a board paper.</strong> Keep it to two pages. Start with one line: "For decision", "For advice" or "For information". Then the ask, the answer and the cost, as in the narrative above. Show the one number the case depends on, and what happens if it is half as good. Name the risks with owners. Say which appetite metrics the bet touches, and where they will land. Directors read for the downside. Write for it.</p>
+<p><strong>Domain application.</strong> A lender's board approves its risk appetite, including a loss-rate limit. A product leader who wants to loosen the credit cutoff needs the forecast loss rate under the new cutoff. If it crosses amber, the decision goes to the risk committee, not only to the executive team. In an insurer, the audit committee watches reserve adequacy. A fast-growing new line will draw questions about whether its early loss ratio is too good to be true. The answer lives in <a href="performance-and-growth.html">performance and growth</a>.</p>
+<p><strong>Rules for board and CEO communication.</strong></p>
+<ul>
+<li><strong>No surprises.</strong> Bad news goes to the CEO before the board meeting, and to the board before it reaches the press.</li>
+<li><strong>Pre-reads, not presentations.</strong> Send material early. Use meeting time for questions.</li>
+<li><strong>Lead with what you need from them.</strong> A decision, advice or awareness. Say which.</li>
+<li><strong>Keep the scorecard stable.</strong> Show the same core metrics every time, with the same definitions.</li>
+<li><strong>Show risks with owners.</strong> For each major risk: likelihood, impact, owner and mitigation.</li>
+</ul>
+<p><strong>The common misreading.</strong> "The board wants to see the roadmap." It wants to know whether management's bets fit the strategy, the capital and the risk appetite. A roadmap is evidence for that, at most.</p>
+<h3 id="influence-without-authority">Influence without authority</h3>
+<p>You influence peers through four things:</p>
+<ul>
+<li><strong>Shared goals.</strong> Frame your ask as progress toward their goal, not only yours.</li>
+<li><strong>Credibility.</strong> A record of delivering what you said, and of admitting when you were wrong.</li>
+<li><strong>Reciprocity.</strong> Help peers hit their targets. They remember.</li>
+<li><strong>Clarity.</strong> A clear ask is easier to say yes to than a vague one.</li>
+</ul>
+<p><strong>Managing up</strong> means making your manager's job easier. Know their goals and pressures. Bring problems early, with options. Ask how they want to be updated. Disagree in private, with evidence, and support the decision in public once it is made.</p>
+<p><strong>Managing across</strong> means aligning peers. Know what each peer is measured on, as in <a href="navigating-the-organization.html">navigating the organization</a>. Share credit. Escalate together when you cannot agree.</p>
+<h3 id="driving-cross-functional-alignment">Driving cross-functional alignment</h3>
+<ol>
+<li><strong>Name the decision and its owner.</strong> See <a href="teams-and-collaboration.html">teams and collaboration</a>.</li>
+<li><strong>Map the stakeholders.</strong> Use the power and interest grid in <a href="navigating-the-organization.html">navigating the organization</a>. Mark every veto.</li>
+<li><strong>Write the pre-read.</strong> One document with the facts, the options and the recommendation.</li>
+<li><strong>Pre-wire.</strong> Meet each key stakeholder alone first. Learn their objections while you can still change the proposal.</li>
+<li><strong>Use the meeting to decide.</strong> Not to discover objections.</li>
+<li><strong>Close the loop.</strong> Send the decision, the reason and the owners within a day.</li>
+</ol>
+<h3 id="negotiation-at-the-executive-table">Negotiation at the executive table</h3>
+<p>Executives negotiate constantly: budgets with Finance, dates with Sales, terms with partners. Four ideas make you better at it.</p>
+<ul>
+<li><strong>Interests, not positions.</strong> A position is what someone asks for. An interest is why. A partner bank asks for a larger revenue share (position) because it needs to cover its compliance cost (interest). You might meet the interest another way, for example by taking on some of the compliance work.</li>
+<li><strong>Your best alternative to a deal.</strong> Know what you will do if you cannot agree. A second partner? Building it yourself? Delaying? Your alternative sets your walk-away point. The stronger it is, the more you can ask for.</li>
+<li><strong>The zone of agreement.</strong> If your walk-away point and theirs overlap, a deal is possible. Find out where theirs is by asking questions and by modelling its economics, not by guessing.</li>
+<li><strong>Trade across issues.</strong> Price, term, exclusivity, volume and timing can be traded against each other. A deal on one issue alone is a tug of war.</li>
+</ul>
+<p>Public deals often trade across several issues at once: ownership, board seats, partnerships and service terms. Shopify's 2023 agreement to sell most of its logistics business to Flexport is one example, covered in <a href="portfolio-strategy-and-allocation.html">portfolio strategy and capital allocation</a>.</p>
+<h3 id="negotiation-in-numbers-the-zone-of-agreement">Negotiation in numbers: the zone of agreement</h3>
+<p><strong>What it is.</strong> Each side has a <strong>walk-away point</strong>: the worst terms it will accept. Below that point, it is better off with its best alternative. The <strong>zone of agreement</strong> is the range between the two walk-away points. Any deal inside it leaves both sides better off than walking away. The width of the zone is the <strong>surplus</strong> the deal creates. The negotiation decides how the surplus is split.</p>
+<p><strong>How to compute your own walk-away point.</strong> Work from your economics in three steps.</p>
+<ol>
+<li><strong>Value the deal on the table</strong> at different terms. For a revenue share, compute what you keep at each share.</li>
+<li><strong>Value your best alternative.</strong> Include its full cost: switching, migration, lost customers, delay. Spread one-off costs over the alternative's contract term.</li>
+<li><strong>Your walk-away point is where the two are equal.</strong> It is not your break-even. Break-even matters only if your best alternative is to stop the business.</li>
+</ol>
+<p><strong>How to estimate theirs.</strong> Build the same model for the other side, from what you can observe:</p>
+<ul>
+<li><strong>Its costs to serve you.</strong> Staff, systems, compliance, losses it bears.</li>
+<li><strong>Its alternative.</strong> What else could it do with the same capacity, or the same balance sheet?</li>
+<li><strong>Its constraints.</strong> Regulators, capital, internal hurdle rates.</li>
+</ul>
+<p>You will not know their numbers exactly. A range is enough. Test it with questions: "What does this programme cost you to oversee?" Their answers move your estimate.</p>
+<p><strong>Why trades across issues create value.</strong> A trade adds surplus only when the two sides' costs differ. Suppose a task costs the bank $0.8 million a year and costs you $0.4 million, because you already run the tooling. Moving the task to you lowers the bank's walk-away point by more than it raises yours. The zone widens by the difference, $0.4 million. If the task cost both sides the same, moving it would only shift money from one side to the other.</p>
+<p><strong>Anchoring and the first offer.</strong> The first number often pulls the final deal toward it. Make the first offer when you have a good estimate of the zone. Make it inside the zone, near the other side's walk-away point, and give a reason for it. When the other side opens far outside the zone, do not counter by splitting the difference. Restate the economics and re-anchor.</p>
+<p><strong>Domain application.</strong> Many fintechs that offer debit cards issue them through a partner bank. In the US, debit interchange is capped for large issuers, and smaller issuers are exempt from the cap (see <a href="monetization-and-business-models.html">pricing and business models</a>). So partner banks can be smaller banks. The bank and the fintech split the interchange. The bank's share must cover its oversight, because its regulator holds it responsible for the programme. The fintech's share must cover cards, processing, fraud and support.</p>
+<p><strong>Decision rule.</strong> Write both walk-away points, in numbers, before the first meeting. If you cannot estimate theirs, your first meeting is for questions, not offers.</p>
+<p><strong>The common misreading.</strong> "A good negotiator gets the most." A good negotiator first makes the zone as wide as possible, then claims a fair share of it. Claiming everything often costs the relationship you renegotiate in three years.</p>
+<style>
+.ba-z{background:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;
+  padding:var(--space-6,24px) var(--space-5,20px);margin:26px 0;font-family:inherit;text-align:left}
+.ba-z-title{font-size:var(--font-text-xs-size);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--color-text-secondary);font-weight:700;margin:0 0 4px}
+.ba-z-sub{font-size:var(--font-text-sm-size);color:var(--color-text-secondary);margin:0 0 18px}
+.ba-z-row{display:grid;grid-template-columns:7.5em 1fr;align-items:center;gap:10px;margin-bottom:12px}
+.ba-z-lab{font-size:var(--font-text-xs-size);font-weight:700;color:var(--color-text)}
+.ba-z-track{position:relative;height:2.6em;background:var(--color-surface-tertiary);border-radius:8px}
+.ba-z-band{position:absolute;top:0;bottom:0;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:var(--font-text-2xs-size);font-weight:700}
+.ba-z-band.before{background:var(--color-background-info-surface);border:1px solid var(--color-border-info-surface);color:var(--color-text-info)}
+.ba-z-band.after{background:var(--color-background-success-surface);border:1px solid var(--color-border-success-surface);color:var(--color-text-success)}
+.ba-z-axis{position:relative;height:3.6em;margin-left:calc(7.5em + 10px)}
+.ba-z-mark{position:absolute;top:0;transform:translateX(-50%);text-align:center;font-size:var(--font-text-2xs-size);
+  color:var(--color-text-secondary);white-space:nowrap}
+.ba-z-mark::before{content:"";display:block;width:2px;height:.8em;margin:0 auto 2px;background:var(--color-border-strong)}
+.ba-z-mark.deal{color:var(--color-text-success);font-weight:700}
+.ba-z-mark.deal::before{background:var(--color-text-success)}
+.ba-z-mark.ask{color:var(--color-text-danger);font-weight:700}
+.ba-z-mark.ask::before{background:var(--color-text-danger)}
+.ba-z-ends{display:flex;justify-content:space-between;margin-left:calc(7.5em + 10px);font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary)}
+.ba-z-note{margin-top:12px;font-size:var(--font-text-xs-size);color:var(--color-text-secondary)}
+@media (max-width:640px){.ba-z-row{grid-template-columns:1fr}.ba-z-axis,.ba-z-ends{margin-left:0}}
+</style>
+<div class="ba-z" role="img" aria-label="Zone of agreement for the share of interchange the partner bank keeps. Before the trade the zone runs from 16% (bank walk-away) to 24.7% (fintech walk-away), worth 1.95 million dollars a year. After the fintech takes on transaction monitoring it runs from 12.4% to 22.9%, worth 2.35 million dollars. Today's share is 20%, the bank's ask is 30%, outside the zone, and the deal settles at 18%.">
+  <div class="ba-z-title">The zone of agreement</div>
+  <p class="ba-z-sub">Share of the $22.5M interchange pool the partner bank keeps. Illustrative, all inputs assumed.</p>
+  <div class="ba-z-row">
+    <span class="ba-z-lab">Before the trade</span>
+    <div class="ba-z-track"><div class="ba-z-band before" style="left:27.3%;width:39.4%">16% to 24.7% · $1.95M</div></div>
+  </div>
+  <div class="ba-z-row">
+    <span class="ba-z-lab">After the trade</span>
+    <div class="ba-z-track"><div class="ba-z-band after" style="left:11.1%;width:47.5%">12.4% to 22.9% · $2.35M</div></div>
+  </div>
+  <div class="ba-z-axis">
+    <span class="ba-z-mark deal" style="left:36.4%">Deal<br>18%</span>
+    <span class="ba-z-mark" style="left:45.5%">Today<br>20%</span>
+    <span class="ba-z-mark ask" style="left:90.9%">Bank's ask<br>30%</span>
+  </div>
+  <div class="ba-z-ends"><span>10%</span><span>32%</span></div>
+  <div class="ba-z-note">Left edge of each band: the bank's walk-away. Right edge: the fintech's walk-away. The trade widens the zone by $0.4M, the gap between the two sides' cost of the same task. The ask sits outside both zones.</div>
+</div>
+
+<h2 id="worked-example-a-3-million-ask-at-an-insurer">Worked example: a $3 million ask at an insurer</h2>
+<p><em>This example is invented, to show the method. The insurer and all numbers are illustrative. All inputs are assumed.</em></p>
+<p>A VP of Product at a home insurer wants $3 million to rebuild underwriting rules and data for new policies. Earned premium on new business is $40 million a year. Its loss ratio is 72%. The target after the rebuild is 67%.</p>
+<p><strong>Step 1: compute the value.</strong> 5 points × $40 million = <strong>$2 million a year</strong> in lower claims cost, if the target is met. Payback = $3 million ÷ $2 million = <strong>1.5 years</strong>.</p>
+<p><strong>Step 2: find the one assumption that matters.</strong> The case depends on the 5-point improvement. At 2.5 points, the value is $1 million a year and payback is 3 years.</p>
+<p><strong>Step 3: write the first paragraph.</strong></p>
+<blockquote>
+<p><em>We ask for $3 million to rebuild underwriting for new home policies. We expect it to cut the loss ratio on new business from 72% to 67%. That is worth $2 million a year and pays back in 18 months. We propose to release the money in two stages. The second stage depends on the first stage showing at least 2 points of improvement in two pilot states.</em></p>
+</blockquote>
+<p><strong>Step 4: offer options.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Cost</th>
+<th>Expected value</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. Full rebuild now</td>
+<td>$3.0M</td>
+<td>$2.0M a year</td>
+<td>All money at risk before proof</td>
+</tr>
+<tr>
+<td><strong>B. Staged: two pilot states first</strong></td>
+<td>$1.2M, then $1.8M if the gate is met</td>
+<td>$2.0M a year, about two quarters later</td>
+<td>Small delay; most money waits for proof</td>
+</tr>
+<tr>
+<td>C. Do nothing</td>
+<td>$0</td>
+<td>$0</td>
+<td>Loss ratio on new business stays at 72%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 5: pre-wire and negotiate.</strong> The chief financial officer (CFO) wants to limit cash at risk. The Chief Risk Officer's interest is no new exposure in the pilot states. The VP recommends option B, which meets both interests. Her alternative if the full ask is refused is option B anyway, so she can concede on staging at no cost. She asks for one thing in return: a commitment to release stage two within a month if the gate is met.</p>
+<h2 id="worked-example-renegotiating-a-partner-bank-revenue-share">Worked example: renegotiating a partner-bank revenue share</h2>
+<p><em>This example is invented, to show the method. The fintech, the banks and all numbers are illustrative. All inputs are assumed.</em></p>
+<p>A fintech offers a debit card through a partner bank. The contract is up for renewal. Today the bank keeps 20% of the interchange and passes 80% to the fintech. The bank asks to keep 30%. It cites a rise in its compliance cost.</p>
+<p><strong>Step 1: size the pool.</strong> The programme has 200,000 active cards. Each spends $750 a month. Annual purchase volume is 200,000 × $750 × 12 = <strong>$1.8 billion</strong>. At an assumed interchange rate of 1.25%, the interchange pool is <strong>$22.5 million a year</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Bank keeps</th>
+<th>Bank's revenue</th>
+<th>Fintech's revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20% (today)</td>
+<td>$4.5M</td>
+<td>$18.0M</td>
+</tr>
+<tr>
+<td>30% (the ask)</td>
+<td>$6.75M</td>
+<td>$15.75M</td>
+</tr>
+</tbody>
+</table>
+<p>The ask moves $2.25 million a year from the fintech to the bank.</p>
+<p><strong>Step 2: estimate the bank's walk-away point.</strong> The fintech models the bank's economics.</p>
+<table>
+<thead>
+<tr>
+<th>Bank cost or need</th>
+<th>Assumed amount a year</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Programme oversight: compliance staff, audit, monitoring</td>
+<td>$1.5M</td>
+</tr>
+<tr>
+<td>Variable costs, at 0.05% of volume</td>
+<td>$0.9M</td>
+</tr>
+<tr>
+<td>The return it could earn from another programme with the same oversight capacity</td>
+<td>$1.2M</td>
+</tr>
+<tr>
+<td><strong>Total the bank needs</strong></td>
+<td><strong>$3.6M</strong></td>
+</tr>
+</tbody>
+</table>
+<p>$3.6 million ÷ $22.5 million = <strong>16%</strong>. Below 16%, the bank does better by signing a different programme. Today's 20% already clears it. The bank's interest is real, but its position of 30% is far above its need.</p>
+<p><strong>Step 3: compute the fintech's walk-away point.</strong> A second bank has quoted to keep 18%, on a three-year contract. Switching is not free. Reissuing cards, re-integrating and the customers lost on the way cost an assumed $4.5 million once. Over three years, that is $1.5 million a year, or $1.5 million ÷ $22.5 million = 6.7 points. So the second bank really costs 18% + 6.7% = <strong>24.7%</strong>. The fintech should accept up to 24.7% from the current bank, and no more.</p>
+<p>The fintech's break-even is different. Its own costs are an assumed $15 million a year. It breaks even if the bank keeps up to 1 − 15 ÷ 22.5 = <strong>33.3%</strong>. That number does not set the walk-away point, because the second bank is a better option long before 33.3%.</p>
+<p><strong>Step 4: find the zone.</strong> The zone runs from 16% to 24.7%. It is 8.7 points wide, or <strong>$1.95 million a year</strong> of surplus. The bank's ask of 30% is outside the zone. The fintech says so, and shows why: at 30% it would move to the second bank.</p>
+<p><strong>Step 5: trade across issues.</strong> The bank's real interest is its oversight cost. Transaction monitoring for the programme costs the bank an assumed $0.8 million a year. The fintech already runs monitoring tooling for its own fraud work. Doing the bank's monitoring, under the bank's oversight, costs it only $0.4 million.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Before the trade</th>
+<th>After the trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bank walk-away</td>
+<td>16.0%</td>
+<td>($3.6M − $0.8M) ÷ $22.5M = <strong>12.4%</strong></td>
+</tr>
+<tr>
+<td>Fintech walk-away</td>
+<td>24.7%</td>
+<td>24.7% − $0.4M ÷ $22.5M = <strong>22.9%</strong></td>
+</tr>
+<tr>
+<td>Zone width</td>
+<td>8.7 points, $1.95M</td>
+<td>10.4 points, <strong>$2.35M</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The trade adds $0.4 million a year of surplus. That is the gap between the two sides' cost of the same task.</p>
+<p><strong>Step 6: agree a split.</strong> The two sides settle at <strong>18%</strong>, with the fintech running monitoring.</p>
+<table>
+<thead>
+<tr>
+<th>At the deal</th>
+<th>Bank</th>
+<th>Fintech</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Above its walk-away, today (20%, no trade)</td>
+<td>$4.5M − $3.6M = $0.9M</td>
+<td>(24.7% − 20%) × $22.5M = $1.05M</td>
+</tr>
+<tr>
+<td>Above its walk-away, new deal (18%, with trade)</td>
+<td>$4.05M − $2.8M = <strong>$1.25M</strong></td>
+<td>(22.9% − 18%) × $22.5M = <strong>$1.1M</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Both sides end up better off than today. The bank's oversight cost falls, and its surplus rises by $0.35 million. The fintech keeps more of the pool, and its surplus rises by $0.05 million. The fintech also adds a three-year term, which the bank values for planning.</p>
+<p><strong>What this shows.</strong> The bank's 30% was a position. Its interest was cost. The numbers turned an argument about share into a trade about who does the work.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Clarity vs. completeness.</strong> A short narrative persuades. It leaves out detail your team cares about.</li>
+<li><strong>Pre-wiring vs. openness.</strong> Pre-wiring avoids surprises. Done badly, it looks like back-room dealing. Share the same facts with everyone.</li>
+<li><strong>Staged vs. full ask.</strong> A staged ask is easier to approve. It delays full value and adds a gate.</li>
+<li><strong>Board detail vs. board focus.</strong> More detail answers more questions in advance. It also invites directors into management decisions.</li>
+<li><strong>Revealing your alternative vs. hiding it.</strong> A credible alternative moves the other side. Revealing a weak one tells them your walk-away point.</li>
+<li><strong>Taking on work vs. paying for it.</strong> Running a partner's task can widen the zone. It also adds operational and regulatory duties to your team.</li>
+<li><strong>Winning vs. relationship.</strong> A hard negotiation can win terms and cost trust with a partner you will deal with for years.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The buried ask.</strong> The ask is on slide 14. The meeting runs out of time on slide 9.</li>
+<li><strong>Data without a point.</strong> Twelve charts, no headline.</li>
+<li><strong>Surprise in the room.</strong> A peer hears your proposal for the first time in the decision meeting and objects to protect their team.</li>
+<li><strong>The board status update.</strong> Product sends the board a feature list. Directors cannot tell what they are asked to decide, or which risk changed.</li>
+<li><strong>Negotiating with no alternative.</strong> You accept poor terms because you never prepared a fallback.</li>
+<li><strong>Break-even as walk-away.</strong> You accept up to your break-even share, when a second partner would have been far better.</li>
+<li><strong>Splitting the difference.</strong> The other side opens outside the zone, and you meet them halfway. You land outside your own walk-away point.</li>
+<li><strong>A trade that only moves cost.</strong> You take on the partner's work at the same cost it had. The zone does not widen, and you now own the task.</li>
+<li><strong>Changing metrics.</strong> A different definition each quarter. The board stops trusting the trend.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The script reproduces the lesson's numbers: the insurer's payback and the partner-bank zone of agreement. All inputs are the illustrative assumptions above.</p>
+<pre><code class="language-python"># Worked example: the insurer's $3M ask (assumed inputs)
+premium, ask = 40_000_000, 3_000_000
+for points in (0.05, 0.025):
+    value = points * premium
+    print(f&quot;{points:.1%} better loss ratio: ${value:,.0f}/yr, payback {ask / value:.1f} years&quot;)
+
+# Worked example: partner-bank revenue share (assumed inputs)
+cards, spend_per_month, ic_rate = 200_000, 750, 0.0125
+volume = cards * spend_per_month * 12                  # $1.8B
+pool = volume * ic_rate                                 # $22.5M
+
+bank_need = 1_500_000 + 0.0005 * volume + 1_200_000     # $3.6M
+bank_walk = bank_need / pool                            # 16.0%
+
+alt_share, switch_cost, term = 0.18, 4_500_000, 3
+fin_walk = alt_share + switch_cost / term / pool        # 24.7%
+fin_breakeven = 1 - 15_000_000 / pool                   # 33.3%
+print(f&quot;pool ${pool:,.0f}; bank walk {bank_walk:.1%}; fintech walk {fin_walk:.1%}; &quot;
+      f&quot;fintech break-even {fin_breakeven:.1%}&quot;)
+print(f&quot;zone {100 * (fin_walk - bank_walk):.1f} points, ${(fin_walk - bank_walk) * pool:,.0f}&quot;)
+
+# Trade: fintech runs monitoring (bank saves $0.8M, fintech spends $0.4M)
+bank_walk2 = (bank_need - 800_000) / pool               # 12.4%
+fin_walk2 = fin_walk - 400_000 / pool                   # 22.9%
+print(f&quot;after trade: bank {bank_walk2:.1%}, fintech {fin_walk2:.1%}, &quot;
+      f&quot;zone ${(fin_walk2 - bank_walk2) * pool:,.0f}&quot;)
+
+# Split of the surplus: today versus the new deal
+for label, share, need, walk in ((&quot;today 20%&quot;, 0.20, bank_need, fin_walk),
+                                 (&quot;new 18%&quot;, 0.18, bank_need - 800_000, fin_walk2)):
+    print(f&quot;{label}: bank +${share * pool - need:,.0f}, fintech +${(walk - share) * pool:,.0f}&quot;)
+</code></pre>
+<p>A one-page decision memo template:</p>
+<pre><code class="language-markdown"># &lt;Decision title&gt;
+**For:** decision / advice / information
+**Ask:** &lt;money / people / decision&gt;, by &lt;date&gt;
+**Recommendation:** &lt;one sentence&gt;
+
+## Why (three reasons, one number each)
+1.
+2.
+3.
+
+## What it depends on
+- The key assumption, and the result if it is half as good.
+
+## Options considered
+| Option | Cost | Value | Risk |
+
+## Risks and owners
+| Risk | Likelihood | Impact | Owner | Mitigation |
+
+## Risk appetite
+- Metrics this touches, where they are today, where they will land.
+</code></pre>
+<p>A negotiation sheet, filled in before the first meeting:</p>
+<pre><code class="language-yaml">counterparty: Partner bank
+issue_list: [revenue_share, monitoring_owner, term, minimum_fee]
+our_walk_away: 0.247          # from best alternative, not break-even
+our_best_alternative: &quot;Second bank at 18%, $4.5M one-off switching cost, 3-year term&quot;
+their_walk_away_estimate: [0.14, 0.18]   # a range, from their costs and options
+their_interests: [&quot;cover oversight cost&quot;, &quot;regulatory comfort&quot;, &quot;predictable term&quot;]
+trades_that_widen_the_zone:
+  - give: &quot;run transaction monitoring&quot;
+    our_cost: 400000
+    their_saving: 800000
+opening_offer: 0.17
+</code></pre>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Rewrite the first paragraph of your next proposal so it holds the ask, the answer and the cost.</li>
+<li class="task todo">Give each chart a title that states its point.</li>
+<li class="task todo">Find the one assumption your case depends on, and show the result if it is half as good.</li>
+<li class="task todo">Read your company's last board pack, or ask your manager how product appears in it.</li>
+<li class="task todo">Label your next board paper "for decision", "for advice" or "for information".</li>
+<li class="task todo">Pre-wire every key stakeholder before your next decision meeting.</li>
+<li class="task todo">Before your next negotiation, write your best alternative and compute your walk-away point from it.</li>
+<li class="task todo">Model the other side's walk-away point from its costs and alternatives. Write it as a range.</li>
+<li class="task todo">List the issues in play, and find one task the other side does at a higher cost than you.</li>
+<li class="task todo">Keep your leadership scorecard's metric definitions fixed for a full year.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="navigating-the-organization.html">Navigating the organization</a> — the power and interest grid, the plan and the risk appetite.</li>
+<li><a href="teams-and-collaboration.html">Teams and collaboration</a> — decision rights and the business review.</li>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> — the numbers behind every executive ask.</li>
+<li><a href="unit-economics.html">Unit economics</a> — the economics both sides of a negotiation rest on.</li>
+<li><a href="monetization-and-business-models.html">Pricing and business models</a> — interchange, its caps, and revenue-share models.</li>
+<li><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> — large bets, and the Shopify and Flexport example.</li>
+<li><a href="../product-sense/communication.html">Communication</a> — artifacts and storytelling for product leaders.</li>
+<li><a href="../technical-product-management/specs-prds-and-rfcs.html">Specs, PRDs and RFCs</a> — writing that drives decisions at team level.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="leading-leaders-and-org-design.html"><span class="lbl">← Previous</span><span class="ttl">Leading leaders and designing the product org</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-answer-first-then-support">Mental model: answer first, then support</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#executive-narrative">Executive narrative</a><a class="h3" href="#storytelling-with-data">Storytelling with data</a><a class="h3" href="#what-executives-ask-by-domain">What executives ask, by domain</a><a class="h3" href="#how-the-board-works">How the board works</a><a class="h3" href="#influence-without-authority">Influence without authority</a><a class="h3" href="#driving-cross-functional-alignment">Driving cross-functional alignment</a><a class="h3" href="#negotiation-at-the-executive-table">Negotiation at the executive table</a><a class="h3" href="#negotiation-in-numbers-the-zone-of-agreement">Negotiation in numbers: the zone of agreement</a><a class="h2" href="#worked-example-a-3-million-ask-at-an-insurer">Worked example: a $3 million ask at an insurer</a><a class="h2" href="#worked-example-renegotiating-a-partner-bank-revenue-share">Worked example: renegotiating a partner-bank revenue share</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fexecutive-influence-and-stakeholders.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/executive-influence-and-stakeholders.html"</script><script defer src="../assets/glossary.js"></script></body></html>

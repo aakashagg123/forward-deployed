@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Building RAG with Claude Code, pgvector and Pinecone — RAG &amp; vector databases</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-to-use-rag.html">1 · When to use RAG, and when not to</a><a class="modlink" href="why-rag.html">2 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">3 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">4 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">5 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">6 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">7 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">8 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink active" href="building-rag-with-claude-code.html">9 · Building RAG with Claude Code, pgvector and Pinecone</a><a class="modlink" href="rag-terms.html">10 · RAG terms, explained</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 09</span>
+    <h1>Building RAG with Claude Code, pgvector and Pinecone</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: fast</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>This lesson builds a working RAG feature end to end, with Claude Code doing most of the typing. The store is Postgres with the <strong>pgvector</strong> extension. <strong>Pinecone</strong> is shown as the managed alternative, with a table that maps each step across.</p>
+<p>The build has seven stages: a contract, a plan, the database, ingestion, retrieval, the grounded prompt, and an eval. Claude Code writes the code for each stage. You own three things it cannot decide for you: the eval questions, the permission rules, and the bar the eval must pass.</p>
+<p>Everything here runs. The repo ships a standard-library pipeline with no install, and a pgvector demo that was run against Postgres 16 with pgvector 0.8.1. The real database returned the same ranking as the Python code, to three decimal places. The Pinecone code is written against the Python software development kit (SDK) 10.0.0 and was not run, because it needs an account.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — A coding agent can stand up a RAG prototype in an afternoon. That is real leverage. It also means a prototype with no eval, no permission filter and no delete path can reach a demo before anyone asks for them.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the eval set and the recall bar before the first line of code. You choose the store by your operations, not by a benchmark. Postgres is enough for most first builds.</p>
+<p><strong>Ask your eng team</strong> — <em>"Which command proves retrieval still works, what score must it pass, and does the agent run it before it says it is done?"</em></p>
+<p><strong>Risk if ignored</strong> — A fast demo that answers from a retracted policy, or shows one customer another customer's documents. Both are retrieval bugs that only a filter and an eval catch.</p>
+</blockquote>
+<h2 id="the-mental-model-you-set-the-contract-the-agent-fills-in-the-stages">The mental model: you set the contract, the agent fills in the stages</h2>
+<style>
+.dgm-bc{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-bc-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-bc h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-bc-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-bc-flow{display:grid;grid-template-columns:1fr 2.6fr 1fr;gap:10px;align-items:stretch}
+.dgm-bc-lane{border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.dgm-bc-you{background:var(--color-background-discovery-surface);border:1.5px solid var(--color-border-discovery-surface)}
+.dgm-bc-agent{background:var(--color-surface-secondary);border:1px solid var(--color-border)}
+.dgm-bc-lane h5{margin:0 0 2px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-tertiary)}
+.dgm-bc-you h5{color:var(--color-text-discovery)}
+.dgm-bc-step{background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;padding:8px 10px}
+.dgm-bc-step b{display:block;font-size:12px;font-weight:700;color:var(--color-text)}
+.dgm-bc-step > span{display:block;font-size:10.5px;line-height:1.35;color:var(--color-text-secondary);margin-top:2px}
+.dgm-bc-n{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;margin-right:5px;
+  font-size:10px;font-weight:700;background:var(--color-background-discovery-surface);color:var(--color-text-discovery)}
+.dgm-bc-stages{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.dgm-bc-gate{background:var(--color-background-caution-surface);border:1.5px solid var(--color-border-caution-outline)}
+.dgm-bc-gate b{color:var(--color-text-warning)}
+.dgm-bc-ship{background:var(--color-background-success-surface);border:1.5px solid var(--color-border-success-surface)}
+.dgm-bc-ship b{color:var(--color-text-success)}
+.dgm-bc-loop{margin:12px 0 0;font-size:11px;color:var(--color-text-secondary);text-align:center;display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}
+.dgm-bc-loop svg{width:15px;height:15px;color:var(--color-text-tertiary)}
+.dgm-bc-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.dgm-bc-pill{font-size:10px;font-weight:600;border-radius:20px;padding:1px 8px;background:var(--color-surface-secondary);border:1px solid var(--color-border);color:var(--color-text-secondary)}
+@media (max-width:760px){.dgm-bc{padding:22px 14px 18px}.dgm-bc-flow{grid-template-columns:1fr}}
+@media (max-width:420px){.dgm-bc-stages{grid-template-columns:1fr}}
+</style>
+<div class="dgm-bc">
+  <span class="dgm-bc-chip">Building RAG with Claude Code</span>
+  <h4>You set the contract and the gate · the agent fills in the stages</h4>
+  <p class="dgm-bc-sub">Seven stages. Two belong to you, because they define what "correct" means.</p>
+
+  <div class="dgm-bc-flow">
+    <div class="dgm-bc-lane dgm-bc-you">
+      <h5>You own</h5>
+      <div class="dgm-bc-step"><b><span class="dgm-bc-n">1</span>Contract</b><span>CLAUDE.md: corpus, chunk rule, model, filter, the check. A human-written eval set.</span></div>
+    </div>
+
+    <div class="dgm-bc-lane dgm-bc-agent">
+      <h5>Claude Code does</h5>
+      <div class="dgm-bc-stages">
+        <div class="dgm-bc-step"><b><span class="dgm-bc-n">2</span>Plan</b><span>Plan mode: schema, index, query, eval design. No code yet.</span></div>
+        <div class="dgm-bc-step"><b><span class="dgm-bc-n">3</span>Database</b><span>pgvector or Pinecone. Dimension matches the model.</span></div>
+        <div class="dgm-bc-step"><b><span class="dgm-bc-n">4</span>Ingest</b><span>Chunk, embed, store with metadata. Deletes included.</span></div>
+        <div class="dgm-bc-step"><b><span class="dgm-bc-n">5</span>Retrieve</b><span>Vector, keyword, hybrid. Filter on every query.</span></div>
+        <div class="dgm-bc-step"><b><span class="dgm-bc-n">6</span>Generate</b><span>Numbered sources, cite [n], "I don't know" path.</span></div>
+        <div class="dgm-bc-step"><b>Store options</b>
+          <div class="dgm-bc-pills"><span class="dgm-bc-pill">pgvector · your Postgres</span><span class="dgm-bc-pill">Pinecone · managed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dgm-bc-lane dgm-bc-you">
+      <h5>You own</h5>
+      <div class="dgm-bc-step dgm-bc-gate"><b><span class="dgm-bc-n">7</span>Eval gate</b><span>recall@3 at or above the bar, by question type. Enforced by a hook or CI.</span></div>
+      <div class="dgm-bc-step dgm-bc-ship"><b>Ship</b><span>Fernpay: hybrid 0.917 passes a 0.90 bar.</span></div>
+    </div>
+  </div>
+
+  <p class="dgm-bc-loop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5"/></svg>Below the bar, the agent goes back to stage 4 or 5 and tries again.</p>
+</div>
+
+<p>Two stages are yours. Stage 1 is the contract: what "correct" means. Stage 7 is the gate: the eval that proves it. Claude Code does the work in between, and loops back when the eval fails.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="stage-1-the-contract">Stage 1: the contract</h3>
+<p>Claude Code reads a file called <code>CLAUDE.md</code> at the start of every session. The docs suggest you keep it short, and put in only what Claude cannot work out from the code. <code>/init</code> writes a starter file you can edit. For a RAG build, the contract fits in a few lines.</p>
+<pre><code class="language-markdown"># RAG service
+- Corpus: docs/help-centre/*.md. Chunk by &quot;## &quot; section. Keep the title with each chunk.
+- Store: Postgres 16 + pgvector, table `chunks`. Schema in db/schema.sql.
+- Embeddings: one model for documents and queries. Never mix models in one table.
+- Every answer cites chunk ids. If no chunk supports the answer, say &quot;I don't know&quot;.
+- Retrieval always filters status = 'current' and the caller's audience.
+- Check: `python3 eval.py` must print recall@3 &gt;= 0.90 before you say you are done.
+- Never connect to the production database. Use the local container only.
+</code></pre>
+<p><code>CLAUDE.md</code> is advice. The Claude Code docs say hooks are deterministic, and <code>CLAUDE.md</code> instructions are advisory. So turn the last two lines into enforcement as well. A Stop hook can run <code>eval.py</code> and block the end of a turn until it passes. A permission rule can block commands you never want run. The <a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">machine learning lesson on Claude Code</a> covers these guard rails in depth.</p>
+<p>Write the eval set yourself. Twenty to fifty real questions, each with the chunk that answers it, is enough to start. Include paraphrases, exact codes, and one question whose answer is in a retracted document. The agent must not write the questions it is graded on.</p>
+<h3 id="stage-2-the-plan">Stage 2: the plan</h3>
+<p>Start Claude Code in plan mode with <code>claude --permission-mode plan</code>, or press <code>Shift+Tab</code> in a session. In plan mode it reads and proposes, and changes nothing. Ask for the design before any code:</p>
+<pre><code class="language-text">Read CLAUDE.md and docs/help-centre/. Propose the schema, the chunking rule,
+the index, the retrieval query with filters, and how eval.py computes recall@3.
+Say which embedding model and dimension you assume. Do not write code yet.
+</code></pre>
+<p>Check four things in the plan: the vector dimension matches the embedding model, the filter is in every query, deletes are handled, and the eval uses your questions.</p>
+<h3 id="stage-3-the-database">Stage 3: the database</h3>
+<p>pgvector adds a vector type and nearest-neighbour search to Postgres. The quickest local start is the project's Docker image:</p>
+<pre><code class="language-bash">docker run -d --name rag-pg -e POSTGRES_PASSWORD=pw -p 5432:5432 pgvector/pgvector:0.8.1-pg16
+</code></pre>
+<p>Then the schema. This is adapted from <code>rag-vector-databases/code/pgvector_demo.sql</code>, with a real model's 1,024 dimensions and the <code>updated</code> column left out:</p>
+<pre><code class="language-sql">CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE chunks (
+    id        text PRIMARY KEY,          -- 'refunds-v2#0': document id + section number
+    doc       text NOT NULL,
+    title     text NOT NULL,
+    section   text NOT NULL,
+    body      text NOT NULL,
+    status    text NOT NULL,             -- 'current' or 'retracted'
+    audience  text NOT NULL,             -- 'customer' or 'internal'
+    embedding vector(1024) NOT NULL,     -- must equal the embedding model's dimension
+    fts       tsvector GENERATED ALWAYS AS (to_tsvector('english', title || ' ' || body)) STORED
+);
+CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON chunks USING gin (fts);
+</code></pre>
+<p>Three choices sit in that schema. The <code>vector(1024)</code> size must match the model. The HNSW index is the approximate search; its operator class, <code>vector_cosine_ops</code>, must match the <code>&lt;=&gt;</code> cosine distance used in queries. The <code>fts</code> column gives you keyword search in the same table, which is what makes hybrid search one SQL statement.</p>
+<p>pgvector has three main distance operators: <code>&lt;=&gt;</code> for cosine distance, <code>&lt;-&gt;</code> for Euclidean (L2) distance and <code>&lt;#&gt;</code> for the negative inner product (dot product). Pick the one your embedding model is designed for. Normalized vectors give the same ranking under all three.</p>
+<p>Two limits from the pgvector documentation matter early. An index on the <code>vector</code> type supports up to 2,000 dimensions; the <code>halfvec</code> type supports up to 4,000. And a filter is applied after the approximate index scan, so a narrow filter can return fewer rows than you asked for. Version 0.8.0 added iterative index scans to fix that. They are off by default: turn them on with <code>SET hnsw.iterative_scan = strict_order</code>. They still stop at a scan limit, <code>hnsw.max_scan_tuples</code>.</p>
+<p>Claude Code reaches the database through its Bash tool, with <code>psql</code>. You can also connect a database server over the Model Context Protocol (MCP) with <code>claude mcp add</code>. The docs warn you to verify that you trust each server before you connect it. Either way, give the session a local database and nothing else.</p>
+<h3 id="stage-4-ingestion">Stage 4: ingestion</h3>
+<p>Ingestion reads each document, cuts it into chunks, embeds each chunk and stores it with its metadata. Anthropic does not offer its own embedding model. Its documentation points to Voyage AI. With Voyage, you embed documents and questions with different <code>input_type</code> values, which handles the gap between short questions and long passages:</p>
+<pre><code class="language-python">import voyageai
+
+vo = voyageai.Client()                               # reads VOYAGE_API_KEY
+doc_vectors = vo.embed(chunk_texts, model=&quot;voyage-4&quot;, input_type=&quot;document&quot;).embeddings
+query_vector = vo.embed([question], model=&quot;voyage-4&quot;, input_type=&quot;query&quot;).embeddings[0]
+</code></pre>
+<p><code>voyage-4</code> returns 1,024 numbers by default, which is why the schema says <code>vector(1024)</code>. Any embedding model works the same way. Pick one, record it in <code>CLAUDE.md</code>, and re-embed everything if you ever change it.</p>
+<p>A good prompt for this stage names the chunk rule and the delete path:</p>
+<pre><code class="language-text">Write ingest.py. Chunk each file by &quot;## &quot; section and keep the title in each chunk.
+Upsert by chunk id. When a source file is deleted or marked retracted, delete or
+mark its chunks in the same run. Print counts of added, updated and removed chunks.
+</code></pre>
+<h3 id="stage-5-retrieval">Stage 5: retrieval</h3>
+<p>Four queries do most of the work. Each one is in <code>pgvector_demo.sql</code>.</p>
+<pre><code class="language-sql">-- vector search, filtered: the default query
+SELECT id, 1 - (embedding &lt;=&gt; :'qvec') AS similarity
+FROM chunks
+WHERE status = 'current' AND audience = 'customer'
+ORDER BY embedding &lt;=&gt; :'qvec'
+LIMIT 3;
+</code></pre>
+<p>The keyword query uses Postgres full-text search with <code>websearch_to_tsquery</code>. The hybrid query runs both lists and fuses them with <strong>reciprocal rank fusion</strong>: each list gives a chunk <code>1 / (60 + rank)</code>, and the sums decide the order. pgvector's own README suggests reciprocal rank fusion or a cross-encoder to combine the two lists.</p>
+<h3 id="stage-6-the-grounded-prompt">Stage 6: the grounded prompt</h3>
+<p>The prompt puts numbered sources before the question and tells the model what to do when they do not answer it.</p>
+<pre><code class="language-python">import anthropic
+
+prompt = &quot;\n&quot;.join([
+    &quot;Answer only from the sources below. Cite each claim as [n].&quot;,
+    &quot;If the sources do not contain the answer, say you do not know.&quot;, &quot;&quot;,
+    *[f&quot;[{n}] {c.title} &gt; {c.section}: {c.body}&quot; for n, c in enumerate(chunks, start=1)],
+    &quot;&quot;, f&quot;Question: {question}&quot;,
+])
+client = anthropic.Anthropic()                       # reads ANTHROPIC_API_KEY
+msg = client.messages.create(model=&quot;claude-opus-5-5&quot;, max_tokens=1024,
+                             messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}])
+answer = next(b.text for b in msg.content if b.type == &quot;text&quot;)
+</code></pre>
+<p>Gate the call before it happens. If neither the keyword search nor the vector search finds good evidence, skip the model and say "I don't know". The Claude API also has a built-in citations feature for documents you pass as <code>document</code> blocks; it returns the cited text with each claim.</p>
+<h3 id="stage-7-the-eval">Stage 7: the eval</h3>
+<p><code>eval.py</code> runs every question in your eval set and reports <strong>recall@3</strong>: the share of questions whose answering chunk is in the top 3. Report it by question type, because the averages hide the pattern. Make the agent run it, and gate the turn on it with a Stop hook if the build runs unattended. The Claude Code docs say Claude "stops when the work looks done", and that a check it can run is what closes the loop.</p>
+<h3 id="the-pinecone-variant">The Pinecone variant</h3>
+<p>Pinecone is a managed vector database. You do not run a server. You create an index, write records to it and search it over an API. The SDK changed in version 10: an index now declares a <strong>schema</strong>, and you read and write it through <code>index.documents</code>.</p>
+<pre><code class="language-python">from pinecone import DenseVectorQuery, Pinecone, TextQuery
+
+pc = Pinecone()                                      # reads PINECONE_API_KEY
+pc.indexes.create(
+    name=&quot;fernpay-help&quot;,
+    schema={&quot;fields&quot;: {
+        &quot;embedding&quot;: {&quot;type&quot;: &quot;dense_vector&quot;, &quot;dimension&quot;: 1024, &quot;metric&quot;: &quot;cosine&quot;},
+        &quot;body&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;full_text_search&quot;: {&quot;language&quot;: &quot;en&quot;}},
+    }},
+    deployment={&quot;deployment_type&quot;: &quot;managed&quot;, &quot;cloud&quot;: &quot;aws&quot;, &quot;region&quot;: &quot;us-east-1&quot;},
+)
+index = pc.index(&quot;fernpay-help&quot;)
+index.documents.upsert(namespace=&quot;tenant-42&quot;, documents=[
+    {&quot;_id&quot;: &quot;refunds-v2#0&quot;, &quot;embedding&quot;: vec, &quot;body&quot;: text, &quot;status&quot;: &quot;current&quot;, &quot;audience&quot;: &quot;customer&quot;},
+])
+hits = index.documents.search(
+    namespace=&quot;tenant-42&quot;, top_k=3,
+    score_by=[DenseVectorQuery(field=&quot;embedding&quot;, values=query_vec)],
+    filter={&quot;status&quot;: {&quot;$eq&quot;: &quot;current&quot;}, &quot;audience&quot;: {&quot;$eq&quot;: &quot;customer&quot;}},
+)
+</code></pre>
+<p>Three details differ from Postgres. Only searched fields go in the schema; metadata you filter on is indexed when you write it. Upserts apply asynchronously, so a new record may not show in the next search. And a dense-vector clause must run alone, so hybrid search is two searches plus fusion in your code. The full file is <code>rag-vector-databases/code/pinecone_example.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>pgvector</th>
+<th>Pinecone (SDK 10)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Run the store</td>
+<td>Your Postgres, or a hosted one</td>
+<td>Managed by Pinecone</td>
+</tr>
+<tr>
+<td>Declare vectors</td>
+<td><code>embedding vector(1024)</code> column</td>
+<td><code>dense_vector</code> field in the schema</td>
+</tr>
+<tr>
+<td>Approximate index</td>
+<td><code>CREATE INDEX ... USING hnsw</code></td>
+<td>Built for you</td>
+</tr>
+<tr>
+<td>Write</td>
+<td><code>INSERT ... ON CONFLICT</code></td>
+<td><code>index.documents.upsert</code></td>
+</tr>
+<tr>
+<td>Vector search</td>
+<td><code>ORDER BY embedding &lt;=&gt; q LIMIT k</code></td>
+<td><code>documents.search</code> with <code>DenseVectorQuery</code></td>
+</tr>
+<tr>
+<td>Keyword search</td>
+<td><code>tsvector</code> + <code>websearch_to_tsquery</code></td>
+<td><code>TextQuery</code> on a <code>full_text_search</code> field</td>
+</tr>
+<tr>
+<td>Filters</td>
+<td><code>WHERE</code> on any column</td>
+<td><code>filter={"field": {"$eq": ...}}</code></td>
+</tr>
+<tr>
+<td>Tenants</td>
+<td>A column in <code>WHERE</code>, or row-level security</td>
+<td>One namespace per tenant</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE ... WHERE doc = ...</code></td>
+<td><code>documents.delete(filter=...)</code></td>
+</tr>
+<tr>
+<td>Join with business data</td>
+<td>Same database, plain SQL</td>
+<td>A second call to your database</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>pgvector vs. Pinecone.</strong> pgvector keeps vectors next to your business data, in a system you already back up and secure. You run it and tune it. Pinecone removes the operations work and bills by use. You add a second system and a sync job from your database.</li>
+<li><strong>Exact vs. approximate search.</strong> With no index, pgvector scans every row and returns the exact top-k. An HNSW index is faster and can miss a neighbour. On a small table, exact search may be fast enough. Measure it before you add an index.</li>
+<li><strong>One embedding model vs. many.</strong> A model trained for code or law may retrieve better in that domain. Each model needs its own column or index, and its own re-embed when it changes.</li>
+<li><strong>Agent speed vs. review.</strong> Claude Code writes each stage quickly. Review the parts that carry risk: the filter, the delete path and the eval.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Dimension mismatch.</strong> The column is <code>vector(1536)</code> and the model returns 1,024 numbers. Inserts fail, or someone pads the vectors and recall collapses.</li>
+<li><strong>Wrong operator class.</strong> The index uses <code>vector_l2_ops</code> and the query uses <code>&lt;=&gt;</code>. Postgres cannot use the index, so every search scans the table.</li>
+<li><strong>A filter that empties the result.</strong> A narrow <code>WHERE</code> after an approximate scan returns 1 row instead of 10. Use iterative scans, a partial index or exact search for small tenants.</li>
+<li><strong>No delete path.</strong> A retracted policy stays in the index and wins the search. In the worked example it scores 0.927 against 0.936 for the current one.</li>
+<li><strong>The agent grades itself.</strong> Claude Code writes the eval questions and the code, and both agree. Keep the eval set human-written and read-only to the agent.</li>
+<li><strong>Production credentials in the session.</strong> The agent can run any command its permissions allow. Point it at a local container only.</li>
+<li><strong>Prompt injection through documents.</strong> A retrieved document says "ignore your instructions". Treat retrieved text as data, and never give the answering model tools it does not need.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Two files show every stage with no account. <code>mini_rag.py</code> is the whole pipeline in the Python standard library. <code>pgvector_demo.py</code> loads the same chunks into a real Postgres through <code>psql</code> and runs the four queries from <code>pgvector_demo.sql</code>. It then checks that Postgres and Python agree.</p>
+<pre><code class="language-python">ids = lambda rows: [row[0] for row in rows]
+assert ids(r[&quot;vector&quot;]) == [cid for _, cid in r[&quot;python_vector&quot;]]       # same ranking as Python
+assert &quot;refunds-v1#0&quot; in ids(r[&quot;vector&quot;])                               # the retracted policy competes
+assert &quot;refunds-v1#0&quot; not in ids(r[&quot;vector_filtered&quot;])                  # the filter removes it
+assert ids(r[&quot;keyword_code&quot;])[0] == &quot;errors#0&quot;                          # keyword search finds the code
+assert ids(r[&quot;hybrid_code&quot;])[0] == &quot;errors#0&quot;                           # and hybrid keeps it on top
+assert &quot;chunks_embedding_hnsw&quot; in r[&quot;plan&quot;]                             # the HNSW index is used
+</code></pre>
+<p>The embedding in these files is a toy with 30 numbers, so the schema there says <code>vector(30)</code>. With no Postgres reachable, the demo prints a skip message and exits cleanly.</p>
+<h2 id="worked-example-the-fernpay-help-centre-on-postgres">Worked example: the Fernpay help centre on Postgres</h2>
+<p><em>This example is invented. Fernpay is a made-up product. The output is from <code>rag-vector-databases/code/pgvector_demo.py</code>, run against Postgres 16 with pgvector 0.8.1.</em></p>
+<p>The corpus is 10 help documents, cut into 22 chunks. One document is a retracted refund policy that allowed 30 days. The current policy allows 14.</p>
+<p><strong>The retracted policy nearly wins.</strong> Ask "can I get my money back on a yearly plan". Unfiltered, Postgres returns the current policy at 0.936 and the retracted one at 0.927. Add <code>WHERE status = 'current'</code> and the retracted chunk is gone. The Python index returns the same three chunks with the same scores.</p>
+<p><strong>Keyword search finds the code.</strong> Ask "what does E-4021 mean". Vector search ranks a refund chunk first, at a similarity of 0.113, and misses the E-4021 section (<code>errors#0</code>) in its top 3. Postgres full-text search returns <code>errors#0</code> first. The hybrid query keeps <code>errors#0</code> on top with a fused score of 0.0320.</p>
+<p><strong>The index is used.</strong> <code>EXPLAIN</code> shows <code>Index Scan using chunks_embedding_hnsw</code>. On 22 rows Postgres prefers a plain scan, so the demo turns sequential scans off for that one statement.</p>
+<p><strong>The eval.</strong> The demo runs no eval itself. In the Python pipeline (<code>mini_rag.py</code>), on 12 questions, recall@3 is 0.667 for keyword search, 0.833 for vector search and 0.917 for hybrid. The contract's bar is 0.90, so hybrid ships and vector search alone does not.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Is the eval set written by a person, with the answering chunk for each question?</li>
+<li class="task todo">Does <code>CLAUDE.md</code> name the corpus, the chunk rule, the model, the filter and the check?</li>
+<li class="task todo">Is the check enforced by a hook or CI, not only written in <code>CLAUDE.md</code>?</li>
+<li class="task todo">Does the vector column's dimension match the embedding model?</li>
+<li class="task todo">Does the index's operator class match the distance operator in the queries?</li>
+<li class="task todo">Is the status and permission filter in every retrieval query?</li>
+<li class="task todo">Do deletes and retractions reach the index in the same run as the source change?</li>
+<li class="task todo">Does the agent work only against a local or staging database?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="when-to-use-rag.html">When to use RAG, and when not to</a> — check the tool before you build it.</li>
+<li><a href="vector-databases.html">Vector databases</a> — HNSW, filters and choosing a store.</li>
+<li><a href="retrieval-quality.html">Retrieval quality</a> — hybrid search, reranking and recall.</li>
+<li><a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">Learning and doing ML with Claude Code</a> — the agent guard rails in depth.</li>
+<li><a href="../harness/phases/06-permissions-and-security/02-hooks/docs/en.html">Hooks</a> — enforcing a check every time.</li>
+<li><a href="../ai-security-and-guardrails/index.html">AI security and guardrails</a> — prompt injection through retrieved text.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>pgvector <a href="https://github.com/pgvector/pgvector/blob/v0.8.1/README.md">README</a>, release 0.8.1: the <code>&lt;=&gt;</code>, <code>&lt;-&gt;</code> and <code>&lt;#&gt;</code> operators, HNSW and IVFFlat indexes, <code>vector_cosine_ops</code>, the default <code>m</code> of 16 and <code>ef_construction</code> of 64, the 2,000-dimension index limit for <code>vector</code> and 4,000 for <code>halfvec</code>, filtering applied after the index scan, iterative index scans from 0.8.0, the Docker image, and hybrid search with full-text search and reciprocal rank fusion. Read from the source, 2026-10.</li>
+<li>PostgreSQL documentation, <a href="https://www.postgresql.org/docs/16/textsearch.html">Full text search</a>: <code>to_tsvector</code>, <code>websearch_to_tsquery</code> and <code>ts_rank</code>. Read 2026-10.</li>
+<li>Pinecone Python SDK <a href="https://github.com/pinecone-io/pinecone-python-client/tree/v10.0.0">README and docs</a>, release 10.0.0 (published 3 September 2026): <code>schema=</code> and <code>deployment=</code>, <code>index.documents.upsert</code> and <code>.search</code>, <code>DenseVectorQuery</code> and <code>TextQuery</code>, metadata filters, namespaces, asynchronous upserts, and a dense-vector clause that must appear alone. The call signatures were checked against the installed 10.0.0 package. Read 2026-10.</li>
+<li>Anthropic documentation, <a href="https://platform.claude.com/docs/en/build-with-claude/embeddings">Embeddings</a>: Anthropic does not offer its own embedding model, Voyage AI models, <code>voyage-4</code> with 1,024 dimensions by default, and the <code>input_type</code> parameter. Read 2026-10.</li>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/best-practices">Best practices</a>: <code>CLAUDE.md</code> read at the start of every conversation, <code>/init</code>, plan mode with <code>Shift+Tab</code> or <code>--permission-mode plan</code>, hooks as deterministic, Stop hooks as a gate, and "Claude stops when the work looks done". Read 2026-10.</li>
+<li>Claude Code docs, <a href="https://code.claude.com/docs/en/mcp">MCP</a>: <code>claude mcp add</code>, scopes, and the warning to verify you trust each server. Read 2026-10.</li>
+<li>Cormack, Clarke and Büttcher, <em>Reciprocal rank fusion outperforms Condorcet and individual rank learning methods</em>, SIGIR 2009: the <code>1 / (k + rank)</code> fusion with k = 60.</li>
+<li>The Fernpay corpus, the eval questions and every number are invented. They come from <code>rag-vector-databases/code/</code>.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="graphrag-and-structured-retrieval.html"><span class="lbl">← Previous</span><span class="ttl">Beyond flat RAG: GraphRAG &amp; structured retrieval</span></a><a class="navcard next" href="rag-terms.html"><span class="lbl">→ Next</span><span class="ttl">RAG terms, explained</span></a></div><footer class="foot"><strong>Core insight:</strong> Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-you-set-the-contract-the-agent-fills-in-the-stages">The mental model: you set the contract, the agent fills in the stages</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#stage-1-the-contract">Stage 1: the contract</a><a class="h3" href="#stage-2-the-plan">Stage 2: the plan</a><a class="h3" href="#stage-3-the-database">Stage 3: the database</a><a class="h3" href="#stage-4-ingestion">Stage 4: ingestion</a><a class="h3" href="#stage-5-retrieval">Stage 5: retrieval</a><a class="h3" href="#stage-6-the-grounded-prompt">Stage 6: the grounded prompt</a><a class="h3" href="#stage-7-the-eval">Stage 7: the eval</a><a class="h3" href="#the-pinecone-variant">The Pinecone variant</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-the-fernpay-help-centre-on-postgres">Worked example: the Fernpay help centre on Postgres</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=rag-vector-databases%2Fbuilding-rag-with-claude-code.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="rag-vector-databases/building-rag-with-claude-code.html"</script><script defer src="../assets/glossary.js"></script></body></html>

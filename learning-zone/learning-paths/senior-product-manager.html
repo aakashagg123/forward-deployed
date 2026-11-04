@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Learning paths</span><em>start here</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="senior-product-manager.html">1 · Learning path: Senior Product Manager</a><a class="modlink" href="ai-product-lead.html">2 · Learning path: AI Product Lead</a><a class="modlink" href="ai-engineer.html">3 · Learning path: AI Engineer</a><a class="modlink" href="ai-engineering-lead.html">4 · Learning path: AI Engineering Lead</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
@@ -56,7 +65,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <p><strong>Who it is for:</strong> a product manager with several years of experience who is starting to own AI features.</p>
 <p><strong>Outcome:</strong> You can lead an AI feature end to end. You choose the approach, set the quality bar, price it, and judge the risk.</p>
 <p><strong>Before you start:</strong> Several years in product. No machine learning background is needed.</p>
-<p><strong>Length:</strong> about 17 hours, across 4 stages. The time is a rough estimate (see Under the hood).</p>
+<p><strong>Length:</strong> about 20.5 hours, across 4 stages. The time is a rough estimate (see Under the hood).</p>
 <p><strong>Terms:</strong> a large language model (LLM) is a model like those behind chat assistants; the plural is large language models (LLMs); machine learning (ML) is the practice of training models from data.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the senior product manager</strong></p>
@@ -84,17 +93,17 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <tr>
 <td>2</td>
 <td>AI literacy</td>
-<td>about 7 hours</td>
+<td>about 8.5 hours</td>
 </tr>
 <tr>
 <td>3</td>
 <td>The decisions only you own</td>
-<td>about 4.5 hours</td>
+<td>about 6 hours</td>
 </tr>
 <tr>
 <td>4</td>
 <td>Go deeper where your product needs it (optional)</td>
-<td>about 3.5 hours</td>
+<td>about 4 hours</td>
 </tr>
 </tbody>
 </table>
@@ -105,8 +114,9 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <p><strong>Ready to move on when:</strong> You can explain a request path, an API contract and where latency comes from. You can name what changes when one component is a model.</p>
 <h2 id="stage-2-ai-literacy">Stage 2: AI literacy</h2>
-<p>Learn what a model is, what it does well, and what it does badly. Plain language, no maths. (about 7 hours)</p>
+<p>Learn what a model is, what it does well, and what it does badly. Plain language, no maths. (about 8.5 hours)</p>
 <ul>
+<li><strong>Visual explainers</strong>: <a href="../explainers/inside-one-llm-request.html">1. Inside one LLM request</a> · <a href="../explainers/how-a-model-learns.html">2. How a model learns</a> · <a href="../explainers/one-agent-run.html">5. One agent run, step by step</a></li>
 <li><strong>Machine learning</strong>: <a href="../machine-learning/what-machine-learning-is.html">1. What machine learning is, and when to use it</a> · <a href="../machine-learning/data-features-labels-and-leakage.html">2. Data: features, labels, splits and leakage</a> · <a href="../machine-learning/measuring-a-model.html">5. Measuring a model: metrics, thresholds and baselines</a> · <a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">8. Learning and doing ML with Claude Code</a></li>
 <li><strong>Generative AI</strong>: <a href="../generative-ai/what-is-generative-ai.html">1. What makes AI "generative"?</a> · <a href="../generative-ai/the-modalities.html">2. The five modalities</a> · <a href="../generative-ai/probabilistic-software.html">3. Probabilistic software</a> · <a href="../generative-ai/the-genai-product-stack.html">4. The generative AI product stack</a></li>
 <li><strong>LLMs</strong>: <a href="../llms/what-is-an-llm.html">1. What an LLM actually is</a> · <a href="../llms/the-context-window.html">2. The context window</a> · <a href="../llms/capabilities-and-the-jagged-frontier.html">3. Capabilities &amp; the jagged frontier</a> · <a href="../llms/temperature-sampling-and-determinism.html">5. Temperature, sampling &amp; determinism</a> · <a href="../llms/choosing-a-model.html">6. Choosing a model</a></li>
@@ -114,8 +124,9 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <p><strong>Ready to move on when:</strong> You can say why the same prompt gives different answers, what a context window limits, and when a bad result is a prompt problem and when it is not.</p>
 <h2 id="stage-3-the-decisions-only-you-own">Stage 3: The decisions only you own</h2>
-<p>Pick the approach, set the bar, count the cost, and accept the risk. (about 4.5 hours)</p>
+<p>Pick the approach, set the bar, count the cost, and accept the risk. (about 6 hours)</p>
 <ul>
+<li><strong>Visual explainers</strong>: <a href="../explainers/one-ai-feature-from-idea-to-launch.html">7. One AI feature, from idea to launch</a> · <a href="../explainers/one-model-change.html">8. One model change: cost, speed and quality</a> · <a href="../explainers/one-ai-feature-p-and-l.html">9. From one AI task to gross margin</a> · <a href="../explainers/one-eval-regression-traced.html">10. One eval regression, traced to its cause</a></li>
 <li><strong>Generative AI</strong>: <a href="../generative-ai/build-buy-or-fine-tune.html">5. Build, buy, or fine-tune</a> · <a href="../generative-ai/where-value-is-created-and-destroyed.html">6. Where generative AI creates and destroys value</a></li>
 <li><strong>LLMs</strong>: <a href="../llms/prompting-vs-rag-vs-finetuning.html">7. Prompting vs. RAG vs. fine-tuning</a></li>
 <li><strong>Product sense</strong>: <a href="../product-sense/product-sense-for-ai.html">7. Product sense for AI products</a></li>
@@ -126,9 +137,9 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <p><strong>Ready to move on when:</strong> You can write a one-page case for build, buy or fine-tune. It has an eval plan, a cost per task and the top three risks.</p>
 <h2 id="stage-4-go-deeper-where-your-product-needs-it-optional">Stage 4: Go deeper where your product needs it (optional)</h2>
-<p>Read only what your roadmap touches. Retrieval, memory and agents each change the product shape. (about 3.5 hours)</p>
+<p>Read only what your roadmap touches. Retrieval, memory and agents each change the product shape. (about 4 hours)</p>
 <ul>
-<li><strong>RAG &amp; vector databases</strong>: <a href="../rag-vector-databases/why-rag.html">1. Why RAG?</a> · <a href="../rag-vector-databases/retrieval-quality.html">5. Retrieval quality</a> · <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">6. RAG vs. long-context vs. fine-tuning</a></li>
+<li><strong>RAG &amp; vector databases</strong>: <a href="../rag-vector-databases/when-to-use-rag.html">1. When to use RAG, and when not to</a> · <a href="../rag-vector-databases/why-rag.html">2. Why RAG?</a> · <a href="../rag-vector-databases/retrieval-quality.html">6. Retrieval quality</a> · <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">7. RAG vs. long-context vs. fine-tuning</a></li>
 <li><strong>Memory &amp; context</strong>: <a href="../memory-and-context/memory-as-a-product-decision.html">1. Memory as a product decision</a> · <a href="../memory-and-context/when-memory-goes-wrong.html">5. When memory goes wrong</a></li>
 <li><strong>Agentic AI</strong>: <a href="../agentic-ai/what-is-an-agent.html">1. What is an agent?</a> · <a href="../agentic-ai/agentic-ai-as-a-product.html">8. Agentic AI as a product</a></li>
 <li><strong>Tool calling</strong>: <a href="../tool-calling/what-tool-calling-is.html">1. What tool calling is</a></li>
@@ -143,7 +154,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <h2 id="worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</h2>
 <p><em>This example is invented, to show the method.</em></p>
-<p>A senior PM with three hours a week plans 6 weeks of work. Each week ends with something you can show. At this pace the full path (about 17 hours) takes about 6 weeks.</p>
+<p>A senior PM with three hours a week plans 6 weeks of work. Each week ends with something you can show. At this pace the full path (about 20.5 hours) takes about 7 weeks.</p>
 <table>
 <thead>
 <tr>
@@ -217,7 +228,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <h2 id="sources">Sources</h2>
 <p>Lesson counts and titles come from the track overview pages and build configs in this repository. The time estimates are this course's rule of thumb, not measured results. The week plan is invented.</p></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="ai-product-lead.html"><span class="lbl">→ Next</span><span class="ttl">Learning path: AI Product Lead</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="ai-product-lead.html"><span class="lbl">→ Next</span><span class="ttl">Learning path: AI Product Lead</span></a></div><footer class="foot"><strong>Core insight:</strong> You do not need every lesson. Read the path for your role, in order, and skip the rest.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-path-at-a-glance">The path at a glance</a><a class="h2" href="#stage-1-technical-footing">Stage 1: Technical footing</a><a class="h2" href="#stage-2-ai-literacy">Stage 2: AI literacy</a><a class="h2" href="#stage-3-the-decisions-only-you-own">Stage 3: The decisions only you own</a><a class="h2" href="#stage-4-go-deeper-where-your-product-needs-it-optional">Stage 4: Go deeper where your product needs it (optional)</a><a class="h2" href="#skip-ahead-rules">Skip-ahead rules</a><a class="h2" href="#worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#under-the-hood-how-this-path-was-built">Under the hood: how this path was built</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

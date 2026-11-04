@@ -41,16 +41,26 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
     <h1>Foundations &amp; framework</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
 <p>Every system starts as one server. It grows by separating concerns: compute from storage, reads from writes, hot data from cold. <strong>Scaling</strong> is the art of adding capacity without redesigning. It uses load balancers, replication, caching, CDNs, message queues, and sharding. Before you design anything, <strong>back-of-envelope estimation</strong> forces you to confront the numbers: QPS, storage, bandwidth, cost. The <strong>four-step framework</strong> — scope, high-level design, deep dive, wrap-up — keeps you from getting lost in detail before you've agreed on what you're building.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the technical PM</strong></p>
@@ -358,6 +368,195 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <h3 id="step-4-wrap-up">Step 4: Wrap-up</h3>
 <p>Summarize the design. Name the bottlenecks you didn't address. Propose what you'd improve next: error handling, scaling the next bottleneck, metrics and monitoring. This is where you show you understand the system's limits, not just its capabilities.</p>
 <hr />
+<h2 id="what-a-design-review-evaluates">What a design review evaluates</h2>
+<p>A design discussion, in a team review or in a hiring interview, is graded on four things.</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>The question behind it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scoping</td>
+<td>Did you ask what the system must do, separate functional from non-functional needs, and fix the scale before you drew boxes?</td>
+</tr>
+<tr>
+<td>High-level design</td>
+<td>Did you produce a working architecture, with APIs, a data model and the core components?</td>
+</tr>
+<tr>
+<td>Depth and trade-offs</td>
+<td>Did you find the bottleneck, go deep on it, and say why you chose one option over another?</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>Did you state assumptions, think aloud and adapt to hints?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a-common-45-minute-split">A common 45-minute split</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Minutes</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Requirements</td>
+<td>about 5</td>
+<td>Features, scale, latency, availability, consistency</td>
+</tr>
+<tr>
+<td>Estimates</td>
+<td>about 5</td>
+<td>Queries per second, storage, bandwidth, to the precision that changes the design</td>
+</tr>
+<tr>
+<td>API and data model</td>
+<td>about 5</td>
+<td>The few calls and tables that matter</td>
+</tr>
+<tr>
+<td>High-level design</td>
+<td>about 10</td>
+<td>A box diagram that works end to end</td>
+</tr>
+<tr>
+<td>Deep dives</td>
+<td>about 15</td>
+<td>The hardest parts: hot spots, consistency, failure</td>
+</tr>
+<tr>
+<td>Wrap-up</td>
+<td>about 5</td>
+<td>Trade-offs, bottlenecks, what you would do next</td>
+</tr>
+</tbody>
+</table>
+<p>Treat the split as a guide. Some reviewers want depth early, so follow their lead. Say your assumptions out loud and check them: "I'll assume 100 million daily users and mostly reads. Does that match what you had in mind?"</p>
+<h3 id="five-mistakes-that-sink-strong-engineers">Five mistakes that sink strong engineers</h3>
+<ol>
+<li>Jumping into components before you clarify requirements and scale.</li>
+<li>Naming a technology without saying what problem it solves here.</li>
+<li>Ignoring failure: what happens when this box, region or dependency goes down?</li>
+<li>Designing for Google scale when the stated load fits on one database.</li>
+<li>Staying silent. The reviewer grades your reasoning, not only the final diagram.</li>
+</ol>
+<h3 id="how-to-practise-a-seven-stage-roadmap">How to practise: a seven-stage roadmap</h3>
+<p>Durations assume 8 to 12 focused hours a week. Experienced engineers can compress the stages they know.</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Focus</th>
+<th>Build this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0. Foundations (2 to 4 weeks)</td>
+<td>Networking, operating systems, SQL, indexes, transactions, big-O</td>
+<td>A small REST API on Postgres. Add an index and a cache. Measure p50 and p95 latency before and after.</td>
+</tr>
+<tr>
+<td>1. Building blocks (4 to 6 weeks)</td>
+<td>Load balancers, caches, CDNs, queues, search, rate limiters, ID generators</td>
+<td>Write a load balancer and a rate limiter, then load-test them.</td>
+</tr>
+<tr>
+<td>2. Distributed systems core (4 to 6 weeks)</td>
+<td>Replication, partitioning, consistency, quorums, consensus, clocks</td>
+<td>A replicated key-value store sharded with consistent hashing. Kill nodes and watch.</td>
+</tr>
+<tr>
+<td>3. Classic designs (6 to 8 weeks)</td>
+<td>15 or more designs with the framework above</td>
+<td>One design document a week, reviewed by someone else.</td>
+</tr>
+<tr>
+<td>4. Scale and reliability (3 to 4 weeks)</td>
+<td>SLOs, timeouts, retries, circuit breakers, safe deploys, disaster recovery</td>
+<td>Inject failures into your project and write a blameless postmortem.</td>
+</tr>
+<tr>
+<td>5. ML and GenAI design (4 to 6 weeks)</td>
+<td>Recommendations, ranking, search, vector search, LLM serving, agents</td>
+<td>A small two-stage recommender, or an open model served behind an API.</td>
+</tr>
+<tr>
+<td>6. Practice (ongoing)</td>
+<td>Timed mocks, out loud</td>
+<td>Ten or more mocks. Keep a log of the feedback and fix one habit a week.</td>
+</tr>
+</tbody>
+</table>
+<p>The best study loop is recall. Read one design, then redraw it from memory on a blank page before you read it again.</p>
+<hr />
+<h2 id="what-happens-when-you-type-a-url-and-press-enter">What happens when you type a URL and press Enter</h2>
+<p>This one question touches every layer in the track. Practise telling it in two minutes, then go deep wherever someone points.</p>
+<ol>
+<li><strong>DNS.</strong> The browser and operating system check their caches. If the name is unknown, a recursive resolver asks the root servers, then the top-level domain servers, then the authoritative servers for the IP address, which is often a CDN's.</li>
+<li><strong>Connection.</strong> A TCP handshake, then a TLS handshake. HTTP/3 uses QUIC, which combines both.</li>
+<li><strong>Request.</strong> The HTTP request reaches the CDN edge. On a miss, a load balancer forwards it to an application server.</li>
+<li><strong>Backend.</strong> Services read caches and databases, may call other services, and build a response.</li>
+<li><strong>Response.</strong> The HTML returns. The browser parses it, fetches CSS, scripts and images, mostly from the CDN, and renders the page.</li>
+</ol>
+<p>Each step is a place where a design can be fast or slow, and a place where it can fail.</p>
+<hr />
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>system-design/code/estimator.py</code>. It holds the estimation formulas as small functions, so you can change an assumption and watch the answer move.</p>
+<pre><code class="language-python">def twitter_like(dau=200e6, posts_per_user=2, read_ratio=100, bytes_per_post=300):
+    posts = dau * posts_per_user
+    write_qps = posts / 86_400
+    return dict(write_qps=write_qps, peak_write_qps=3 * write_qps, read_qps=write_qps * read_ratio,
+                gb_per_day=posts * bytes_per_post / 1e9, tb_per_year=posts * bytes_per_post * 365 / 1e12)
+</code></pre>
+<p>The file ends with asserts for every number below, plus the Base62 and availability figures used in the <a href="numbers-and-formulas.html">numbers and formulas</a> lesson.</p>
+<h2 id="worked-example-a-twitter-like-service-on-one-page">Worked example: a Twitter-like service on one page</h2>
+<p><em>The inputs are assumed. The numbers come from <code>system-design/code/estimator.py</code>.</em></p>
+<p>Assume 200 million daily active users, 2 posts each per day, 300 bytes per post and 100 reads for every write.</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Result</th>
+<th>What it tells you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Posts per day</td>
+<td>400 million</td>
+<td></td>
+</tr>
+<tr>
+<td>Write rate</td>
+<td>about 4,630 per second (peak about 13,900 at 3x)</td>
+<td>One well-tuned database cluster, with queues, can take this.</td>
+</tr>
+<tr>
+<td>Read rate</td>
+<td>about 463,000 per second</td>
+<td>Reads dominate by two orders of magnitude, so cache and precompute.</td>
+</tr>
+<tr>
+<td>Post text per day</td>
+<td>about 120 GB</td>
+<td>Small.</td>
+</tr>
+<tr>
+<td>Post text per year</td>
+<td>about 43.8 TB, before replicas</td>
+<td>Media will dwarf it, so media goes to object storage and a CDN.</td>
+</tr>
+</tbody>
+</table>
+<p>Round aggressively and say so out loud. The goal is the right order of magnitude, not decimals.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Premature optimization</strong> — sharding before you've exhausted replication; caching before you've indexed properly.</li>
@@ -382,9 +581,17 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <li><a href="../technical-product-sense/latency-scale-performance.html">Latency, scale &amp; performance</a> — the product-sense view of the same scaling concerns</li>
 <li><a href="../technical-product-sense/economics-of-infrastructure.html">Economics of infrastructure</a> — what scaling decisions cost in dollars</li>
 <li><a href="../ai/06-strategy-tradeoffs.html#production-failure-modes">Production failure modes</a> — how these patterns fail when LLMs are in the loop</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Jeff Dean, "Numbers everyone should know" and the widely circulated "latency numbers every programmer should know": the order-of-magnitude figures.</li>
+<li>Betsy Beyer et al., <em>Site Reliability Engineering</em>, O'Reilly, 2016 (sre.google/sre-book): SLIs, SLOs and error budgets.</li>
+<li>Martin Kleppmann, <em>Designing Data-Intensive Applications</em>, O'Reilly, 2017: the standard reference for the data topics in this track.</li>
+<li>Alex Xu, <em>System Design Interview</em>, volumes 1 and 2: the four-step framework and many of the systems this track covers.</li>
+<li>These sources were not re-opened during this revision, and the lesson's fact-check is pending. Numbers in the worked examples are invented or estimated, and come from the code in <code>system-design/code/</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="core-building-blocks.html"><span class="lbl">→ Next</span><span class="ttl">Core building blocks</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#scaling-from-one-server-to-millions-of-users">Scaling: from one server to millions of users</a><a class="h3" href="#single-server-to-separated-tiers">Single server to separated tiers</a><a class="h3" href="#load-balancing-and-replication">Load balancing and replication</a><a class="h3" href="#caching-cdn-and-statelessness">Caching, CDN, and statelessness</a><a class="h3" href="#sharding-the-final-frontier">Sharding: the final frontier</a><a class="h2" href="#back-of-envelope-estimation">Back-of-envelope estimation</a><a class="h3" href="#the-numbers-you-need-to-know">The numbers you need to know</a><a class="h3" href="#availability-in-nines">Availability in nines</a><a class="h3" href="#worked-example-twitter-scale-estimation">Worked example: Twitter-scale estimation</a><a class="h2" href="#the-four-step-system-design-framework">The four-step system design framework</a><a class="h3" href="#step-1-understand-the-problem-and-establish-scope">Step 1: Understand the problem and establish scope</a><a class="h3" href="#step-2-propose-high-level-design-and-get-buy-in">Step 2: Propose high-level design and get buy-in</a><a class="h3" href="#step-3-design-deep-dive">Step 3: Design deep dive</a><a class="h3" href="#step-4-wrap-up">Step 4: Wrap-up</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="numbers-and-formulas.html"><span class="lbl">→ Next</span><span class="ttl">Numbers, formulas and papers to know</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#scaling-from-one-server-to-millions-of-users">Scaling: from one server to millions of users</a><a class="h3" href="#single-server-to-separated-tiers">Single server to separated tiers</a><a class="h3" href="#load-balancing-and-replication">Load balancing and replication</a><a class="h3" href="#caching-cdn-and-statelessness">Caching, CDN, and statelessness</a><a class="h3" href="#sharding-the-final-frontier">Sharding: the final frontier</a><a class="h2" href="#back-of-envelope-estimation">Back-of-envelope estimation</a><a class="h3" href="#the-numbers-you-need-to-know">The numbers you need to know</a><a class="h3" href="#availability-in-nines">Availability in nines</a><a class="h3" href="#worked-example-twitter-scale-estimation">Worked example: Twitter-scale estimation</a><a class="h2" href="#the-four-step-system-design-framework">The four-step system design framework</a><a class="h3" href="#step-1-understand-the-problem-and-establish-scope">Step 1: Understand the problem and establish scope</a><a class="h3" href="#step-2-propose-high-level-design-and-get-buy-in">Step 2: Propose high-level design and get buy-in</a><a class="h3" href="#step-3-design-deep-dive">Step 3: Design deep dive</a><a class="h3" href="#step-4-wrap-up">Step 4: Wrap-up</a><a class="h2" href="#what-a-design-review-evaluates">What a design review evaluates</a><a class="h3" href="#a-common-45-minute-split">A common 45-minute split</a><a class="h3" href="#five-mistakes-that-sink-strong-engineers">Five mistakes that sink strong engineers</a><a class="h3" href="#how-to-practise-a-seven-stage-roadmap">How to practise: a seven-stage roadmap</a><a class="h2" href="#what-happens-when-you-type-a-url-and-press-enter">What happens when you type a URL and press Enter</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-a-twitter-like-service-on-one-page">Worked example: a Twitter-like service on one page</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

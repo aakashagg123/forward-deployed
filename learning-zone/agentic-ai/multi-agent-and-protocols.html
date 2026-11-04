@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Agentic AI</span><em>an agents module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-an-agent.html">1 · What is an agent?</a><a class="modlink" href="tools-and-function-calling.html">2 · Tools &amp; function calling</a><a class="modlink" href="context-and-memory.html">3 · Context &amp; memory</a><a class="modlink" href="planning-and-reasoning.html">4 · Planning &amp; reasoning</a><a class="modlink active" href="multi-agent-and-protocols.html">5 · Multi-agent systems &amp; protocols</a><a class="modlink" href="reliability-and-evals.html">6 · Reliability &amp; evals</a><a class="modlink" href="safety-security-and-governance.html">7 · Safety, security &amp; governance</a><a class="modlink" href="agentic-ai-as-a-product.html">8 · Agentic AI as a product</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
@@ -155,7 +164,10 @@ org chart, and org charts feel like progress.</p>
   grepping logs and return one paragraph, so the lead's context stays clean — often the
   real reason this beats one agent. <strong>Parallelism</strong>: three research threads run at once.
   The recurring cost is that the orchestrator's brief <em>is</em> the spec. Vague briefs yield
-  duplicated or contradictory work.</li>
+  duplicated or contradictory work. Anthropic's own multi-agent research system shows both
+  sides. It beat a single agent by 90.2% on an internal research eval. It also used about
+  15 times the tokens of a chat. Anthropic notes the pattern fits parallel research well
+  and tightly coupled work, such as coding, poorly.</li>
 <li><strong>Pipeline</strong> — sequential specialists, each stage checkable. This is the multi-agent
   version of a <a href="what-is-an-agent.html">workflow</a>: predictable, testable stage by stage,
   and usually the right shape when stages are known in advance.</li>
@@ -175,20 +187,29 @@ internalizing because it inoculates you against a whole genre of hype:</p>
 <ul>
 <li><strong>MCP (Model Context Protocol)</strong> — real, shipped, and broadly adopted across major
   vendors. It's the standard way to plug tools and data into agents
-  (<a href="tools-and-function-calling.html">lesson 2</a>). If you learn one protocol, learn this.</li>
-<li><strong>A2A (Agent2Agent)</strong> — real (Google-initiated, now a Linux Foundation project):
-  agents advertise capabilities and delegate to each other across vendors. It's early —
-  watch it, pilot it where a partner ecosystem demands it, but don't architect your
-  product around universal adoption.</li>
+  (<a href="tools-and-function-calling.html">lesson 2</a>). In December 2025 Anthropic gave MCP to
+  the Agentic AI Foundation, a Linux Foundation body. That moves it from one vendor's
+  project to neutral governance. If you learn one protocol, learn this.</li>
+<li><strong>A2A (Agent2Agent)</strong> — real (Google-initiated, donated to the Linux Foundation in June
+  2025): agents advertise capabilities and delegate to each other across vendors. It
+  reached a stable v1.0 in March 2026, with signed Agent Cards for identity. It is still
+  young. Pilot it where a partner ecosystem demands it, but don't architect your product
+  around universal adoption.</li>
 <li><strong>The rest</strong> — a mix of research proposals, single-vendor efforts, and acronyms that
-  exist mainly on infographics. Some may mature. None is a dependency you should list
+  exist mainly on infographics. One example: the "ACP" on those infographics is usually
+  IBM's Agent Communication Protocol. IBM merged it into A2A in August 2025 and archived
+  it. It is not the commerce ACP described below. The same three letters name two
+  different protocols, so always ask which one a vendor means. Some may mature. None is a dependency you should list
   today.</li>
 </ul>
 <p>One protocol family did arrive with real backing: <strong>agentic commerce</strong>. Google's
 <strong>AP2</strong> (Agent Payments Protocol) and OpenAI/Stripe's <strong>ACP</strong> (Agentic Commerce
-Protocol, powering Instant Checkout inside ChatGPT) both shipped in late 2025 —
+Protocol, which powered Instant Checkout inside ChatGPT) both shipped in late 2025 —
 mandates, payment credentials, and merchant integration for agents that <em>buy things</em>.
-It's early, but note what it validates: the money layer is exactly the transaction-cost
+Adoption has been slow. In March 2026 OpenAI scaled Instant Checkout back after weak
+merchant uptake. Shoppers are now sent to the retailer's own app to pay. The protocol
+lives on in ChatGPT Apps. So the lesson is double: the money layer is where agents are
+heading, and demand there is unproven. Note what it validates: the money layer is exactly the transaction-cost
 territory that <a href="agentic-ai-as-a-product.html">workflow capture</a> says agents absorb.
 Watch this family more closely than the alphabet soup above.</p>
 <p>Here's the strategic read: tool-to-agent standardization (MCP) succeeded because the
@@ -246,7 +267,7 @@ in their prompt.</p>
 <li><a href="context-and-memory.html">Context &amp; memory</a></li>
 <li><a href="reliability-and-evals.html">Reliability &amp; evals</a></li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="planning-and-reasoning.html"><span class="lbl">← Previous</span><span class="ttl">Planning &amp; reasoning</span></a><a class="navcard next" href="reliability-and-evals.html"><span class="lbl">→ Next</span><span class="ttl">Reliability &amp; evals</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="planning-and-reasoning.html"><span class="lbl">← Previous</span><span class="ttl">Planning &amp; reasoning</span></a><a class="navcard next" href="reliability-and-evals.html"><span class="lbl">→ Next</span><span class="ttl">Reliability &amp; evals</span></a></div><footer class="foot"><strong>Core insight:</strong> Teams win with agents by matching autonomy to stakes, making the work verifiable, and earning trust one tier at a time.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-topologies">The topologies</a><a class="h2" href="#the-protocol-landscape-honestly">The protocol landscape, honestly</a><a class="h2" href="#when-to-go-multi-agent">When to go multi-agent</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open module menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI&nbsp;engineering</span><em>for AI-native PMs</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="00-foundations.html"><span class="ButtonInner">00</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="01-inference-internals.html"><span class="ButtonInner">01</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="02-reliable-outputs.html"><span class="ButtonInner">02</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="03-rag.html"><span class="ButtonInner">03</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="04-evals-observability.html"><span class="ButtonInner">04</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="05-safety-multitenancy.html"><span class="ButtonInner">05</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="06-strategy-tradeoffs.html"><span class="ButtonInner">06</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="00-foundations.html"><span class="num">00</span>Foundations</a><a class="modlink active" href="01-inference-internals.html"><span class="num">01</span>Inference internals</a><div class="sub"><a href="#interactive">◆ Interactive demo</a><a href="#prompt-vs-semantic-caching">Prompt caching vs. semantic caching</a><a href="#kv-cache-management">KV cache management: eviction, reuse, and memory pressure at scale</a><a href="#prefill-vs-decode">Prefill vs. decode latency</a><a href="#batching-and-paged-attention">Continuous batching &amp; paged attention</a><a href="#speculative-quantization-distillation">Speculative decoding vs. quantization vs. distillation</a><a href="#quantization-formats">Quantization formats: INT8, INT4, FP8, AWQ, GPTQ — and when it hurts</a><a href="#recap">Recap &amp; examples</a></div><a class="modlink" href="02-reliable-outputs.html"><span class="num">02</span>Reliable outputs &amp; tool use</a><a class="modlink" href="03-rag.html"><span class="num">03</span>RAG &amp; retrieval</a><a class="modlink" href="04-evals-observability.html"><span class="num">04</span>Evals &amp; observability</a><a class="modlink" href="05-safety-multitenancy.html"><span class="num">05</span>Safety &amp; multi-tenancy</a><a class="modlink" href="06-strategy-tradeoffs.html"><span class="num">06</span>Strategy &amp; tradeoffs</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Module 01</span>
@@ -146,9 +155,20 @@ after the first.</p>
   invalidates everything after it. This is why
   <a href="00-foundations.html#context-engineering">context engineering</a> insists on
   a <em>stable prefix</em>.</li>
-<li><strong>Time-limited.</strong> Cached entries expire; provider TTLs are short, often
-  minutes. Self-hosted entries are subject to
+<li><strong>Time-limited.</strong> Cached entries expire. Provider lifetimes are short and
+  differ by vendor. Anthropic's default is 5 minutes, with an optional 1-hour
+  tier. OpenAI keeps entries for about 5 to 10 minutes of inactivity, up to an
+  hour, with an optional extended mode of up to 24 hours. Each cache hit
+  refreshes the timer. Self-hosted entries are subject to
   <a href="#kv-cache-management">KV cache eviction</a> under memory pressure.</li>
+<li><strong>Priced as a trade.</strong> Anthropic charges a premium to write a cache entry
+  (1.25× the base input price for 5 minutes, 2× for 1 hour). Reads cost a
+  fraction of the base price (0.1× or less). A prefix that is written but
+  rarely re-read can cost <em>more</em> than no caching. Check the current price page,
+  because the multipliers vary by model.</li>
+<li><strong>Minimum length.</strong> Short prompts are not cached, and the API returns no
+  error. The minimum depends on the model (512 to 4,096 tokens on Anthropic's
+  current list). Read the cache-hit fields in the response to confirm a hit.</li>
 </ul>
 <p><strong>Design rules:</strong></p>
 <ul>
@@ -159,6 +179,14 @@ after the first.</p>
 <li>In multi-tenant systems, be deliberate: a shared prefix is fine, but never
   let cache <em>reuse</em> cross a trust boundary in a way that exposes data. See
   <a href="05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant cache safety</a>.</li>
+<li>Know the provider's isolation scope. Anthropic and OpenAI both say caches are
+  never shared across organizations. Anthropic also isolates by workspace on its
+  own API, but only by organization on Amazon Bedrock and Google Cloud.</li>
+<li>"Lossless" is about the output distribution. A cache hit is still <em>visible</em>
+  as lower latency. A 2025 audit of LLM APIs (Gu et al.) used that timing gap as
+  a side channel and found global cache sharing across users at seven providers.
+  Providers have since documented tighter scopes. Still, treat a shared cache as
+  a possible information channel in your threat model.</li>
 </ul>
 <h2 id="semantic-caching">Semantic caching</h2>
 <p><strong>What it reuses:</strong> a <em>final response</em>. The system embeds the query. If its
@@ -1035,15 +1063,19 @@ bit-width.</p>
   <section class="recap MarkdownContent" id="recap"><div class="recap-head"><span class="recap-ic">📌</span><h2>Recap &amp; real-world examples</h2></div><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
 <p><strong>PagedAttention / vLLM (UC Berkeley, 2023).</strong> By managing the
 <a href="#kv-cache-management">KV cache</a> in non-contiguous "pages" instead of one
-big reserved block, the PagedAttention paper reported up to <strong>~24× higher
-throughput</strong> than prior serving systems at the same latency. vLLM became a
-default open-source serving engine on the strength of it. 🎯 <em>PM takeaway:</em>
+big reserved block, the vLLM team reported up to <strong>24× higher throughput</strong> than
+HuggingFace Transformers and up to <strong>3.5×</strong> over HuggingFace TGI. The peer-reviewed
+paper reports <strong>2–4×</strong> over earlier specialized serving systems at the same latency
+(FasterTransformer and Orca). The 24× figure is a best case against a naive baseline.
+vLLM became a default open-source serving engine on the strength of it. 🎯 <em>PM takeaway:</em>
 the same GPU can serve far more traffic. Your <strong>$/token and gross margin</strong>
 are an engineering choice, not a fixed input. See
 <a href="#batching-and-paged-attention">batching &amp; paged attention</a>.</p>
 <p><strong>Prompt caching goes mainstream (2024).</strong> Anthropic, OpenAI, and Google all
 shipped prefix/prompt caching that can cut the cost of the <em>cached</em> input by
-up to <strong>~90%</strong> and reduce time-to-first-token. This only works when your
+up to <strong>~90%</strong> and reduce time-to-first-token. Today, discounts on cached reads
+range from 90% to 95% or more, depending on the provider and model. Check the
+current price page before you build a business case. This only works when your
 prompt prefix is byte-stable. 🎯 <em>PM takeaway:</em> a stable system prompt is
 literally money. A per-request timestamp at the top of the prompt quietly
 throws that discount away. See

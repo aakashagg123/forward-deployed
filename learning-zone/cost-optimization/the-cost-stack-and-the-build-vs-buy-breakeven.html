@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Cost optimization</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-cost-stack-and-the-build-vs-buy-breakeven.html">1 · The cost stack, and the build-vs-buy breakeven</a><a class="modlink" href="finops-budgets-forecasting-and-the-cost-review.html">2 · FinOps for AI: budgets, forecasting &amp; the cost review</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
@@ -205,7 +214,12 @@ the terrain so a team knows which door to open.</p>
   <a href="../ai/01-inference-internals.html#prefill-vs-decode">Prefill vs. decode</a> and
   <a href="../ai/01-inference-internals.html#batching-and-paged-attention">Continuous batching &amp; paged attention</a>,
   which also covers why serving many users at once — not just one clever prompt — is the
-  biggest lever on cost-per-token for anyone running their own inference.</li>
+  biggest lever on cost-per-token for anyone running their own inference. Three
+  details change the bill and are easy to miss. Output tokens cost several times more than
+  input tokens: on current Claude models the ratio is 5 to 1. Reasoning ("thinking") tokens
+  bill as output tokens, even though you never see them. And a new tokenizer changes the
+  count: Anthropic says Claude 4.7 and later models produce about 30 percent more tokens for
+  the same text. Price per token is not price per task.</li>
 <li><strong>Caching</strong> — a prompt cache skips recomputation for an identical prefix, losslessly. A
   semantic cache skips the model call entirely for a <em>similar</em> query, at the risk of
   serving a wrong or stale answer. Fully developed in
@@ -224,20 +238,88 @@ map, a cost complaint stops being "everything is expensive" and becomes "which o
 four is actually the slack one, this quarter, for this feature" — a question
 <a href="../ai/04-evals-observability.html#cost-attribution">cost attribution</a> is built to
 answer with data instead of guesses.</p>
+<h2 id="reading-a-price-sheet-the-modifiers">Reading a price sheet: the modifiers</h2>
+<p>The four levers show up on a price sheet as multipliers. A product leader needs only a few of
+them. The table shows Anthropic's list on 2026-10-29. Check the vendor page before you quote any
+number, because these change often.</p>
+<table>
+<thead>
+<tr>
+<th>Modifier</th>
+<th>What it does</th>
+<th>Catch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prompt cache hit</td>
+<td>Reads cost 0.1x base input (0.05x on Opus 5.5 and Sonnet 5.5, 0.025x on Fable 5.1)</td>
+<td>A write costs 1.25x (5-minute) or 2x (1-hour), and the default cache lifetime is 5 minutes</td>
+</tr>
+<tr>
+<td>Batch API</td>
+<td>50 percent off input and output</td>
+<td>Asynchronous: results arrive within 24 hours, most within 1 hour</td>
+</tr>
+<tr>
+<td>Fast mode</td>
+<td>Up to 2.5x output speed on supported Opus models</td>
+<td>Premium price (Opus 5.5: $8 and $40 per million tokens, double standard) and no batch discount</td>
+</tr>
+<tr>
+<td>US-only inference</td>
+<td>1.1x on all token prices</td>
+<td>Applies to input, output and cache</td>
+</tr>
+<tr>
+<td>Long prompts</td>
+<td>Full 1M-token window at the standard rate on most models</td>
+<td>Haiku 5.5 charges a higher rate once a prompt passes 100,000 tokens</td>
+</tr>
+</tbody>
+</table>
+<p>Four points matter for decisions.</p>
+<ul>
+<li><strong>Caching and batch stack.</strong> Cache hits in a batch are best-effort, because batch requests run
+  concurrently. Do not forecast the best-case product of both discounts.</li>
+<li><strong>Cache hit rate is a metric.</strong> A change to the tools, the system prompt, or an early message
+  invalidates the cached prefix after it. A timestamp at the top of a prompt can silently turn
+  every call into a full-price call.</li>
+<li><strong>Timing is a lever.</strong> Work nobody waits on (evals, enrichment, nightly summaries) belongs in
+  batch. OpenAI's Flex tier prices tokens at Batch rates for the same kind of work, with
+  occasional 429 "resource unavailable" errors, and you are not billed for those.</li>
+<li><strong>Effort is a lever.</strong> Anthropic's <code>effort</code> setting changes how many tokens the model spends
+  on text, tool calls and thinking. Its model-choice guide says tuning effort is often a better
+  lever than switching models. Opus 5.5 and Haiku 5.5 default to medium effort. The other
+  current models default to high. Test your own evals before you lower it.</li>
+</ul>
 <h2 id="the-build-vs-buy-breakeven">The build-vs-buy breakeven</h2>
 <p>Every team renting a frontier model's API eventually asks: <em>should we run this
 ourselves?</em> The honest answer is arithmetic, not instinct — a crossover volume where a
 provider's per-token price, multiplied by your usage, exceeds the fixed and variable cost
 of serving it yourself.</p>
 <p><strong>The metered side</strong> scales linearly with volume: <code>tokens/month × price/token</code>. It has
-no fixed cost, and it falls automatically whenever the provider cuts prices — which,
-historically, has been often and steeply.</p>
+no fixed cost, and it falls automatically whenever the provider cuts prices. Prices for a
+given capability tier have fallen steeply. Anthropic's Opus tier went from $15 and $75 per
+million input and output tokens (Opus 4.1) to $4 and $20 (Opus 5.5). But vendors also add
+higher tiers: Fable 5.1 lists at $10 and $50. Compare price by capability tier, not by
+vendor, and count tokens per task, not price per token.</p>
 <p><strong>The self-hosted side</strong> has a large fixed cost (GPU capacity, whether reserved or
 committed) plus a much smaller marginal cost per token once that capacity is running.
 <a href="../ai/01-inference-internals.html#batching-and-paged-attention">Continuous batching and paged attention</a>
 are exactly what determine how low that marginal cost goes — a well-tuned serving stack
 extracts far more tokens per dollar of GPU than a naive one, which shifts the whole
 crossover point.</p>
+<p><strong>Utilization is the hidden variable.</strong> A GPU bills by the hour, busy or idle. The effective
+cost per million output tokens is <code>GPU price per hour × 1,000,000 ÷ (output tokens per second ×
+3,600)</code>, and the tokens per second you use is your real traffic, not the peak the hardware can
+reach. A product with office-hours traffic leaves the GPU idle most of the day. Published
+2026 breakeven analyses disagree widely for this reason, and most come from GPU vendors, so run
+the numbers with your own traffic shape. Add the staff who run it: on-call, upgrades, security
+patching and capacity planning. Also price two middle paths. One is a smaller model from the
+same vendor, such as a Haiku-class model at $0.10 per million input tokens for short prompts.
+The other is open-weight models hosted by a third party. Against a cheap small model,
+self-hosting may never break even.</p>
 <p>The two lines cross at a specific volume: below it, metered API pricing wins because
 you're not using enough of the fixed capacity to justify owning it. Above it,
 self-hosting wins because the fixed cost is now spread across enough tokens that the
@@ -253,7 +335,7 @@ reaches acceptable quality — the same scoping judgment
 <a href="../technical-product-sense/technical-sense-for-ai.html">technical sense for AI systems</a>
 develops for the reliable frontier, applied to cost instead of capability.</p>
 <h2 id="a-worked-pass-the-self-hosting-decision-nobody-re-ran">A worked pass: the self-hosting decision nobody re-ran</h2>
-<p>A support-automation product launches on a frontier model's API. At 2 million tokens a
+<p>This is an illustrative case with made-up numbers. A support-automation product launches on a frontier model's API. At 2 million tokens a
 month, the bill is a rounding error next to the eng team's own salaries, and self-hosting
 is obviously not worth the operational burden — nobody runs the numbers because the
 answer is visibly "stay metered." Eighteen months later, volume has grown 40x to 80
@@ -274,6 +356,13 @@ checking it again after the first, correct call.</p>
 <li><strong>Ignoring the moving crossover</strong> — the breakeven volume shifts with every provider
   price cut and every serving-efficiency gain, and a team that calculated it once treats
   the number as fixed.</li>
+<li><strong>Idle GPUs</strong> — a team sizes capacity for peak traffic, average utilization stays low, and
+  the real cost per token lands above the API price. The breakeven math assumed a busy GPU.</li>
+<li><strong>Cache-busting prompt changes</strong> — a new timestamp, user ID or tool list at the top of the
+  prompt breaks the cached prefix. Cache hit rate falls and the bill rises with no change in
+  traffic.</li>
+<li><strong>Hidden reasoning spend</strong> — a default effort or thinking setting multiplies output tokens on
+  simple requests, and the product leader sees only a higher cost per task.</li>
 <li><strong>Self-hosting without the serving-stack investment</strong> — running your own model without
   continuous batching and paged attention lands nowhere near the marginal cost the
   breakeven math assumed, so the crossover that looked favorable on paper never
@@ -287,6 +376,10 @@ checking it again after the first, correct call.</p>
       not intuition?</li>
 <li class="task todo">When did we last recheck that calculation against current token prices and current
       usage?</li>
+<li class="task todo">What is our cache hit rate, and who gets an alert when it drops?</li>
+<li class="task todo">Which workloads nobody waits on could run in batch or a flex tier?</li>
+<li class="task todo">Have we set effort and reasoning budgets per feature, based on our evals?</li>
+<li class="task todo">If we're self-hosting, what is our real GPU utilization, and does the breakeven use it?</li>
 <li class="task todo">If we're self-hosting, is the serving stack (batching, paged attention) actually
       tuned to the marginal cost the breakeven math assumed?</li>
 </ul>
@@ -299,9 +392,17 @@ checking it again after the first, correct call.</p>
 <li><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a>
   — the general unit-economics napkin this lesson's breakeven specializes for the
   build-vs-buy decision.</li>
-</ul></div>
-  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="finops-budgets-forecasting-and-the-cost-review.html"><span class="lbl">→ Next</span><span class="ttl">FinOps for AI: budgets, forecasting &amp; the cost review</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-cost-stack">The cost stack</a><a class="h2" href="#the-build-vs-buy-breakeven">The build-vs-buy breakeven</a><a class="h2" href="#a-worked-pass-the-self-hosting-decision-nobody-re-ran">A worked pass: the self-hosting decision nobody re-ran</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+</ul>
+<h2 id="sources">Sources</h2>
+<p>Checked 2026-10-29. Prices and multipliers: <a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic pricing</a>,
+<a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a>,
+<a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing">batch processing</a>,
+<a href="https://platform.claude.com/docs/en/build-with-claude/effort">effort</a> and
+<a href="https://platform.claude.com/docs/en/about-claude/models/choosing-a-model">choosing a model</a>.
+Reasoning tokens and Flex: <a href="https://developers.openai.com/api/docs/guides/reasoning">OpenAI reasoning guide</a>
+and <a href="https://developers.openai.com/api/docs/guides/flex-processing">Flex processing</a>.</p></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="finops-budgets-forecasting-and-the-cost-review.html"><span class="lbl">→ Next</span><span class="ttl">FinOps for AI: budgets, forecasting &amp; the cost review</span></a></div><footer class="foot"><strong>Core insight:</strong> Cost optimization is diagnosis plus governance: find the lever that is actually slack before you fix anything, and catch drift before the invoice does.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-cost-stack">The cost stack</a><a class="h2" href="#reading-a-price-sheet-the-modifiers">Reading a price sheet: the modifiers</a><a class="h2" href="#the-build-vs-buy-breakeven">The build-vs-buy breakeven</a><a class="h2" href="#a-worked-pass-the-self-hosting-decision-nobody-re-ran">A worked pass: the self-hosting decision nobody re-ran</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

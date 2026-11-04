@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Learning paths</span><em>start here</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="senior-product-manager.html">1 · Learning path: Senior Product Manager</a><a class="modlink" href="ai-product-lead.html">2 · Learning path: AI Product Lead</a><a class="modlink" href="ai-engineer.html">3 · Learning path: AI Engineer</a><a class="modlink active" href="ai-engineering-lead.html">4 · Learning path: AI Engineering Lead</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
@@ -56,7 +65,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <p><strong>Who it is for:</strong> an engineering manager or tech lead who runs a team that builds AI systems.</p>
 <p><strong>Outcome:</strong> You review AI architecture, set quality and safety standards, control cost, and work well with product.</p>
 <p><strong>Before you start:</strong> Years of engineering and some time running a team. You may not have shipped an AI feature yet.</p>
-<p><strong>Length:</strong> about 37 hours, across 5 stages. The time is a rough estimate (see Under the hood).</p>
+<p><strong>Length:</strong> about 42.5 hours, across 5 stages. The time is a rough estimate (see Under the hood).</p>
 <p><strong>Terms:</strong> a large language model (LLM) is a model like those behind chat assistants; the plural is large language models (LLMs); machine learning (ML) is the practice of training models from data.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the AI engineering lead</strong></p>
@@ -79,12 +88,12 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <tr>
 <td>1</td>
 <td>How models behave and what they cost</td>
-<td>about 10 hours</td>
+<td>about 13 hours</td>
 </tr>
 <tr>
 <td>2</td>
 <td>Architecture you can review</td>
-<td>about 15 hours</td>
+<td>about 16 hours</td>
 </tr>
 <tr>
 <td>3</td>
@@ -99,16 +108,18 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <tr>
 <td>5</td>
 <td>Work with product and run the team</td>
-<td>about 3.5 hours</td>
+<td>about 5.5 hours</td>
 </tr>
 </tbody>
 </table>
 <h2 id="stage-1-how-models-behave-and-what-they-cost">Stage 1: How models behave and what they cost</h2>
-<p>Cost and latency come from model and serving choices. Know the levers. (about 10 hours)</p>
+<p>Cost and latency come from model and serving choices. Know the levers. (about 13 hours)</p>
 <ul>
 <li><strong>LLMs</strong>: <a href="../llms/what-is-an-llm.html">1. What an LLM actually is</a> · <a href="../llms/the-context-window.html">2. The context window</a> · <a href="../llms/capabilities-and-the-jagged-frontier.html">3. Capabilities &amp; the jagged frontier</a> · <a href="../llms/choosing-a-model.html">6. Choosing a model</a> · <a href="../llms/prompting-vs-rag-vs-finetuning.html">7. Prompting vs. RAG vs. fine-tuning</a></li>
 <li><strong>Machine learning</strong>: <a href="../machine-learning/what-machine-learning-is.html">1. What machine learning is, and when to use it</a> · <a href="../machine-learning/data-features-labels-and-leakage.html">2. Data: features, labels, splits and leakage</a> · <a href="../machine-learning/generalization-overfitting-and-bias-variance.html">4. Generalization: overfitting and the bias–variance tradeoff</a> · <a href="../machine-learning/measuring-a-model.html">5. Measuring a model: metrics, thresholds and baselines</a> · <a href="../machine-learning/model-families.html">6. Model families: linear models, trees and neural networks</a> · <a href="../machine-learning/ml-in-production.html">7. ML in production: drift, skew and the lifecycle</a> · <a href="../machine-learning/learning-and-doing-ml-with-claude-code.html">8. Learning and doing ML with Claude Code</a></li>
 <li><strong>Tensors</strong>: <a href="../tensors/what-a-tensor-is.html">1. What a tensor is: shape, rank and dtype</a> · <a href="../tensors/matrix-multiplication.html">3. Matrix multiplication: the workhorse</a> · <a href="../tensors/batching-memory-and-precision.html">4. Batching, memory and precision</a></li>
+<li><strong>Transformers</strong>: <a href="../transformers/the-shape-of-a-transformer.html">1. The shape of a transformer</a> · <a href="../transformers/position-and-the-cost-of-context.html">4. Position, and the cost of context</a> · <a href="../transformers/generating-text-and-the-kv-cache.html">5. Generating text and the KV cache</a> · <a href="../transformers/variants-and-reading-a-model-card.html">6. Variants, and reading a model card</a></li>
+<li><strong>Fine-tuning and post-training</strong>: <a href="../fine-tuning/from-base-model-to-assistant.html">1. From base model to assistant: the post-training pipeline</a> · <a href="../fine-tuning/lora-and-parameter-efficient-tuning.html">3. LoRA and parameter-efficient tuning</a> · <a href="../fine-tuning/deciding-costing-and-checking-a-fine-tune.html">6. Deciding, costing and checking a fine-tune</a></li>
 <li><strong>AI engineering: inference internals</strong>: <a href="../ai/01-inference-internals.html#prefill-vs-decode">Prefill vs. decode latency</a> · <a href="../ai/01-inference-internals.html#batching-and-paged-attention">Continuous batching &amp; paged attention</a> · <a href="../ai/01-inference-internals.html#prompt-vs-semantic-caching">Prompt caching vs. semantic caching</a></li>
 <li><strong>AI engineering: reliable outputs</strong>: <a href="../ai/02-reliable-outputs.html#model-routing">Model routing, graceful fallback logic, and degraded-mode UX</a></li>
 <li><strong>AI engineering: evals &amp; observability</strong>: <a href="../ai/04-evals-observability.html#cost-attribution">Cost attribution per feature, workflow, tenant, and user journey — not just per model</a></li>
@@ -117,9 +128,9 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <p><strong>Ready to move on when:</strong> You can explain where a request's time and money go and name the three levers that change them.</p>
 <h2 id="stage-2-architecture-you-can-review">Stage 2: Architecture you can review</h2>
-<p>Know the shapes: grounding, context, memory, agents, workflows. Skim the build lessons. (about 15 hours)</p>
+<p>Know the shapes: grounding, context, memory, agents, workflows. Skim the build lessons. (about 16 hours)</p>
 <ul>
-<li><strong>RAG &amp; vector databases</strong>: <a href="../rag-vector-databases/why-rag.html">1. Why RAG?</a> · <a href="../rag-vector-databases/retrieval-quality.html">5. Retrieval quality</a> · <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">6. RAG vs. long-context vs. fine-tuning</a></li>
+<li><strong>RAG &amp; vector databases</strong>: <a href="../rag-vector-databases/when-to-use-rag.html">1. When to use RAG, and when not to</a> · <a href="../rag-vector-databases/why-rag.html">2. Why RAG?</a> · <a href="../rag-vector-databases/retrieval-quality.html">6. Retrieval quality</a> · <a href="../rag-vector-databases/rag-vs-long-context-vs-finetuning.html">7. RAG vs. long-context vs. fine-tuning</a> · <a href="../rag-vector-databases/building-rag-with-claude-code.html">9. Building RAG with Claude Code, pgvector and Pinecone</a></li>
 <li><strong>Context engineering</strong>: <a href="../context-engineering/what-is-context-engineering.html">1. What is context engineering, for a product leader?</a> · <a href="../context-engineering/the-anatomy-of-a-context-pipeline.html">3. The anatomy of a context pipeline</a> · <a href="../context-engineering/context-governance-at-scale.html">5. Context governance at scale</a></li>
 <li><strong>Memory &amp; context</strong>: <a href="../memory-and-context/memory-as-a-product-decision.html">1. Memory as a product decision</a> · <a href="../memory-and-context/when-memory-goes-wrong.html">5. When memory goes wrong</a></li>
 <li><strong>Tool calling</strong>: <a href="../tool-calling/tool-contracts-and-reliability.html">2. Tool contracts &amp; reliability</a></li>
@@ -146,14 +157,15 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <h2 id="stage-4-systems-at-scale">Stage 4: Systems at scale</h2>
 <p>AI features still run on ordinary systems. Hold the same bar for reliability. (about 2.5 hours)</p>
 <ul>
-<li><strong>System design</strong>: <a href="../system-design/foundations-and-framework.html">1. Foundations &amp; framework</a> · <a href="../system-design/core-building-blocks.html">2. Core building blocks</a> · <a href="../system-design/web-scale-services.html">3. Web-scale services</a> · <a href="../system-design/data-infrastructure.html">7. Data infrastructure</a></li>
+<li><strong>System design</strong>: <a href="../system-design/foundations-and-framework.html">1. Foundations &amp; framework</a> · <a href="../system-design/numbers-and-formulas.html">2. Numbers, formulas and papers to know</a> · <a href="../system-design/traffic-caching-apis-and-storage-choice.html">3. Traffic, caching, APIs and storage choice</a> · <a href="../system-design/real-time-systems.html">7. Real-time systems</a></li>
 <li><strong>Technical product sense</strong>: <a href="../technical-product-sense/reliability-and-failure.html">5. Reliability &amp; failure</a> · <a href="../technical-product-sense/economics-of-infrastructure.html">8. The economics of infrastructure</a></li>
 </ul>
 <p><strong>Ready to move on when:</strong> You can run a design review for scale, failure and cost on any service in the stack.</p>
 <h2 id="stage-5-work-with-product-and-run-the-team">Stage 5: Work with product and run the team</h2>
-<p>Turn standards into process: specs, launches, incidents and how product and engineering share ownership. (about 3.5 hours)</p>
+<p>Turn standards into process: specs, launches, incidents and how product and engineering share ownership. (about 5.5 hours)</p>
 <ul>
 <li><strong>Technical product management</strong>: <a href="../technical-product-management/specs-prds-and-rfcs.html">3. Specs, PRDs &amp; RFCs</a> · <a href="../technical-product-management/prioritization-and-roadmaps.html">4. Prioritization &amp; roadmaps</a> · <a href="../technical-product-management/working-with-engineering.html">5. Working with engineering</a> · <a href="../technical-product-management/metrics-and-experimentation.html">6. Metrics &amp; experimentation</a> · <a href="../technical-product-management/launches-rollouts-and-migrations.html">7. Launches, rollouts &amp; migrations</a> · <a href="../technical-product-management/incidents-and-postmortems.html">8. Incidents &amp; postmortems</a> · <a href="../technical-product-management/tpm-for-ai-products.html">9. Technical product management for AI</a></li>
+<li><strong>AI-assisted development</strong>: <a href="../ai-assisted-development/when-an-agent-writes-the-code.html">1. When an agent writes the code: where the bottleneck goes</a> · <a href="../ai-assisted-development/specs-and-the-context-file.html">2. Specs and the context file</a> · <a href="../ai-assisted-development/control-permissions-modes-and-hooks.html">4. Control: permissions, modes and hooks</a> · <a href="../ai-assisted-development/running-at-scale.html">5. Running at scale: sessions, subagents and fan-out</a> · <a href="../ai-assisted-development/measuring-and-governing.html">6. Measuring and governing</a></li>
 <li><strong>Product sense</strong>: <a href="../product-sense/product-sense-for-ai.html">7. Product sense for AI products</a></li>
 </ul>
 <p><strong>Ready to move on when:</strong> You and your PM share one definition of done, one quality bar and one incident process.</p>
@@ -166,7 +178,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <h2 id="worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</h2>
 <p><em>This example is invented, to show the method.</em></p>
-<p>An AI engineering lead with three hours a week plans 5 weeks of work. Each week ends with something you can show. This plan is a fast tour: one activity per stage. At this pace the full path (about 37 hours) takes about 13 weeks.</p>
+<p>An AI engineering lead with three hours a week plans 5 weeks of work. Each week ends with something you can show. This plan is a fast tour: one activity per stage. At this pace the full path (about 42.5 hours) takes about 15 weeks.</p>
 <table>
 <thead>
 <tr>
@@ -235,7 +247,7 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ul>
 <h2 id="sources">Sources</h2>
 <p>Lesson counts and titles come from the track overview pages and build configs in this repository. The time estimates are this course's rule of thumb, not measured results. The week plan is invented.</p></div>
-  <div class="pagenav"><a class="navcard prev" href="ai-engineer.html"><span class="lbl">← Previous</span><span class="ttl">Learning path: AI Engineer</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="ai-engineer.html"><span class="lbl">← Previous</span><span class="ttl">Learning path: AI Engineer</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> You do not need every lesson. Read the path for your role, in order, and skip the rest.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-path-at-a-glance">The path at a glance</a><a class="h2" href="#stage-1-how-models-behave-and-what-they-cost">Stage 1: How models behave and what they cost</a><a class="h2" href="#stage-2-architecture-you-can-review">Stage 2: Architecture you can review</a><a class="h2" href="#stage-3-quality-safety-and-access">Stage 3: Quality, safety and access</a><a class="h2" href="#stage-4-systems-at-scale">Stage 4: Systems at scale</a><a class="h2" href="#stage-5-work-with-product-and-run-the-team">Stage 5: Work with product and run the team</a><a class="h2" href="#skip-ahead-rules">Skip-ahead rules</a><a class="h2" href="#worked-example-a-week-by-week-plan">Worked example: a week-by-week plan</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#under-the-hood-how-this-path-was-built">Under the hood: how this path was built</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

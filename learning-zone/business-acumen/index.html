@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Business acumen for the product leader</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><main class="content index" id="top">
+  <div class="index-hero">
+    <h1>Business acumen for the product leader</h1>
+    <p class="lede">Money, markets, organizations and influence for Group PMs, Heads of Product and VPs — grounded in FinTech, Payments, Lending, eCommerce, InsurTech and Retail.</p>
+    <div class="index-insight"><span class="Badge" data-color="discovery" data-size="md" data-variant="soft" data-pill="">Core insight</span><p>Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.</p></div>
+    <div class="index-meta"><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">15 lessons</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">+ recap</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">interactive assessment</span><span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">6 domains</span></div>
+  </div>
+  <div class="intro MarkdownContent"><p><em>A standalone module: money, markets, organizations and influence, for Group PMs, Heads of Product and vice presidents (VPs) of Product.</em></p>
+<p>Product leaders are promoted for product judgement. Above Group PM level, they are judged on business results. The decisions change. You approve bets, set targets, design teams, set prices and argue for money at the executive table. Each of those decisions is made in the language of the business: cash, margin, risk, market position and organizational power.</p>
+<p>This module teaches that language, and how to use it to decide. It is written for Group Product Managers, Heads of Product and VPs of Product. Every lesson ties its ideas to six domains: <strong>FinTech, Payments, Lending, eCommerce, InsurTech and Retail</strong>. The domain examples use public disclosures of real companies, such as their annual reports and company blogs. Each lesson's invented worked example is labelled as invented.</p>
+<p>Start with the <strong><a href="assessment.html">interactive self-assessment</a></strong>. It scores you on the fifteen lessons, draws a radar chart of your strengths, and builds a two-week improvement plan from your largest gaps.</p>
+<p><strong>A note on scope.</strong> This module covers business judgement. Neighbouring modules cover the craft. Metric trees and experiments live in <a href="../technical-product-management/index.html">Technical product management</a>. Infrastructure cost lives in <a href="../technical-product-sense/index.html">Technical product sense</a>. Payment and ledger systems live in <a href="../system-design/index.html">System design</a>. Precision, recall and model measurement live in <a href="../machine-learning/index.html">Machine learning</a>. This module links to them and does not repeat them.</p>
+<h2 id="where-the-depth-lives">Where the depth lives</h2>
+<table>
+<thead>
+<tr>
+<th>If you want the full depth on</th>
+<th>Read here first</th>
+<th>Then go deeper in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The three statements, cash and float</td>
+<td><a href="the-language-of-money.html">The language of money</a></td>
+<td><a href="../system-design/transactional-and-financial.html">Transactional and financial systems</a>, for how ledgers and payouts record it</td>
+</tr>
+<tr>
+<td>Contribution margin, payback and lifetime value</td>
+<td><a href="unit-economics.html">Unit economics</a></td>
+<td><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a>, for the cost of goods sold hidden in infrastructure</td>
+</tr>
+<tr>
+<td>NPV, hurdle rates, funding and valuation</td>
+<td><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a></td>
+<td><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a>, for staged bets</td>
+</tr>
+<tr>
+<td>Base rates, thresholds and model risk</td>
+<td><a href="data-and-decisions.html">Data and decisions</a></td>
+<td><a href="../machine-learning/measuring-a-model.html">Measuring a model</a>, for precision, recall and the confusion matrix</td>
+</tr>
+<tr>
+<td>Metric trees, instrumentation and A/B tests</td>
+<td><a href="performance-and-growth.html">Performance and growth</a></td>
+<td><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a></td>
+</tr>
+<tr>
+<td>OKRs, scoring frameworks and roadmaps at team level</td>
+<td><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a></td>
+<td><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a></td>
+</tr>
+<tr>
+<td>How payment systems, ledgers and wallets work</td>
+<td><a href="unit-economics.html">Unit economics</a></td>
+<td><a href="../system-design/transactional-and-financial.html">Transactional and financial systems</a></td>
+</tr>
+<tr>
+<td>Domain expertise as product intuition</td>
+<td><a href="foundations-and-assessment.html">Foundations</a></td>
+<td><a href="../product-sense/domain-expertise.html">Domain expertise</a></td>
+</tr>
+<tr>
+<td>Artifacts and storytelling for influence</td>
+<td><a href="executive-influence-and-stakeholders.html">Executive influence</a></td>
+<td><a href="../product-sense/communication.html">Communication</a></td>
+</tr>
+<tr>
+<td>Running a launch end to end</td>
+<td><a href="products-and-marketing.html">Products and go-to-market</a></td>
+<td><a href="../technical-product-management/launches-rollouts-and-migrations.html">Launches, rollouts and migrations</a></td>
+</tr>
+<tr>
+<td>Breadth and depth as a learning strategy</td>
+<td><a href="foundations-and-assessment.html">Foundations</a></td>
+<td><a href="../first-principles/becoming-a-polymath.html">Becoming a polymath</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-knowledge-graph">The knowledge graph</h2>
+<pre class="mermaid">flowchart TB
+  subgraph FOUND[&quot;FOUNDATIONS&quot;]
+    L1[&quot;1. Foundations and the T-shaped leader&quot;]
+    L5[&quot;5. Data and decisions&quot;]
+  end
+  subgraph BIZ[&quot;BUSINESS AND MARKETS&quot;]
+    L2[&quot;2. Reading the three statements&quot;]
+    L3[&quot;3. Unit economics&quot;]
+    L4[&quot;4. Business cases, capital and valuation&quot;]
+    L6[&quot;6. Markets and customers&quot;]
+    L7[&quot;7. Competitive advantage and strategy&quot;]
+  end
+  subgraph PROD[&quot;PRODUCT LEADERSHIP&quot;]
+    L8[&quot;8. Pricing and business models&quot;]
+    L9[&quot;9. Products and go-to-market&quot;]
+    L10[&quot;10. Performance and growth&quot;]
+    L11[&quot;11. Portfolio strategy and capital allocation&quot;]
+  end
+  subgraph PEOPLE[&quot;PEOPLE AND INFLUENCE&quot;]
+    L12[&quot;12. Navigating the organization&quot;]
+    L13[&quot;13. Teams and collaboration&quot;]
+    L14[&quot;14. Leading leaders and org design&quot;]
+    L15[&quot;15. Executive influence and stakeholders&quot;]
+  end
+  L1 --&gt; L2 --&gt; L3 --&gt; L4
+  L4 --&gt; L11
+  L5 --&gt; L4
+  L3 --&gt; L8 --&gt; L9 --&gt; L10
+  L6 --&gt; L7 --&gt; L8
+  L3 --&gt; L10
+  L1 --&gt; L12 --&gt; L13 --&gt; L14
+  L12 --&gt; L15
+  L4 --&gt; L15</pre>
+<p>Read it in four clusters. <strong>Foundations:</strong> diagnose yourself, and learn to decide under uncertainty. <strong>Business and markets:</strong> how money is measured, what one unit earns, how a bet is valued, and where to compete. <strong>Product leadership:</strong> how to price, how to go to market, how to measure performance, and how to fund a portfolio. <strong>People and influence:</strong> the organization, teams, leaders and the executive table. The same four clusters colour the self-assessment's radar chart.</p>
+<p>The order is money first. The first four lessons give you the numbers that every later lesson uses.</p>
+<h2 id="the-lessons">The lessons</h2>
+<ol>
+<li><a href="foundations-and-assessment.html"><strong>Foundations: business acumen and the T-shaped leader</strong></a> — breadth, domain depth, each domain's first unit-economics question, and how to diagnose your gaps.</li>
+<li><a href="the-language-of-money.html"><strong>The language of money: reading the three statements</strong></a> — the income statement line by line, revenue recognition, the balance sheet, working capital, float and free cash flow.</li>
+<li><a href="unit-economics.html"><strong>Unit economics: from one transaction to a cohort</strong></a> — contribution margin layers, acquisition cost, cohort payback, lifetime value, and unit waterfalls for each domain.</li>
+<li><a href="business-cases-and-valuation.html"><strong>Business cases, capital and valuation</strong></a> — NPV, IRR, hurdle rates, how lenders and insurers fund themselves, the counterfactual, scenarios and how the company is valued.</li>
+<li><a href="data-and-decisions.html"><strong>Data and decisions</strong></a> — base rates, threshold economics, the value of information, forecasting in ranges and model governance.</li>
+<li><a href="markets-and-strategy.html"><strong>Markets and customers: segments, sizing and positioning</strong></a> — bottom-up sizing, segmentation, positioning, competitor teardowns and the growth matrix.</li>
+<li><a href="competitive-advantage-and-strategy.html"><strong>Competitive advantage and strategy</strong></a> — the five competitive forces as a method, profit pools, seven sources of advantage, network effects and how to structure a strategy.</li>
+<li><a href="monetization-and-business-models.html"><strong>Pricing and business models</strong></a> — value metrics, willingness to pay, elasticity, the price waterfall, regulated pricing and the business-model table.</li>
+<li><a href="products-and-marketing.html"><strong>Products and go-to-market</strong></a> — go-to-market motions, sales capacity, attribution versus incrementality, make-buy-partner and intellectual property.</li>
+<li><a href="performance-and-growth.html"><strong>Performance and growth</strong></a> — growth accounting, gross and net retention, vintage curves, loss development and targets with guardrails.</li>
+<li><a href="portfolio-strategy-and-allocation.html"><strong>Portfolio strategy and capital allocation</strong></a> — horizons, staged funding, correlated bets, the option to expand, acquisitions and sunsets.</li>
+<li><a href="navigating-the-organization.html"><strong>Navigating the organization</strong></a> — who holds which lever, the planning and budget cycle, how Risk decides, and stakeholder mapping.</li>
+<li><a href="teams-and-collaboration.html"><strong>Teams and collaboration</strong></a> — team types, interaction modes, the cost of a handoff, operating cadence and decision rights.</li>
+<li><a href="leading-leaders-and-org-design.html"><strong>Leading leaders and org design</strong></a> — the org-design process, the cost of a reorg, the general-manager model, leveling and calibration.</li>
+<li><a href="executive-influence-and-stakeholders.html"><strong>Executive influence and stakeholders</strong></a> — the executive narrative, how the board works, and negotiation in numbers.</li>
+</ol>
+<p>Each lesson has a <strong>🎯 For the product leader</strong> briefing, a labelled worked example, examples across the six domains, and an "Under the hood" section with a formula or template.</p>
+<p><strong>📌 Close out the module:</strong> <a href="recap.html">Recap &amp; real-world examples</a>, which ends with a self-test. Then re-take the <a href="assessment.html">self-assessment</a> to see what moved.</p></div>
+  <h2 class="sec">The lessons</h2>
+  <div class="cards"><a class="card" href="foundations-and-assessment.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">01</span><h3>Foundations: business acumen and the T-shaped leader</h3><span class="card-go">Read lesson →</span></a><a class="card" href="the-language-of-money.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">02</span><h3>The language of money: reading the three statements</h3><span class="card-go">Read lesson →</span></a><a class="card" href="unit-economics.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">03</span><h3>Unit economics: from one transaction to a cohort</h3><span class="card-go">Read lesson →</span></a><a class="card" href="business-cases-and-valuation.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">04</span><h3>Business cases, capital and valuation</h3><span class="card-go">Read lesson →</span></a><a class="card" href="data-and-decisions.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">05</span><h3>Data and decisions: deciding well under uncertainty</h3><span class="card-go">Read lesson →</span></a><a class="card" href="markets-and-strategy.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">06</span><h3>Markets and customers: segments, sizing and positioning</h3><span class="card-go">Read lesson →</span></a><a class="card" href="competitive-advantage-and-strategy.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">07</span><h3>Competitive advantage and strategy</h3><span class="card-go">Read lesson →</span></a><a class="card" href="monetization-and-business-models.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">08</span><h3>Pricing and business models</h3><span class="card-go">Read lesson →</span></a><a class="card" href="products-and-marketing.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">09</span><h3>Products and go-to-market</h3><span class="card-go">Read lesson →</span></a><a class="card" href="performance-and-growth.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">10</span><h3>Performance and growth: KPIs, scorecards and the metrics that move profit</h3><span class="card-go">Read lesson →</span></a><a class="card" href="portfolio-strategy-and-allocation.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">11</span><h3>Portfolio strategy and capital allocation</h3><span class="card-go">Read lesson →</span></a><a class="card" href="navigating-the-organization.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">12</span><h3>Navigating the organization: how the company really works</h3><span class="card-go">Read lesson →</span></a><a class="card" href="teams-and-collaboration.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">13</span><h3>Teams and collaboration: structures, rhythms and decision rights</h3><span class="card-go">Read lesson →</span></a><a class="card" href="leading-leaders-and-org-design.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">14</span><h3>Leading leaders and designing the product org</h3><span class="card-go">Read lesson →</span></a><a class="card" href="executive-influence-and-stakeholders.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">15</span><h3>Executive influence: narrative, the board and the negotiating table</h3><span class="card-go">Read lesson →</span></a><a class="card" href="recap.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">📌</span><h3>Recap &amp; real-world examples</h3><span class="card-go">Read recap →</span></a><a class="card" href="assessment.html"><span class="Badge" data-color="secondary" data-size="md" data-variant="soft">✓</span><h3>Business acumen self-assessment</h3><span class="card-go">Open →</span></a></div>
+  <footer class="foot">Educational content. Use it, fork it, teach from it.</footer>
+  </main><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2FREADME.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/index.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>AI security &amp; guardrails</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="the-threat-model-and-guardrails.html">1 · The threat model, and guardrails as architecture</a><a class="modlink" href="red-teaming-and-proving-your-defenses.html">2 · Red-teaming: testing your defenses</a><a class="modlink active" href="governance-audit-and-compliance.html">3 · Governance, audit &amp; compliance</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
@@ -227,7 +236,9 @@ auditor may also look at <strong>model change management</strong>: who approved 
 version, when, and against which evaluation. Ask your auditor how they treat it.</p>
 <p>Buyers may also ask for <strong>ISO/IEC 42001</strong> (December 2023), the first international standard
 for an AI management system. Others cite the NIST AI Risk Management Framework (RMF),
-released in January 2023, and its Generative AI Profile, NIST AI 600-1 (July 2024). None replaces SOC 2.
+released in January 2023, and its Generative AI Profile, NIST AI 600-1 (July 2024). NIST has also drafted a Cyber AI Profile (NIST IR 8596, preliminary draft Dec 2025) that
+maps AI security work onto its Cybersecurity Framework 2.0. It was still a draft in 2026.
+None replaces SOC 2.
 Each is a different request for the same thing: proof of how you manage AI risk.</p>
 <h2 id="gdpr-and-automated-decisions">GDPR and automated decisions</h2>
 <p><a href="../technical-product-sense/security-and-privacy.html">Security &amp; privacy sense</a> covers the
@@ -448,11 +459,16 @@ eu_exposure: true             # output reaches EU users, so the AI Act applies
 <li>AICPA, <a href="https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-2/">SOC suite of services</a>:
   the 2017 Trust Services Criteria with revised points of focus (2022), five categories,
   security required. The Type II period is a common practice, not a fixed rule.</li>
+<li>NIST Cyber AI Profile (IR 8596): draft status from search results only
+  (<a href="https://kpmg.com/us/en/articles/2026/cybersecurity-nist-draft-cybersecurity-framework-for-ai-reg-alert.html">KPMG alert</a>).
+  Not opened. Check NIST for the current status.</li>
+<li>Omnibus dates re-confirmed 2026-10-23 through search results from White &amp; Case, Mayer Brown
+  and Cuatrecasas. White &amp; Case blocked a direct read. The Official Journal still was not read.</li>
 <li>ISO/IEC 42001:2023; NIST AI RMF 1.0 (26 Jan 2023); NIST AI 600-1 (26 Jul 2024). Search-result
   excerpts.</li>
 <li>The deal scenario and the evidence-register sketch are invented and illustrative.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="red-teaming-and-proving-your-defenses.html"><span class="lbl">← Previous</span><span class="ttl">Red-teaming: testing your defenses</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="red-teaming-and-proving-your-defenses.html"><span class="lbl">← Previous</span><span class="ttl">Red-teaming: testing your defenses</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> AI security is four attacks, not one. A guardrail covers one shape, an untested defence is a guess, and governance counts only as evidence.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-from-governance-to-evidence">The mental model: from governance to evidence</a><a class="h2" href="#soc-2-the-default-enterprise-gate">SOC 2: the default enterprise gate</a><a class="h2" href="#gdpr-and-automated-decisions">GDPR and automated decisions</a><a class="h2" href="#the-eu-ai-act-risk-tiers-with-a-moving-timeline">The EU AI Act: risk tiers, with a moving timeline</a><a class="h2" href="#the-model-or-system-card">The model or system card</a><a class="h2" href="#worked-example-the-deal-that-stalled-in-security-review">Worked example: the deal that stalled in security review</a><a class="h2" href="#tradeoffs">Tradeoffs</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

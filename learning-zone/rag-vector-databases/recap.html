@@ -41,52 +41,31 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="why-rag.html">1 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">2 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">3 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">4 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">5 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">6 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">7 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-to-use-rag.html">1 · When to use RAG, and when not to</a><a class="modlink" href="why-rag.html">2 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">3 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">4 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">5 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">6 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">7 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">8 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="building-rag-with-claude-code.html">9 · Building RAG with Claude Code, pgvector and Pinecone</a><a class="modlink" href="rag-terms.html">10 · RAG terms, explained</a><a class="modlink active" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Recap</span>
     <h1>RAG &amp; vector databases — recap &amp; real-world examples</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="real-world-examples-war-stories">Real-world examples &amp; war stories</h2>
-<p><strong>The support bot that invented a policy (2025).</strong> Users of an AI coding tool were
-mysteriously logged out; the company's AI support agent confidently explained it was
-"expected behaviour under a new login policy" that never existed. Users cancelled, the
-company apologized. 🎯 <em>Takeaway:</em> a closed-book model answering from memory
-<a href="why-rag.html">hallucinates your own business</a>. Grounding the bot in the actual, current
-support docs — with a path to say "I don't have that" — is the difference between a helpful
-answer and a churn event.</p>
-<p><strong>"Just search our docs" that couldn't find the obvious doc.</strong> A recurring internal-tool
-story: a RAG assistant fails to answer a question whose answer is plainly in the handbook.
-The model gets blamed; the cause is upstream — the handbook was
-<a href="chunking-and-ingestion.html">chunked</a> mid-section so no chunk contained the whole answer,
-or retrieval was pure-semantic and the query hinged on an exact term. 🎯 <em>Takeaway:</em>
-<a href="retrieval-quality.html">retrieval quality</a>, not model IQ, is the ceiling — and you only see
-it if you measure recall.</p>
-<p><strong>The stale-index incident.</strong> A team ships a RAG feature, it's accurate at launch, and
-weeks later it's citing a retracted policy with a confident source link. Nobody built a
-<a href="chunking-and-ingestion.html">delete/refresh path</a>, so the retracted document still sat in
-the index. 🎯 <em>Takeaway:</em> ingestion is a permanent product surface; a knowledge feature
-that can't forget is worse than one that never knew, because people trust the citation.</p>
-<p><strong>Microsoft GraphRAG (2024).</strong> Microsoft Research showed that vector-only RAG fails on
-<em>global</em> questions ("what are the main themes in this corpus?") and multi-hop questions,
-and that building a graph over the corpus with pre-summarized communities lets an LLM answer
-both, with sources. It went from paper to product roadmaps within a year. 🎯 <em>Takeaway:</em>
-<a href="graphrag-and-structured-retrieval.html">flat RAG has a definite edge</a>; knowing the <em>shape</em>
-of question it can't answer tells you when structure earns its cost — and when it's fashion.</p>
-<p><strong>The "long context killed RAG" cycle.</strong> Each time context windows jump, the claim returns
-that you can drop retrieval and paste everything in. Teams that tried it on real corpora
-hit the same wall: the bill scaled with document count × calls, latency ballooned, and
-answers got <em>worse</em> as the relevant passage hid in the haystack. 🎯 <em>Takeaway:</em>
-<a href="rag-vs-long-context-vs-finetuning.html">long-context is a partner to RAG, not a replacement</a>
-— great when the knowledge is small and static, expensive and lossy when it isn't.</p>
-<p><strong>Fine-tuning to teach facts.</strong> A common expensive mistake: a team fine-tunes a model on
-their knowledge base to "make it know our product," then discovers the facts are stale the
-next release, can't be cited, and every update means retraining. 🎯 <em>Takeaway:</em>
-<a href="rag-vs-long-context-vs-finetuning.html">fine-tune for behaviour, retrieve for facts</a> —
-conflating the two burns money and trust.</p>
+  <div class="MarkdownContent"><h2 id="real-world-examples">Real-world examples</h2>
+<p><strong>The support bot that invented a policy (2025).</strong> Users of an AI coding tool were logged out without warning. The company's AI support agent reportedly explained that this was expected under a new login policy. The policy did not exist. Users reportedly cancelled their subscriptions. 🎯 <em>Takeaway:</em> a model answering from memory <a href="why-rag.html">invents your own business</a>. Grounding the bot in current support documents, with a path to say "I don't have that", is the difference between a helpful answer and lost customers.</p>
+<p><strong>Contextual retrieval (2024).</strong> Anthropic tested a simple change to ingestion: add a short note about the whole document to each chunk before embedding it. Failed retrievals in the top 20 fell by 35%. With keyword search added, they fell by 49%. With a reranker, by 67%. The same post says a knowledge base under about 200,000 tokens can often skip RAG and go in the prompt. 🎯 <em>Takeaway:</em> the gains came from <a href="chunking-and-ingestion.html">ingestion</a> and <a href="retrieval-quality.html">retrieval</a> changes. The study measured retrieval alone, with no model upgrade. And the first question is still <a href="when-to-use-rag.html">whether you need RAG</a>.</p>
+<p><strong>Microsoft GraphRAG (2024).</strong> Microsoft Research showed that flat RAG struggles with global questions, such as "what are the main themes in this corpus?". Their method builds a graph over the corpus and writes summaries for clusters of related entities in advance. A model can then answer global questions from those summaries. 🎯 <em>Takeaway:</em> <a href="graphrag-and-structured-retrieval.html">flat RAG has a definite edge</a>. Know which question shapes it cannot answer.</p>
+<p><strong>"Lost in the middle" (2023).</strong> Researchers at Stanford and elsewhere moved the passage that held the answer around a long prompt. Models often did best when it was at the start or end, and worse when it was in the middle. 🎯 <em>Takeaway:</em> a bigger window is not a free replacement for retrieval. <a href="rag-vs-long-context-vs-finetuning.html">Fewer, better passages</a> often beat everything at once.</p>
+<p><strong>The stale-index pattern.</strong> A common story in teams that ship RAG: the feature is accurate at launch, and weeks later cites a retracted policy with a confident source link. Nobody built a <a href="chunking-and-ingestion.html">delete path</a>. In this module's Fernpay corpus, the retracted refund policy scores 0.927 against 0.936 for the current one. 🎯 <em>Takeaway:</em> ingestion is a permanent product surface. A feature that cannot forget is worse than one that never knew, because people trust the citation.</p>
+<p><strong>Fine-tuning to teach facts.</strong> Another common pattern: a team fine-tunes a model on its knowledge base to "make it know our product". The facts are stale by the next release, cannot be cited, and every update means retraining. 🎯 <em>Takeaway:</em> <a href="rag-vs-long-context-vs-finetuning.html">fine-tune for behaviour, retrieve for facts</a>.</p>
 <h2 id="module-recap">Module recap</h2>
 <table>
 <thead>
@@ -98,61 +77,133 @@ conflating the two burns money and trust.</p>
 </thead>
 <tbody>
 <tr>
-<td><a href="why-rag.html">Why RAG?</a></td>
-<td>Open-book beats closed-book for private, fresh, citable knowledge</td>
-<td>Can our answer point to a real, current source?</td>
+<td><a href="when-to-use-rag.html">When to use RAG</a></td>
+<td>The shape of the answer picks the tool</td>
+<td>Is this a passage, a number, a record, a document or a behaviour?</td>
 </tr>
 <tr>
-<td><a href="embeddings-and-semantic-search.html">Embeddings &amp; semantic search</a></td>
-<td>Meaning becomes geometry; similar ≠ correct</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+<td>Open book beats closed book for private, fresh, citable knowledge</td>
+<td>Can our answer point to a real, current source, and refuse when there is none?</td>
+</tr>
+<tr>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+<td>Meaning becomes geometry, and similar is not correct</td>
 <td>Does retrieval find the right passage when the wording differs?</td>
 </tr>
 <tr>
 <td><a href="vector-databases.html">Vector databases</a></td>
-<td>The easy, commoditized part — filtering and freshness matter more than the math</td>
-<td>How many vectors, filtered by what, at what latency — and did we try what we already run?</td>
+<td>The search is a commodity; filters and freshness decide</td>
+<td>How many vectors, filtered by what, and do filtered queries return enough?</td>
 </tr>
 <tr>
-<td><a href="chunking-and-ingestion.html">Chunking &amp; ingestion</a></td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
 <td>You can only find what you filed well</td>
-<td>Can the right answer survive our chunking, and how fast does the index reflect change?</td>
+<td>Can the answer survive our chunking, and how fast does the index follow changes?</td>
 </tr>
 <tr>
 <td><a href="retrieval-quality.html">Retrieval quality</a></td>
-<td>Retrieval quality <em>is</em> RAG quality — measure it</td>
-<td>What's our recall on real, hard questions?</td>
+<td>Retrieval quality is RAG quality, so measure it</td>
+<td>What is our recall on hard questions, by type?</td>
 </tr>
 <tr>
-<td><a href="rag-vs-long-context-vs-finetuning.html">RAG vs. long-context vs. fine-tuning</a></td>
-<td>Fine-tune for behaviour, retrieve for facts, long-context when it's small</td>
-<td>Are we changing behaviour or supplying facts?</td>
+<td><a href="rag-vs-long-context-vs-finetuning.html">RAG vs. long context vs. fine-tuning</a></td>
+<td>Fine-tune for behaviour, retrieve for facts, send small knowledge whole</td>
+<td>Does our cost grow with the corpus or with use?</td>
 </tr>
 <tr>
-<td><a href="graphrag-and-structured-retrieval.html">Beyond flat RAG</a></td>
-<td>Retrieve structure when the answer is a connection or a summary</td>
-<td>Are our failing questions multi-hop/global, or just tuned badly?</td>
+<td><a href="graphrag-and-structured-retrieval.html">GraphRAG</a></td>
+<td>Retrieve structure when the answer is a connection, a summary or a count</td>
+<td>Are our failing questions multi-hop, global or numeric?</td>
+</tr>
+<tr>
+<td><a href="building-rag-with-claude-code.html">Building RAG</a></td>
+<td>You set the contract and the gate; the agent fills in the stages</td>
+<td>Which command proves retrieval works, and does the agent run it?</td>
+</tr>
+<tr>
+<td><a href="rag-terms.html">RAG terms</a></td>
+<td>Every term has a place on the pipeline</td>
+<td>Which stage does this number measure?</td>
 </tr>
 </tbody>
 </table>
-<p><strong>The through-line:</strong> every lesson annotates one picture — the
-<a href="index.html">module knowledge graph</a>: a pipeline that turns your data into findable
-passages, a retrieval step that hands the model the right ones, a quality loop that keeps it
-honest, and a set of decisions (RAG vs. the alternatives, flat vs. structured) about <em>which</em>
-retrieval to build. The teams who win with RAG aren't the ones with the fanciest vector
-database — they're the ones who chunked with care, measured retrieval, paid the freshness
-bill, and grounded every answer in a source they'd stand behind.</p>
+<p><strong>The through-line.</strong> Every lesson annotates one picture, the <a href="index.html">module knowledge graph</a>. A pipeline turns your data into findable passages. Retrieval hands the model the right ones. A quality loop keeps it honest. And a set of decisions comes first: RAG or something simpler, flat or structured. The teams who win with RAG do not have the fanciest vector database. They chose RAG only where it fit, chunked with care, measured retrieval, paid the freshness bill, and grounded every answer in a source they would stand behind.</p>
 <blockquote>
-<p><strong>Walk-away question:</strong> <em>"For our RAG feature: can I name the four jobs it needs, show its
-retrieval recall on hard questions, point to the delete/refresh path that keeps it
-current, and defend every answer with a citation a user could open — and do I know which
-questions it can't answer without structure?"</em></p>
+<p><strong>Walk-away question:</strong> <em>"For our RAG feature: can I say why RAG beat the simpler options, show recall on hard questions by type, point to the delete path, and defend every answer with a citation a user could open?"</em></p>
 </blockquote>
-<p>If yes, you've built a knowledge product, not a demo. If not, you now know exactly which
-lesson to reread — and where the deeper mechanics live, one spoke away in
-<a href="../ai/03-rag.html#rag-architecture">RAG architecture</a> and
-<a href="../ai/03-rag.html#retrieval-evals">Retrieval evals</a>.</p></div>
-  <div class="pagenav"><a class="navcard prev" href="graphrag-and-structured-retrieval.html"><span class="lbl">← Previous</span><span class="ttl">Beyond flat RAG: GraphRAG &amp; structured retrieval</span></a><span></span></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples-war-stories">Real-world examples &amp;amp; war stories</a><a class="h2" href="#module-recap">Module recap</a></div></aside></div><script>
+<h2 id="test-yourself">Test yourself</h2>
+<ol>
+<li>
+<p><strong>A product manager asks for RAG so users can ask "how many invoices are overdue this month?". What do you recommend, and why?</strong>
+ <br />
+<details><summary>Answer</summary>A database query or a tool call, not RAG. The answer is a count over rows. Top-k retrieval returns at most k chunks, so it cannot count past k, and a model reading them would give a confident wrong number. (<a href="when-to-use-rag.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>Your HR handbook is 35,000 tokens and changes twice a year. Every employee may see all of it. RAG or not?</strong>
+ <br />
+<details><summary>Answer</summary>Not RAG. It is small, stable and the same for everyone, so none of the three deciding signals (too big, changes often, differs by user) holds. Put it in the prompt and use prompt caching. In the lesson's sketch, cached long context costs $54.00 to $106.50 per 10,000 questions, depending on the cache price, against $61.50 for RAG, before cache writes. It needs no pipeline. (<a href="when-to-use-rag.html">Lesson 1</a>)</details></p>
+</li>
+<li>
+<p><strong>Name the four jobs RAG does that a bare model cannot.</strong>
+ <br />
+<details><summary>Answer</summary>Grounding (answering from real text), freshness (today's data without retraining), private knowledge (your data, never in a training set) and attribution (citing the source). (<a href="why-rag.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>Why is a similarity threshold alone a weak "I don't know" gate?</strong>
+ <br />
+<details><summary>Answer</summary>Similarity scores do not track relevance well enough. In the Fernpay example, an off-topic weather question scores 0.301, and a real question about error E-4021 scores only 0.113. A threshold would refuse the real question and answer the off-topic one. Checking the keyword leg as well gets both right. (<a href="why-rag.html">Lesson 2</a>)</details></p>
+</li>
+<li>
+<p><strong>The current refund policy scores 0.936 and the retracted one 0.927. What fixes this?</strong>
+ <br />
+<details><summary>Answer</summary>A metadata filter on status, plus a delete path in ingestion. Embeddings cannot tell which version is in force, because the two texts are nearly identical. (<a href="embeddings-and-semantic-search.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>The team switches embedding models but keeps the old document vectors. What happens?</strong>
+ <br />
+<details><summary>Answer</summary>Retrieval quietly breaks. Old and new vectors live in different spaces, so distances mean nothing. In the lesson's demo, recall@3 falls from 0.833 to 0.167 with no error. Changing models means re-embedding the whole corpus. (<a href="embeddings-and-semantic-search.html">Lesson 3</a>)</details></p>
+</li>
+<li>
+<p><strong>What does an approximate nearest-neighbour index trade, and what is the dial?</strong>
+ <br />
+<details><summary>Answer</summary>It trades a little recall for a lot of speed by checking only part of the vectors. The dial is how much it scans: lists probed in IVF, or ef_search in HNSW. In the demo, scanning 25% of the vectors found 95.5% of the true top 10. (<a href="vector-databases.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>A small tenant's searches return 1 result instead of 10. What is the likely cause?</strong>
+ <br />
+<details><summary>Answer</summary>The filter is applied after the approximate index scan. The scan returns the nearest candidates across all tenants, and few belong to the small one. Fixes include iterative index scans (pgvector 0.8.0 and later, off by default), a partial index, or exact search within the tenant. (<a href="vector-databases.html">Lesson 4</a>)</details></p>
+</li>
+<li>
+<p><strong>Why did 80-character chunks answer only 7 of 12 questions while section chunks answered 11?</strong>
+ <br />
+<details><summary>Answer</summary>Blind cuts sliced two answer facts in half, so no chunk held them whole. Fixed chunks also lost the titles and headings, which probably cost some matches as well. (<a href="chunking-and-ingestion.html">Lesson 5</a>)</details></p>
+</li>
+<li>
+<p><strong>Keyword search scores 0.667 recall@3, vector search 0.833 and hybrid 0.917. Why does hybrid win?</strong>
+    <details><summary>Answer</summary>Each leg covers the other's blind spot. Keyword search finds exact codes and misses paraphrases. Vector search finds paraphrases and misses codes. Reciprocal rank fusion combines the two lists. (<a href="retrieval-quality.html">Lesson 6</a>)</details></p>
+</li>
+<li><strong>At what corpus size does cached long context stop being an option, and why does RAG's cost not grow with the corpus?</strong>
+    <details><summary>Answer</summary>When the corpus no longer fits the context window: 2.5 million tokens does not fit a 1 million token window. RAG sends the same few retrieved chunks per question, so its cost depends on use, not on corpus size. (<a href="rag-vs-long-context-vs-finetuning.html">Lesson 7</a>)</details></li>
+<li><strong>"Which customers are exposed to the recall at Kestrel Metals?" Why does flat RAG fail, and what works?</strong>
+    <details><summary>Answer</summary>The answer is a chain: supplier, parts, products, customers. No chunk holds the chain, so flat retrieval found one of three customers. A graph walk that follows the links finds all three. (<a href="graphrag-and-structured-retrieval.html">Lesson 8</a>)</details></li>
+<li><strong>In a Claude Code build, which three things should a person own rather than the agent?</strong>
+    <details><summary>Answer</summary>The eval questions, the permission rules, and the bar the eval must pass. The agent must not write the questions it is graded on. Enforce the bar with a hook or CI, because CLAUDE.md is advice. (<a href="building-rag-with-claude-code.html">Lesson 9</a>)</details></li>
+<li><strong>In pgvector, the index uses vector_l2_ops and the query orders by the &lt;=&gt; operator. What goes wrong?</strong>
+    <details><summary>Answer</summary>The operator class does not match the cosine distance operator, so Postgres cannot use the index, and every search scans the whole table. Use vector_cosine_ops with &lt;=&gt;. (<a href="building-rag-with-claude-code.html">Lesson 9</a>)</details></li>
+<li><strong>A review says "the RAG feature is 90% accurate". What do you ask?</strong>
+    <details><summary>Answer</summary>Which stage that measures, on which questions, and how. Recall@k measures retrieval. Faithfulness and answer relevance measure the answer. A low score in each needs a different fix. (<a href="rag-terms.html">Lesson 10</a>)</details></li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>AI Incident Database, <a href="https://incidentdatabase.ai/cite/1039/">Incident 1039</a>, reported 19 April 2025: an AI support agent reportedly invented a login policy, leading to cancellations. The site could not be opened from the build sandbox; checked through search excerpts, 2026-10.</li>
+<li>Anthropic, <a href="https://www.anthropic.com/news/contextual-retrieval">Introducing Contextual Retrieval</a>, 19 September 2024. Read 2026-10.</li>
+<li>Edge et al., <em>From Local to Global: A Graph RAG Approach to Query-Focused Summarization</em>, Microsoft Research, 2024 (<a href="https://arxiv.org/abs/2404.16130">arxiv.org/abs/2404.16130</a>).</li>
+<li>Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts</em>, Transactions of the ACL, 2024 (<a href="https://arxiv.org/abs/2307.03172">arxiv.org/abs/2307.03172</a>).</li>
+<li>The stale-index and fine-tuning patterns are composites, not single documented incidents. The Fernpay numbers come from <code>rag-vector-databases/code/</code>.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="rag-terms.html"><span class="lbl">← Previous</span><span class="ttl">RAG terms, explained</span></a><span></span></div><footer class="foot"><strong>Core insight:</strong> Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#real-world-examples">Real-world examples</a><a class="h2" href="#module-recap">Module recap</a><a class="h2" href="#test-yourself">Test yourself</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

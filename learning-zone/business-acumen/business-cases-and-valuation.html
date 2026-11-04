@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Business cases, capital and valuation — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink active" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 04</span>
+    <h1>Business cases, capital and valuation</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>business case</strong> asks for money for one bet. It shows what the bet costs, what it returns, when, and how sure you are. Finance judges it with a few tools. <strong>Net present value</strong> (NPV) says whether the bet earns more than the company's cost of money. <strong>Internal rate of return</strong> (IRR) states the same bet as a yearly return. <strong>Payback</strong> says how long until you get the money back. A <strong>sensitivity table</strong> says which assumption the case rests on.</p>
+<p>Behind those tools sit two bigger questions. Where does the money come from, and what does it cost? For a lender, a bank or an insurer, that question shapes the product itself. And how does the market value the company? A dollar of recurring gross profit can add many dollars to the company's value. A dollar of one-off revenue adds about a dollar.</p>
+<p>The core tradeoff is precision against honesty. A single-number case looks confident and breaks at the first hard question. A case with a counterfactual, a range, a tornado and a staged plan looks less certain and wins more often. This lesson gives you the tools to build that second kind.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Every serious bet is approved in the CFO's language. "This adds $2 million of gross profit a year, pays back in 18 months, and still works if adoption is 30% lower" gets funded. "Users love it" does not.</p>
+<p><strong>What it changes in your decisions</strong> — You state the counterfactual before the benefit. You rank bets by NPV and use IRR to communicate. You find the one input that can flip the case, and you stage the bet to measure it first. In regulated domains, you count the cost of funding and capital as a product cost.</p>
+<p><strong>Ask your team</strong> — <em>"Which single input, if it moved to the edge of its range, turns this case negative, and how do we measure it before we commit the full budget?"</em></p>
+<p><strong>Risk if ignored</strong> — A case built on volume that would have happened anyway, or on a discount rate Finance does not use. Finance finds the hole, and your credibility goes with it.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li>Rank bets by NPV. Use IRR and payback to communicate, not to choose.</li>
+<li>Use the discount rate Finance gives you. Ask for a higher hurdle for riskier bets, not a lower one for your favourite.</li>
+<li>Every case states its counterfactual: what happens if we do nothing.</li>
+<li>Build a tornado before you build the product. Stage the bet to measure the top bar first.</li>
+<li>Report expected NPV across scenarios, not only the base case.</li>
+<li>In lending and insurance, count funding cost and capital as product costs.</li>
+<li>Value a bet by the durable gross profit it adds, not by the revenue it books.</li>
+</ul>
+<h2 id="mental-model-a-business-case-is-a-price-for-a-stream-of-cash">Mental model: a business case is a price for a stream of cash</h2>
+<p>Think of a bet as buying a rental flat. You pay a price today. You collect rent for some years. You would only pay up to the value of that rent, discounted at the return you could earn elsewhere. A riskier flat, in a weaker area, must offer a higher return to be worth the same price. If you are unsure of the rent, you would rent it out for a short trial before you buy.</p>
+<p>A business case works the same way. The build cost is the price. The yearly net cash is the rent. The discount rate is the return you could earn elsewhere at that risk. NPV is the gap between what the rent is worth and what you pay. A pilot is the trial let.</p>
+<p><strong>Where the analogy breaks.</strong> A flat's rent is fairly stable and does not depend on you. A product bet's "rent" depends on execution, competitors and customer behaviour. It also has a life: a fraud model decays as fraudsters adapt. And a product bet has options a flat lacks. You can stage it, expand it or stop it. <a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> values those options.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="budgets-forecasts-and-business-cases">Budgets, forecasts and business cases</h3>
+<p>Three documents get confused.</p>
+<ul>
+<li>A <strong>budget</strong> is the plan: what each team may spend and what it must deliver. It is set once a year and rarely changes.</li>
+<li>A <strong>forecast</strong> is the current best guess of where the year will land. It changes every month or quarter.</li>
+<li>A <strong>business case</strong> asks for money for one bet. It shows costs, benefits, timing, risks and NPV.</li>
+</ul>
+<p>A business case that wins approval must then find room in the budget. <a href="navigating-the-organization.html">Navigating the organization</a> covers how an ask gets into the plan.</p>
+<h3 id="time-value-of-money-present-value-and-npv">Time value of money, present value and NPV</h3>
+<p>A dollar today is worth more than a dollar next year. You could invest today's dollar and earn a return. So future cash must be <strong>discounted</strong> to compare it with cash today.</p>
+<ul>
+<li><strong>Present value (PV)</strong> of a future cash flow = cash ÷ (1 + r)^t, where r is the discount rate and t is years from now.</li>
+<li><strong>Net present value (NPV)</strong> = the sum of the present values of all cash flows, minus the investment today. A positive NPV means the bet earns more than the discount rate.</li>
+<li>The <strong>discount rate</strong> is usually set by Finance. It reflects the company's cost of capital and the risk of the bet.</li>
+</ul>
+<p><strong>How to compute it.</strong> $400,000 received in three years, at 10%, is worth $400,000 ÷ 1.1³ = $300,526 today. The factor 1 ÷ 1.1³ = 0.7513 is the <strong>discount factor</strong>.</p>
+<p><strong>Domain application.</strong> In lending, the same maths prices a loan. A loan's value to the lender is the present value of its expected payments, net of expected losses, at the lender's cost of funds. In insurance, it values claims paid years after the premium.</p>
+<p><strong>Decision rule.</strong> When two bets compete for one budget, compare their NPVs at the same discount rate.</p>
+<p><strong>The common misreading.</strong> "The bet returns $1.2 million over three years against $900,000 of cost, so it makes $300,000." It makes less. Cash in year 3 is worth about three-quarters of cash today at 10%.</p>
+<h3 id="payback-and-discounted-payback">Payback and discounted payback</h3>
+<p><strong>Payback period</strong> is how long until cumulative cash returns equal the investment. It is simple, and boards under cash pressure like it.</p>
+<p>It has two flaws. It ignores everything after payback. And simple payback ignores the time value of money. <strong>Discounted payback</strong> fixes the second flaw. It uses present values instead of raw cash.</p>
+<p><strong>How to compute it.</strong> A bet costs $900,000 and returns $400,000 a year.</p>
+<ul>
+<li><strong>Simple payback:</strong> $900,000 ÷ $400,000 = 2.25 years.</li>
+<li><strong>Discounted payback at 10%:</strong> present values are $363,636, $330,579 and $300,526. After two years the total is $694,215. The remaining $205,785 takes 205,785 ÷ 300,526 = 0.68 of year 3. Discounted payback is <strong>2.68 years</strong>.</li>
+</ul>
+<p><strong>Decision rule.</strong> Use payback as a constraint, not a goal. "NPV-positive and pays back inside 24 months" is a sound rule when cash is tight. "Shortest payback wins" kills long-lived bets.</p>
+<p><strong>The common misreading.</strong> "It pays back in 2.25 years, so it is a good bet." A bet can pay back and still have a negative NPV, if its life ends soon after.</p>
+<h3 id="irr-and-when-it-misleads">IRR and when it misleads</h3>
+<p><strong>Internal rate of return</strong> (IRR) is the discount rate at which NPV is exactly zero. It answers: what yearly return does this bet earn? If IRR is above the hurdle rate, NPV is positive at that rate.</p>
+<p><strong>How to compute it.</strong> There is no closed formula. You search for the rate. A spreadsheet's IRR function does it. The code in Under the hood does it by bisection. For a bet that costs $900,000 and returns $400,000 a year for three years, IRR is about <strong>15.9%</strong>.</p>
+<p>Executives like IRR because a percentage is easy to compare with a hurdle. It misleads in three ways.</p>
+<ol>
+<li><strong>Scale blindness.</strong> IRR ignores size. Take two one-year bets at a 10% cost of capital. A small one costs $100,000 and returns $140,000: IRR 40%, NPV $27,273. A large one costs $1 million and returns $1.2 million: IRR 20%, NPV $90,909. The small bet has the higher IRR. The large bet creates more than three times the value. If you can fund both, do both. If you must choose one, choose the large one.</li>
+<li><strong>Multiple answers.</strong> When cash flows change sign more than once, there can be two IRRs. Take a bet that costs 100, returns 230 next year, then needs 132 the year after. A wind-down or a clawback can look like this. NPV is zero at both 10% and 20%. "The IRR" has no single meaning.</li>
+<li><strong>The reinvestment assumption.</strong> IRR implicitly assumes each year's cash is reinvested at the IRR itself. A 40% IRR on a short bet assumes you can keep finding 40% bets. You usually cannot.</li>
+</ol>
+<p><strong>Domain application.</strong> In lending, the yield on a loan is an IRR. It is the rate that equates the loan amount with its payments. A loan's quoted rate looks like an IRR but ignores losses and funding cost. The lender's real return is far lower.</p>
+<p><strong>Decision rule.</strong> Rank by NPV, communicate with IRR. Quote IRR next to NPV, never alone.</p>
+<p><strong>The common misreading.</strong> "Bet A has a higher IRR, so it is better." It may be smaller, shorter or riskier. Check NPV.</p>
+<h3 id="cost-of-capital-and-hurdle-rates">Cost of capital and hurdle rates</h3>
+<p>The <strong>cost of capital</strong> is the return the company's investors expect. It is the company's cost of money. A bet that earns less than this destroys value, even if it is profitable on paper.</p>
+<p><strong>How it works.</strong> A company is funded by equity and debt. The <strong>weighted average cost of capital</strong> (WACC) blends their costs by their shares.</p>
+<p><strong>WACC = (equity share × cost of equity) + (debt share × cost of debt × (1 − tax rate))</strong></p>
+<p>Debt is cheaper, because lenders are paid first and interest is usually tax-deductible. Equity is dearer, because shareholders are paid last and bear the most risk. The cost of equity is usually estimated as a risk-free interest rate plus a premium for the risk of the company's shares.</p>
+<p><strong>How to compute it.</strong> An illustrative company is 70% equity at 12% and 30% debt at 7%, with a 25% tax rate. All inputs assumed.</p>
+<ul>
+<li>Equity part: 0.70 × 12% = 8.40%.</li>
+<li>Debt part: 0.30 × 7% × (1 − 0.25) = 1.575%.</li>
+<li>WACC = <strong>9.97%</strong>, so about 10%.</li>
+</ul>
+<p>A <strong>hurdle rate</strong> is the minimum return Finance requires for a bet. It starts from WACC. Finance often adds a premium for riskier bets. One common pattern, with illustrative numbers:</p>
+<table>
+<thead>
+<tr>
+<th>Bet type</th>
+<th>Illustrative hurdle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cost saving or improvement in the core business</td>
+<td>WACC, about 10%</td>
+</tr>
+<tr>
+<td>New product in an existing market</td>
+<td>WACC plus 3 to 5 points</td>
+</tr>
+<tr>
+<td>New market or new business model</td>
+<td>WACC plus 10 points or more</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Who sets the rate.</strong> Finance or Treasury sets it. You do not pick it. Ask for it before you build the case.</p>
+<p><strong>Domain application.</strong> An unprofitable fintech funded by venture equity has a high cost of capital. Its investors expect venture-level returns. A profitable bank funded by deposits has a much lower one. The same product bet can be worth building at the bank and not at the fintech.</p>
+<p><strong>Decision rule.</strong> Use one risk adjustment, not two. If your cash flows are already probability-weighted, a large risk premium on the rate counts the same risk twice.</p>
+<p><strong>The common misreading.</strong> "Our money is free. It is already in the bank." Cash on the balance sheet belongs to the shareholders. It has an opportunity cost: the return they could earn elsewhere.</p>
+<h3 id="funding-and-capital-in-regulated-businesses">Funding and capital in regulated businesses</h3>
+<p>In most software businesses, funding is a company-level question. In lending, banking and insurance, it is a product question. The cost of money and the capital a regulator demands set the product's economics.</p>
+<h4 id="how-lenders-fund-loans">How lenders fund loans</h4>
+<p>A lender must find the cash it lends. It has four main sources. Most lenders use more than one.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>How it works</th>
+<th>Cost and risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deposits</strong></td>
+<td>A bank lends out customers' deposits. This needs a bank charter.</td>
+<td>Usually the cheapest source. Deposit rates lag market rates. Deposits can leave fast in a panic.</td>
+</tr>
+<tr>
+<td><strong>Warehouse facility</strong></td>
+<td>A bank lends against a pool of the lender's loans. It advances only part of each loan's value, for example 80% to 90% (illustrative). The lender funds the rest with its own equity.</td>
+<td>Floating rate. The facility has rules on loan quality. If losses rise past a trigger, the bank can stop funding.</td>
+</tr>
+<tr>
+<td><strong>Forward flow</strong></td>
+<td>An investor commits to buy loans that meet set criteria, at an agreed price, over a set period. The lender keeps a fee and often keeps servicing.</td>
+<td>Moves loans off the balance sheet. The buyer can reprice or walk away when the agreement ends.</td>
+</tr>
+<tr>
+<td><strong>Securitization</strong></td>
+<td>The lender sells a pool of loans to a trust. The trust issues bonds in layers, called tranches. Senior tranches are paid first and cost least. The lender usually keeps the riskiest layer.</td>
+<td>Cheap at scale. Needs a track record and good markets. US rules generally require the sponsor to keep at least 5% of the credit risk.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How cost of funds sets the lending P&amp;L.</strong> Take the $10,000, 36-month loan from <a href="unit-economics.html">unit economics</a>. Its average balance over three years is about $5,583. (Illustrative; all inputs assumed.)</p>
+<ul>
+<li>Funded by deposits at 3%: funding cost ≈ $5,583 × 3 × 3% = <strong>$502</strong>.</li>
+<li>Funded by a warehouse at 6%: funding cost ≈ $5,583 × 3 × 6% = <strong>$1,005</strong>.</li>
+</ul>
+<p>The difference is about $500 per loan. That is a large share of the loan's whole contribution. It is why fintech lenders seek bank charters or bank partners. And it is why a lender's margin moves with market rates. When US rates rose in 2022 and 2023, lenders that relied on capital markets paid more for funding. Loan buyers also demanded higher returns. <a href="the-language-of-money.html#the-balance-sheet">The language of money</a> shows one lender's response to that squeeze.</p>
+<p><strong>Decision rule.</strong> In a lending case, price the loan off the marginal cost of the funding source that will actually fund it. Do not use the average cost of funds if growth will come from the most expensive source.</p>
+<h4 id="bank-capital-in-plain-words">Bank capital in plain words</h4>
+<p><strong>Capital</strong> is the owners' money that absorbs losses before depositors and creditors lose anything. It is the cushion. Regulators set minimum amounts of capital relative to <strong>risk-weighted assets</strong>. A riskier asset gets a higher weight, so it needs more capital. Basel Committee member jurisdictions commit to implementing its international standards, with local changes.</p>
+<p><strong>Why a product leader cares.</strong> Every loan a bank makes uses some of its capital. Capital is expensive equity. So a loan product must earn a return on the capital it uses, not only a margin on the loan.</p>
+<p><strong>How to compute it.</strong> Assume a $10,000 loan with a 100% risk weight, a 10% capital target and a 12% cost of equity. All illustrative. The loan uses $10,000 × 100% × 10% = <strong>$1,000</strong> of capital. Holding that capital costs about $1,000 × 12% = <strong>$120 a year</strong>.</p>
+<p><strong>Decision rule.</strong> In a bank, compare products on return on the capital they use, not on margin alone. A thin-margin, low-risk product can beat a fat-margin, high-risk one.</p>
+<p><strong>The common misreading.</strong> "Capital is cash in a vault." Capital is a source of funding: the owners' stake. It sits on the other side of the balance sheet from the loans.</p>
+<h4 id="insurer-capital-and-reinsurance">Insurer capital and reinsurance</h4>
+<p>Insurers must also hold capital against the risk they write. Regulators set risk-based capital requirements. Rating agencies add their own views. The more premium an insurer writes on its own account, the more capital it needs.</p>
+<p><strong>Reinsurance</strong> is insurance for insurers. The insurer (the <strong>cedant</strong>) passes part of its risk to a reinsurer. There are two main forms.</p>
+<ul>
+<li><strong>Quota share.</strong> The insurer cedes a fixed share of every policy's premium and losses, say 50%. The reinsurer pays a <strong>ceding commission</strong> back, to cover part of the insurer's acquisition and admin costs. Quota share cuts the capital the insurer needs roughly in proportion. It also gives away that share of the profit.</li>
+<li><strong>Excess of loss.</strong> The reinsurer pays losses above a set <strong>retention</strong>, up to a limit. For example, it pays storm losses between $1 million and $10 million per event. The insurer pays a premium for this cover. Excess of loss protects against a single large event. It does little for capital needs on ordinary claims.</li>
+</ul>
+<p><strong>How to compute it.</strong> An insurer writes $10 million of premium. Losses are 60% of premium. Expenses are 32%. Capital needed is half of net premium. A 50% quota share pays a 30% ceding commission. All inputs illustrative.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>No reinsurance</th>
+<th>50% quota share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Net premium kept</td>
+<td>$10.0M</td>
+<td>$5.0M</td>
+</tr>
+<tr>
+<td>Net losses</td>
+<td>$6.0M</td>
+<td>$3.0M</td>
+</tr>
+<tr>
+<td>Expenses (insurer pays all)</td>
+<td>$3.2M</td>
+<td>$3.2M</td>
+</tr>
+<tr>
+<td>Ceding commission received</td>
+<td>$0</td>
+<td>$1.5M</td>
+</tr>
+<tr>
+<td><strong>Underwriting profit</strong></td>
+<td><strong>$0.8M</strong></td>
+<td><strong>$0.3M</strong></td>
+</tr>
+<tr>
+<td>Capital needed</td>
+<td>$5.0M</td>
+<td>$2.5M</td>
+</tr>
+<tr>
+<td>Return on capital</td>
+<td>16%</td>
+<td>12%</td>
+</tr>
+</tbody>
+</table>
+<p>The quota share gives up $0.5 million of profit to free $2.5 million of capital. That is like renting capital at 0.5 ÷ 2.5 = <strong>20%</strong> a year.</p>
+<p><strong>Decision rule.</strong> Buy quota share when your own capital costs more than its implied cost, as it often does for a young insurer. Buy excess of loss to survive the large event. Do not use quota share to make a loss-making book look smaller.</p>
+<p><strong>The common misreading.</strong> "Reinsurance is a cost line." It is a funding choice. It trades margin for capital and for protection from volatility.</p>
+<h3 id="incrementality-and-the-counterfactual">Incrementality and the counterfactual</h3>
+<p>A business case is only as good as its counterfactual. The <strong>counterfactual</strong> is what would happen if you did nothing. <strong>Incrementality</strong> is the difference between the world with your bet and the world without it.</p>
+<p><strong>How it goes wrong.</strong> Four effects distort the gap.</p>
+<ul>
+<li><strong>Baseline drift.</strong> The metric was rising anyway, from seasonality, price or market growth. A before-and-after comparison credits the bet with the drift.</li>
+<li><strong>Cannibalization.</strong> The bet shifts activity from another product you own. The new product's volume looks large. The company's total barely moves.</li>
+<li><strong>Halo.</strong> The bet lifts other products, too. A narrow measure misses this gain.</li>
+<li><strong>The declining do-nothing case.</strong> The baseline is not flat. Without the bet, things get worse: fraud grows, a competitor takes share, a partner leaves. Ignoring this understates the bet.</li>
+</ul>
+<p><strong>How to compute it.</strong> An eCommerce company adds a buy now, pay later (BNPL) option at checkout. In the first year, 50,000 orders of $200 use it: <strong>$10 million</strong> of BNPL sales. The launch deck claims $10 million of new sales. A holdout test shows only 15% of those orders were truly new. The rest would have paid by card. (Illustrative; all inputs assumed: 30% gross margin, BNPL fee 6%, card fee 2.5%.)</p>
+<ul>
+<li>New sales: 15% × $10 million = $1.5 million. Margin after the BNPL fee: $1.5 million × (30% − 6%) = <strong>$360,000</strong>.</li>
+<li>Shifted sales: $8.5 million now pay a 6% fee instead of 2.5%. Extra cost: $8.5 million × 3.5% = <strong>$297,500</strong>.</li>
+<li><strong>Net gain: $62,500 a year.</strong> Not $10 million of sales. Not even $3 million of margin.</li>
+</ul>
+<p><strong>How to measure it.</strong> The best tool is a randomized holdout: a group that does not get the feature. <a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a> covers test design. When a holdout is impossible, use a matched comparison group or a staggered rollout, and state the weakness.</p>
+<p><strong>Domain application.</strong> Payments: a new routing rule lifts authorization rates during a holiday peak, when rates rise anyway. Lending: a pre-approved offer "converts" customers who would have applied anyway. Insurance: a bundle discount mainly reaches customers who would have bought both policies.</p>
+<p><strong>Decision rule.</strong> Every case states its counterfactual. If it cannot, it is not a case yet.</p>
+<p><strong>The common misreading.</strong> "The feature drove $10 million of sales." It touched $10 million of sales. It drove only the incremental part.</p>
+<h3 id="scenarios-sensitivity-and-the-tornado">Scenarios, sensitivity and the tornado</h3>
+<p>A single-number case hides its risk. Three tools expose it. Use them in this order.</p>
+<ol>
+<li><strong>One-at-a-time sensitivity.</strong> Move one input to the low and high end of its plausible range. Keep the others at base. Record NPV at each end.</li>
+<li><strong>Tornado.</strong> Draw one bar per input, from its low NPV to its high NPV. Sort the bars with the widest on top. The chart looks like a funnel cloud, hence the name. The top bar is the input your case depends on most.</li>
+<li><strong>Scenarios with probabilities.</strong> Build a bear, base and bull case. Each changes several inputs together, as they would move in reality. Give each a probability. <strong>Expected NPV</strong> = the probability-weighted sum.</li>
+</ol>
+<p>The tornado tells you what to measure first. The scenarios tell you whether the bet is worth it on average. Expected NPV can be positive while the bear case is negative. That is normal. The question is whether you can afford the bear case, and whether a pilot can rule it out cheaply.</p>
+<p><strong>Decision rule.</strong> Stage the bet so the first stage measures the top bar of the tornado.</p>
+<p><strong>The common misreading.</strong> "The base case is the most likely outcome, so it is enough." The base case is one point. Losses in the bear case are often larger than gains in the bull case.</p>
+<h3 id="how-the-company-is-valued">How the company is valued</h3>
+<p>Your bets add up to the company's value. Knowing how investors value the company tells you which bets they reward.</p>
+<p><strong>Enterprise value and equity value.</strong> <strong>Equity value</strong> is what the shares are worth: for a listed company, its market capitalization. <strong>Enterprise value</strong> (EV) is the value of the whole operating business, to all funders. EV = equity value + debt − cash. Example: market capitalization $8 billion, debt $1 billion, cash $2 billion. EV = <strong>$7 billion</strong>. (Illustrative.)</p>
+<p><strong>Multiples.</strong> Investors often value a company as a multiple of one metric.</p>
+<ul>
+<li><strong>EV ÷ revenue</strong> for companies with little profit yet.</li>
+<li><strong>EV ÷ gross profit</strong> when revenue is reported gross and margins differ widely, as in payments and marketplaces.</li>
+<li><strong>EV ÷ EBITDA</strong> for mature, profitable companies. EBITDA is earnings before interest, taxes, depreciation and amortization.</li>
+<li><strong>Price ÷ earnings</strong> for profitable companies.</li>
+<li><strong>Price ÷ book value</strong> for banks and insurers, whose balance sheet is the business. A bank that earns a high return on equity trades above its book value.</li>
+</ul>
+<p>Multiples change with interest rates and market mood. They can halve in a year. Use any multiple only as an illustration.</p>
+<p><strong>Why recurring gross profit is worth more.</strong> A multiple is a shortcut for discounting future profit. At a 10% discount rate:</p>
+<ul>
+<li><strong>$1 of gross profit that recurs and grows 3% a year</strong> is worth about $1 ÷ (10% − 3%) = <strong>$14.29</strong> today.</li>
+<li><strong>$1 of gross profit that recurs but shrinks 10% a year</strong> is worth about $1 ÷ (10% + 10%) = <strong>$5.00</strong>.</li>
+<li><strong>$1 of one-off gross profit</strong> is worth <strong>$1.00</strong>.</li>
+</ul>
+<p>These are simple growing-perpetuity values. They ignore operating costs and tax. The direction is what matters. Durability and growth drive the multiple. That is why investors pay more for subscription and transaction revenue than for one-off sales. It is also why they ask about retention.</p>
+<p><strong>What investors watch, by domain.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>What investors watch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Payments</td>
+<td>Volume growth, net take rate, transaction or gross profit growth, merchant retention</td>
+</tr>
+<tr>
+<td>Lending</td>
+<td>Origination growth, revenue after losses and funding, credit performance by vintage, funding cost and access</td>
+</tr>
+<tr>
+<td>Banking</td>
+<td>Return on equity, net interest margin, deposit growth and cost, capital ratios</td>
+</tr>
+<tr>
+<td>Insurance</td>
+<td>Premium growth, combined ratio, reserve adequacy, book value growth</td>
+</tr>
+<tr>
+<td>eCommerce and marketplaces</td>
+<td>GMV, take rate, contribution margin per order, free cash flow</td>
+</tr>
+<tr>
+<td>Retail</td>
+<td>Comparable sales, gross margin, inventory turns, free cash flow</td>
+</tr>
+<tr>
+<td>Software</td>
+<td>Revenue growth, net revenue retention, gross margin, and an industry rule of thumb, not a standard, that growth rate plus profit margin should reach about 40%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A bet's implied value.</strong> You can translate a bet into company value. Suppose a bet adds $2 million of recurring gross profit a year. Suppose the company trades at an assumed 8 times gross profit. The implied value is about <strong>$16 million</strong>. Use this to explain why a bet matters to the CEO. Do not put it in the business case as the bet's return. The multiple belongs to the market, and the market applies it only to profit it believes will last.</p>
+<p><strong>Decision rule.</strong> Prefer bets that add durable, recurring gross profit over bets that add one-off revenue of the same size.</p>
+<p><strong>The common misreading.</strong> "We doubled revenue, so we doubled the company's value." If the new revenue has thin margins, low retention or is reported gross, the market may value it at a fraction of the core.</p>
+<h2 id="worked-example-a-business-case-for-a-fraud-model">Worked example: a business case for a fraud model</h2>
+<p><em>This example is invented, to show the method. The company and all numbers are illustrative.</em></p>
+<p>A payments company wants a new fraud model. It costs $900,000 to build (year 0). It costs $100,000 a year to run. The team estimates it saves $500,000 a year in fraud losses and dispute costs. Finance sets a 10% discount rate. The model's life is three years.</p>
+<p><strong>Step 1: net cash per year.</strong> Savings $500,000 − running cost $100,000 = $400,000 a year.</p>
+<p><strong>Step 2: discount each year.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Net cash</th>
+<th>Discount factor 1 ÷ 1.1^t</th>
+<th>Present value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>$400,000</td>
+<td>0.9091</td>
+<td>$363,636</td>
+</tr>
+<tr>
+<td>2</td>
+<td>$400,000</td>
+<td>0.8264</td>
+<td>$330,579</td>
+</tr>
+<tr>
+<td>3</td>
+<td>$400,000</td>
+<td>0.7513</td>
+<td>$300,526</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>2.4869</strong></td>
+<td><strong>$994,741</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3: NPV.</strong> $994,741 − $900,000 = <strong>$94,741</strong>. The case is positive.</p>
+<p><strong>Step 4: payback.</strong> $900,000 ÷ $400,000 = 2.25 years, undiscounted.</p>
+<p><strong>Step 5: sensitivity.</strong> Suppose savings are 20% lower: $400,000 a year. Net cash falls to $300,000. PV = $300,000 × 2.4869 = $746,056. NPV = <strong>−$153,944</strong>. The case flips.</p>
+<p><strong>Step 6: find the break-even.</strong> NPV is zero when net cash × 2.4869 = $900,000. That is net cash of about $361,900, or savings of about $461,900. The case survives only if savings are within about 7.6% of the estimate.</p>
+<p><strong>What the leader does with this.</strong> The case is thin. She proposes a pilot on one merchant segment for one quarter to measure real savings before the full build. That turns a fragile bet into a staged one. See real options in <a href="portfolio-strategy-and-allocation.html">portfolio strategy and capital allocation</a>.</p>
+<h3 id="extending-the-case-irr-scenarios-and-a-tornado">Extending the case: IRR, scenarios and a tornado</h3>
+<p>The steps below extend the same example. All new inputs are assumed.</p>
+<p><strong>Step 7: IRR.</strong> The rate at which $400,000 a year for three years is worth exactly $900,000 is about <strong>15.9%</strong>. It clears the 10% hurdle by about 6 points. Discounted payback is <strong>2.68 years</strong>, against a three-year life. That is a thin margin of safety.</p>
+<p><strong>Step 8: the tornado.</strong> Move each input across an assumed range, one at a time.</p>
+<style>
+.ba-tor{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-warning-outline);
+  border-radius:var(--radius-xl, 16px);padding:28px 24px 22px;margin:26px 0;position:relative;font-family:inherit;text-align:left}
+.ba-tor-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-warning-solid);color:var(--white);
+  font-size:var(--font-text-xs-size);font-weight:var(--font-weight-semibold);letter-spacing:.06em;text-transform:uppercase;
+  border-radius:999px;padding:3px 12px}
+.ba-tor h4{margin:0 0 4px;font-size:var(--font-text-sm-size);font-weight:var(--font-weight-semibold);color:var(--color-text)}
+.ba-tor-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 18px}
+.ba-tor-grid{display:grid;grid-template-columns:minmax(120px,30%) 1fr;row-gap:10px;column-gap:12px;align-items:center}
+.ba-tor-lbl{font-size:var(--font-text-xs-size);color:var(--color-text);font-weight:var(--font-weight-semibold);line-height:1.3}
+.ba-tor-lbl small{display:block;font-weight:var(--font-weight-normal);color:var(--color-text-secondary);font-size:var(--font-text-xs-size)}
+.ba-tor-lane{position:relative;height:30px;background:var(--color-surface-tertiary);border-radius:6px}
+.ba-tor-neg,.ba-tor-pos{position:absolute;top:5px;height:20px;display:flex;align-items:center;
+  font-size:var(--font-text-xs-size);font-weight:var(--font-weight-semibold);white-space:nowrap}
+.ba-tor-neg{background:var(--color-background-danger-surface);border:1px solid var(--color-border-danger-surface);color:var(--color-text-danger);
+  border-radius:5px 0 0 5px;justify-content:flex-start;padding-left:4px}
+.ba-tor-pos{background:var(--color-background-success-surface);border:1px solid var(--color-border-success-surface);color:var(--color-text-success);
+  border-radius:0 5px 5px 0;justify-content:flex-end;padding-right:4px}
+.ba-tor-base{position:absolute;top:0;bottom:0;width:0;border-left:2px solid var(--color-border-strong)}
+.ba-tor-zero{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--color-text-danger)}
+.ba-tor-axis{position:relative;height:30px;font-size:var(--font-text-xs-size);color:var(--color-text-tertiary)}
+.ba-tor-axis i{position:absolute;top:4px;font-style:normal;transform:translateX(-50%);white-space:nowrap}
+.ba-tor-note{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:12px 0 0}
+@media (max-width:640px){.ba-tor{padding:22px 14px 18px}.ba-tor-grid{grid-template-columns:1fr}.ba-tor-neg,.ba-tor-pos{font-size:0}}
+</style>
+<div class="ba-tor" role="img" aria-label="Tornado chart of the fraud-model NPV. Base NPV is 94,741 dollars. Model life of 2 to 4 years moves NPV from minus 205,785 to plus 367,946. Savings of 400,000 to 600,000 moves it from minus 153,944 to plus 343,426. Build cost of 1.08 million to 720,000 moves it from minus 85,259 to plus 274,741. Running cost of 150,000 to 50,000 moves it from minus 29,602 to plus 219,083. Discount rate of 14% to 8% moves it from 28,653 to 130,839.">
+  <span class="ba-tor-chip">Tornado</span>
+  <h4>Fraud-model NPV: which input moves the answer most?</h4>
+  <p class="ba-tor-sub">One input moved at a time; the others stay at base. Solid line = base NPV $94,741. Dashed line = NPV of zero. Illustrative; all ranges assumed.</p>
+  <div class="ba-tor-grid">
+    <div class="ba-tor-lbl">Model life<small>2 to 4 years</small></div>
+    <div class="ba-tor-lane">
+      <div class="ba-tor-zero" style="left:36.21%"></div>
+      <div class="ba-tor-neg" style="left:0.73%;width:51.81%">−$205,785</div>
+      <div class="ba-tor-pos" style="left:52.54%;width:47.10%">+$367,946</div>
+      <div class="ba-tor-base" style="left:52.54%"></div>
+    </div>
+
+    <div class="ba-tor-lbl">Annual savings<small>$400k to $600k</small></div>
+    <div class="ba-tor-lane">
+      <div class="ba-tor-zero" style="left:36.21%"></div>
+      <div class="ba-tor-neg" style="left:9.66%;width:42.88%">−$153,944</div>
+      <div class="ba-tor-pos" style="left:52.54%;width:42.88%">+$343,426</div>
+      <div class="ba-tor-base" style="left:52.54%"></div>
+    </div>
+
+    <div class="ba-tor-lbl">Build cost<small>$1.08M to $720k</small></div>
+    <div class="ba-tor-lane">
+      <div class="ba-tor-zero" style="left:36.21%"></div>
+      <div class="ba-tor-neg" style="left:21.51%;width:31.03%">−$85,259</div>
+      <div class="ba-tor-pos" style="left:52.54%;width:31.03%">+$274,741</div>
+      <div class="ba-tor-base" style="left:52.54%"></div>
+    </div>
+
+    <div class="ba-tor-lbl">Running cost<small>$150k to $50k a year</small></div>
+    <div class="ba-tor-lane">
+      <div class="ba-tor-zero" style="left:36.21%"></div>
+      <div class="ba-tor-neg" style="left:31.10%;width:21.44%">−$29,602</div>
+      <div class="ba-tor-pos" style="left:52.54%;width:21.44%">+$219,083</div>
+      <div class="ba-tor-base" style="left:52.54%"></div>
+    </div>
+
+    <div class="ba-tor-lbl">Discount rate<small>14% to 8%</small></div>
+    <div class="ba-tor-lane">
+      <div class="ba-tor-zero" style="left:36.21%"></div>
+      <div class="ba-tor-neg" style="left:41.15%;width:11.39%"></div>
+      <div class="ba-tor-pos" style="left:52.54%;width:6.23%"></div>
+      <div class="ba-tor-base" style="left:52.54%"></div>
+    </div>
+
+    <div></div>
+    <div class="ba-tor-axis"><i style="left:0%">−$210k</i><i style="left:36.21%">$0</i><i style="left:52.54%">base</i><i style="left:100%">+$370k</i></div>
+  </div>
+  <p class="ba-tor-note">Discount rate: NPV stays positive across the range ($28,653 to $130,839). The top two bars swing the result most, so they are what the pilot must measure.</p>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Range (bad to good)</th>
+<th>NPV at bad end</th>
+<th>NPV at good end</th>
+<th>Swing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model life</td>
+<td>2 to 4 years</td>
+<td>−$205,785</td>
+<td>$367,946</td>
+<td>$573,731</td>
+</tr>
+<tr>
+<td>Annual savings</td>
+<td>$400,000 to $600,000</td>
+<td>−$153,944</td>
+<td>$343,426</td>
+<td>$497,370</td>
+</tr>
+<tr>
+<td>Build cost</td>
+<td>$1,080,000 to $720,000</td>
+<td>−$85,259</td>
+<td>$274,741</td>
+<td>$360,000</td>
+</tr>
+<tr>
+<td>Running cost</td>
+<td>$150,000 to $50,000</td>
+<td>−$29,602</td>
+<td>$219,083</td>
+<td>$248,685</td>
+</tr>
+<tr>
+<td>Discount rate</td>
+<td>14% to 8%</td>
+<td>$28,653</td>
+<td>$130,839</td>
+<td>$102,186</td>
+</tr>
+</tbody>
+</table>
+<p>Two lessons jump out. First, the model's life matters more than the savings. Fraudsters adapt, so a model that decays in two years loses money. The team had not discussed life at all. Second, the discount rate matters least. The debate the team expected, over 10% or 12%, does not change the answer.</p>
+<p><strong>Step 9: scenarios.</strong> Savings is the input the team is least sure of. Three assumed scenarios:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Probability</th>
+<th>Annual savings</th>
+<th>NPV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bear</td>
+<td>25%</td>
+<td>$350,000</td>
+<td>−$278,287</td>
+</tr>
+<tr>
+<td>Base</td>
+<td>50%</td>
+<td>$500,000</td>
+<td>$94,741</td>
+</tr>
+<tr>
+<td>Bull</td>
+<td>25%</td>
+<td>$600,000</td>
+<td>$343,426</td>
+</tr>
+<tr>
+<td><strong>Expected</strong></td>
+<td></td>
+<td></td>
+<td><strong>$63,655</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Expected NPV is positive but lower than the base case. The bear case loses more than the bull case gains over base.</p>
+<p><strong>Step 10: value the pilot.</strong> Suppose a one-quarter pilot costs $50,000 and reveals whether savings are in the bear range. The team builds only if they are not. Expected NPV becomes 50% × $94,741 + 25% × $343,426 + 25% × $0 − $50,000 = <strong>$83,227</strong>. This ignores the one-quarter delay. The pilot is worth up to about $19,600 more than building blind. That is the value of the information it buys. <a href="data-and-decisions.html">Data and decisions</a> covers how to value information more generally.</p>
+<p><strong>Step 11: check the counterfactual.</strong> The base case assumes fraud losses stay flat without the model. Suppose instead fraud would grow 10% a year. Savings become $500,000, $550,000 and $605,000. NPV rises to <strong>$214,951</strong>. This is a fair point to make. It is also the easiest way to inflate a case. Show the fraud trend data, or leave it out.</p>
+<p><strong>What the leader does now.</strong> She asks for a pilot that measures two things: savings per month, and how fast the model's precision decays. She commits the full build only if the pilot rules out the bear case and shows a life of at least three years. She shows Finance the tornado, so the debate is about life and savings, not the discount rate.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>NPV vs. payback.</strong> NPV values the whole life of a bet. Payback rewards fast returns. A board under cash pressure may prefer payback. The cost is passing on long-lived bets.</li>
+<li><strong>NPV vs. IRR.</strong> IRR is easy to compare with a hurdle. It favours small, fast bets. The cost of ranking by IRR is choosing bets that create less value.</li>
+<li><strong>Staging vs. speed.</strong> A pilot buys information and lowers risk. It costs time, and a competitor may move first. Stage when the top tornado bar can flip the case. Skip the pilot when being late costs more than being wrong.</li>
+<li><strong>Cheap funding vs. control.</strong> Forward flow and securitization fund growth without the lender's balance sheet. You give up margin, and the buyer can walk away at renewal. Deposits are cheap. They need a charter and the regulation that comes with it.</li>
+<li><strong>Capital relief vs. margin.</strong> Quota-share reinsurance lets an insurer grow with less capital. It gives away a share of profit on every policy.</li>
+<li><strong>Precision vs. honesty.</strong> A case with one precise number looks confident. A case with a range, a tornado and scenarios is more honest and easier to trust.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The single-number case.</strong> No sensitivity. The first question about an assumption sinks it.</li>
+<li><strong>The missing counterfactual.</strong> A team claims all volume that touched the feature. A holdout later shows a fraction was new. Every later case from that team is discounted.</li>
+<li><strong>Wrong discount rate.</strong> The team picks a low rate to make NPV positive. Finance uses its own rate, and the case fails.</li>
+<li><strong>IRR theatre.</strong> A team ranks bets by IRR. A small bet with a 60% IRR beats a large one with a 20% IRR and five times the NPV.</li>
+<li><strong>Funding mismatch.</strong> A lending product is priced on the average cost of funds. Growth comes from an expensive warehouse line. Margins fall as volume rises.</li>
+<li><strong>Funding cliff.</strong> A forward-flow agreement ends during a market shock. The buyer does not renew. The lender must cut originations or fund loans on its own balance sheet.</li>
+<li><strong>The inflated do-nothing case.</strong> A team assumes the business collapses without its bet. Finance asks for the trend data, and there is none.</li>
+<li><strong>Valuation in the case.</strong> A team adds "implied company value" to its NPV. Finance strikes it out, and the team looks naive.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The code below reproduces every number in this lesson. Run it with any Python 3.</p>
+<pre><code class="language-python"># Worked example K and the other numbers in this lesson (illustrative, all inputs assumed).
+
+def npv(rate, cash_flows, invest):
+    &quot;&quot;&quot;Present value of yearly cash flows (years 1..n) minus the investment today.&quot;&quot;&quot;
+    return sum(cf / (1 + rate) ** t for t, cf in enumerate(cash_flows, start=1)) - invest
+
+def irr(cash_flows, invest, lo=-0.99, hi=1.0):
+    &quot;&quot;&quot;The rate at which NPV is zero, found by bisection.&quot;&quot;&quot;
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if npv(mid, cash_flows, invest) &gt; 0 else (lo, mid)
+    return mid
+
+def discounted_payback(rate, cash_flows, invest):
+    cum = 0
+    for t, cf in enumerate(cash_flows, start=1):
+        pv = cf / (1 + rate) ** t
+        if cum + pv &gt;= invest:
+            return t - 1 + (invest - cum) / pv
+        cum += pv
+    return None
+
+BASE = dict(savings=500_000, run_cost=100_000, build=900_000, rate=0.10, life=3)
+
+def case_npv(savings, run_cost, build, rate, life):
+    return npv(rate, [savings - run_cost] * life, build)
+
+flows = [400_000] * 3
+print(f&quot;Base NPV ${case_npv(**BASE):,.0f}; IRR {irr(flows, 900_000):.1%}; &quot;
+      f&quot;discounted payback {discounted_payback(0.10, flows, 900_000):.2f} years&quot;)
+
+# 1. Three scenarios with probabilities (savings is the uncertain input)
+scenarios = {&quot;bear&quot;: (0.25, 350_000), &quot;base&quot;: (0.50, 500_000), &quot;bull&quot;: (0.25, 600_000)}
+expected = 0
+for name, (p, s) in scenarios.items():
+    v = case_npv(**{**BASE, &quot;savings&quot;: s})
+    expected += p * v
+    print(f&quot;{name:5s} p={p:.2f} savings ${s:,} NPV ${v:,.0f}&quot;)
+print(f&quot;Expected NPV ${expected:,.0f}&quot;)
+
+# 2. A pilot (cost $50,000) that reveals the bear case before the build. Ignores the delay.
+with_pilot = sum(p * max(case_npv(**{**BASE, &quot;savings&quot;: s}), 0)
+                 for p, s in scenarios.values()) - 50_000
+print(f&quot;Expected NPV with pilot ${with_pilot:,.0f}&quot;)
+
+# 3. Tornado: move one input at a time across its range, sort by swing
+ranges = {&quot;savings&quot;: (400_000, 600_000), &quot;build&quot;: (1_080_000, 720_000),
+          &quot;life&quot;: (2, 4), &quot;run_cost&quot;: (150_000, 50_000), &quot;rate&quot;: (0.14, 0.08)}
+rows = sorted(((abs(case_npv(**{**BASE, k: hi}) - case_npv(**{**BASE, k: lo})), k,
+                case_npv(**{**BASE, k: lo}), case_npv(**{**BASE, k: hi}))
+               for k, (lo, hi) in ranges.items()), reverse=True)
+for width, k, a, b in rows:
+    print(f&quot;tornado {k:9s} ${a:&gt;10,.0f} to ${b:&gt;10,.0f}  swing ${width:,.0f}&quot;)
+
+# 4. A declining do-nothing case: fraud losses grow 10% a year without the model
+grow = [500_000 * 1.1 ** t - 100_000 for t in range(3)]
+print(f&quot;NPV against a growing-fraud baseline ${npv(0.10, grow, 900_000):,.0f}&quot;)
+
+# 5. IRR traps: two one-year bets at a 10% cost of capital
+for name, invest, back in ((&quot;small&quot;, 100_000, 140_000), (&quot;large&quot;, 1_000_000, 1_200_000)):
+    print(f&quot;{name}: IRR {irr([back], invest):.0%}, NPV ${npv(0.10, [back], invest):,.0f}&quot;)
+mixed = [230, -132]   # invest 100, get 230, then pay 132: two IRRs
+print(&quot;NPV of mixed flows at 10% and 20%:&quot;, round(npv(0.10, mixed, 100), 6), round(npv(0.20, mixed, 100), 6))
+
+# 6. Cost of capital
+wacc = 0.70 * 0.12 + 0.30 * 0.07 * (1 - 0.25)
+print(f&quot;WACC {wacc:.2%}&quot;)
+
+# 7. Incrementality: buy now, pay later at checkout
+gmv = 50_000 * 200
+incremental, shifted = gmv * 0.15, gmv * 0.85
+gain = incremental * (0.30 - 0.06)              # margin minus BNPL fee on new orders
+cannibal = shifted * (0.06 - 0.025)             # higher fee on orders that would have used cards
+print(f&quot;GMV ${gmv:,.0f}; incremental margin ${gain:,.0f}; extra fees ${cannibal:,.0f}; net ${gain - cannibal:,.0f}&quot;)
+
+# 8. Funding: cost of funds on a $10,000, 36-month loan (average balance $5,583)
+for label, r in ((&quot;deposits 3%&quot;, 0.03), (&quot;warehouse 6%&quot;, 0.06)):
+    print(f&quot;funding via {label}: ${5_583 * 3 * r:,.0f}&quot;)
+
+# 9. Quota-share reinsurance on $10M of premium (loss ratio 60%, expenses 32%)
+def underwrite(premium, cede=0.0, commission=0.30, loss=0.60, expense=0.32, capital_per_net=0.5):
+    net = premium * (1 - cede)
+    profit = net - premium * loss * (1 - cede) - premium * expense + premium * cede * commission
+    capital = net * capital_per_net
+    return profit, capital
+p0, c0 = underwrite(10e6)
+p1, c1 = underwrite(10e6, cede=0.5)
+print(f&quot;no reinsurance: profit ${p0/1e6:.1f}M on capital ${c0/1e6:.1f}M ({p0/c0:.0%})&quot;)
+print(f&quot;50% quota share: profit ${p1/1e6:.1f}M on capital ${c1/1e6:.1f}M ({p1/c1:.0%})&quot;)
+print(f&quot;implied cost of the capital released: {(p0 - p1) / (c0 - c1):.0%}&quot;)
+
+# 10. Valuation: what $1 of gross profit a year is worth at a 10% discount rate
+print(f&quot;$1 growing 3%: ${1 / (0.10 - 0.03):.2f}; $1 decaying 10%: ${1 / (0.10 + 0.10):.2f}; one-off: $1.00&quot;)
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-text">Base NPV $94,741; IRR 15.9%; discounted payback 2.68 years
+bear  p=0.25 savings $350,000 NPV $-278,287
+base  p=0.50 savings $500,000 NPV $94,741
+bull  p=0.25 savings $600,000 NPV $343,426
+Expected NPV $63,655
+Expected NPV with pilot $83,227
+tornado life      $  -205,785 to $   367,946  swing $573,731
+tornado savings   $  -153,944 to $   343,426  swing $497,370
+tornado build     $   -85,259 to $   274,741  swing $360,000
+tornado run_cost  $   -29,602 to $   219,083  swing $248,685
+tornado rate      $    28,653 to $   130,839  swing $102,186
+NPV against a growing-fraud baseline $214,951
+small: IRR 40%, NPV $27,273
+large: IRR 20%, NPV $90,909
+NPV of mixed flows at 10% and 20%: -0.0 0.0
+WACC 9.97%
+GMV $10,000,000; incremental margin $360,000; extra fees $297,500; net $62,500
+funding via deposits 3%: $502
+funding via warehouse 6%: $1,005
+no reinsurance: profit $0.8M on capital $5.0M (16%)
+50% quota share: profit $0.3M on capital $2.5M (12%)
+implied cost of the capital released: 20%
+$1 growing 3%: $14.29; $1 decaying 10%: $5.00; one-off: $1.00
+</code></pre>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Ask Finance for the discount rate and the hurdle for this type of bet before you build the case.</li>
+<li class="task todo">Write the counterfactual in one sentence at the top of the case.</li>
+<li class="task todo">Show NPV, IRR, simple and discounted payback side by side.</li>
+<li class="task todo">Build a tornado. Name the top bar, and say how the first stage will measure it.</li>
+<li class="task todo">Show bear, base and bull scenarios with probabilities, and the expected NPV.</li>
+<li class="task todo">For a lending product, name the funding source for the next dollar of loans and its cost.</li>
+<li class="task todo">For a bank product, state the capital it uses and the return on that capital.</li>
+<li class="task todo">For an insurance product, state the reinsurance structure and what it costs in margin.</li>
+<li class="task todo">State whether the bet adds recurring or one-off gross profit.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="the-language-of-money.html">The language of money</a> — the three statements, working capital and free cash flow.</li>
+<li><a href="unit-economics.html">Unit economics</a> — the per-loan, per-policy and per-transaction numbers these cases rest on.</li>
+<li><a href="data-and-decisions.html">Data and decisions</a> — value of information and forecasting with ranges.</li>
+<li><a href="portfolio-strategy-and-allocation.html">Portfolio strategy and capital allocation</a> — staged bets, real options and hurdle rates by horizon.</li>
+<li><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a> — holdouts and test design for measuring incrementality.</li>
+<li><a href="../technical-product-management/prioritization-and-roadmaps.html">Prioritization and roadmaps</a> — scoring bets at team level.</li>
+<li><a href="../system-design/transactional-and-financial.html">Transactional and financial systems</a> — the ledgers that record funding, settlement and reserves.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="unit-economics.html"><span class="lbl">← Previous</span><span class="ttl">Unit economics: from one transaction to a cohort</span></a><a class="navcard next" href="data-and-decisions.html"><span class="lbl">→ Next</span><span class="ttl">Data and decisions: deciding well under uncertainty</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-a-business-case-is-a-price-for-a-stream-of-cash">Mental model: a business case is a price for a stream of cash</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#budgets-forecasts-and-business-cases">Budgets, forecasts and business cases</a><a class="h3" href="#time-value-of-money-present-value-and-npv">Time value of money, present value and NPV</a><a class="h3" href="#payback-and-discounted-payback">Payback and discounted payback</a><a class="h3" href="#irr-and-when-it-misleads">IRR and when it misleads</a><a class="h3" href="#cost-of-capital-and-hurdle-rates">Cost of capital and hurdle rates</a><a class="h3" href="#funding-and-capital-in-regulated-businesses">Funding and capital in regulated businesses</a><a class="h3" href="#incrementality-and-the-counterfactual">Incrementality and the counterfactual</a><a class="h3" href="#scenarios-sensitivity-and-the-tornado">Scenarios, sensitivity and the tornado</a><a class="h3" href="#how-the-company-is-valued">How the company is valued</a><a class="h2" href="#worked-example-a-business-case-for-a-fraud-model">Worked example: a business case for a fraud model</a><a class="h3" href="#extending-the-case-irr-scenarios-and-a-tornado">Extending the case: IRR, scenarios and a tornado</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fbusiness-cases-and-valuation.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/business-cases-and-valuation.html"</script><script defer src="../assets/glossary.js"></script></body></html>

@@ -41,16 +41,25 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Memory &amp; context</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="memory-as-a-product-decision.html">1 · Memory as a product decision</a><a class="modlink active" href="session-user-and-organizational-memory.html">2 · Session, user &amp; organizational memory</a><a class="modlink" href="writing-and-maintaining-memory.html">3 · Writing and maintaining memory</a><a class="modlink" href="retrieval-as-memory.html">4 · Retrieval as memory</a><a class="modlink" href="when-memory-goes-wrong.html">5 · When memory goes wrong</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 02</span>
     <h1>Session, user &amp; organizational memory</h1>
   </div>
-  <div class="MarkdownContent"><p><em>Last reviewed: 2026-09 · Volatility: fast</em></p>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-11 · Volatility: fast</em></p>
 <h2 id="tldr">TL;DR</h2>
 <p>"The product remembers me" is three different features with one name. Mixing them up is
 where most memory mistakes start.</p>
@@ -211,6 +220,16 @@ another's view. That is the failure covered in
 <a href="when-memory-goes-wrong.html">When memory goes wrong</a>. The defence is the same
 <a href="../ai/05-safety-multitenancy.html#multi-tenant-isolation">multi-tenant isolation</a> you
 would apply to any shared system.</p>
+<h2 id="what-a-shipped-product-does">What a shipped product does</h2>
+<p>Anthropic's Claude help page shows how one vendor drew these lines (checked 2026-11).
+Each project has its own memory. A project chat uses that memory plus account memory from
+non-project chats, but not memory from other projects. On Team and Enterprise plans, the
+owner decides whether memory is available, and each member starts with it off. Owners
+cannot view or edit members' memories. Sensitive topics such as health are off by default
+and need each user to opt in. Incognito chats never write to memory.</p>
+<p>Copy the pattern, not the settings. The user owns personal memory. The admin owns only
+the on-off switch. Check whether an admin should ever read a member's memory in your
+product. If yes, say so in the spec and tell the member.</p>
 <h2 id="worked-example-three-notes-three-shapes">Worked example: three notes, three shapes</h2>
 <p><em>This example is invented, to show the method.</em></p>
 <p>A sales assistant has three things it might remember. The team places each one.</p>
@@ -312,11 +331,14 @@ or keys in a database." Choosing that mapping is the boundary decision.</p>
 <ul>
 <li>Anthropic, <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Memory tool</a>
   (Claude API docs): <code>/memories</code> is a prefix your handler maps to real storage, such as a
-  per-user directory or database keys. Checked 2026-09.</li>
+  per-user directory or database keys. Checked 2026-11.</li>
+<li>Anthropic, <a href="https://support.claude.com/en/articles/11817273">How does Claude's memory work?</a>
+  (help centre): per-project memory, Team and Enterprise defaults, admin limits, incognito.
+  Opened 2026-11.</li>
 <li>The sales-assistant scenario is invented and illustrative.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="memory-as-a-product-decision.html"><span class="lbl">← Previous</span><span class="ttl">Memory as a product decision</span></a><a class="navcard next" href="writing-and-maintaining-memory.html"><span class="lbl">→ Next</span><span class="ttl">Writing and maintaining memory</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-note-a-file-and-a-shared-handbook">The mental model: a note, a file, and a shared handbook</a><a class="h2" href="#session-memory-low-risk-still-worth-naming">Session memory: low risk, still worth naming</a><a class="h2" href="#user-memory-a-real-store-with-real-duties">User memory: a real store with real duties</a><a class="h2" href="#organizational-memory-the-boundary-is-the-feature">Organizational memory: the boundary is the feature</a><a class="h2" href="#worked-example-three-notes-three-shapes">Worked example: three notes, three shapes</a><a class="h2" href="#why-name-the-shape-first">Why name the shape first</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="memory-as-a-product-decision.html"><span class="lbl">← Previous</span><span class="ttl">Memory as a product decision</span></a><a class="navcard next" href="writing-and-maintaining-memory.html"><span class="lbl">→ Next</span><span class="ttl">Writing and maintaining memory</span></a></div><footer class="foot"><strong>Core insight:</strong> A model does not give you memory. Your product builds it as a set of promises about what it keeps, reads back and forgets.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-note-a-file-and-a-shared-handbook">The mental model: a note, a file, and a shared handbook</a><a class="h2" href="#session-memory-low-risk-still-worth-naming">Session memory: low risk, still worth naming</a><a class="h2" href="#user-memory-a-real-store-with-real-duties">User memory: a real store with real duties</a><a class="h2" href="#organizational-memory-the-boundary-is-the-feature">Organizational memory: the boundary is the feature</a><a class="h2" href="#what-a-shipped-product-does">What a shipped product does</a><a class="h2" href="#worked-example-three-notes-three-shapes">Worked example: three notes, three shapes</a><a class="h2" href="#why-name-the-shape-first">Why name the shape first</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

@@ -41,10 +41,19 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
   <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Generative AI</span><em>a Generative AI module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
 </header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="what-is-generative-ai.html">1 · What makes AI &quot;generative&quot;?</a><a class="modlink" href="the-modalities.html">2 · The five modalities</a><a class="modlink" href="probabilistic-software.html">3 · Probabilistic software</a><a class="modlink" href="the-genai-product-stack.html">4 · The generative AI product stack</a><a class="modlink active" href="build-buy-or-fine-tune.html">5 · Build, buy, or fine-tune</a><a class="modlink" href="where-value-is-created-and-destroyed.html">6 · Where generative AI creates and destroys value</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
     <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 05</span>
@@ -202,6 +211,16 @@ product solves, not for which model answers it. Buying the model and spending yo
 on grounding, action, and operations — the layers covered in the <a href="the-genai-product-stack.html">product stack
 lesson</a> — is almost always the better use of a limited
 budget.</p>
+<p>Buying is not risk-free, and the evidence on it is mixed. MIT NANDA's 2025 study <em>The GenAI
+Divide</em> reported that tools bought from specialist vendors succeeded about 67% of the time,
+and internal builds about one-third as often. Treat that as a signal, not a law. The study
+rests on interviews, a survey, and public deployments, and it defines success narrowly as
+rapid revenue growth. The bigger risk of buying is dependence. OpenAI retired the Sora 2 API
+on 24 September 2026, and Google shut down its Veo 3.1 preview video models on 22 October</p>
+<ol start="2026">
+<li>Any model you rent can change price, features, or availability on the vendor's
+schedule, not yours.</li>
+</ol>
 <h2 id="when-build-or-fine-tune-actually-make-sense">When build or fine-tune actually make sense</h2>
 <p>Build is justified when the model's behavior, cost structure, or data handling is the
 product itself — a company selling a specialized model to other companies, for example, or
@@ -218,7 +237,8 @@ plainly why this feature is the exception before committing the extra cost and t
 <li><strong>Fine-tuning to teach facts</strong> — using fine-tuning to bake in a knowledge base that goes
   stale on the next update and can never be cited, when retrieval was the right tool.</li>
 <li><strong>Buying without a fallback plan</strong> — depending entirely on one vendor's model, with no
-  plan for a price increase, a policy change, or an outage.</li>
+  plan for a price increase, a policy change, an outage, or the model being shut down. Keep
+  your prompts, evals, and data in a form you can move to a second model.</li>
 <li><strong>Skipping the justification step</strong> — choosing build or fine-tune out of habit or
   preference, without a clear answer to why buy alone would not work.</li>
 </ul>
@@ -242,7 +262,7 @@ plainly why this feature is the exception before committing the extra cost and t
 <li><a href="../ai/06-strategy-tradeoffs.html#finetune-vs-icl-vs-rag">Fine-tuning vs. ICL vs. RAG vs. distillation</a>
   — the engineering-depth spoke on this tradeoff.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="the-genai-product-stack.html"><span class="lbl">← Previous</span><span class="ttl">The generative AI product stack</span></a><a class="navcard next" href="where-value-is-created-and-destroyed.html"><span class="lbl">→ Next</span><span class="ttl">Where generative AI creates and destroys value</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
+  <div class="pagenav"><a class="navcard prev" href="the-genai-product-stack.html"><span class="lbl">← Previous</span><span class="ttl">The generative AI product stack</span></a><a class="navcard next" href="where-value-is-created-and-destroyed.html"><span class="lbl">→ Next</span><span class="ttl">Where generative AI creates and destroys value</span></a></div><footer class="foot"><strong>Core insight:</strong> Buy the model and build the system around it, for jobs that are slow by hand, cheap to check and safe to sometimes get wrong.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
   </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-the-engine-the-workshop-and-the-tune-up">The mental model: the engine, the workshop, and the tune-up</a><a class="h2" href="#the-three-options-compared">The three options, compared</a><a class="h2" href="#why-buy-wins-by-default">Why &quot;buy&quot; wins by default</a><a class="h2" href="#when-build-or-fine-tune-actually-make-sense">When build or fine-tune actually make sense</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),

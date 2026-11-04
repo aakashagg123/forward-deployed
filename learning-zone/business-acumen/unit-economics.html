@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Unit economics: from one transaction to a cohort — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink active" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 03</span>
+    <h1>Unit economics: from one transaction to a cohort</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p><strong>Unit economics</strong> is the profit or loss on one unit of business. The unit can be one payment, one order, one loan, one policy or one customer. You start with what the unit earns. You subtract every cost that rises with it. What is left is the <strong>contribution margin</strong>. Then you roll the unit up to a customer, and the customers up to a <strong>cohort</strong>: everyone acquired in the same month.</p>
+<p>The core tradeoff is growth against proof. Spending to acquire customers speeds growth. It only creates value if each cohort earns back its acquisition cost, with churn and losses counted. Most bad growth decisions do not come from bad arithmetic. They come from the wrong unit, the wrong margin layer, a blended cost, or a lifetime value that assumes customers never leave.</p>
+<p>The scale is large. In payments, the merchant's fee can be several times what the processor keeps. In lending, a few points of default turn a profitable loan book into a loss. In retail, the same sales can earn very different returns on the cash tied up in stock. This lesson gives you one method for all of them.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Every growth plan is a bet that new customers will be worth more than they cost. In FinTech, Payments, Lending and Insurance, that bet also carries risk losses that arrive months after the sale. A product that looks profitable per transaction can lose money per cohort.</p>
+<p><strong>What it changes in your decisions</strong> — You pick the unit before you pick the metric. You steer by the right contribution layer. You approve spend on channel-level acquisition cost and cohort payback, not on blended averages or a lifetime value with no time limit.</p>
+<p><strong>Ask your team</strong> — <em>"Show me cumulative contribution per acquired customer, by monthly cohort and by channel, against what we paid to acquire them. Which cohorts have paid back, and in which month?"</em></p>
+<p><strong>Risk if ignored</strong> — You scale a channel that never pays back. You approve a riskier credit band on average numbers. You report a lifetime value that Finance, investors or a regulator later write down.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ol>
+<li>Measure at the unit where revenue and variable cost are both incurred. Then roll up to the customer.</li>
+<li>Steer pricing and risk by CM1, operations by CM2, and growth spend by CM3 and cohort payback.</li>
+<li>Never approve growth spend on blended acquisition cost. Use paid acquisition cost for the channel you are buying.</li>
+<li>Report lifetime value only with a time limit, a discount rate, and cohort payback next to it.</li>
+<li>Compare cohorts at the same age, never at the same calendar date.</li>
+<li>Approve a new credit band, range or segment on its marginal economics, not the portfolio average.</li>
+<li>Count chargebacks, returns, refunds and defaults inside the unit, not in a separate "losses" bucket.</li>
+</ol>
+<h2 id="mental-model-the-contribution-waterfall">Mental model: the contribution waterfall</h2>
+<style>
+.ba-wf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-info-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.ba-wf-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-info-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.ba-wf h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.ba-wf-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-wf-row{display:grid;grid-template-columns:11rem 1fr 4.5rem;gap:10px;align-items:center;margin:5px 0}
+.ba-wf-lab{font-size:var(--font-text-xs-size);color:var(--color-text);line-height:1.3}
+.ba-wf-lab small{display:block;color:var(--color-text-tertiary);font-size:var(--font-text-3xs-size)}
+.ba-wf-track{position:relative;height:18px;background:var(--color-surface-secondary);border-radius:5px}
+.ba-wf-bar{position:absolute;top:0;bottom:0;border-radius:5px}
+.ba-wf-in{background:var(--color-background-info-solid)}
+.ba-wf-out{background:var(--color-background-danger-surface);border:1px solid var(--color-border-danger-surface)}
+.ba-wf-sum{background:var(--color-background-success-solid)}
+.ba-wf-mkt{background:var(--color-background-caution-surface);border:1px solid var(--color-border-caution-surface)}
+.ba-wf-val{font-family:var(--font-mono);font-size:var(--font-text-xs-size);text-align:right;color:var(--color-text)}
+.ba-wf-tot .ba-wf-lab{font-weight:700}
+.ba-wf-tot .ba-wf-val{font-weight:700;color:var(--color-text-success)}
+.ba-wf-gap{border-top:1px dashed var(--color-border);margin:9px 0}
+.ba-wf-legend{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.ba-wf-pill{font-size:var(--font-text-3xs-size);font-weight:600;border-radius:10px;padding:2px 9px}
+.ba-wf-p1{background:var(--color-background-info-surface);color:var(--color-text-info)}
+.ba-wf-p2{background:var(--color-background-danger-surface);color:var(--color-text-danger)}
+.ba-wf-p3{background:var(--color-background-success-surface);color:var(--color-text-success)}
+.ba-wf-p4{background:var(--color-background-caution-surface);color:var(--color-text-caution)}
+.ba-wf-foot{margin:12px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary)}
+@media (max-width:560px){.ba-wf-row{grid-template-columns:7.5rem 1fr 3.8rem}.ba-wf{padding:22px 14px 16px}}
+</style>
+<div class="ba-wf"><span class="ba-wf-chip">Contribution margin</span>
+<h4>One SMB merchant, one month: from gross fees to CM3</h4>
+<p class="ba-wf-sub">Illustrative. 400 card payments of $50 at 2.9% + $0.30. All inputs assumed (worked example B).</p>
+
+<div class="ba-wf-row"><div class="ba-wf-lab">Gross fees<small>what the merchant pays</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-in" style="left:0;width:100%"></div></div><div class="ba-wf-val">$700</div></div>
+<div class="ba-wf-row"><div class="ba-wf-lab">Interchange<small>to the card issuer</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-out" style="left:48.57%;width:51.43%"></div></div><div class="ba-wf-val">−$360</div></div>
+<div class="ba-wf-row"><div class="ba-wf-lab">Scheme fees<small>to the card network</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-out" style="left:44.86%;width:3.71%"></div></div><div class="ba-wf-val">−$26</div></div>
+<div class="ba-wf-row ba-wf-tot"><div class="ba-wf-lab">Net revenue</div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-sum" style="left:0;width:44.86%"></div></div><div class="ba-wf-val">$314</div></div>
+<div class="ba-wf-gap"></div>
+<div class="ba-wf-row"><div class="ba-wf-lab">Fraud and disputes<small>losses you cannot pass on</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-out" style="left:42%;width:2.86%"></div></div><div class="ba-wf-val">−$20</div></div>
+<div class="ba-wf-row"><div class="ba-wf-lab">Processing<small>per-transaction cost</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-out" style="left:39.14%;width:2.86%"></div></div><div class="ba-wf-val">−$20</div></div>
+<div class="ba-wf-row ba-wf-tot"><div class="ba-wf-lab">CM1</div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-sum" style="left:0;width:39.14%"></div></div><div class="ba-wf-val">$274</div></div>
+<div class="ba-wf-row"><div class="ba-wf-lab">Cost to serve<small>support, onboarding, risk review</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-out" style="left:35.71%;width:3.43%"></div></div><div class="ba-wf-val">−$24</div></div>
+<div class="ba-wf-row ba-wf-tot"><div class="ba-wf-lab">CM2</div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-sum" style="left:0;width:35.71%"></div></div><div class="ba-wf-val">$250</div></div>
+<div class="ba-wf-row"><div class="ba-wf-lab">Performance marketing<small>period view, per active merchant</small></div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-mkt" style="left:27.14%;width:8.57%"></div></div><div class="ba-wf-val">−$60</div></div>
+<div class="ba-wf-row ba-wf-tot"><div class="ba-wf-lab">CM3</div><div class="ba-wf-track"><div class="ba-wf-bar ba-wf-sum" style="left:0;width:27.14%"></div></div><div class="ba-wf-val">$190</div></div>
+
+<div class="ba-wf-legend"><span class="ba-wf-pill ba-wf-p1">money in</span><span class="ba-wf-pill ba-wf-p2">variable cost</span><span class="ba-wf-pill ba-wf-p3">margin layer</span><span class="ba-wf-pill ba-wf-p4">growth spend</span></div>
+<p class="ba-wf-foot">Only 27% of the gross fee survives to CM3. Steer pricing and risk by CM1, operations by CM2, growth by CM3 and cohort payback.</p>
+</div>
+
+<p>Picture water poured into the top of a staircase of buckets. Each step pours some water off to someone else. The card issuer takes the largest share. The network takes a little. Fraud, processing, support and marketing each take a little more. Unit economics is the discipline of measuring what reaches each step. The figure shows one small merchant's month from the first worked example below.</p>
+<p><strong>Where the analogy breaks.</strong> Water flows down at once. Money does not. Fees arrive today. Disputes arrive weeks later. Loan defaults arrive months later. Acquisition cost is paid before the first fee. So a waterfall for one period always needs a second view across time: the cohort. The rest of this lesson builds both.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="choose-the-unit">Choose the unit</h3>
+<p>The <strong>unit</strong> is the smallest thing you sell that has its own revenue and its own variable cost. Pick it first. A metric on the wrong unit hides the problem you are trying to see.</p>
+<p><strong>How it works.</strong> List the events that create revenue. List the events that create variable cost. Find the smallest unit where both happen. That is your base unit. Then group base units into the unit a customer buys from you, usually the customer or merchant per month.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Base unit</th>
+<th>Roll-up unit</th>
+<th>Why this base</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Payments</td>
+<td>One transaction</td>
+<td>Merchant per month</td>
+<td>Fees, interchange and fraud are all per transaction</td>
+</tr>
+<tr>
+<td>Lending</td>
+<td>One loan</td>
+<td>Borrower over the loan's life</td>
+<td>Interest, funding cost and default attach to the loan</td>
+</tr>
+<tr>
+<td>Insurance</td>
+<td>One policy-year</td>
+<td>Policyholder over renewals</td>
+<td>Premium and claims attach to the policy term</td>
+</tr>
+<tr>
+<td>Marketplace or eCommerce</td>
+<td>One order</td>
+<td>Customer per month</td>
+<td>Fees, delivery, promotions and returns attach to the order</td>
+</tr>
+<tr>
+<td>Retail</td>
+<td>One category</td>
+<td>Store or chain</td>
+<td>Margin and stock are managed by category</td>
+</tr>
+<tr>
+<td>Neobank</td>
+<td>One active customer per month</td>
+<td>Customer over lifetime</td>
+<td>Interchange, deposits and service cost attach to the customer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Domain application.</strong> A payments team that measures per merchant only can miss that tiny transactions lose money. A $5 payment at 2.9% + $0.30 pays a fee of $0.445. The processor's own cost has a fixed part per transaction. So a merchant base full of small tickets can look fine in total and lose money per transaction. <a href="monetization-and-business-models.html">Pricing and business models</a> shows how the price metric creates this.</p>
+<p><strong>Decision rule.</strong> When revenue and cost happen at different units, measure at the smaller unit and roll up. When a new product changes the unit, rebuild the model before you compare it with the old one.</p>
+<p><strong>Common misreading.</strong> "Per customer" sounds complete. It averages away the fact that some transactions, orders or loans inside the customer lose money.</p>
+<h3 id="contribution-margin-in-three-layers">Contribution margin in three layers</h3>
+<p><strong>Contribution margin (CM)</strong> is what a unit earns after the costs that move with it. It is what the unit contributes toward fixed costs and profit. Teams split it into three layers, because different decisions need different costs.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Formula</th>
+<th>Costs it subtracts</th>
+<th>Decisions it steers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CM1</strong></td>
+<td>Net revenue − direct variable cost</td>
+<td>Pass-through fees, cost of goods, processing, fraud, credit loss, courier pay</td>
+<td>Pricing, risk policy, supplier and partner terms</td>
+</tr>
+<tr>
+<td><strong>CM2</strong></td>
+<td>CM1 − variable cost to serve</td>
+<td>Support, onboarding, identity checks, servicing, collections</td>
+<td>Operations, automation, self-serve design</td>
+</tr>
+<tr>
+<td><strong>CM3</strong></td>
+<td>CM2 − performance marketing</td>
+<td>Paid acquisition spend that scales with volume</td>
+<td>Growth budget, channel mix</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Net revenue</strong> comes first. It is revenue after amounts you pass straight to others, such as interchange. Whether the books show revenue gross or net is an accounting choice. <a href="the-language-of-money.html">The language of money</a> explains it. For unit economics, always start from net revenue. The pass-through was never yours.</p>
+<p><strong>How to compute it.</strong> Write every cost line. Tag each as fixed, variable or step-fixed. Put each variable line in exactly one layer. Agree the tags with Finance once, then keep them stable. A layer that changes definition every quarter cannot be trended.</p>
+<p><strong>CM3 is a period view.</strong> CM3 spreads one period's marketing over the units of that period. It answers "is this month's business, including this month's growth spend, contributing?" It does not say whether a cohort will pay back. The cohort view below does that.</p>
+<p><strong>Domain application.</strong> In the payments example, net revenue is $314 a month for one merchant. Fraud, disputes and processing cost $40, so CM1 is $274. Support and onboarding cost $24, so CM2 is $250. Assume the business has 10,000 active merchants and spends $600,000 a month on performance marketing. That is $60 per active merchant, so CM3 is $190. All of these inputs are assumed.</p>
+<p><strong>Decision rule.</strong> When you change price or risk policy, judge it on CM1. When you change support or onboarding, judge it on CM2. When you change the growth budget, judge it on CM3 and cohort payback together.</p>
+<p><strong>Common misreading.</strong> Calling CM1 "profit". CM1 is before support, marketing, salaries and rent. A product can have a healthy CM1 and still lose money at CM2, because each customer needs a human to onboard or service them.</p>
+<h3 id="customer-acquisition-cost-done-right">Customer acquisition cost done right</h3>
+<p><strong>Customer acquisition cost (CAC)</strong> is what you spend to win one new customer. The formula looks simple: acquisition spend ÷ new customers. Every part of it can be bent.</p>
+<p><strong>Three versions you must keep apart:</strong></p>
+<ul>
+<li><strong>Blended CAC</strong> divides all acquisition spend by all new customers, including those who came free through word of mouth or brand. It flatters paid channels.</li>
+<li><strong>Paid CAC</strong> divides paid spend by the customers that paid spend brought in. Use it to decide whether to buy more.</li>
+<li><strong>Channel CAC</strong> splits paid CAC by channel: search, partners, field sales, referrals. Channels differ widely. The blended number hides a channel that never pays back.</li>
+</ul>
+<p><strong>Fully loaded CAC</strong> adds the costs people forget. Sales and marketing salaries. Sign-up incentives and referral bonuses. Onboarding checks such as identity and know-your-customer (KYC) checks. In lending, it also adds the cost of applicants you decline.</p>
+<p><strong>Domain application: lending.</strong> A lender pays for every application, not only for funded loans. Assume $70 of marketing and $14 of data and verification cost per completed application. Assume 32% of applicants are approved and 75% of those accept the offer. So 24% of applications become loans. CAC per funded loan = $84 ÷ 0.24 = <strong>$350</strong>. Tighten the credit policy so that approval falls to 24%, and CAC per funded loan rises to $84 ÷ 0.18 = $467. Risk policy changes acquisition cost. The two teams must plan together.</p>
+<p><strong>Domain application: payments.</strong> In the worked example below, paid merchants cost $3,000 each through field sales. Organic merchants cost $500 each in onboarding and incentives. With 40% paid and 60% organic, blended CAC is $1,500. The blended number is half the paid number.</p>
+<p><strong>Decision rule.</strong> When you decide whether to spend the next dollar, use paid CAC for that channel, fully loaded. Use blended CAC only to describe the whole business to outsiders.</p>
+<p><strong>Common misreading.</strong> "Our CAC is falling." It often falls because organic growth rose, or because a cheap channel grew while an expensive one held still. Ask which CAC fell, and in which channel.</p>
+<h3 id="payback-simple-and-cohort">Payback: simple and cohort</h3>
+<p><strong>Payback</strong> is how long a new customer takes to earn back what you paid to acquire them. It is the single most useful growth number, because it combines CAC, margin and churn in one figure a CFO can act on.</p>
+<p><strong>Simple payback</strong> = CAC ÷ monthly contribution per customer. Use CM2, not revenue. It assumes the customer stays until payback. That is never true.</p>
+<p><strong>Cohort payback</strong> follows a real group. Take every customer acquired in one month. Each month, add up the contribution of those who are still active. Divide by the number originally acquired. Payback is the first month in which that cumulative contribution per acquired customer covers CAC. Churn is built in, because customers who leave stop contributing.</p>
+<style>
+.ba-pb{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-success-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.ba-pb-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-success-solid);color:var(--white);
+  font-size:var(--font-text-3xs-size);font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.ba-pb h4{margin:0 0 4px;font-size:var(--font-text-2xs-size);font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.ba-pb-sub{font-size:var(--font-text-xs-size);color:var(--color-text-secondary);margin:0 0 12px}
+.ba-pb svg{width:100%;height:auto;display:block}
+.ba-pb .ax{stroke:var(--color-border-strong);stroke-width:1.2}
+.ba-pb .grid{stroke:var(--color-border-subtle);stroke-width:1}
+.ba-pb .naive{fill:none;stroke:var(--color-text-tertiary);stroke-width:2;stroke-dasharray:6 5}
+.ba-pb .cohort{fill:none;stroke:var(--color-background-success-solid);stroke-width:3}
+.ba-pb .cac1{stroke:var(--color-background-info-solid);stroke-width:1.5;stroke-dasharray:3 4}
+.ba-pb .cac2{stroke:var(--color-background-danger-solid);stroke-width:1.5;stroke-dasharray:3 4}
+.ba-pb .dot-ok{fill:var(--color-background-success-solid)}
+.ba-pb .dot-naive{fill:var(--color-text-tertiary)}
+.ba-pb text{font-family:inherit;font-size:var(--font-text-3xs-size);fill:var(--color-text-secondary)}
+.ba-pb text.t-info{fill:var(--color-text-info);font-weight:700}
+.ba-pb text.t-danger{fill:var(--color-text-danger);font-weight:700}
+.ba-pb text.t-ok{fill:var(--color-text-success);font-weight:700}
+.ba-pb-legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.ba-pb-pill{font-size:var(--font-text-3xs-size);font-weight:600;border-radius:10px;padding:2px 9px;background:var(--color-surface-secondary);color:var(--color-text-secondary)}
+.ba-pb-pill.ok{background:var(--color-background-success-surface);color:var(--color-text-success)}
+.ba-pb-foot{margin:10px 0 0;font-size:var(--font-text-2xs-size);color:var(--color-text-tertiary)}
+@media (max-width:520px){.ba-pb{padding:22px 12px 16px}}
+</style>
+<div class="ba-pb"><span class="ba-pb-chip">Cohort payback</span>
+<h4>Cumulative CM2 per acquired merchant, by month</h4>
+<p class="ba-pb-sub">Illustrative (worked example B). CM2 $250 a month. Churn 8% a month for three months, then 2%.</p>
+<svg viewBox="0 0 640 310" role="img" aria-label="Cumulative contribution per acquired merchant. The no-churn line crosses blended CAC of 1,500 dollars at month 6 and paid CAC of 3,000 dollars at month 12. The cohort line with churn crosses them at months 8 and 17.">
+  <line class="grid" x1="60" y1="216.7" x2="610" y2="216.7"/>
+  <line class="grid" x1="60" y1="163.3" x2="610" y2="163.3"/>
+  <line class="grid" x1="60" y1="56.7" x2="610" y2="56.7"/>
+  <line class="cac1" x1="60" y1="190" x2="610" y2="190"/>
+  <line class="cac2" x1="60" y1="110" x2="610" y2="110"/>
+  <line class="ax" x1="60" y1="270" x2="610" y2="270"/>
+  <line class="ax" x1="60" y1="30" x2="60" y2="270"/>
+  <polyline class="naive" points="60.0,270.0 82.9,256.7 105.8,243.3 128.8,230.0 151.7,216.7 174.6,203.3 197.5,190.0 220.4,176.7 243.3,163.3 266.2,150.0 289.2,136.7 312.1,123.3 335.0,110.0 357.9,96.7 380.8,83.3 403.8,70.0 426.7,56.7 449.6,43.3 472.5,30.0"/>
+  <polyline class="cohort" points="60.0,270.0 82.9,256.7 105.8,244.4 128.8,233.1 151.7,222.7 174.6,212.6 197.5,202.6 220.4,192.8 243.3,183.2 266.2,173.8 289.2,164.7 312.1,155.7 335.0,146.8 357.9,138.2 380.8,129.7 403.8,121.4 426.7,113.2 449.6,105.2 472.5,97.4 495.4,89.7 518.3,82.2 541.2,74.9 564.2,67.7 587.1,60.6 610.0,53.6"/>
+  <circle class="dot-naive" cx="197.5" cy="190" r="4"/>
+  <circle class="dot-naive" cx="335" cy="110" r="4"/>
+  <circle class="dot-ok" cx="243.3" cy="183.2" r="5"/>
+  <circle class="dot-ok" cx="449.6" cy="105.2" r="5"/>
+  <text x="54" y="273" text-anchor="end">$0</text>
+  <text x="54" y="219.7" text-anchor="end">$1,000</text>
+  <text x="54" y="166.3" text-anchor="end">$2,000</text>
+  <text x="54" y="113" text-anchor="end">$3,000</text>
+  <text x="54" y="59.7" text-anchor="end">$4,000</text>
+  <text x="60" y="288" text-anchor="middle">0</text>
+  <text x="197.5" y="288" text-anchor="middle">6</text>
+  <text x="335" y="288" text-anchor="middle">12</text>
+  <text x="472.5" y="288" text-anchor="middle">18</text>
+  <text x="610" y="288" text-anchor="middle">24</text>
+  <text x="335" y="304" text-anchor="middle">months since acquisition</text>
+  <text class="t-info" x="606" y="184" text-anchor="end">blended CAC $1,500</text>
+  <text class="t-danger" x="606" y="104" text-anchor="end">paid CAC $3,000</text>
+  <text class="t-ok" x="250" y="200">cohort: month 8</text>
+  <text class="t-ok" x="456" y="124">cohort: month 17</text>
+  <text x="150" y="182" text-anchor="end">simple: month 6</text>
+  <text x="328" y="100" text-anchor="end">simple: month 12</text>
+</svg>
+<div class="ba-pb-legend"><span class="ba-pb-pill">dashed: simple payback, no churn</span><span class="ba-pb-pill ok">solid: cohort payback, with churn</span></div>
+<p class="ba-pb-foot">Simple payback divides CAC by one survivor's margin. Cohort payback divides it by the average acquired merchant's margin, and that average shrinks as merchants leave.</p>
+</div>
+
+<p>In the figure, the dashed line ignores churn. The solid line counts it. With churn, the merchant cohort pays back blended CAC in month 8 rather than month 6, and paid CAC in month 17 rather than month 12. The first worked example below shows every step.</p>
+<p><strong>How to run it.</strong> You need three tables: acquisition spend by channel and month, customers acquired by channel and month, and contribution by customer and month. Most data teams can build the cohort table in a day. Ask for it by channel, because each channel has its own churn as well as its own CAC.</p>
+<p><strong>Heuristics, labelled as heuristics.</strong> A widely repeated rule of thumb says payback should be under about 12 months for small-business products and under about 24 months for enterprise products. These are rules of thumb, not sourced benchmarks or laws. A lender or insurer with cheap long-term funding can accept longer payback. A startup with 18 months of cash cannot.</p>
+<p><strong>Decision rule.</strong> When cohort payback is longer than your cash runway or your planning horizon, slow the channel, whatever the lifetime value says.</p>
+<p><strong>Common misreading.</strong> "Payback is 6 months." Ask: simple or cohort? On which margin layer? On blended or paid CAC? The answers can turn 6 months into 17.</p>
+<h3 id="lifetime-value-and-six-ways-it-lies">Lifetime value, and six ways it lies</h3>
+<p><strong>Lifetime value (LTV)</strong> is the contribution a customer brings over their whole relationship with you. It is the number most often used to justify growth spend. It is also the number most often wrong.</p>
+<p><strong>The formulas.</strong></p>
+<ul>
+<li><strong>Undiscounted:</strong> LTV = monthly CM ÷ monthly churn. With CM2 of $250 and churn of 3%, LTV = $8,333. The term 1 ÷ churn is the expected lifetime in months.</li>
+<li><strong>Discounted:</strong> LTV = monthly CM ÷ (monthly churn + monthly discount rate). At a 1% monthly discount rate, LTV = $250 ÷ 0.04 = $6,250. Discounting counts a dollar in year 3 as worth less than a dollar today.</li>
+<li><strong>Cohort LTV with a horizon:</strong> sum the actual cohort contribution, month by month, discounted, up to a cap such as 36 months. In the worked example, this gives $4,648. That is 44% less than the simple $8,333.</li>
+</ul>
+<p><strong>Six ways LTV lies:</strong></p>
+<ol>
+<li><strong>Front-loaded churn.</strong> Most customers who leave do so in the first months. A single average churn rate spreads that loss evenly and overstates early value.</li>
+<li><strong>Extrapolated expansion.</strong> Teams assume customers will grow their spend for years because the best cohort did. Young cohorts have not proved it.</li>
+<li><strong>Revenue, not contribution.</strong> LTV built on revenue ignores interchange, losses and cost to serve. In payments, that can overstate value several times.</li>
+<li><strong>No discounting.</strong> A dollar in year 5 is worth less than a dollar now, and much less to a company that is short of cash.</li>
+<li><strong>Young cohorts.</strong> A cohort that is 6 months old says little about month 36. Extrapolating it is a guess with a decimal point.</li>
+<li><strong>Survivorship.</strong> Measuring "average customer lifetime" from customers who are still active ignores those who already left.</li>
+</ol>
+<p><strong>Domain application: lending.</strong> A loan has a contractual life. The "lifetime" is the loan term plus any repeat loans. Repeat borrowing is real value, but it depends on the borrower not defaulting on the first loan. Model it only from observed repeat rates by vintage.</p>
+<p><strong>Decision rule.</strong> When someone shows you LTV ÷ CAC, ask for cohort payback beside it, and for the horizon and discount rate behind it. Approve spend only if both look healthy.</p>
+<p><strong>Common misreading.</strong> "LTV to CAC is above 3, so we should spend more." The 3:1 ratio is a widely repeated rule of thumb, not a sourced benchmark or a law. A 3:1 ratio that pays back in 40 months can still sink a company that runs out of cash in 24.</p>
+<h3 id="cohort-curves">Cohort curves</h3>
+<p>A <strong>cohort curve</strong> plots what a group of customers does by <strong>months on book</strong>: the months since they were acquired. It is the most honest picture of a product's economics. It shows retention, expansion and loss in one place.</p>
+<p><strong>Two kinds of retention.</strong></p>
+<ul>
+<li><strong>Logo retention</strong> counts customers still active. "Logo" means one account, whatever its size.</li>
+<li><strong>Revenue or volume retention</strong> tracks money. In payments it is often total payment volume (TPV) retention: the cohort's processed volume this month versus its first months.</li>
+</ul>
+<p>They can tell opposite stories. A merchant cohort can lose 35% of its merchants and still keep 100% of its volume, because the survivors grow. Revenue retention across a whole book is covered in <a href="performance-and-growth.html">performance and growth</a>, which defines net revenue retention.</p>
+<p><strong>Three shapes to recognise.</strong></p>
+<ul>
+<li><strong>Flattening.</strong> Early loss, then a stable base. Healthy. The flat level is what you are really buying.</li>
+<li><strong>Smiling.</strong> Logo retention flattens while volume retention turns up, because survivors grow. Strong. Common in payments and B2B software.</li>
+<li><strong>Decaying.</strong> The curve never flattens. Every cohort eventually disappears. The product has no lasting hold, and LTV based on any churn average is too high.</li>
+</ul>
+<p><strong>How to read it.</strong> Put cohorts on one chart with months on book on the horizontal axis. Compare them at the same age. A January cohort at month 6 is comparable to a March cohort at month 6. It is not comparable to the March cohort in the same calendar month. Lenders call the same idea a <strong>vintage curve</strong>: cumulative losses by months on book, by origination month.</p>
+<p><strong>Domain application: eCommerce.</strong> A promotion brings a large cohort. Its month-1 orders look great. By month 4, its repeat rate is half that of organic cohorts. The cohort curve shows it. A monthly dashboard of total orders hides it inside the growth.</p>
+<p><strong>Decision rule.</strong> When a new cohort's curve sits below older cohorts at the same age, stop scaling the source of that cohort until you know why.</p>
+<p><strong>Common misreading.</strong> Comparing this month's active-customer total with last month's. That mixes old and new cohorts. Growth in new customers can hide decay in every cohort.</p>
+<h3 id="unit-waterfalls-by-domain">Unit waterfalls by domain</h3>
+<p>Each domain has its own waterfall. The method is the same: start with what the customer pays, subtract what passes to others, subtract each variable cost, and name the layer at each step. The figures here are illustrative unless a source is given.</p>
+<h4 id="payments-per-transaction">Payments: per transaction</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What it is</th>
+<th>Who keeps it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gross fee</td>
+<td>What the merchant pays the acquirer</td>
+<td>—</td>
+</tr>
+<tr>
+<td>− Interchange</td>
+<td>Paid to the card issuer, set by the card network</td>
+<td>Issuer</td>
+</tr>
+<tr>
+<td>− Scheme fees</td>
+<td>Paid to the card network</td>
+<td>Network</td>
+</tr>
+<tr>
+<td>= Net revenue</td>
+<td>What the acquirer keeps</td>
+<td>Acquirer</td>
+</tr>
+<tr>
+<td>− Fraud and disputes</td>
+<td>Losses the acquirer cannot pass on to the merchant</td>
+<td>—</td>
+</tr>
+<tr>
+<td>− Processing</td>
+<td>Gateway, risk checks, hosting, settlement</td>
+<td>—</td>
+</tr>
+<tr>
+<td>= CM1</td>
+<td>Per-transaction contribution</td>
+<td>Acquirer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Gross and net take rate.</strong> The <strong>take rate</strong> is revenue as a share of the payment value. The <strong>gross take rate</strong> uses the full fee. The <strong>net take rate</strong> uses net revenue. In the worked example, gross take is 3.5% and net take is 1.57%. Compare competitors on net take. Gross take mostly measures the issuer's share. How interchange is regulated and passed on to merchants is in <a href="monetization-and-business-models.html">pricing and business models</a>.</p>
+<p><strong>Chargeback and dispute economics.</strong> A cardholder can dispute a payment with their card issuer. If the dispute succeeds, the money goes back to the cardholder. This reversal is a <strong>chargeback</strong>. The merchant usually bears the lost sale. The acquirer usually charges the merchant a dispute fee. The merchant can fight with evidence. Fighting costs staff time and wins only some of the time.</p>
+<p>The expected cost of one dispute has four parts:</p>
+<ul>
+<li><strong>Lost funds</strong>: the payment amount × (1 − win rate), if you fight. The full amount, if you do not.</li>
+<li><strong>The dispute fee.</strong></li>
+<li><strong>Operations cost</strong> to gather and submit evidence.</li>
+<li><strong>The goods</strong>, if they shipped and do not come back.</li>
+</ul>
+<p><em>Illustrative, inputs assumed:</em> a $120 disputed payment, a $15 fee, $12 of staff time to fight, and a 30% win rate. Accepting costs $120 + $15 = $135. Fighting costs 0.7 × $120 + $15 + $12 = $111. Fighting saves $24. On a $25 payment, the expected recovery is 0.3 × $25 = $7.50, below the $12 cost to fight. So you accept.</p>
+<p><strong>Decision rule.</strong> Fight a dispute when win rate × amount is more than the cost to fight. Otherwise accept it, and spend the effort on preventing the next one.</p>
+<p><strong>Where the acquirer carries the loss.</strong> The acquirer is exposed when the merchant cannot pay the chargeback back. That happens when a merchant fails after taking payment for goods it never delivers, such as tickets, travel or pre-orders. This is <strong>merchant credit risk</strong>. Acquirers manage it with reserves, which hold back part of a risky merchant's payouts, and with slower payouts. These tools cost the merchant cash flow. They are a pricing and product decision, not only a risk one.</p>
+<p><strong>Network monitoring.</strong> Card networks monitor merchants' dispute rates against thresholds. A merchant above them faces remediation requirements and escalating consequences. Thresholds differ by network and change over time. Ask your risk team for the current ones.</p>
+<h4 id="lending-per-loan">Lending: per loan</h4>
+<p>A loan earns interest and fees. It pays for its funding, its expected credit loss, its servicing and its acquisition.</p>
+<p><strong>Contribution per loan</strong> = interest + fees − cost of funds − expected loss − servicing − acquisition.</p>
+<ul>
+<li><strong>Interest</strong> follows the annual percentage rate (APR) and the amortization schedule. On an amortizing loan the balance falls each month, so interest falls too.</li>
+<li><strong>Cost of funds</strong> is what the lender pays for the money it lends: deposits, credit lines or investors. It moves with interest rates. <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> explains how lenders fund loans.</li>
+<li><strong>Expected loss (EL)</strong> = probability of default (PD) × loss given default (LGD) × exposure at default (EAD). PD is the chance the borrower defaults over the loan's life. LGD is the share of the balance lost after recoveries. EAD is the balance owed when default happens.</li>
+<li><strong>Servicing</strong> covers payment processing, statements, support and collections.</li>
+<li><strong>Acquisition</strong> is CAC per funded loan, as computed above.</li>
+</ul>
+<p><strong>Marginal versus average borrower.</strong> A lender's average contribution includes its best borrowers. The decision to approve one more risk band depends only on that band. In the worked example, the average loan contributes $1,301 and a band with 15% PD contributes $944. Both are positive. But the marginal band also carries more uncertainty, more fraud and worse recoveries than the model may show.</p>
+<p><strong>Decision rule.</strong> When you widen the approval criteria, compute the contribution of the new band alone. Compare it with the band's own uncertainty, not with the portfolio average.</p>
+<p><strong>Common misreading.</strong> "Losses are 5% and our rate is 18%, so we earn 13%." That ignores the cost of funds, servicing, acquisition and the interest lost after default. The worked example shows how much each one takes.</p>
+<h4 id="insurance-per-policy">Insurance: per policy</h4>
+<p>An insurer collects premium first and pays claims later. Its unit is one policy for one term.</p>
+<ul>
+<li><strong>Loss ratio</strong> = claims incurred ÷ earned premium. Earned premium is the part of the premium for cover already provided.</li>
+<li><strong>Loss adjustment expense (LAE)</strong> is the cost of handling claims: adjusters, investigation, legal. Some insurers report it inside the loss ratio, and some report it apart. Check which.</li>
+<li><strong>Expense ratio</strong> = acquisition and other underwriting expenses ÷ premium. Acquisition includes commissions, marketing and policy setup.</li>
+<li><strong>Combined ratio</strong> = loss ratio + LAE ratio + expense ratio. Under 100% means an underwriting profit. Over 100% means an underwriting loss.</li>
+<li><strong>Investment income</strong> comes from the premium held between collection and claim payment. This held money is called <strong>float</strong>. It lets an insurer run a combined ratio slightly over 100% and still make money. It shrinks when interest rates fall.</li>
+</ul>
+<p>Reinsurance changes the unit too. An insurer that passes part of each policy to a reinsurer gives up part of the premium and part of the claims. <a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> covers how that trades margin for capital.</p>
+<p><strong>Domain application.</strong> In InsurTech, product decisions move each ratio. A faster digital claims flow lowers LAE. Paying claims too fast without checks raises the loss ratio through fraud. A cheap acquisition channel lowers the expense ratio. It may also bring riskier customers who raise the loss ratio.</p>
+<p><strong>Decision rule.</strong> When a product change lowers one ratio, check the other two before you claim the win.</p>
+<p><strong>Common misreading.</strong> Judging a new insurance product on its first year's loss ratio. Claims are reported and settled late. The first year's loss ratio is almost always too low. <a href="performance-and-growth.html">Performance and growth</a> shows how insurers correct for this with loss development.</p>
+<h4 id="marketplaces-and-ecommerce-per-order">Marketplaces and eCommerce: per order</h4>
+<p><strong>Contribution per order</strong> = fees and margin − fulfilment or courier cost − payment cost − promotions − refunds and returns.</p>
+<p><em>Illustrative food-delivery order, inputs assumed:</em> a $40 basket. The restaurant pays 20% commission ($8). The customer pays $5 in delivery and service fees. Revenue is $13. The courier is paid $7. Payment processing is 3% of the $45 charged, which is $1.35. Promotions cost $1.50. Refunds and credits average $0.60. Support averages $0.40. Contribution per order is $13 − $7 − $1.35 − $1.50 − $0.60 − $0.40 = <strong>$2.15</strong>. A $2 delivery-fee waiver removes almost all of it.</p>
+<p><strong>Returns economics.</strong> In online fashion and electronics, returns can be one of the largest costs. The expected cost of returns per order is:</p>
+<p><strong>return rate × (lost margin + reverse logistics + unsellable share × cost of goods)</strong></p>
+<p><em>Illustrative apparel order, inputs assumed:</em> an $80 order, a $40 cost of goods, so a $40 gross margin. Outbound shipping and fulfilment cost $10. Payment cost is 3%, or $2.40. Contribution before returns is $80 − $40 − $10 − $2.40 = $27.60. The return rate is 30%. Reverse shipping and handling cost $12 per return. Of returned items, 15% cannot be resold, which loses their $40 cost: $6 expected per return. Each return costs $40 + $12 + $6 = $58. Per order, returns cost 0.30 × $58 = $17.40. Contribution after returns is <strong>$10.20</strong>. Returns take 63% of the contribution.</p>
+<p><strong>Decision rule.</strong> Price a return policy, a size guide or a better product photo against this formula. Here, each point of return rate is worth $0.58 per order.</p>
+<p><strong>Common misreading.</strong> Booking "free returns" as a marketing cost. It is a cost of every order, and it scales with volume.</p>
+<h4 id="retail-per-category">Retail: per category</h4>
+<p>A retailer manages margin and stock together. Its key unit metric is <strong>gross margin return on inventory investment (GMROI)</strong>.</p>
+<ul>
+<li><strong>GMROI</strong> = gross margin ÷ average inventory at cost. It says how many dollars of gross margin each dollar of stock earns in a year.</li>
+<li><strong>Inventory turns</strong> = cost of goods sold ÷ average inventory at cost. It says how often the stock sells through in a year.</li>
+<li><strong>Markdown</strong> is a price cut to clear stock. It lowers gross margin.</li>
+<li><strong>Shrink</strong> is stock lost to theft, damage or error. It lowers gross margin too.</li>
+</ul>
+<p>GMROI combines margin and speed. A high-margin category that sells slowly can earn less on its stock than a low-margin one that turns fast.</p>
+<p><strong>Domain application.</strong> A wider range brings more choice and more sales. It also ties up cash in slower stock and raises markdown risk. GMROI tells you whether the extra range earns its place. The worked example below runs the numbers.</p>
+<p><strong>Decision rule.</strong> Add range only if the new range clears the category's GMROI, not merely if it adds sales.</p>
+<p><strong>Common misreading.</strong> "The new range added $150,000 of sales." Sales are not the test. The test is margin earned per dollar of stock.</p>
+<h4 id="neobanks-per-customer">Neobanks: per customer</h4>
+<p>A neobank earns from card interchange, from the spread on deposits, and from fees and lending. It pays for support, cards, processing, compliance and fraud. Its unit is one active customer per month.</p>
+<p>Nubank publishes two of the inputs. It reports monthly average revenue per active customer and monthly cost to serve per active customer. In Q2 2023 it reported the first as $9.3 and the second as $0.8. A low cost to serve is what lets a digital bank profit from customers with small balances. A bank with a cost to serve several times higher could not serve these customers profitably.</p>
+<p><strong>Worked example: a neobank's debit card economics.</strong> <em>Illustrative. The neobank, its partner bank and all rates are assumed.</em></p>
+<p>A US neobank issues debit cards through a partner bank. The partner is exempt from the US debit interchange cap. <a href="monetization-and-business-models.html">Pricing and business models</a> explains the cap and the exemption.</p>
+<p><strong>Assumed inputs, per active customer per month:</strong></p>
+<ul>
+<li>Card spend $1,000. Interchange rate 1.2%. The neobank keeps 75% of interchange. The partner bank keeps 25%.</li>
+<li>Average balance $800, earning a net 3% a year for the neobank.</li>
+<li>Cost to serve $4: support, card, processing and compliance. Fraud and other losses $1.</li>
+<li>CAC $90. Monthly churn 2%.</li>
+</ul>
+<p><strong>Step 1: revenue.</strong> Interchange: $1,000 × 1.2% = $12. Neobank share: $12 × 75% = $9. Interest: $800 × 3% ÷ 12 = $2. Total: <strong>$11 a month</strong>.</p>
+<p><strong>Step 2: contribution margin.</strong> $11 − $4 − $1 = <strong>$6 a month</strong>.</p>
+<p><strong>Step 3: payback.</strong> $90 ÷ $6 = <strong>15 months</strong>. This is simple payback. With early churn, cohort payback is longer.</p>
+<p><strong>Step 4: LTV.</strong> Expected lifetime = 1 ÷ 2% = 50 months. LTV = $6 × 50 = <strong>$300</strong>, undiscounted. LTV to CAC = $300 ÷ $90 = <strong>3.3</strong>.</p>
+<p><strong>Step 5: stress test.</strong> Suppose interchange halves. The partner bank might grow past the asset threshold for the cap, or renegotiate its share. Interchange becomes $6. Neobank share: $4.50. Revenue: $6.50. Contribution: $1.50. Payback: $90 ÷ $1.50 = <strong>60 months</strong>. LTV: $1.50 × 50 = <strong>$75</strong>. LTV to CAC: <strong>0.8</strong>. Each new customer now loses money.</p>
+<p><strong>What the leader does with this.</strong> The model depends on one revenue line that a partner and a rule control. The team adds a second revenue line, such as a paid tier or a lending product. It caps acquisition spend until the second line proves out.</p>
+<p><strong>Decision rule.</strong> When more than half of contribution depends on one rule or one partner, stress-test that line at half, and set the acquisition budget on the stressed number.</p>
+<h3 id="operating-leverage-and-break-even">Operating leverage and break-even</h3>
+<p>Unit economics covers variable cost. A business also has fixed cost: salaries, platform, licences, compliance teams, rent. <strong>Operating leverage</strong> is how much profit moves when volume moves. High fixed cost and low variable cost mean high leverage. Profit grows fast with volume, and falls fast without it.</p>
+<p>Costs come in three kinds:</p>
+<ul>
+<li><strong>Variable</strong> costs move with each unit: interchange, courier pay, credit losses.</li>
+<li><strong>Fixed</strong> costs do not move with volume in the planning period: the core platform team.</li>
+<li><strong>Step-fixed</strong> costs stay flat until a threshold, then jump. One fraud analyst may cover 400 merchants. Merchant 401 needs a second analyst.</li>
+</ul>
+<p><strong>Break-even volume</strong> = fixed cost ÷ contribution per unit.</p>
+<p><em>Illustrative, inputs assumed:</em> a merchant-acquiring product carries $2.4 million a year of fixed cost. Each merchant contributes CM2 of $250 a month, or $3,000 a year. Break-even = $2,400,000 ÷ $3,000 = <strong>800 merchants</strong>. If a pricing change lifts CM2 by 10% to $275 a month, break-even falls to about 727 merchants.</p>
+<p><strong>Decision rule.</strong> When a product has high fixed cost, protect contribution per unit first. A small margin change moves break-even volume a lot.</p>
+<p><strong>Common misreading.</strong> Treating a step-fixed cost as variable, or as fixed. Both mislead. Model the steps.</p>
+<h2 id="worked-examples">Worked examples</h2>
+<h3 id="worked-example-an-smb-acquiring-cohort-from-one-payment-to-payback">Worked example: an SMB acquiring cohort, from one payment to payback</h3>
+<p><em>Illustrative. A payments company sells card acceptance to small and medium-sized businesses (SMBs). Every input is assumed.</em></p>
+<p><strong>Step 1: one transaction.</strong> The average payment is $50. The merchant pays 2.9% + $0.30.</p>
+<ul>
+<li>Gross fee: $50 × 2.9% + $0.30 = <strong>$1.75</strong>.</li>
+<li>Interchange at 1.8%: $50 × 1.8% = $0.90.</li>
+<li>Scheme fees: $0.065.</li>
+<li>Net revenue: $1.75 − $0.90 − $0.065 = <strong>$0.785</strong>.</li>
+<li>Gross take rate: $1.75 ÷ $50 = 3.5%. Net take rate: $0.785 ÷ $50 = 1.57%.</li>
+<li>Fraud and disputes the acquirer cannot pass on: $0.05. Processing: $0.05.</li>
+<li>CM1: $0.785 − $0.05 − $0.05 = <strong>$0.685</strong> per transaction.</li>
+</ul>
+<p><strong>Step 2: one merchant month.</strong> The merchant makes 400 payments a month.</p>
+<ul>
+<li>CM1: 400 × $0.685 = <strong>$274</strong>.</li>
+<li>Cost to serve, for support, onboarding amortized and risk review: $24.</li>
+<li>CM2: $274 − $24 = <strong>$250</strong> a month.</li>
+</ul>
+<p><strong>Step 3: acquisition cost.</strong> 40% of merchants come through field sales at $3,000 each. 60% come organically at $500 each in onboarding and incentives.</p>
+<ul>
+<li>Paid CAC: <strong>$3,000</strong>.</li>
+<li>Blended CAC: 0.4 × $3,000 + 0.6 × $500 = <strong>$1,500</strong>.</li>
+</ul>
+<p><strong>Step 4: simple payback.</strong> Blended: $1,500 ÷ $250 = <strong>6 months</strong>. Paid: $3,000 ÷ $250 = <strong>12 months</strong>.</p>
+<p><strong>Step 5: cohort payback.</strong> Merchants churn 8% a month for the first 3 months, then 2% a month. After 3 months, 77.9% remain. After 12 months, 64.9% remain. After 36 months, 40.0% remain. A merchant active at the start of a month earns that month's CM2. Add the cohort's contribution month by month, per acquired merchant.</p>
+<ul>
+<li>Blended CAC of $1,500 is covered in <strong>month 8</strong>.</li>
+<li>Paid CAC of $3,000 is covered in <strong>month 17</strong>.</li>
+</ul>
+<p><strong>Step 6: lifetime value.</strong> The team's dashboard shows a book-wide average churn of 3% a month.</p>
+<ul>
+<li>Naive LTV: $250 ÷ 0.03 = <strong>$8,333</strong>. Against paid CAC, LTV to CAC is 2.8.</li>
+<li>Discounted at 1% a month: $250 ÷ 0.04 = <strong>$6,250</strong>.</li>
+<li>Cohort LTV over 36 months, undiscounted: <strong>$5,428</strong>.</li>
+<li>Cohort LTV over 36 months, discounted at 1% a month: <strong>$4,648</strong>. Against paid CAC, LTV to CAC is 1.5.</li>
+</ul>
+<p><strong>What the leader does with this.</strong> The pitch said "6-month payback and LTV to CAC near 6". That used blended CAC against naive LTV: $8,333 ÷ $1,500 = 5.6. The truth for the channel being funded is 17-month payback and about 1.5 times CAC over 3 years. The leader does two things. She funds the field-sales channel only for merchant segments whose cohort payback is under 12 months. And she funds a project to cut first-quarter churn, because churn costs 5 months of payback on the paid channel (month 12 with no churn, month 17 with it). The 8% early churn alone adds 3 of those months: with a flat 2% churn from the start, paid CAC would be covered in month 14.</p>
+<h3 id="worked-example-one-personal-loan">Worked example: one personal loan</h3>
+<p><em>Illustrative. An online lender makes unsecured personal loans. Every input is assumed.</em></p>
+<p><strong>The loan.</strong> $10,000 over 36 months at 18% APR, repaid in equal monthly payments.</p>
+<p><strong>Step 1: interest.</strong> The monthly payment is <strong>$361.52</strong>. Over 36 months the borrower pays $13,015, so total interest is <strong>$3,015</strong>. The average balance over the life is <strong>$5,583</strong>, because the balance falls as it is repaid.</p>
+<p><strong>Step 2: other income.</strong> An origination fee of 3%: <strong>$300</strong>.</p>
+<p><strong>Step 3: cost of funds.</strong> The lender pays 6% a year on the money it lends. $5,583 × 6% × 3 years = <strong>$1,005</strong>.</p>
+<p><strong>Step 4: servicing.</strong> 1.5% a year of the average balance: $5,583 × 1.5% × 3 = <strong>$251</strong>.</p>
+<p><strong>Step 5: acquisition.</strong> CAC per funded loan: <strong>$350</strong>, from the lending CAC example above.</p>
+<p><strong>Step 6: expected loss.</strong> PD 8% over the life. LGD 85%. EAD $6,000, an assumed average balance at the time of default. EL = 8% × 85% × $6,000 = <strong>$408</strong>.</p>
+<p><strong>Step 7: contribution.</strong> $3,015 + $300 − $1,005 − $251 − $350 − $408 = <strong>$1,301</strong> per loan.</p>
+<p><strong>Step 8: the marginal band.</strong> The lender considers approving a riskier band with PD 15%, on the same terms. EL = 15% × 85% × $6,000 = $765. Contribution = <strong>$944</strong>.</p>
+<p><strong>Step 9: timing.</strong> Steps 1 to 8 assume every borrower pays all the interest, then a lump of loss is subtracted. That is a simplification. A borrower who defaults in month 10 stops paying interest in month 10. The balance lost depends on when they default. The script in Under the hood models defaults month by month and gives these results:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>PD 8%</th>
+<th>PD 15%</th>
+<th>Break-even PD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simple (steps 1 to 8)</td>
+<td>$1,301</td>
+<td>$944</td>
+<td>33.5%</td>
+</tr>
+<tr>
+<td>Monthly defaults, evenly spread</td>
+<td>$1,269</td>
+<td>$874</td>
+<td>29.8%</td>
+</tr>
+<tr>
+<td>Monthly defaults, twice as likely in year 1</td>
+<td>$1,201</td>
+<td>$746</td>
+<td>26.1%</td>
+</tr>
+</tbody>
+</table>
+<p>The script assumes defaults cluster early in the loan's life. Check that against your own vintage curves. If your defaults do cluster early, the front-loaded row is the closest of the three. In it, the marginal band earns $746, 38% less than the average loan's $1,201.</p>
+<p><strong>What the leader does with this.</strong> The band is still profitable on these numbers. But the estimate of its PD is the least certain number in the model, because the lender has never approved that band. The leader approves a small, capped test of the band, with its own vintage curve. She also asks for the band's own price. Charging the same APR to both bands means the safer borrowers subsidize the riskier ones. In many places, the law limits how high the APR can go. See <a href="monetization-and-business-models.html">pricing and business models</a>.</p>
+<h3 id="worked-example-gmroi-for-a-range-extension">Worked example: GMROI for a range extension</h3>
+<p><em>Illustrative. A retailer reviews one category. Every input is assumed.</em></p>
+<p><strong>Step 1: today.</strong> The category sells $1.2 million a year at a 40% gross margin, after markdowns and shrink. Gross margin is <strong>$480,000</strong>. Cost of goods sold is $720,000. Average inventory at cost is $200,000.</p>
+<ul>
+<li>GMROI = $480,000 ÷ $200,000 = <strong>2.4</strong>.</li>
+<li>Turns = $720,000 ÷ $200,000 = <strong>3.6</strong> a year.</li>
+</ul>
+<p><strong>Step 2: the proposal.</strong> The buyer wants to add a wider range. It needs $100,000 more average inventory at cost. It is expected to sell $150,000 a year at a 35% margin, because it carries more markdown risk.</p>
+<ul>
+<li>New gross margin: $150,000 × 35% = $52,500.</li>
+<li>GMROI of the new range alone: $52,500 ÷ $100,000 = <strong>0.53</strong>.</li>
+<li>Category GMROI after: ($480,000 + $52,500) ÷ $300,000 = <strong>1.78</strong>.</li>
+</ul>
+<p><strong>Step 3: the test.</strong> The new range adds sales and gross margin. But it earns 53 cents of margin per dollar of stock, against 2.40 for the category. The category's return on its stock falls by a quarter.</p>
+<p><strong>What the leader does with this.</strong> She does not approve the full range. She asks for a smaller test with a sell-through target and a markdown limit. She also asks the buyer to show which existing lines the new range would replace, so that inventory does not simply grow. If the range draws customers who then buy other high-GMROI items, that halo must be measured, not assumed.</p>
+<h3 id="worked-example-one-renters-policy">Worked example: one renters policy</h3>
+<p><em>Illustrative. An InsurTech sells renters insurance. Every input is assumed.</em></p>
+<p><strong>Step 1: the premium.</strong> An annual policy costs <strong>$180</strong>.</p>
+<p><strong>Step 2: the ratios.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Ratio</th>
+<th>Per policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claims (loss ratio)</td>
+<td>60%</td>
+<td>$108.00</td>
+</tr>
+<tr>
+<td>Loss adjustment expense</td>
+<td>10%</td>
+<td>$18.00</td>
+</tr>
+<tr>
+<td>Acquisition expense</td>
+<td>20%</td>
+<td>$36.00</td>
+</tr>
+<tr>
+<td>Other underwriting expense</td>
+<td>12%</td>
+<td>$21.60</td>
+</tr>
+<tr>
+<td><strong>Combined ratio</strong></td>
+<td><strong>102%</strong></td>
+<td><strong>$183.60</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3: underwriting result.</strong> $180 − $183.60 = <strong>−$3.60</strong>. The policy loses money on underwriting.</p>
+<p><strong>Step 4: investment income.</strong> Assume the insurer holds the premium for half a year on average before it pays claims and costs. At 4% a year, that earns $180 × 0.5 × 4% = <strong>$3.60</strong>. That is 2 points of premium.</p>
+<p><strong>Step 5: the result.</strong> The policy breaks even. The insurer depends on interest rates staying near 4%.</p>
+<p><strong>What the leader does with this.</strong> Two product moves each beat waiting for rates. Cutting acquisition from 20% to 15% through a renewal and referral flow saves $9 a policy. Cutting LAE from 10% to 7% through self-serve claims saves $5.40. Either one turns the policy profitable at today's rates, without relying on investment income. Before claiming either win, the team checks that the loss ratio did not rise as a result.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Growth vs. payback.</strong> Spending on a channel with long payback grows the customer count today. The cost is cash tied up for longer and more exposure to churn you have not yet seen.</li>
+<li><strong>Precision vs. speed.</strong> A full cohort model takes weeks to build and trust. A simple payback takes minutes. Use the simple one to screen ideas, and the cohort one to approve budgets. The cost of skipping the cohort model is approving channels that never pay back.</li>
+<li><strong>Average vs. marginal.</strong> Average economics are easy to compute and to defend. Marginal economics are what each decision changes. The cost of using averages is that the last band, range or channel you add looks better than it is.</li>
+<li><strong>Fight vs. accept.</strong> Fighting disputes and chasing returns recovers money. It also costs staff time and can annoy good customers. Use the expected-value test, and accept the rest.</li>
+<li><strong>Credit approval vs. loss.</strong> Approving more applicants grows volume and lowers CAC per funded loan. The cost is higher expected loss, with less certainty about its size.</li>
+<li><strong>Range vs. stock return.</strong> A wider range wins sales and loyalty. The cost is cash in slower stock and more markdowns.</li>
+<li><strong>Fixed cost vs. variable cost.</strong> Building in-house raises fixed cost and lowers variable cost. It pays off at high volume. It hurts if volume does not arrive.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Blended CAC approves a bad channel.</strong> Organic growth hides the paid channel's true cost. You see it when total CAC rises sharply after organic growth slows.</li>
+<li><strong>LTV with no horizon.</strong> The plan shows LTV to CAC of 5. The cohorts show payback beyond 30 months. You see it as cash burn that stays high while LTV to CAC looks fine.</li>
+<li><strong>CM1 called profit.</strong> The team celebrates a strong CM1. Support and onboarding cost per customer double as the product reaches less able customers. You see it as falling CM2 with stable CM1.</li>
+<li><strong>Gross take rate reported as revenue quality.</strong> Take rate rises because the card mix moved to premium cards with higher interchange. Net revenue does not move. You see it as rising gross take with flat net take.</li>
+<li><strong>Losses outside the unit.</strong> Fraud, chargebacks and returns sit in a central budget. Each product looks profitable. The company does not. You see it when Finance cannot reconcile product contribution to company profit.</li>
+<li><strong>Young cohorts extrapolated.</strong> Six months of a lending vintage look clean, so the team grows the band. Losses arrive in months 9 to 18. You see it as a vintage curve that crosses older vintages.</li>
+<li><strong>Calendar comparisons.</strong> A dashboard compares this month's active customers with last month's. New cohorts hide the decay of older ones. You see it when growth slows and active customers suddenly fall.</li>
+<li><strong>Single-point revenue.</strong> One rule, partner or rate supports most of the contribution. You see it as a sudden drop in contribution after a renegotiation, a rate cut or a regulation.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The script below reproduces every number in the worked examples. It uses only the standard library. The cohort model assumes a customer active at the start of a month earns that month's contribution. The loan model ignores prepayment and discounting. Both would lower the numbers further.</p>
+<pre><code class="language-python"># Unit economics: reproduces the numbers in this lesson. Python 3, standard library only.
+
+def payments_waterfall(ticket, pct, fixed, ic_rate, scheme, fraud, processing):
+    gross = ticket * pct + fixed                    # what the merchant pays
+    net = gross - ticket * ic_rate - scheme         # what the acquirer keeps
+    cm1 = net - fraud - processing                  # after direct variable cost
+    return gross, net, cm1
+
+def survival(month, early_churn=0.08, early_months=3, late_churn=0.02):
+    &quot;&quot;&quot;Share of the cohort still active at the END of `month` (0 = acquisition).&quot;&quot;&quot;
+    s = 1.0
+    for m in range(1, month + 1):
+        s *= 1 - (early_churn if m &lt;= early_months else late_churn)
+    return s
+
+def cohort_payback(cac, cm_per_month, max_months=120):
+    &quot;&quot;&quot;First month in which cumulative contribution per ACQUIRED customer covers CAC.
+    A customer active at the start of a month earns that month's contribution.&quot;&quot;&quot;
+    cum = 0.0
+    for t in range(1, max_months + 1):
+        cum += survival(t - 1) * cm_per_month
+        if cum &gt;= cac:
+            return t
+    return None
+
+def cohort_ltv(cm_per_month, horizon, monthly_discount=0.0):
+    return sum(survival(t - 1) * cm_per_month / (1 + monthly_discount) ** t
+               for t in range(1, horizon + 1))
+
+# Example B: one SMB merchant, assumed inputs
+gross, net, cm1 = payments_waterfall(50, 0.029, 0.30, 0.018, 0.065, 0.05, 0.05)
+print(f&quot;per tx: gross ${gross:.3f}  net ${net:.3f}  CM1 ${cm1:.3f}&quot;)
+print(f&quot;gross take {gross/50:.2%}  net take {net/50:.2%}&quot;)
+cm1_m = cm1 * 400
+cm2_m = cm1_m - 24
+blended = 0.4 * 3000 + 0.6 * 500
+print(f&quot;CM1/month ${cm1_m:.0f}  CM2/month ${cm2_m:.0f}  blended CAC ${blended:.0f}&quot;)
+print(f&quot;simple payback, blended / paid: {blended / cm2_m:.0f} / {3000 / cm2_m:.0f} months&quot;)
+print(f&quot;cohort payback, blended / paid: {cohort_payback(blended, cm2_m)} / {cohort_payback(3000, cm2_m)} months&quot;)
+flat = next(t for t in range(1, 121) if sum(cm2_m * 0.98 ** (m - 1) for m in range(1, t + 1)) &gt;= 3000)
+print(f&quot;paid payback with a flat 2% churn: {flat} months&quot;)
+print(&quot;survival at month 3, 12, 36:&quot;, [round(survival(m), 3) for m in (3, 12, 36)])
+print(f&quot;naive LTV ${cm2_m/0.03:,.0f}   discounted naive ${cm2_m/(0.03+0.01):,.0f}&quot;)
+print(f&quot;cohort LTV, 36 months: ${cohort_ltv(cm2_m, 36):,.0f} undiscounted, &quot;
+      f&quot;${cohort_ltv(cm2_m, 36, 0.01):,.0f} at 1%/month&quot;)
+
+# Example C: one personal loan, assumed inputs
+def amortize(principal, apr, months):
+    r = apr / 12
+    pay = principal * r / (1 - (1 + r) ** -months)
+    bal, rows = principal, []
+    for _ in range(months):
+        interest = bal * r
+        rows.append((bal, interest, pay - interest))   # opening balance, interest, principal
+        bal -= pay - interest
+    return pay, rows
+
+def loan_simple(principal=10_000, apr=0.18, months=36, fee_pct=0.03, cof=0.06,
+                servicing=0.015, acquisition=350, pd=0.08, lgd=0.85, ead=6_000):
+    pay, rows = amortize(principal, apr, months)
+    interest = sum(r[1] for r in rows)
+    avg_bal = sum(r[0] for r in rows) / months
+    years = months / 12
+    el = pd * lgd * ead
+    contribution = (interest + principal * fee_pct - avg_bal * cof * years
+                    - avg_bal * servicing * years - acquisition - el)
+    return pay, interest, avg_bal, el, contribution
+
+def loan_monthly(principal=10_000, apr=0.18, months=36, fee_pct=0.03, cof=0.06,
+                 servicing=0.015, acquisition=350, pd=0.08, lgd=0.85, front=1.0):
+    &quot;&quot;&quot;Same loan, but defaults happen month by month. The monthly default rate in
+    months 1-12 is `front` times the rate after that, scaled so that a share `pd`
+    of loans default over the life. A defaulted loan pays nothing more, and the
+    lender loses `lgd` of the balance owed at that moment.&quot;&quot;&quot;
+    lo, hi = 0.0, 1.0
+    for _ in range(60):                            # solve for the base monthly rate
+        h = (lo + hi) / 2
+        lifetime = 1 - (1 - front * h) ** 12 * (1 - h) ** (months - 12)
+        lo, hi = (lo, h) if lifetime &gt; pd else (h, hi)
+    _, rows = amortize(principal, apr, months)
+    alive = 1.0
+    interest = funding = serv = loss = 0.0
+    for t, (bal, intr, _) in enumerate(rows, 1):
+        rate = front * h if t &lt;= 12 else h
+        funding += alive * bal * cof / 12          # performing loans need funding
+        serv += alive * bal * servicing / 12
+        loss += alive * rate * lgd * bal           # loans that default this month
+        alive *= 1 - rate
+        interest += alive * intr                   # survivors pay this month
+    contribution = interest + principal * fee_pct - funding - serv - acquisition - loss
+    return interest, loss, contribution
+
+pay, interest, avg_bal, el, c = loan_simple()
+print(f&quot;payment ${pay:.2f}  interest ${interest:,.0f}  avg balance ${avg_bal:,.0f}  EL ${el:.0f}  contribution ${c:,.0f}&quot;)
+print(f&quot;marginal band PD 15%: contribution ${loan_simple(pd=0.15)[4]:,.0f}&quot;)
+for pd in (0.08, 0.15):
+    for front in (1, 2):
+        i, l, c = loan_monthly(pd=pd, front=front)
+        print(f&quot;PD {pd:.0%}, front-load x{front}: interest ${i:,.0f}  loss ${l:,.0f}  contribution ${c:,.0f}&quot;)
+
+def breakeven_pd(model):
+    lo, hi = 0.0, 0.9
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if model(mid) &gt; 0 else (lo, mid)
+    return mid
+
+print(&quot;break-even PD: simple {:.1%}, monthly {:.1%}, front-loaded {:.1%}&quot;.format(
+    breakeven_pd(lambda p: loan_simple(pd=p)[4]),
+    breakeven_pd(lambda p: loan_monthly(pd=p)[2]),
+    breakeven_pd(lambda p: loan_monthly(pd=p, front=2)[2])))
+
+# Example H: GMROI
+def gmroi(gross_margin, avg_inventory_cost):
+    return gross_margin / avg_inventory_cost
+print(&quot;GMROI now&quot;, gmroi(480_000, 200_000), &quot; turns&quot;, (1_200_000 - 480_000) / 200_000)
+print(&quot;GMROI with new range&quot;, round(gmroi(480_000 + 150_000 * 0.35, 300_000), 3),
+      &quot; new range alone&quot;, gmroi(150_000 * 0.35, 100_000))
+
+# Example I: insurance per policy
+prem = 180
+ratios = dict(loss=0.60, lae=0.10, acquisition=0.20, other=0.12)
+combined = sum(ratios.values())
+inv = prem * 0.5 * 0.04
+print(f&quot;combined {combined:.0%}  underwriting result ${prem*(1-combined):.2f}  &quot;
+      f&quot;investment income ${inv:.2f} ({inv/prem:.0%} of premium)&quot;)
+
+# Neobank debit card customer, assumed inputs (simple payback, as in the lesson)
+def neobank(spend, ic_rate, share, balance, nim, cost, loss, cac, churn):
+    revenue = spend * ic_rate * share + balance * nim / 12
+    cm = revenue - cost - loss
+    payback = cac / cm if cm &gt; 0 else float(&quot;inf&quot;)
+    ltv = cm / churn
+    return round(revenue, 2), round(cm, 2), round(payback, 1), round(ltv), round(ltv / cac, 2)
+
+print(neobank(1000, 0.012, 0.75, 800, 0.03, 4, 1, 90, 0.02))  # (11.0, 6.0, 15.0, 300, 3.33)
+print(neobank(1000, 0.006, 0.75, 800, 0.03, 4, 1, 90, 0.02))  # (6.5, 1.5, 60.0, 75, 0.83)
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-text">per tx: gross $1.750  net $0.785  CM1 $0.685
+gross take 3.50%  net take 1.57%
+CM1/month $274  CM2/month $250  blended CAC $1500
+simple payback, blended / paid: 6 / 12 months
+cohort payback, blended / paid: 8 / 17 months
+paid payback with a flat 2% churn: 14 months
+survival at month 3, 12, 36: [0.779, 0.649, 0.4]
+naive LTV $8,333   discounted naive $6,250
+cohort LTV, 36 months: $5,428 undiscounted, $4,648 at 1%/month
+payment $361.52  interest $3,015  avg balance $5,583  EL $408  contribution $1,301
+marginal band PD 15%: contribution $944
+PD 8%, front-load x1: interest $2,925  loss $384  contribution $1,269
+PD 8%, front-load x2: interest $2,902  loss $439  contribution $1,201
+PD 15%, front-load x1: interest $2,843  loss $729  contribution $874
+PD 15%, front-load x2: interest $2,799  loss $830  contribution $746
+break-even PD: simple 33.5%, monthly 29.8%, front-loaded 26.1%
+GMROI now 2.4  turns 3.6
+GMROI with new range 1.775  new range alone 0.525
+combined 102%  underwriting result $-3.60  investment income $3.60 (2% of premium)
+(11.0, 6.0, 15.0, 300, 3.33)
+(6.5, 1.5, 60.0, 75, 0.83)
+</code></pre>
+<p>To use it on your own product, replace <code>survival()</code> with your observed cohort retention by month, and replace the constant CM with contribution by month on book.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Name the base unit and the roll-up unit for your product, and agree them with Finance.</li>
+<li class="task todo">Tag every cost line as variable, step-fixed or fixed, and assign each variable line to CM1 or CM2.</li>
+<li class="task todo">Get paid CAC by channel, fully loaded, for the last 6 cohorts.</li>
+<li class="task todo">Get cumulative CM2 per acquired customer by monthly cohort and channel, and mark the payback month.</li>
+<li class="task todo">Check that every LTV figure you present has a horizon, a discount rate and cohort payback beside it.</li>
+<li class="task todo">Check that chargebacks, returns, refunds and credit losses sit inside your unit, not in a central budget.</li>
+<li class="task todo">For any new credit band, range or segment, compute its marginal economics alone.</li>
+<li class="task todo">List each revenue line that depends on one rule, one partner or one rate, and stress-test it at half.</li>
+<li class="task todo">Compare cohorts only at equal months on book.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="the-language-of-money.html">The language of money</a>: gross versus net revenue, and how unit economics shows up in the statements.</li>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a>: turning contribution into a business case, and how lenders and insurers fund themselves.</li>
+<li><a href="monetization-and-business-models.html">Pricing and business models</a>: price metrics, interchange rules and the business-model table.</li>
+<li><a href="performance-and-growth.html">Performance and growth</a>: net revenue retention, vintage curves and loss development.</li>
+<li><a href="../technical-product-management/metrics-and-experimentation.html">Metrics and experimentation</a>: metric trees and guardrails that sit on top of these numbers.</li>
+<li><a href="../technical-product-sense/economics-of-infrastructure.html">The economics of infrastructure</a>: the processing and hosting lines inside CM1.</li>
+<li><a href="../system-design/transactional-and-financial.html">Transactional and financial systems</a>: how payments, ledgers and disputes are built.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="the-language-of-money.html"><span class="lbl">← Previous</span><span class="ttl">The language of money: reading the three statements</span></a><a class="navcard next" href="business-cases-and-valuation.html"><span class="lbl">→ Next</span><span class="ttl">Business cases, capital and valuation</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-the-contribution-waterfall">Mental model: the contribution waterfall</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#choose-the-unit">Choose the unit</a><a class="h3" href="#contribution-margin-in-three-layers">Contribution margin in three layers</a><a class="h3" href="#customer-acquisition-cost-done-right">Customer acquisition cost done right</a><a class="h3" href="#payback-simple-and-cohort">Payback: simple and cohort</a><a class="h3" href="#lifetime-value-and-six-ways-it-lies">Lifetime value, and six ways it lies</a><a class="h3" href="#cohort-curves">Cohort curves</a><a class="h3" href="#unit-waterfalls-by-domain">Unit waterfalls by domain</a><a class="h3" href="#operating-leverage-and-break-even">Operating leverage and break-even</a><a class="h2" href="#worked-examples">Worked examples</a><a class="h3" href="#worked-example-an-smb-acquiring-cohort-from-one-payment-to-payback">Worked example: an SMB acquiring cohort, from one payment to payback</a><a class="h3" href="#worked-example-one-personal-loan">Worked example: one personal loan</a><a class="h3" href="#worked-example-gmroi-for-a-range-extension">Worked example: GMROI for a range extension</a><a class="h3" href="#worked-example-one-renters-policy">Worked example: one renters policy</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Funit-economics.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/unit-economics.html"</script><script defer src="../assets/glossary.js"></script></body></html>

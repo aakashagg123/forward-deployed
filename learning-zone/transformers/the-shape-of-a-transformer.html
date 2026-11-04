@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>The shape of a transformer — Transformers</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Transformers</span><em>a foundation module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink active" href="the-shape-of-a-transformer.html">1 · The shape of a transformer</a><a class="modlink" href="attention.html">2 · Attention</a><a class="modlink" href="the-block.html">3 · The block: heads, the feed-forward layer and the residual stream</a><a class="modlink" href="position-and-the-cost-of-context.html">4 · Position, and the cost of context</a><a class="modlink" href="generating-text-and-the-kv-cache.html">5 · Generating text and the KV cache</a><a class="modlink" href="variants-and-reading-a-model-card.html">6 · Variants, and reading a model card</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 01</span>
+    <h1>The shape of a transformer</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>A <strong>transformer</strong> is a stack of identical blocks. Tokens go in at the bottom as numbers. Each block updates a vector for every token. At the top, the last vector becomes a score for every word in the vocabulary. The model picks one token, adds it to the input, and runs again.</p>
+<p>That picture lets you count. Where do the parameters live? Where do the multiplies go? How much memory does a request need? Most answers come from five numbers on a model's spec sheet: layers, hidden size, number of heads, vocabulary size and context length.</p>
+<p>Two rules carry most of the weight. In a block, the <strong>feed-forward layer</strong> holds about two thirds of the parameters and attention holds one third. And a forward pass costs about two multiply-adds per parameter, per token. The rest of this module opens each part of the stack.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — "A 7 billion parameter model" is one number. Cost, speed and memory depend on the shape behind it. Two models with the same parameter count can differ by four times in memory per request.</p>
+<p><strong>What it changes in your decisions</strong> — You ask for the spec sheet, not the headline. You can turn it into memory, compute and cost on one page, before the team runs a single test.</p>
+<p><strong>Ask your eng team</strong> — <em>"What are the layers, hidden size, heads, vocabulary and context length, and what do they give for weights, memory per request and compute per token?"</em></p>
+<p><strong>Risk if ignored</strong> — A plan that fits the model on a device and forgets the request memory. Or a vendor comparison that ranks two models by parameter count when their serving costs differ widely.</p>
+</blockquote>
+<h2 id="the-mental-model-a-stack-that-keeps-one-vector-per-token">The mental model: a stack that keeps one vector per token</h2>
+<style>
+.dgm-tf{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-tf-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-tf h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-tf-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-tf-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.dgm-tf-stack{display:flex;flex-direction:column;gap:6px}
+.dgm-tf-row{border-radius:10px;padding:8px 12px;font-size:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.dgm-tf-row b{font-weight:700}.dgm-tf-row span{font-size:10.5px;color:var(--color-text-secondary)}
+.dgm-tf-in{background:var(--color-background-info-surface);border:1.5px solid var(--color-border-info-surface)}
+.dgm-tf-blk{background:var(--color-background-discovery-surface);border:1.5px solid var(--color-border-discovery-surface)}
+.dgm-tf-out{background:var(--color-background-success-surface);border:1.5px solid var(--color-border-success-surface)}
+.dgm-tf-dots{text-align:center;color:var(--color-text-tertiary);font-size:12px;line-height:1}
+.dgm-tf-nums{display:flex;flex-direction:column;gap:6px}
+.dgm-tf-num{background:var(--color-surface-secondary);border:1px solid var(--color-border);border-radius:10px;padding:8px 12px;font-size:11.5px;color:var(--color-text-secondary)}
+.dgm-tf-num b{display:block;color:var(--color-text);font-size:12px}
+.dgm-tf-bar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:8px 0 4px;border:1px solid var(--color-border)}
+.dgm-tf-bar i{display:block}
+.dgm-tf-b1{background:var(--color-background-info-surface);width:31.6%}.dgm-tf-b2{background:var(--color-background-caution-surface);width:22.8%}.dgm-tf-b3{background:var(--color-background-discovery-surface);width:45.6%}
+.dgm-tf-leg{font-size:10.5px;color:var(--color-text-secondary);display:flex;flex-wrap:wrap;gap:4px 10px}
+.dgm-tf-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:640px){.dgm-tf{padding:22px 14px 18px}.dgm-tf-grid{grid-template-columns:1fr}}
+</style>
+<div class="dgm-tf">
+  <span class="dgm-tf-chip">The shape of a transformer</span>
+  <h4>One vector per token, rewritten by a stack of identical blocks</h4>
+  <p class="dgm-tf-sub">Five numbers on the spec sheet set the parameters, the memory and the compute.</p>
+  <div class="dgm-tf-grid">
+    <div class="dgm-tf-stack">
+      <div class="dgm-tf-row dgm-tf-out"><b>Softmax</b><span>probabilities for the next token</span></div>
+      <div class="dgm-tf-row dgm-tf-out"><b>Unembedding</b><span>one score per vocabulary word</span></div>
+      <div class="dgm-tf-row dgm-tf-blk"><b>Block L</b><span>attention + feed-forward</span></div>
+      <div class="dgm-tf-dots">⋮</div>
+      <div class="dgm-tf-row dgm-tf-blk"><b>Block 2</b><span>attention + feed-forward</span></div>
+      <div class="dgm-tf-row dgm-tf-blk"><b>Block 1</b><span>attention + feed-forward</span></div>
+      <div class="dgm-tf-row dgm-tf-in"><b>Embedding + position</b><span>d_model numbers per token</span></div>
+      <div class="dgm-tf-row dgm-tf-in"><b>Token ids</b><span>from a vocabulary of V</span></div>
+    </div>
+    <div class="dgm-tf-nums">
+      <div class="dgm-tf-num"><b>Five numbers</b>layers L · hidden size d_model · heads h · vocabulary V · context n_max</div>
+      <div class="dgm-tf-num"><b>GPT-2 small: 124,439,808 parameters</b>
+        <div class="dgm-tf-bar"><i class="dgm-tf-b1"></i><i class="dgm-tf-b2"></i><i class="dgm-tf-b3"></i></div>
+        <div class="dgm-tf-leg"><span>Embeddings 31.6%</span><span>Attention 22.8%</span><span>Feed-forward 45.5%</span></div>
+      </div>
+      <div class="dgm-tf-num"><b>Cost rule</b>about 2 FLOPs per parameter, per token, plus 2n²d per layer for attention</div>
+    </div>
+  </div>
+  <p class="dgm-tf-foot">Inside a block, attention holds 33.3% of the weights and the feed-forward layer 66.7%.</p>
+</div>
+
+<p>Think of a table with one row per token. The embedding fills each row with a vector of <code>d_model</code> numbers. Each block rewrites the table. Attention lets a row read from other rows. The feed-forward layer then reworks each row on its own. The table keeps the same shape all the way up. Only the last row matters for the next token.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="the-five-numbers">The five numbers</h3>
+<table>
+<thead>
+<tr>
+<th>Number</th>
+<th>Symbol</th>
+<th>What it sets</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layers</td>
+<td><code>L</code></td>
+<td>How many blocks. Depth.</td>
+</tr>
+<tr>
+<td>Hidden size</td>
+<td><code>d_model</code></td>
+<td>The length of each token's vector. Width.</td>
+</tr>
+<tr>
+<td>Heads</td>
+<td><code>h</code></td>
+<td>How many attention comparisons run side by side.</td>
+</tr>
+<tr>
+<td>Vocabulary</td>
+<td><code>V</code></td>
+<td>How many tokens the model knows.</td>
+</tr>
+<tr>
+<td>Context length</td>
+<td><code>n_max</code></td>
+<td>The most tokens it can read at once.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="where-the-parameters-live">Where the parameters live</h3>
+<p>In one block, attention has four matrices of size <code>d × d</code>: query, key, value and output. That is <code>4d²</code> numbers. The feed-forward layer widens each vector to <code>4d</code>, then narrows it again. That is two matrices of <code>d × 4d</code>, or <code>8d²</code>. So the feed-forward layer holds <code>8 / 12</code>, about two thirds, of a block.</p>
+<p>Outside the blocks sits the embedding table, with <code>V × d</code> numbers. Many models reuse it as the output matrix, so it counts once.</p>
+<p>The small model in the GPT-2 family (generative pre-trained transformer, GPT) has 12 layers, <code>d = 768</code>, <code>V = 50,257</code> and 1,024 positions. It has 124,439,808 parameters. Embeddings hold 31.6% of them. Attention holds 22.8% and the feed-forward layers hold 45.5%. The vocabulary is a large share here. In bigger models it shrinks, because blocks grow with <code>d²</code> and the table grows with <code>d</code>.</p>
+<p>Doubling the width multiplies a block's size by four. Doubling the depth doubles it.</p>
+<h3 id="where-the-multiplies-go">Where the multiplies go</h3>
+<p>For one token, each weight in a block does one multiply-add. A multiply-add counts as two floating-point operations. So the forward pass costs about <code>2N</code> FLOPs per token, where <code>N</code> is the non-embedding parameter count. Kaplan and colleagues use the same rule.</p>
+<p>Attention adds a term that depends on context. For <code>n</code> tokens, the scores and the weighted sum cost <code>2n²d</code> multiply-adds in each layer. <a href="position-and-the-cost-of-context.html">Lesson 4</a> shows when that term takes over.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Deep vs. wide.</strong> More layers give more steps of reasoning-like composition. More width gives each step more room. Both cost parameters, and depth also adds latency, because layers run in sequence.</li>
+<li><strong>Big vocabulary vs. small.</strong> A large vocabulary shortens text, which saves tokens at run time. It also grows the embedding table and the output matrix.</li>
+<li><strong>Long context vs. memory.</strong> A larger <code>n_max</code> costs nothing in parameters for models with rotary positions. It costs a great deal in request memory and compute.</li>
+<li><strong>Parameters vs. active parameters.</strong> Some models use only part of their weights per token. <a href="variants-and-reading-a-model-card.html">Lesson 6</a> covers them.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>Counting only parameters.</strong> The headline number leaves out the cache that grows with every request.</li>
+<li><strong>Forgetting the embedding.</strong> A small model can spend a third of its weights on the vocabulary.</li>
+<li><strong>Mixing up depth and width.</strong> A change from 32 to 40 layers is a 25% change in blocks. A change in width is a quadratic change.</li>
+<li><strong>Trusting a rule past its range.</strong> "2 FLOPs per parameter" ignores attention, which dominates at long context.</li>
+<li><strong>Comparing models across vocabularies.</strong> Cost per token and cost per word differ when the tokenizers differ.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>transformers/code/mini_transformer.py</code>. It is a small decoder-only transformer in plain Python, with random weights and a counter for multiply-adds. The weights say nothing useful. The point is that every claim in this module can be counted.</p>
+<pre><code class="language-python">def count_params(d, layers, vocab, max_len, d_ff=None, bias=True, layernorm=True, tied=True):
+    d_ff = d_ff or 4 * d
+    attn = 4 * d * d + (4 * d if bias else 0)           # query, key, value and output matrices
+    mlp = 2 * d * d_ff + ((d_ff + d) if bias else 0)
+    norms = 4 * d if layernorm else 0                    # two norms per block
+    block = attn + mlp + norms
+    emb = vocab * d + max_len * d
+    return emb + layers * block + (2 * d if layernorm else 0) + (0 if tied else vocab * d)
+</code></pre>
+<p><code>lesson1_shape.py</code> calls this for GPT-2 small, and for the tiny model. For the tiny model it also counts the real weights and the real multiply-adds, and checks both against the formulas.</p>
+<h2 id="worked-example-counting-a-model-on-one-page">Worked example: counting a model on one page</h2>
+<p><em>This example uses a published configuration and an invented tiny model. The numbers come from <code>transformers/code/lesson1_shape.py</code>.</em></p>
+<p><strong>GPT-2 small.</strong> The formula gives 124,439,808 parameters. That matches the 124 million usually quoted for the released small model.</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Parameters</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Embeddings (tokens and positions)</td>
+<td>39,383,808</td>
+<td>31.6%</td>
+</tr>
+<tr>
+<td>Attention, 12 blocks</td>
+<td>28,348,416</td>
+<td>22.8%</td>
+</tr>
+<tr>
+<td>Feed-forward, 12 blocks</td>
+<td>56,669,184</td>
+<td>45.5%</td>
+</tr>
+</tbody>
+</table>
+<p>Inside the blocks, attention is 33.3% and the feed-forward layer is 66.7%.</p>
+<p><strong>The tiny model.</strong> It has 2 layers, <code>d = 16</code>, 4 heads, a vocabulary of 32 and 64 positions. The formula says 7,680 weights. Counting the real matrices gives 7,680.</p>
+<p>Run it on 8 tokens. The counter shows 57,344 multiply-adds. The formula for projections, feed-forward layers, attention scores and the output matrix also gives 57,344. The model does exactly the arithmetic the formula predicts.</p>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Do we have the five numbers for every model we compare: layers, hidden size, heads, vocabulary and context length?</li>
+<li class="task todo">Do we know the share of parameters in embeddings, attention and feed-forward layers?</li>
+<li class="task todo">Do we know total parameters and active parameters per token?</li>
+<li class="task todo">Have we added the request memory to the weight memory?</li>
+<li class="task todo">Are we comparing costs per word or per task, not only per token?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="attention.html">Attention</a> — the first of the two parts of a block.</li>
+<li><a href="../llms/what-is-an-llm.html">What an LLM actually is</a> — the same machine described for the product reader.</li>
+<li><a href="../tensors/matrix-multiplication.html">Matrix multiplication: the workhorse</a> — why the multiplies dominate.</li>
+<li><a href="../tensors/batching-memory-and-precision.html">Batching, memory and precision</a> — turning parameters into bytes.</li>
+<li><a href="../llms/choosing-a-model.html">Choosing a model</a> — reading a spec sheet in a buying decision.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Vaswani et al., <em>Attention Is All You Need</em>, NeurIPS 2017 (<a href="https://arxiv.org/abs/1706.03762">arxiv.org/abs/1706.03762</a>): the transformer, its block and its attention.</li>
+<li>Radford et al., <em>Language Models are Unsupervised Multitask Learners</em>, OpenAI, 2019: the GPT-2 family, with a 1,024-token context and a vocabulary of 50,257. The 124 million figure for the small model is the one usually quoted for the released weights.</li>
+<li>Kaplan et al., <em>Scaling Laws for Neural Language Models</em>, 2020 (<a href="https://arxiv.org/abs/2001.08361">arxiv.org/abs/2001.08361</a>): about <code>2N</code> FLOPs per token for a forward pass, with <code>N</code> excluding embeddings.</li>
+<li>The tiny model and every number from it are invented. They come from <code>transformers/code/lesson1_shape.py</code>. This module's sources were not re-opened during the build, and its fact-check is pending.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="index.html"><span class="lbl">← Previous</span><span class="ttl">Overview</span></a><a class="navcard next" href="attention.html"><span class="lbl">→ Next</span><span class="ttl">Attention</span></a></div><footer class="foot"><strong>Core insight:</strong> A transformer is one block repeated, so almost every question about it is a counting question: parameters, multiply-adds and cache.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-a-stack-that-keeps-one-vector-per-token">The mental model: a stack that keeps one vector per token</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#the-five-numbers">The five numbers</a><a class="h3" href="#where-the-parameters-live">Where the parameters live</a><a class="h3" href="#where-the-multiplies-go">Where the multiplies go</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-counting-a-model-on-one-page">Worked example: counting a model on one page</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=transformers%2Fthe-shape-of-a-transformer.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="transformers/the-shape-of-a-transformer.html"</script><script defer src="../assets/glossary.js"></script></body></html>

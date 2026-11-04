@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>RAG terms, explained — RAG &amp; vector databases</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>RAG &amp; vector databases</span><em>a Generative AI module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="when-to-use-rag.html">1 · When to use RAG, and when not to</a><a class="modlink" href="why-rag.html">2 · Why RAG?</a><a class="modlink" href="embeddings-and-semantic-search.html">3 · Embeddings &amp; semantic search</a><a class="modlink" href="vector-databases.html">4 · Vector databases</a><a class="modlink" href="chunking-and-ingestion.html">5 · Chunking &amp; ingestion</a><a class="modlink" href="retrieval-quality.html">6 · Retrieval quality</a><a class="modlink" href="rag-vs-long-context-vs-finetuning.html">7 · RAG vs. long-context vs. fine-tuning</a><a class="modlink" href="graphrag-and-structured-retrieval.html">8 · Beyond flat RAG: GraphRAG &amp; structured retrieval</a><a class="modlink" href="building-rag-with-claude-code.html">9 · Building RAG with Claude Code, pgvector and Pinecone</a><a class="modlink active" href="rag-terms.html">10 · RAG terms, explained</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 10</span>
+    <h1>RAG terms, explained</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>RAG has a large vocabulary, and much of it is used loosely. This lesson defines every common term in plain language, grouped by the stage of the pipeline where it lives. Each term has a one-line example from the Fernpay help centre used across this module, and a link to the lesson that develops it.</p>
+<p>Three habits make the vocabulary easier. First, place each term on the pipeline: ingest, embed, store, retrieve, generate, evaluate, operate. Second, separate the <strong>retrieval</strong> words from the <strong>answer</strong> words. Recall and precision describe what search found. Faithfulness and answer relevance describe what the model wrote. Third, when two terms seem to mean the same thing, ask which stage each one measures.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Teams use the same word for different things. "Accuracy" can mean retrieval recall, answer correctness or citation support. A review where each person means a different thing ends with the wrong fix.</p>
+<p><strong>What it changes in your decisions</strong> — You ask which stage a number measures before you act on it. A low faithfulness score needs a different fix from a low recall score.</p>
+<p><strong>Ask your eng team</strong> — <em>"When you say the RAG feature is 90% accurate, which stage is that, on which questions, measured how?"</em></p>
+<p><strong>Risk if ignored</strong> — Money spent on a bigger model to fix answers that were wrong because retrieval missed the passage.</p>
+</blockquote>
+<h2 id="the-mental-model-every-term-has-a-place-on-the-pipeline">The mental model: every term has a place on the pipeline</h2>
+<style>
+.dgm-rt{background:var(--color-surface);border:1px solid var(--color-border);border-top:3px solid var(--color-border-discovery-outline);
+  border-radius:16px;padding:28px 26px 22px;box-shadow:0 1px 3px rgb(var(--shadow-color) / 0.04),0 8px 24px rgb(var(--shadow-color) / 0.04);
+  margin:26px 0;max-width:100%;font-family:inherit;text-align:left;position:relative;color:var(--color-text)}
+.dgm-rt-chip{position:absolute;top:-11px;left:24px;background:var(--color-background-discovery-solid);color:var(--white);
+  font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;padding:3px 12px}
+.dgm-rt h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary)}
+.dgm-rt-sub{font-size:12px;color:var(--color-text-secondary);margin:0 0 16px}
+.dgm-rt-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.dgm-rt-col{border-radius:12px;padding:10px 9px;display:flex;flex-direction:column;gap:5px}
+.dgm-rt-col h5{margin:0 0 3px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.dgm-rt-pill{font-size:10.5px;font-weight:600;border-radius:7px;padding:3px 7px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text)}
+.dgm-rt-in{background:var(--color-background-info-surface);border:1.5px solid var(--color-border-info-surface)}.dgm-rt-in h5{color:var(--color-text-info)}
+.dgm-rt-em{background:var(--color-background-discovery-surface);border:1.5px solid var(--color-border-discovery-surface)}.dgm-rt-em h5{color:var(--color-text-discovery)}
+.dgm-rt-st{background:var(--color-surface-secondary);border:1px solid var(--color-border)}.dgm-rt-st h5{color:var(--color-text-secondary)}
+.dgm-rt-re{background:var(--color-background-caution-surface);border:1.5px solid var(--color-border-caution-outline)}.dgm-rt-re h5{color:var(--color-text-warning)}
+.dgm-rt-ge{background:var(--color-background-success-surface);border:1.5px solid var(--color-border-success-surface)}.dgm-rt-ge h5{color:var(--color-text-success)}
+.dgm-rt-ev{background:var(--color-background-discovery-surface);border:1.5px dashed var(--color-border-discovery-surface)}.dgm-rt-ev h5{color:var(--color-text-discovery)}
+.dgm-rt-ops{margin-top:10px;border-radius:12px;padding:9px 11px;background:var(--color-background-danger-surface);border:1.5px solid var(--color-border-danger-surface);
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dgm-rt-ops h5{margin:0 6px 0 0;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-danger)}
+.dgm-rt-foot{margin:12px 0 0;font-size:11px;color:var(--color-text-tertiary);text-align:center}
+@media (max-width:900px){.dgm-rt-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.dgm-rt{padding:22px 14px 18px}.dgm-rt-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+<div class="dgm-rt">
+  <span class="dgm-rt-chip">RAG terms</span>
+  <h4>Every term has a place on the pipeline</h4>
+  <p class="dgm-rt-sub">Before you act on a number, ask which stage it measures.</p>
+  <div class="dgm-rt-grid">
+    <div class="dgm-rt-col dgm-rt-in"><h5>Ingest</h5><span class="dgm-rt-pill">loader</span><span class="dgm-rt-pill">parsing</span><span class="dgm-rt-pill">chunking</span><span class="dgm-rt-pill">overlap</span><span class="dgm-rt-pill">metadata</span></div>
+    <div class="dgm-rt-col dgm-rt-em"><h5>Embed</h5><span class="dgm-rt-pill">embedding model</span><span class="dgm-rt-pill">dimension</span><span class="dgm-rt-pill">normalization</span><span class="dgm-rt-pill">dense · sparse</span></div>
+    <div class="dgm-rt-col dgm-rt-st"><h5>Store</h5><span class="dgm-rt-pill">vector database</span><span class="dgm-rt-pill">ANN index</span><span class="dgm-rt-pill">HNSW · IVF</span><span class="dgm-rt-pill">cosine</span></div>
+    <div class="dgm-rt-col dgm-rt-re"><h5>Retrieve</h5><span class="dgm-rt-pill">top-k</span><span class="dgm-rt-pill">BM25</span><span class="dgm-rt-pill">hybrid · RRF</span><span class="dgm-rt-pill">filters</span><span class="dgm-rt-pill">rerank</span></div>
+    <div class="dgm-rt-col dgm-rt-ge"><h5>Generate</h5><span class="dgm-rt-pill">context window</span><span class="dgm-rt-pill">grounding</span><span class="dgm-rt-pill">citations</span><span class="dgm-rt-pill">refusal path</span></div>
+    <div class="dgm-rt-col dgm-rt-ev"><h5>Evaluate</h5><span class="dgm-rt-pill">recall@k</span><span class="dgm-rt-pill">MRR · nDCG</span><span class="dgm-rt-pill">faithfulness</span><span class="dgm-rt-pill">eval set</span></div>
+  </div>
+  <div class="dgm-rt-ops"><h5>Operate, across all stages</h5><span class="dgm-rt-pill">freshness</span><span class="dgm-rt-pill">re-indexing</span><span class="dgm-rt-pill">access control</span><span class="dgm-rt-pill">prompt injection</span><span class="dgm-rt-pill">cost per query</span></div>
+  <p class="dgm-rt-foot">Recall and MRR measure retrieval. Faithfulness and relevance measure the answer. A low score in each needs a different fix.</p>
+</div>
+
+<h2 id="mechanics-the-terms-by-stage">Mechanics: the terms by stage</h2>
+<h3 id="ingest">Ingest</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Corpus</strong></td>
+<td>All the text the system can retrieve from.</td>
+<td>The 10 help documents.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Ingestion</strong></td>
+<td>Reading sources, cutting them into chunks, embedding and storing them.</td>
+<td><code>ingest.py</code> runs nightly.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Loader</strong></td>
+<td>Code that reads one kind of source, such as PDF, HTML or a ticket system.</td>
+<td>A loader for the help-centre Markdown.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Parsing</strong></td>
+<td>Turning a raw file into clean text and structure.</td>
+<td>Dropping the navigation bar from an HTML page.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Chunk</strong></td>
+<td>One retrievable piece of a document.</td>
+<td><code>refunds-v2#0</code>, the annual-plan section.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Chunking</strong></td>
+<td>The rule that cuts documents into chunks.</td>
+<td>One chunk per <code>##</code> section.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Chunk size</strong></td>
+<td>How long each chunk is, in characters or tokens.</td>
+<td>Fixed 80-character chunks.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Chunk overlap</strong></td>
+<td>Text repeated at the start of the next chunk, so a fact on a boundary survives.</td>
+<td>30 characters of overlap.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Metadata</strong></td>
+<td>Fields stored with a chunk: source, date, status, audience.</td>
+<td><code>status = 'retracted'</code>.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Contextual retrieval</strong></td>
+<td>Adding a short note about the whole document to each chunk before it is embedded.</td>
+<td>"From Fernpay's refund policy, 2026:" before a chunk.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Late chunking</strong></td>
+<td>Embedding the whole document first, then cutting the result into chunk vectors, so each keeps document context.</td>
+<td>Not used in Fernpay.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="embed">Embed</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Embedding</strong></td>
+<td>A list of numbers that places a text so that similar meanings land close together.</td>
+<td>Each chunk becomes 30 numbers in the toy.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Embedding model</strong></td>
+<td>The model that turns text into embeddings.</td>
+<td><code>voyage-4</code> in the build lesson.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Dimension</strong></td>
+<td>How many numbers are in one embedding.</td>
+<td>1,024 for <code>voyage-4</code> by default.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Vector</strong></td>
+<td>The list of numbers itself.</td>
+<td><code>[0, 0.5, 0.5, ...]</code>.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Normalization</strong></td>
+<td>Scaling a vector to length 1, so the dot product equals cosine similarity.</td>
+<td>Every toy vector is unit length.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Dense vector</strong></td>
+<td>An embedding where most numbers are non-zero. It captures meaning.</td>
+<td>The chunk embeddings.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Sparse vector</strong></td>
+<td>A long vector where most numbers are zero, one slot per word. It captures exact words.</td>
+<td>A keyword score per term.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Query and document input types</strong></td>
+<td>Telling the embedding model whether a text is a short question or a passage.</td>
+<td><code>input_type="query"</code>.</td>
+<td><a href="building-rag-with-claude-code.html">Building RAG</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="store">Store</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Vector database</strong></td>
+<td>A store that finds the vectors nearest to a query vector.</td>
+<td>Postgres with pgvector.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>Index</strong></td>
+<td>A structure that makes search fast by not checking every vector.</td>
+<td><code>chunks_embedding_hnsw</code>.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>Exact (brute-force) search</strong></td>
+<td>Comparing the query with every vector. Always right, slow at scale.</td>
+<td>22 chunks: fast enough.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>ANN</strong></td>
+<td>Approximate nearest neighbour: fast search that may miss a true neighbour.</td>
+<td>HNSW in Postgres.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>HNSW</strong></td>
+<td>Hierarchical navigable small world: a layered graph index, fast at query time.</td>
+<td><code>USING hnsw</code>.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>IVF</strong></td>
+<td>Inverted file index: vectors grouped into lists around centres; a query scans the nearest lists.</td>
+<td>The <code>ann_demo.py</code> index.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>Distance metric</strong></td>
+<td>How closeness is measured: cosine, dot product or Euclidean (L2).</td>
+<td>Cosine, <code>&lt;=&gt;</code> in pgvector.</td>
+<td><a href="building-rag-with-claude-code.html">Building RAG</a></td>
+</tr>
+<tr>
+<td><strong>Cosine similarity</strong></td>
+<td>The cosine of the angle between two vectors. 1 means the same direction.</td>
+<td>0.936 for the current refund policy.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Namespace</strong></td>
+<td>A partition of an index. A search sees one namespace only.</td>
+<td>One per tenant in Pinecone.</td>
+<td><a href="building-rag-with-claude-code.html">Building RAG</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="retrieve">Retrieve</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Retriever</strong></td>
+<td>The component that returns candidate chunks for a question.</td>
+<td><code>Index.hybrid()</code>.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Top-k</strong></td>
+<td>How many chunks the retriever returns.</td>
+<td>k = 3.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Semantic search</strong></td>
+<td>Search by meaning, using embeddings.</td>
+<td>"Stop paying" finds "End plan".</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Keyword (lexical) search</strong></td>
+<td>Search by matching words.</td>
+<td>"E-4021" finds the error page.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>BM25</strong></td>
+<td>The standard keyword scoring formula. Rare words count more; long chunks count less per word.</td>
+<td><code>Index.bm25()</code>.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Hybrid search</strong></td>
+<td>Running keyword and semantic search and combining the lists.</td>
+<td>Recall@3 0.917 versus 0.833.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Reciprocal rank fusion (RRF)</strong></td>
+<td>Combining ranked lists by summing <code>1 / (60 + rank)</code> per chunk.</td>
+<td>The hybrid query.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Metadata filter</strong></td>
+<td>Excluding chunks by their fields before or after scoring.</td>
+<td><code>status = 'current'</code>.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Pre-filter and post-filter</strong></td>
+<td>Filtering before the search, or after it. Post-filtering can leave fewer than k results.</td>
+<td>0.9 of 10 results for a small tenant.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>Similarity threshold</strong></td>
+<td>A minimum score below which a chunk is dropped.</td>
+<td>0.35 in the evidence gate.</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+</tr>
+<tr>
+<td><strong>Reranking</strong></td>
+<td>Re-scoring the top candidates with a slower, more accurate model.</td>
+<td>Not used in the toy.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Cross-encoder</strong></td>
+<td>A reranker that reads the question and a chunk together.</td>
+<td>A rerank model.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Query rewriting</strong></td>
+<td>Changing the question before search: fixing spelling, expanding terms, adding context.</td>
+<td>"E4021" to "E-4021".</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Multi-query</strong></td>
+<td>Searching with several rewrites of the question and merging the results.</td>
+<td>Three phrasings of the refund question.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>HyDE</strong></td>
+<td>Hypothetical document embeddings: write a fake answer, then search with its embedding.</td>
+<td>A drafted refund answer used as the query.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="generate">Generate</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Context window</strong></td>
+<td>The most text the model can read in one call.</td>
+<td>Up to 1 million tokens on current Claude models.</td>
+<td><a href="rag-vs-long-context-vs-finetuning.html">RAG vs. long context</a></td>
+</tr>
+<tr>
+<td><strong>Augmentation (stuffing)</strong></td>
+<td>Putting the retrieved chunks into the prompt.</td>
+<td>Sources [1] and [2] above the question.</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+</tr>
+<tr>
+<td><strong>Grounding</strong></td>
+<td>Answering from the supplied sources, not from memory.</td>
+<td>"Answer only from the sources below."</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+</tr>
+<tr>
+<td><strong>Citation (attribution)</strong></td>
+<td>A pointer from a claim to the source that supports it.</td>
+<td>"14 days [1]".</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+</tr>
+<tr>
+<td><strong>Hallucination</strong></td>
+<td>A fluent claim with no support.</td>
+<td>Inventing a 30-day policy.</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+</tr>
+<tr>
+<td><strong>Refusal path</strong></td>
+<td>The "I don't know" answer when the sources do not cover the question.</td>
+<td>The weather question.</td>
+<td><a href="why-rag.html">Why RAG?</a></td>
+</tr>
+<tr>
+<td><strong>Lost in the middle</strong></td>
+<td>Models use information at the start and end of a long prompt better than in the middle.</td>
+<td>Why fewer, better chunks help.</td>
+<td><a href="rag-vs-long-context-vs-finetuning.html">RAG vs. long context</a></td>
+</tr>
+<tr>
+<td><strong>Prompt caching</strong></td>
+<td>Reusing a processed prompt prefix across calls, at a lower price.</td>
+<td>The handbook in the prompt.</td>
+<td><a href="when-to-use-rag.html">When to use RAG</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="evaluate">Evaluate</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Eval set (golden set)</strong></td>
+<td>Questions with the chunk or answer that is correct for each.</td>
+<td>The 12 Fernpay questions.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Recall@k</strong></td>
+<td>The share of questions whose answering chunk is in the top k.</td>
+<td>0.917 for hybrid.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Precision@k</strong></td>
+<td>The share of the top k chunks that are relevant.</td>
+<td>1 relevant chunk in 3 is 0.33.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>MRR</strong></td>
+<td>Mean reciprocal rank: the average of 1 / rank of the first correct chunk.</td>
+<td>0.778 for hybrid.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>nDCG</strong></td>
+<td>A ranking score that gives more credit for relevant chunks near the top, with graded relevance.</td>
+<td>Not used in the toy.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Faithfulness (groundedness)</strong></td>
+<td>Whether every claim in the answer is supported by the retrieved chunks.</td>
+<td>Checked by a person or a judge model.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>Answer relevance</strong></td>
+<td>Whether the answer addresses the question asked.</td>
+<td>A refund answer to a refund question.</td>
+<td><a href="retrieval-quality.html">Retrieval quality</a></td>
+</tr>
+<tr>
+<td><strong>LLM as judge</strong></td>
+<td>Using a model to grade answers against a rubric.</td>
+<td>Grading faithfulness at scale.</td>
+<td><a href="../evaluation-and-observability/index.html">Evaluation</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="operate">Operate</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Fernpay example</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Freshness</strong></td>
+<td>How quickly a change in the sources reaches the index.</td>
+<td>The retracted policy removed in the same run.</td>
+<td><a href="chunking-and-ingestion.html">Chunking and ingestion</a></td>
+</tr>
+<tr>
+<td><strong>Re-indexing</strong></td>
+<td>Rebuilding vectors after a change of model or chunk rule.</td>
+<td>A new embedding model means re-embedding all 22 chunks.</td>
+<td><a href="embeddings-and-semantic-search.html">Embeddings</a></td>
+</tr>
+<tr>
+<td><strong>Access control</strong></td>
+<td>Making retrieval return only what the caller may see.</td>
+<td><code>audience = 'customer'</code>.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>Multi-tenancy</strong></td>
+<td>Serving many customers from one system without mixing their data.</td>
+<td>A namespace or a filter per tenant.</td>
+<td><a href="vector-databases.html">Vector databases</a></td>
+</tr>
+<tr>
+<td><strong>Indirect prompt injection</strong></td>
+<td>Instructions hidden in a retrieved document that try to steer the model.</td>
+<td>A page that says "ignore your rules".</td>
+<td><a href="building-rag-with-claude-code.html">Building RAG</a></td>
+</tr>
+<tr>
+<td><strong>Cost per query</strong></td>
+<td>Embedding, search and model tokens for one question.</td>
+<td>About $0.006 of input tokens per question with RAG.</td>
+<td><a href="when-to-use-rag.html">When to use RAG</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="beyond-basic-rag">Beyond basic RAG</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Develops it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agentic RAG</strong></td>
+<td>A model that decides when to search, what to search for, and whether to search again.</td>
+<td><a href="../agentic-ai/index.html">Agentic AI</a></td>
+</tr>
+<tr>
+<td><strong>GraphRAG</strong></td>
+<td>Retrieval over a knowledge graph of entities and relations, with summaries of related groups.</td>
+<td><a href="graphrag-and-structured-retrieval.html">GraphRAG</a></td>
+</tr>
+<tr>
+<td><strong>Multi-hop question</strong></td>
+<td>A question whose answer joins facts from several documents.</td>
+<td><a href="graphrag-and-structured-retrieval.html">GraphRAG</a></td>
+</tr>
+<tr>
+<td><strong>Global question</strong></td>
+<td>A question about the whole corpus, such as its main themes.</td>
+<td><a href="graphrag-and-structured-retrieval.html">GraphRAG</a></td>
+</tr>
+<tr>
+<td><strong>Text-to-SQL</strong></td>
+<td>A model writes a database query, and the database computes the answer.</td>
+<td><a href="graphrag-and-structured-retrieval.html">GraphRAG</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Similarity vs. relevance.</strong> A high cosine similarity means "close in meaning". It does not mean "answers the question". The retracted policy has a similarity of 0.927.</li>
+<li><strong>Recall vs. precision.</strong> A larger top-k raises recall and lowers precision. More chunks also cost more tokens.</li>
+<li><strong>Retrieval metrics vs. answer metrics.</strong> Recall@k can be perfect while faithfulness is poor, and the reverse. Measure both.</li>
+<li><strong>Grounding vs. citation.</strong> An answer can cite a source and still say something the source does not support. Check that the cited text supports the claim.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>One word, two meanings.</strong> "Accuracy" used for both recall and answer correctness in the same review.</li>
+<li><strong>A metric with no stage.</strong> A single "RAG score" that hides whether retrieval or generation failed.</li>
+<li><strong>Threshold as truth.</strong> Treating a similarity cut-off as a relevance test. In the worked example an off-topic question scores 0.301, and a real code question scores 0.113.</li>
+<li><strong>Citations as decoration.</strong> Showing sources without checking that they support the claim.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>Most retrieval terms in this lesson have a function in <code>rag-vector-databases/code/mini_rag.py</code>. Reranking, query rewriting, HyDE and nDCG do not; the toy leaves them out.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chunking</td>
+<td><code>chunk_by_section</code>, <code>chunk_fixed</code></td>
+</tr>
+<tr>
+<td>Embedding, normalization</td>
+<td><code>embed</code></td>
+</tr>
+<tr>
+<td>Cosine similarity</td>
+<td><code>cosine</code></td>
+</tr>
+<tr>
+<td>Semantic search, top-k, metadata filter</td>
+<td><code>Index.vector_search(query, k, where)</code></td>
+</tr>
+<tr>
+<td>BM25</td>
+<td><code>Index.bm25</code></td>
+</tr>
+<tr>
+<td>Hybrid search, RRF</td>
+<td><code>Index.hybrid</code></td>
+</tr>
+<tr>
+<td>Refusal path, threshold</td>
+<td><code>has_evidence</code></td>
+</tr>
+<tr>
+<td>Augmentation, citation</td>
+<td><code>build_prompt</code></td>
+</tr>
+<tr>
+<td>Recall@k, MRR</td>
+<td><code>recall_at_k</code>, <code>reciprocal_rank</code>, <code>evaluate</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="worked-example-one-question-every-term">Worked example: one question, every term</h2>
+<p><em>This example is invented. The numbers come from <code>rag-vector-databases/code/mini_rag.py</code>.</em></p>
+<p>A customer asks: "can I get my money back on a yearly plan?"</p>
+<ol>
+<li><strong>Ingestion</strong> has already cut the 10 documents into 22 <strong>chunks</strong> by section, each with <strong>metadata</strong>: status, audience and date.</li>
+<li>The question is <strong>embedded</strong> with the same <strong>embedding model</strong> as the chunks.</li>
+<li><strong>Semantic search</strong> compares the question's <strong>vector</strong> with every chunk by <strong>cosine similarity</strong>. With no <strong>filter</strong>, the top 3 are the current policy (0.936), the <strong>retracted</strong> policy (0.927) and the annual-billing section (0.743).</li>
+<li>The <strong>metadata filter</strong> <code>status = 'current'</code> removes the retracted chunk.</li>
+<li>The <strong>evidence gate</strong> passes. The top <strong>similarity</strong> is 0.936, above the <strong>threshold</strong> of 0.35, so the question is not refused.</li>
+<li><strong>Augmentation</strong> puts the top 2 chunks into the prompt as sources [1] and [2], with an instruction to answer only from them and <strong>cite</strong> each claim.</li>
+<li>A <strong>grounded</strong> answer reads "Annual plans can be refunded within 14 days of purchase [1]." It is <strong>faithful</strong>, because source [1] says exactly that. The toy builds the prompt but does not call a model.</li>
+<li>In the <strong>eval set</strong>, this question's answering chunk is <code>refunds-v2#0</code>. In vector search it is at rank 1, so it counts for <strong>recall@3</strong> and its <strong>reciprocal rank</strong> is 1. Under <strong>hybrid search</strong> the keyword leg matches "plan" in two chunks of the "Ending your subscription" page, which push it to rank 3. It still counts for recall@3, with a reciprocal rank of 0.33.</li>
+</ol>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">Does every number in our RAG reviews name the stage it measures?</li>
+<li class="task todo">Do we report retrieval metrics (recall@k, MRR) and answer metrics (faithfulness, relevance) separately?</li>
+<li class="task todo">Is "accuracy" defined in writing for this feature?</li>
+<li class="task todo">Do we check that citations support the claims they are attached to?</li>
+<li class="task todo">Do new team members know the difference between similarity and relevance?</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="when-to-use-rag.html">When to use RAG, and when not to</a> — the decision before the vocabulary.</li>
+<li><a href="retrieval-quality.html">Retrieval quality</a> — most of the retrieval and eval terms in depth.</li>
+<li><a href="building-rag-with-claude-code.html">Building RAG with Claude Code</a> — the terms as running code.</li>
+<li><a href="../index.html">Glossary</a> — every term across all tracks.</li>
+<li><a href="../evaluation-and-observability/index.html">Evaluation and observability</a> — judges, rubrics and online evals.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Lewis et al., <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em>, NeurIPS 2020 (<a href="https://arxiv.org/abs/2005.11401">arxiv.org/abs/2005.11401</a>): the term RAG.</li>
+<li>Robertson and Zaragoza, <em>The Probabilistic Relevance Framework: BM25 and Beyond</em>, Foundations and Trends in Information Retrieval, 2009: BM25.</li>
+<li>Malkov and Yashunin, <em>Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs</em>, IEEE TPAMI, 2020 (<a href="https://arxiv.org/abs/1603.09320">arxiv.org/abs/1603.09320</a>): HNSW.</li>
+<li>Cormack, Clarke and Büttcher, <em>Reciprocal rank fusion outperforms Condorcet and individual rank learning methods</em>, SIGIR 2009: RRF with k = 60.</li>
+<li>Gao, Ma, Lin and Callan, <em>Precise Zero-Shot Dense Retrieval without Relevance Labels</em>, ACL 2023 (<a href="https://arxiv.org/abs/2212.10496">arxiv.org/abs/2212.10496</a>): HyDE.</li>
+<li>Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts</em>, TACL 2024 (<a href="https://arxiv.org/abs/2307.03172">arxiv.org/abs/2307.03172</a>).</li>
+<li>Anthropic, <a href="https://www.anthropic.com/news/contextual-retrieval">Introducing Contextual Retrieval</a>, September 2024: contextual retrieval.</li>
+<li>Günther et al., <em>Late Chunking: Contextual Chunk Embeddings Using Long-Context Embedding Models</em>, 2024 (<a href="https://arxiv.org/abs/2409.04701">arxiv.org/abs/2409.04701</a>).</li>
+<li>Järvelin and Kekäläinen, <em>Cumulated gain-based evaluation of IR techniques</em>, ACM TOIS, 2002: nDCG.</li>
+<li>Edge et al., <em>From Local to Global: A Graph RAG Approach to Query-Focused Summarization</em>, 2024 (<a href="https://arxiv.org/abs/2404.16130">arxiv.org/abs/2404.16130</a>): GraphRAG.</li>
+<li>Greshake et al., <em>Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection</em>, 2023 (<a href="https://arxiv.org/abs/2302.12173">arxiv.org/abs/2302.12173</a>).</li>
+<li>The Fernpay examples and numbers are invented. They come from <code>rag-vector-databases/code/</code>.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="building-rag-with-claude-code.html"><span class="lbl">← Previous</span><span class="ttl">Building RAG with Claude Code, pgvector and Pinecone</span></a><a class="navcard next" href="recap.html"><span class="lbl">→ Next</span><span class="ttl">Recap &amp; examples</span></a></div><footer class="foot"><strong>Core insight:</strong> Use RAG only when the answer is a passage in knowledge too big, too fresh or too private to send whole. Then retrieval quality is the product.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#the-mental-model-every-term-has-a-place-on-the-pipeline">The mental model: every term has a place on the pipeline</a><a class="h2" href="#mechanics-the-terms-by-stage">Mechanics: the terms by stage</a><a class="h3" href="#ingest">Ingest</a><a class="h3" href="#embed">Embed</a><a class="h3" href="#store">Store</a><a class="h3" href="#retrieve">Retrieve</a><a class="h3" href="#generate">Generate</a><a class="h3" href="#evaluate">Evaluate</a><a class="h3" href="#operate">Operate</a><a class="h3" href="#beyond-basic-rag">Beyond basic RAG</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-one-question-every-term">Worked example: one question, every term</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=rag-vector-databases%2Frag-terms.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="rag-vector-databases/rag-terms.html"</script><script defer src="../assets/glossary.js"></script></body></html>

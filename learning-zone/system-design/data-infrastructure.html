@@ -41,16 +41,26 @@ html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflo
 
 /* ---- taps: no double-tap wait, a quiet highlight ---- */
 a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
-html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style></head>
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
 <body><header class="topbar">
-  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a standalone module</em></a>
-  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
-</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="core-building-blocks.html">2 · Core building blocks</a><a class="modlink" href="web-scale-services.html">3 · Web-scale services</a><a class="modlink" href="real-time-systems.html">4 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">5 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">6 · Location &amp; geo services</a><a class="modlink active" href="data-infrastructure.html">7 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">8 · Transactional &amp; financial systems</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>System Design</span><em>a systems module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-framework.html">1 · Foundations &amp; framework</a><a class="modlink" href="numbers-and-formulas.html">2 · Numbers, formulas and papers to know</a><a class="modlink" href="traffic-caching-apis-and-storage-choice.html">3 · Traffic, caching, APIs and storage choice</a><a class="modlink" href="core-building-blocks.html">4 · Core building blocks</a><a class="modlink" href="distributed-data-and-consistency.html">5 · Distributed data and consistency</a><a class="modlink" href="web-scale-services.html">6 · Web-scale services</a><a class="modlink" href="real-time-systems.html">7 · Real-time systems</a><a class="modlink" href="storage-and-sync.html">8 · Storage &amp; sync</a><a class="modlink" href="location-and-geo-services.html">9 · Location &amp; geo services</a><a class="modlink active" href="data-infrastructure.html">10 · Data infrastructure</a><a class="modlink" href="transactional-and-financial.html">11 · Transactional &amp; financial systems</a><a class="modlink" href="ml-system-design.html">12 · ML system design: recommendations, ads and search</a><a class="modlink" href="genai-and-agent-platforms.html">13 · GenAI and agent platforms</a><a class="modlink" href="social-and-media-systems.html">14 · Social and media systems</a><a class="modlink" href="reliability-and-operations.html">15 · Reliability and operations</a><a class="modlink" href="question-bank.html">16 · Question bank: 50 design questions mapped to the lessons</a><a class="modlink" href="recap.html">Recap &amp; examples</a></div></aside><main class="content" id="top">
   <div class="hero">
-    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 07</span>
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 10</span>
     <h1>Data infrastructure</h1>
   </div>
-  <div class="MarkdownContent"><h2 id="tldr">TL;DR</h2>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: stable</em></p>
+<h2 id="tldr">TL;DR</h2>
 <p>Data infrastructure is the plumbing beneath every system in this track. <strong>Distributed message queues</strong> (Kafka) decouple producers from consumers, using append-only logs, partitioned topics, and consumer groups. This same pattern appears as a building block in metrics, ad aggregation, email, and a dozen other designs. <strong>Metrics monitoring</strong> combines pull-based collection (Prometheus) with time-series databases and down-sampling, to track 10M metrics without drowning in data. <strong>Ad click aggregation</strong> applies MapReduce and stream processing (Kappa architecture) to produce billing-accurate counts under exactly-once semantics. <strong>Distributed email</strong> handles 100K messages per second by separating SMTP processing from metadata storage, search indexing, and deliverability infrastructure. These four systems share a throughput-first, eventual-consistency design philosophy.</p>
 <blockquote class="pm-callout">
 <p>🎯 <strong>For the technical PM</strong></p>
@@ -840,6 +850,38 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 </ol>
 <p><strong>DMARC</strong> ties SPF and DKIM together with a policy: "if an email fails both SPF and DKIM, reject it / quarantine it / let it through." This protects the domain from spoofing.</p>
 <hr />
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The file is <code>system-design/code/delivery_semantics.py</code>. It reads three payment messages from a log. The consumer crashes after it processes the second message but before it commits the offset. On restart it reads that message again.</p>
+<pre><code class="language-python">if not (idempotent and msg_id in done_ids):
+    processed.append(amount)
+    done_ids.add(msg_id)
+if crash_after_processing_at == committed and not crashed:
+    crashed = True          # restart from the last committed offset
+    continue
+committed += 1
+</code></pre>
+<h2 id="worked-example-one-crash-two-outcomes">Worked example: one crash, two outcomes</h2>
+<p><em>The amounts are invented. The numbers come from <code>delivery_semantics.py</code>.</em></p>
+<p>Three messages carry charges of 10, 20 and 30. The correct total is 60. The consumer crashes once, after processing the second message and before committing its offset.</p>
+<table>
+<thead>
+<tr>
+<th>Consumer</th>
+<th>Total charged</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Not idempotent</td>
+<td>80, because the second message is processed twice</td>
+</tr>
+<tr>
+<td>Idempotent, keeps a set of processed message IDs</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+<p>"At-least-once" delivery is the normal default. It is safe only when the consumer's effect is idempotent.</p>
 <h2 id="failure-modes">Failure modes</h2>
 <ul>
 <li><strong>Consumer lag in Kafka</strong> — if consumers can't keep up with producers, the lag grows until retention expires and messages are lost. Monitor consumer lag as a first-class metric.</li>
@@ -870,9 +912,16 @@ html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</st
 <li><a href="core-building-blocks.html">Core building blocks</a> — consistent hashing for Kafka partition assignment and Cassandra ring membership</li>
 <li><a href="location-and-geo-services.html">Location &amp; geo services</a> — Kafka-based stream processing for the traffic aggregation pipeline</li>
 <li><a href="transactional-and-financial.html">Transactional &amp; financial systems</a> — exactly-once semantics reappears in payment processing and double-entry ledgers</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Jay Kreps, Neha Narkhede and Jun Rao, <em>Kafka: a Distributed Messaging System for Log Processing</em>, NetDB 2011.</li>
+<li>Tuomas Pelkonen et al., <em>Gorilla: A Fast, Scalable, In-Memory Time Series Database</em>, VLDB 2015: time-series compression.</li>
+<li>Alex Xu, <em>System Design Interview</em>, volume 2: message queue, metrics monitoring, ad click aggregation and email service chapters.</li>
+<li>These sources were not re-opened during this revision, and the lesson's fact-check is pending. Numbers in the worked examples are invented or estimated, and come from the code in <code>system-design/code/</code>.</li>
 </ul></div>
-  <div class="pagenav"><a class="navcard prev" href="location-and-geo-services.html"><span class="lbl">← Previous</span><span class="ttl">Location &amp; geo services</span></a><a class="navcard next" href="transactional-and-financial.html"><span class="lbl">→ Next</span><span class="ttl">Transactional &amp; financial systems</span></a></div><footer class="foot">A standalone module · part of the <a href="../index.html">learning modules</a> collection.</footer>
-  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#distributed-message-queue">Distributed message queue</a><a class="h3" href="#scale-and-requirements">Scale and requirements</a><a class="h3" href="#core-concepts">Core concepts</a><a class="h3" href="#wal-the-append-only-log">WAL: the append-only log</a><a class="h3" href="#pull-model-vs-push-model">Pull model vs. push model</a><a class="h3" href="#isr-replication">ISR replication</a><a class="h3" href="#consumer-rebalancing">Consumer rebalancing</a><a class="h3" href="#delivery-semantics">Delivery semantics</a><a class="h2" href="#metrics-monitoring">Metrics monitoring</a><a class="h3" href="#scale-and-requirements_1">Scale and requirements</a><a class="h3" href="#collection-pull-vs-push">Collection: pull vs. push</a><a class="h3" href="#kafka-as-a-buffer">Kafka as a buffer</a><a class="h3" href="#time-series-storage-down-sampling-and-encoding">Time-series storage: down-sampling and encoding</a><a class="h3" href="#alert-system">Alert system</a><a class="h2" href="#ad-click-aggregation">Ad click aggregation</a><a class="h3" href="#scale-and-requirements_2">Scale and requirements</a><a class="h3" href="#mapreduce-aggregation">MapReduce aggregation</a><a class="h3" href="#kappa-architecture">Kappa architecture</a><a class="h3" href="#event-time-vs-processing-time">Event time vs. processing time</a><a class="h3" href="#windowing-strategies">Windowing strategies</a><a class="h3" href="#exactly-once-for-billing">Exactly-once for billing</a><a class="h3" href="#star-schema-pre-aggregation">Star schema pre-aggregation</a><a class="h2" href="#distributed-email-service">Distributed email service</a><a class="h3" href="#scale-and-requirements_3">Scale and requirements</a><a class="h3" href="#architecture-overview">Architecture overview</a><a class="h3" href="#smtp-workers-message-queues">SMTP workers + message queues</a><a class="h3" href="#metadata-storage-cassandra-like-store">Metadata storage: Cassandra-like store</a><a class="h3" href="#elasticsearch-for-search">Elasticsearch for search</a><a class="h3" href="#deliverability-spf-dkim-and-ip-warm-up">Deliverability: SPF, DKIM, and IP warm-up</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+  <div class="pagenav"><a class="navcard prev" href="location-and-geo-services.html"><span class="lbl">← Previous</span><span class="ttl">Location &amp; geo services</span></a><a class="navcard next" href="transactional-and-financial.html"><span class="lbl">→ Next</span><span class="ttl">Transactional &amp; financial systems</span></a></div><footer class="foot"><strong>Core insight:</strong> Start with the constraints, not the technology. The numbers drive the architecture, and every design must choose between correctness and throughput.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#distributed-message-queue">Distributed message queue</a><a class="h3" href="#scale-and-requirements">Scale and requirements</a><a class="h3" href="#core-concepts">Core concepts</a><a class="h3" href="#wal-the-append-only-log">WAL: the append-only log</a><a class="h3" href="#pull-model-vs-push-model">Pull model vs. push model</a><a class="h3" href="#isr-replication">ISR replication</a><a class="h3" href="#consumer-rebalancing">Consumer rebalancing</a><a class="h3" href="#delivery-semantics">Delivery semantics</a><a class="h2" href="#metrics-monitoring">Metrics monitoring</a><a class="h3" href="#scale-and-requirements_1">Scale and requirements</a><a class="h3" href="#collection-pull-vs-push">Collection: pull vs. push</a><a class="h3" href="#kafka-as-a-buffer">Kafka as a buffer</a><a class="h3" href="#time-series-storage-down-sampling-and-encoding">Time-series storage: down-sampling and encoding</a><a class="h3" href="#alert-system">Alert system</a><a class="h2" href="#ad-click-aggregation">Ad click aggregation</a><a class="h3" href="#scale-and-requirements_2">Scale and requirements</a><a class="h3" href="#mapreduce-aggregation">MapReduce aggregation</a><a class="h3" href="#kappa-architecture">Kappa architecture</a><a class="h3" href="#event-time-vs-processing-time">Event time vs. processing time</a><a class="h3" href="#windowing-strategies">Windowing strategies</a><a class="h3" href="#exactly-once-for-billing">Exactly-once for billing</a><a class="h3" href="#star-schema-pre-aggregation">Star schema pre-aggregation</a><a class="h2" href="#distributed-email-service">Distributed email service</a><a class="h3" href="#scale-and-requirements_3">Scale and requirements</a><a class="h3" href="#architecture-overview">Architecture overview</a><a class="h3" href="#smtp-workers-message-queues">SMTP workers + message queues</a><a class="h3" href="#metadata-storage-cassandra-like-store">Metadata storage: Cassandra-like store</a><a class="h3" href="#elasticsearch-for-search">Elasticsearch for search</a><a class="h3" href="#deliverability-spf-dkim-and-ip-warm-up">Deliverability: SPF, DKIM, and IP warm-up</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#worked-example-one-crash-two-outcomes">Worked example: one crash, two outcomes</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a><a class="h2" href="#sources">Sources</a></div></aside></div><script>
 (function(){
   var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
       scrim=document.getElementById('sb-scrim');

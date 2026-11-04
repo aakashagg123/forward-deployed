@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="preload" as="font" type="font/woff2" crossorigin href="../assets/fonts/google-sans-latin-wght-normal.woff2"><link rel="stylesheet" href="../assets/ds.css"><script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('ds-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}d.setAttribute('data-theme',t)})()</script><script defer src="../assets/ds.js"></script><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-180.png">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Leading leaders and designing the product org — Business Acumen</title>
+<style id="smooth-scroll">/* ---- anchors and programmatic scrolling ---- */
+html{scroll-padding-top:84px}
+@media (max-width:560px){html{scroll-padding-top:80px}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto !important}}
+
+/* ---- sticky bars: opaque, so the browser does not blend them over moving text ---- */
+.topbar{background:var(--color-surface)}
+
+/* ---- text rendering: let the browser pick; optimizeLegibility slows long pages ---- */
+body{text-rendering:auto}
+
+/* ---- horizontal overflow: clip instead of making body a scroll container ---- */
+@supports (overflow:clip){body{overflow-x:clip}}
+
+/* ---- scroll chaining and iOS back-swipe: keep inner scrollers to themselves ---- */
+pre,pre.mermaid,table{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#gl-panel,#panel,#card,#rs-panel{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media (max-width:880px){
+  .sidebar{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;will-change:transform}
+}
+#gl-panel{will-change:transform}
+
+/* ---- page lock while a drawer or the glossary panel is open ---- */
+html:has(#sb-scrim.open),html:has(#gl-scrim.open),html:has(body.gl-open){overflow:hidden}
+/* keep the page from jumping when the desktop scrollbar disappears under the lock */
+@media (hover:hover) and (pointer:fine){html:has(.layout){scrollbar-gutter:stable}}
+
+/* ---- viewport units: iOS toolbars collapse, so 100vh is taller than what is visible ---- */
+@media (min-width:881px){
+  @supports (height:100dvh){.layout .sidebar{max-height:calc(100dvh - var(--topbar-height))}}
+  .layout .sidebar{overscroll-behavior:contain}
+}
+@supports (height:100dvh){#gl-panel{height:100dvh}}
+
+/* ---- taps: no double-tap wait, a quiet highlight ---- */
+a,button,summary,label,[role=button],.navcard{touch-action:manipulation}
+html{-webkit-tap-highlight-color:var(--color-background-primary-soft-alpha)}</style><script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*/graph/*"}},{"not":{"href_matches":"/graph/*"}}]},"eagerness":"moderate"}]}</script><style id="page-fade">@media (prefers-reduced-motion:no-preference){
+  @supports (view-transition-name:none){
+    @view-transition{navigation:auto}
+    .topbar{view-transition-name:site-topbar}
+    @media (min-width:881px){.layout .sidebar{view-transition-name:site-sidebar}}
+    ::view-transition-group(root){animation-duration:.15s}
+    ::view-transition-old(root),::view-transition-new(root){animation-duration:.15s;animation-timing-function:ease}
+    ::view-transition-group(site-topbar),::view-transition-group(site-sidebar){animation-duration:0s}
+  }
+}</style></head>
+<body><header class="topbar">
+  <button class="Button menu-btn" id="sbToggle" data-variant="ghost" data-color="secondary" data-size="lg" data-uniform data-pill aria-expanded="false" aria-controls="sbNav" aria-label="Open lesson menu"><span class="ButtonInner"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h13M3.5 10h13M3.5 14.5h13"/></svg></span></button><a class="brand" href="index.html"><svg class="spark" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true"><path d="M50 8 L58 42 L92 50 L58 58 L50 92 L42 58 L8 50 L42 42 Z" fill="currentColor"/></svg><span>Business Acumen</span><em>a standalone module</em></a>
+  <nav class="topnav"><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../explainers/index.html"><span class="ButtonInner">Explainers</span></a><a class="Button" data-variant="ghost" data-color="secondary" data-size="sm" data-pill href="../index.html"><span class="ButtonInner">← All courses</span></a></nav>
+</header><div id="sb-scrim"></div><div class="layout has-outline"><aside class="sidebar" id="sbNav"><div class="sticky"><a class="modlink" href="index.html">Overview</a><a class="modlink" href="foundations-and-assessment.html">1 · Foundations: business acumen and the T-shaped leader</a><a class="modlink" href="the-language-of-money.html">2 · The language of money: reading the three statements</a><a class="modlink" href="unit-economics.html">3 · Unit economics: from one transaction to a cohort</a><a class="modlink" href="business-cases-and-valuation.html">4 · Business cases, capital and valuation</a><a class="modlink" href="data-and-decisions.html">5 · Data and decisions: deciding well under uncertainty</a><a class="modlink" href="markets-and-strategy.html">6 · Markets and customers: segments, sizing and positioning</a><a class="modlink" href="competitive-advantage-and-strategy.html">7 · Competitive advantage and strategy</a><a class="modlink" href="monetization-and-business-models.html">8 · Pricing and business models</a><a class="modlink" href="products-and-marketing.html">9 · Products and go-to-market</a><a class="modlink" href="performance-and-growth.html">10 · Performance and growth: KPIs, scorecards and the metrics that move profit</a><a class="modlink" href="portfolio-strategy-and-allocation.html">11 · Portfolio strategy and capital allocation</a><a class="modlink" href="navigating-the-organization.html">12 · Navigating the organization: how the company really works</a><a class="modlink" href="teams-and-collaboration.html">13 · Teams and collaboration: structures, rhythms and decision rights</a><a class="modlink active" href="leading-leaders-and-org-design.html">14 · Leading leaders and designing the product org</a><a class="modlink" href="executive-influence-and-stakeholders.html">15 · Executive influence: narrative, the board and the negotiating table</a><a class="modlink" href="recap.html">Recap &amp; examples</a><a class="modlink" href="assessment.html">Self-assessment</a></div></aside><main class="content" id="top">
+  <div class="hero">
+    <span class="Badge" data-color="secondary" data-size="lg" data-variant="soft" data-pill="">Lesson 14</span>
+    <h1>Leading leaders and designing the product org</h1>
+  </div>
+  <div class="MarkdownContent"><p><em>Last reviewed: 2026-10 · Volatility: medium</em></p>
+<h2 id="tldr">TL;DR</h2>
+<p>When you lead managers, your product is the organization. You no longer make most product decisions yourself. You choose the structure, hire and develop the leaders, set the standards, and inspect the results. A good org lets good decisions happen without you. A bad one routes every hard call to your calendar.</p>
+<p>The core tradeoff is how you group people. Every structure makes some coordination easy and other coordination hard. Group by discipline and craft standards rise, but customer journeys cross many teams. Group by product line and journeys get one owner, but standards drift. There is no neutral choice. You choose which coordination you want to be cheap.</p>
+<p>A reorg is also an investment with a price. It costs lost team-weeks and some people who leave. It pays back only through cheaper coordination over the years the new structure lasts. This lesson shows how to design a structure on purpose, how to price the change, when to give a product leader a profit and loss (P&amp;L), and how to level and calibrate leaders fairly.</p>
+<blockquote class="pm-callout">
+<p>🎯 <strong>For the product leader</strong></p>
+<p><strong>Why it matters</strong> — Org design decides which problems your company can solve quickly. A lender organized by function needs four teams to change how a returning borrower is approved. A lender organized by customer journey may need one.</p>
+<p><strong>What it changes in your decisions</strong> — You write design criteria before you draw boxes. You price a reorg in team-weeks before you announce it. You give a leader a P&amp;L only when they hold its main levers. You calibrate ratings on evidence, not on advocacy.</p>
+<p><strong>Ask your team</strong> — <em>"For our top goal this year, how many teams must change something to move it, and who owns the result?"</em></p>
+<p><strong>Risk if ignored</strong> — An org chart that made sense two strategies ago. Every important change becomes a cross-team project with no single owner. Or the opposite: a reorg every year that never pays back its own cost.</p>
+</blockquote>
+<h2 id="decision-rules-in-this-lesson">Decision rules in this lesson</h2>
+<ul>
+<li><strong>Write the design criteria first.</strong> Must-pass criteria, such as an independent credit risk function, come before any weighted score.</li>
+<li><strong>Do not reorg unless the new structure will outlast its payback.</strong> Price the lost team-weeks and the attrition, then compare them with the yearly saving.</li>
+<li><strong>Give every critical system a named owning team on day one of the new structure.</strong></li>
+<li><strong>Give a product leader a P&amp;L only when they control the levers that drive most of it.</strong> Otherwise you create blame without authority.</li>
+<li><strong>Define levels by scope, ambiguity and business impact, never by tenure.</strong></li>
+<li><strong>In calibration, a rating without evidence moves toward the middle.</strong> Advocacy is not evidence.</li>
+<li><strong>Add a management layer last.</strong> Try clearer decision rights and team boundaries first.</li>
+</ul>
+<h2 id="mental-model-the-system-mirrors-the-org">Mental model: the system mirrors the org</h2>
+<pre class="mermaid">flowchart LR
+  subgraph ORG[&quot;How the org is grouped&quot;]
+    T1[&quot;Onboarding team&quot;]
+    T2[&quot;Underwriting team&quot;]
+    T3[&quot;Servicing team&quot;]
+  end
+  subgraph SYS[&quot;What the product becomes&quot;]
+    S1[&quot;Onboarding service&quot;]
+    S2[&quot;Decision engine&quot;]
+    S3[&quot;Servicing platform&quot;]
+  end
+  T1 --&gt; S1
+  T2 --&gt; S2
+  T3 --&gt; S3
+  S1 -.-&gt;|&quot;handoff = interface&quot;| S2
+  S2 -.-&gt;|&quot;handoff = interface&quot;| S3</pre>
+<p>Organizations tend to build systems that copy their own communication structure. Call this the <strong>system-mirrors-the-org principle</strong>. Each team builds its own part. Where two teams must talk, an interface appears. Where they rarely talk, the parts drift apart. So if you want a seamless customer journey, give one team ownership of it.</p>
+<p><strong>Where the principle breaks.</strong> It is a strong tendency, not a law. Shared platforms, strong architecture standards and good interfaces can soften it. And reorganizing to match a new design does not change the existing system overnight. The old structure stays in the code for years.</p>
+<h2 id="mechanics">Mechanics</h2>
+<h3 id="managing-managers">Managing managers</h3>
+<p>Leading leaders is a different job from leading individual contributors.</p>
+<ul>
+<li><strong>Set direction, not tasks.</strong> Give each leader an outcome, a budget and constraints. Let them choose the path.</li>
+<li><strong>Inspect through artifacts.</strong> Review strategies, business cases and metric reviews. Do not review every spec.</li>
+<li><strong>Use skip-levels.</strong> Talk regularly with people two levels down. You hear what filtered reports leave out.</li>
+<li><strong>Develop leaders on purpose.</strong> Give stretch scope with support. Name the next role each leader is growing toward.</li>
+<li><strong>Act on underperformance early.</strong> A struggling leader affects a whole team. Waiting is the most expensive choice.</li>
+</ul>
+<h3 id="product-org-structures">Product org structures</h3>
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>How it groups people</th>
+<th>Makes cheap</th>
+<th>Makes expensive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Functional</strong></td>
+<td>By discipline: all product managers (PMs) together, all engineers together</td>
+<td>Craft standards, shared methods</td>
+<td>Cross-team journeys; slow end-to-end decisions</td>
+</tr>
+<tr>
+<td><strong>Product-line or business-unit</strong></td>
+<td>By product, segment or line of business, often with its own profit and loss</td>
+<td>Ownership of outcomes; speed within a line</td>
+<td>Consistency across lines; shared platforms</td>
+</tr>
+<tr>
+<td><strong>Matrix</strong></td>
+<td>Two reporting lines: a discipline line and a product line</td>
+<td>Balance of standards and outcomes</td>
+<td>Clarity; people serve two bosses</td>
+</tr>
+</tbody>
+</table>
+<p>Block is a public example of grouping by customer segment. Its 10-K describes two ecosystems: Square, for sellers, and Cash App, for consumers. It reports gross profit for each. Each ecosystem serves a different customer with its own products.</p>
+<p>Domain-specific choices:</p>
+<ul>
+<li><strong>Payments</strong>: by flow (accepting payments, issuing cards, risk) or by customer segment (small business, enterprise, platforms).</li>
+<li><strong>Lending</strong>: by lifecycle (acquisition, underwriting, servicing, collections) or by product (personal loans, cards, point-of-sale credit).</li>
+<li><strong>InsurTech</strong>: by line of business (auto, home, renters), each with its own pricing and claims needs.</li>
+<li><strong>Retail</strong>: by channel (stores, online) or by journey across channels. The more customers mix channels, the more a channel split hurts.</li>
+<li><strong>eCommerce marketplace</strong>: by side (buyers, sellers) or by category.</li>
+<li><strong>FinTech</strong>: often a product-line structure plus a strong central Risk and Compliance function.</li>
+</ul>
+<p>Inside each unit, teams still need types and ways of working together. That level of design lives in <a href="teams-and-collaboration.html">teams and collaboration</a>.</p>
+<h3 id="the-org-design-process">The org-design process</h3>
+<p>Most reorgs start with boxes on a slide. That is the last step, not the first. A sound design runs in four steps.</p>
+<pre class="mermaid">flowchart LR
+  C[&quot;1. Design criteria&lt;br/&gt;must-pass, then weighted&quot;] --&gt; O[&quot;2. Options&lt;br/&gt;two to four structures&quot;]
+  O --&gt; E[&quot;3. Evaluate&lt;br/&gt;score, then walk the&lt;br/&gt;top workflows&quot;]
+  E --&gt; T[&quot;4. Transition plan&lt;br/&gt;owners, rights, dates&quot;]</pre>
+<p><strong>Step 1: write the design criteria.</strong> Criteria come from the strategy. Ask what the org must make easy in the next two years. Split them into two kinds.</p>
+<ul>
+<li><strong>Must-pass criteria</strong> are rules no option may break. In regulated domains, some come from the risk model. Credit risk must stay independent of the team paid on loan volume. Compliance must not report to the leader whose launches it reviews. The <a href="navigating-the-organization.html">three lines of defence</a> set these limits.</li>
+<li><strong>Weighted criteria</strong> are goals you trade against each other. Examples: "the top goal sits in one team", "spans of about six", "no critical system without an owner", "low disruption".</li>
+</ul>
+<p>Write the weights before you see the options. If you weight afterwards, you will weight toward the option you already like.</p>
+<p><strong>Step 2: generate options.</strong> Draw two to four real structures. Include the status quo with small fixes. It is often better than it looks, because it costs nothing to move to.</p>
+<p><strong>Step 3: evaluate.</strong> Drop any option that fails a must-pass criterion. Score the rest from 1 to 5 on each weighted criterion. Then do the step most leaders skip: <strong>walk the top five workflows</strong> through each option. For each workflow, count the teams that must change something and the handoffs between them. A score can hide a broken journey. A walk-through cannot.</p>
+<p><strong>Step 4: write the transition plan.</strong> A structure is not done until the plan names:</p>
+<ul>
+<li>the new owner of every system, data set and on-call rota;</li>
+<li>the new decision rights for each recurring decision (see <a href="teams-and-collaboration.html">teams and collaboration</a>);</li>
+<li>who moves, who is told first, and in what order;</li>
+<li>a date to freeze the old roadmap and a date the new teams plan their first quarter;</li>
+<li>a review date, about six months out, to check the criteria were met.</li>
+</ul>
+<p><strong>Decision rule.</strong> Announce structure, people and owners in one week. A long gap between "a reorg is coming" and "here is your team" is the most expensive part of any reorg.</p>
+<p><strong>The common misreading.</strong> "The scoring matrix picks the answer." It only makes the choice explicit. The walk-through and the must-pass rules do most of the work.</p>
+<h3 id="the-cost-of-a-reorg">The cost of a reorg</h3>
+<p>A reorg is an investment. It has an up-front cost and a yearly return. Leaders rarely price either.</p>
+<p><strong>The cost</strong> has three parts.</p>
+<ol>
+<li><strong>Lost team-weeks.</strong> Teams that change members or scope slow down while they form and learn new systems. Teams that do not change still lose time to uncertainty and meetings.</li>
+<li><strong>Attrition.</strong> Some people leave, often the ones with the most options. Each regretted departure costs hiring time, ramp time and lost knowledge.</li>
+<li><strong>Delay.</strong> Roadmap work slips by about the lost weeks. That delays revenue.</li>
+</ol>
+<p>The formula for the first part is simple:</p>
+<p><strong>lost cost = Σ (teams in a group × weeks lost per team) × cost per team-week</strong></p>
+<p><strong>Cost per team-week</strong> = people per team × fully loaded cost per person ÷ working weeks per year. Fully loaded cost is defined in <a href="navigating-the-organization.html">navigating the organization</a>.</p>
+<p><strong>The return</strong> is the coordination you no longer pay for. Fewer teams on a goal means fewer handoffs and fewer meetings. Each handoff also adds queue time, as the <a href="teams-and-collaboration.html">cost of a handoff</a> shows.</p>
+<p><strong>Payback = total cost ÷ yearly saving.</strong> If the structure will not last longer than its payback, the reorg destroys value. A company that reorgs every year never collects the return.</p>
+<p><strong>Domain application.</strong> In a lender, a reorg that moves the decision engine to a new team also moves the credit model's change process. Model risk teams may need to re-approve who can change it. Add those weeks to the cost.</p>
+<p><strong>The common misreading.</strong> "The reorg is free because nobody was hired or fired." The team-weeks are real money. They just never show up as a line in the budget.</p>
+<h3 id="the-general-manager-model">The general-manager model</h3>
+<p>A <strong>general manager (GM)</strong> owns a business unit's P&amp;L. In a product company, this often means a product leader who answers for revenue, margin and cost, not only for usage and delivery.</p>
+<p><strong>What changes for the leader.</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Product leader without a P&amp;L</th>
+<th>Product leader as GM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Measured on</td>
+<td>Adoption, delivery, product metrics</td>
+<td>Unit revenue, contribution, operating profit</td>
+</tr>
+<tr>
+<td>Owns</td>
+<td>Roadmap and product decisions</td>
+<td>Roadmap, pricing, marketing spend, often sales and operations</td>
+</tr>
+<tr>
+<td>Trades</td>
+<td>Features against features</td>
+<td>Growth against margin, this year against next</td>
+</tr>
+<tr>
+<td>Common pain</td>
+<td>Accountable for outcomes it cannot fully steer</td>
+<td>Pressure to hit the quarter at the expense of the product</td>
+</tr>
+</tbody>
+</table>
+<p>A GM P&amp;L usually has the shape below. Shared costs, such as platform engineering, arrive as an <a href="navigating-the-organization.html">internal charge</a>.</p>
+<pre><code class="language-text">  Unit revenue (net of incentives and refunds)
+- Direct variable costs (processing, losses, fulfilment)
+= Contribution
+- Direct operating costs (the unit's own teams)
+= Direct profit           &lt;- what the GM controls most
+- Allocated shared costs (platforms, central functions)
+= Unit operating profit   &lt;- what Finance reports
+</code></pre>
+<p><strong>When the GM model works.</strong> Four conditions help.</p>
+<ul>
+<li><strong>Separable customers.</strong> The unit serves a customer group that others do not. Block's two ecosystems, sellers and consumers, are an example of this split.</li>
+<li><strong>Separable revenue and cost.</strong> Finance can measure the unit's P&amp;L without large arguments over allocation.</li>
+<li><strong>Control of the main levers.</strong> The GM sets price, product and acquisition spend. Shared platforms are priced fairly.</li>
+<li><strong>Enough scale.</strong> The unit can carry its own leadership cost.</li>
+</ul>
+<p><strong>Domain application.</strong> A card issuer makes a product leader GM of its card business. Revenue is interchange, interest and fees. The biggest cost is credit losses. But the credit cutoff stays with Credit Risk, as the second line requires. So the GM's P&amp;L contains a cost the GM cannot set alone. The fix is a shared target: the GM owns growth within a loss limit that Credit Risk sets. In payments, a GM of the small-business segment can own net revenue and fraud losses. The fraud rules still sit with Risk.</p>
+<p><strong>Decision rule.</strong> Give a product leader a P&amp;L when they control the levers behind most of it. Judge them on direct profit, not on allocated cost they cannot change.</p>
+<p><strong>The common misreading.</strong> "A P&amp;L makes a leader accountable." It makes them accountable for what they control. For the rest, it only makes them anxious.</p>
+<h3 id="hiring-leveling-and-performance">Hiring, leveling and performance</h3>
+<p><strong>Hiring.</strong> Write a scorecard for each role: the outcomes expected in the first year and the skills needed. Use structured interviews, where each interviewer tests specific skills. This makes hiring more consistent.</p>
+<p><strong>Leveling.</strong> A career ladder defines each level by scope and impact, not by tenure. A useful rubric has a few dimensions, and describes each level on each one. The example below is illustrative. Your company's ladder will differ.</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>PM</th>
+<th>Senior PM</th>
+<th>Group PM</th>
+<th>Director</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scope</strong></td>
+<td>A feature area</td>
+<td>A product</td>
+<td>Several products</td>
+<td>A product line and its business results</td>
+</tr>
+<tr>
+<td><strong>Ambiguity</strong></td>
+<td>Problem is defined; finds the solution</td>
+<td>Defines the problem within a goal</td>
+<td>Sets goals for several teams</td>
+<td>Chooses which problems the line works on</td>
+</tr>
+<tr>
+<td><strong>Business impact</strong></td>
+<td>Moves a product metric</td>
+<td>Moves a business metric for one product</td>
+<td>Moves a P&amp;L line, such as contribution</td>
+<td>Owns a P&amp;L or a major share of one</td>
+</tr>
+<tr>
+<td><strong>Influence</strong></td>
+<td>Own team</td>
+<td>Peer teams</td>
+<td>Other functions and partners</td>
+<td>Executives, partners and regulators</td>
+</tr>
+<tr>
+<td><strong>Develops people</strong></td>
+<td>Self</td>
+<td>Mentors</td>
+<td>Hires and grows PMs</td>
+<td>Hires and grows leaders</td>
+</tr>
+</tbody>
+</table>
+<p>Write evidence examples for each cell. "Moves a P&amp;L line" means little alone. "Changed the dispute process and cut chargeback losses by a measured amount" is evidence.</p>
+<p><strong>Span of control</strong> is the number of people reporting to one manager. Narrow spans give more coaching and add layers. Wide spans flatten the org and give each person less attention. The right span depends on how similar the work is and how experienced the people are.</p>
+<p><strong>Performance and calibration.</strong> Set clear expectations at the start of a period. Then <strong>calibrate</strong>: a group of managers reviews ratings across teams, so one manager's "strong" means the same as another's. A calibration session works like this.</p>
+<ol>
+<li><strong>Pre-read.</strong> Each manager submits proposed ratings, with two or three pieces of evidence per person against the level rubric.</li>
+<li><strong>Distribution check.</strong> The facilitator shows each manager's share of ratings in each band. Large gaps between managers get discussed first.</li>
+<li><strong>Anchor cases.</strong> The group agrees on one or two clear examples per band. Every other case is compared with the anchors.</li>
+<li><strong>Evidence over advocacy.</strong> A rating moves only on evidence. A manager who argues harder does not win.</li>
+<li><strong>Bias checks.</strong> The facilitator asks about recency (only the last month counts), halo (one strength colours everything), and similarity (people like the manager rate higher).</li>
+<li><strong>Record.</strong> Final ratings, the reason for every change, and actions for each person.</li>
+</ol>
+<p><em>An illustrative example. All inputs are assumed.</em> Two managers each rate ten PMs. Manager A proposes "exceeds" for six of them, 60%. Manager B proposes "exceeds" for one, 10%. The company's guideline, not a quota, is about 20 to 30%. Either A's team is much stronger, or the two scales differ. The group asks A for evidence against the rubric for each of the six. Four hold up. Two move to "meets". B's team gets the same test in reverse: is anyone under-rated? One PM moves up. The result is four "exceeds" out of ten for A and two for B. Six of twenty is 30%, at the top of the guideline. The point is not the curve. It is that the evidence now means the same thing on both teams.</p>
+<p><strong>Decision rule.</strong> Address underperformance with a clear plan, evidence and a date. Calibrate before you tell anyone their rating.</p>
+<h3 id="scaling-the-org">Scaling the org</h3>
+<p>Add structure when coordination costs start to hurt: decisions wait, teams duplicate work, or leaders cannot keep up with their reports. Common signs it is time:</p>
+<ul>
+<li>A manager's reports exceed what they can coach well.</li>
+<li>Two teams keep building the same thing.</li>
+<li>One leader is in every decision, and is the bottleneck.</li>
+</ul>
+<p>Each added layer slows information and decisions. Add layers last. First try clearer decision rights (<a href="teams-and-collaboration.html">teams and collaboration</a>) and better team boundaries.</p>
+<h2 id="worked-example-reorganizing-a-lending-product-org">Worked example: reorganizing a lending product org</h2>
+<p><em>This example is invented, to show the method. The company, its teams and all numbers are illustrative. All inputs are assumed.</em></p>
+<p>A consumer lender has 30 PMs organized by function: a web team, a mobile team, a decision-engine team, a data team, and so on. There are 12 product teams of eight people. The top goal for next year is "approve returning borrowers in under one minute."</p>
+<p><strong>Step 1: count the handoffs.</strong> Under the current structure, the goal needs changes from four teams: web, mobile, decision engine and servicing data. Four teams means four backlogs and three handoffs.</p>
+<p><strong>Step 2: write the criteria.</strong> Must-pass: credit policy stays with Credit Risk, not with any product team. Weighted: the top goal sits in one team (weight 40%); spans of about six (20%); every system has an owner (20%); low disruption (20%).</p>
+<p><strong>Step 3: design around the outcome.</strong> The vice president (VP) of Product proposes a lifecycle structure: acquisition, underwriting, servicing and collections. The returning-borrower goal now sits mainly with one team, underwriting, and touches one other, servicing. Two teams, one handoff. The status quo scores higher only on disruption.</p>
+<p><strong>Step 4: choose the span.</strong> Compare two spans for 30 PMs.</p>
+<table>
+<thead>
+<tr>
+<th>Span</th>
+<th>Group leads</th>
+<th>Next layer</th>
+<th>Top</th>
+<th>Management layers</th>
+<th>Managers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>30 ÷ 6 = 5</td>
+<td>—</td>
+<td>1 VP (span 5)</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr>
+<td>3</td>
+<td>30 ÷ 3 = 10</td>
+<td>4 directors (10 ÷ 3, rounded up)</td>
+<td>2 senior directors, then 1 VP</td>
+<td>4</td>
+<td>17</td>
+</tr>
+</tbody>
+</table>
+<p>A span of 3 needs 17 managers and four layers. A span of 6 needs 6 managers and two layers. The VP picks a span of about 6. Group leads still have time to coach, and decisions pass through fewer layers.</p>
+<p><strong>Step 5: price the reorg.</strong> Each team has eight people at an assumed fully loaded cost of $245,000 each. Assume 48 working weeks a year. One team-week costs 8 × $245,000 ÷ 48 = <strong>$40,833</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Teams</th>
+<th>Weeks lost per team (assumed)</th>
+<th>Team-weeks lost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Re-formed: new members and new scope</td>
+<td>5</td>
+<td>6</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Re-scoped: same people, new scope</td>
+<td>4</td>
+<td>3</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Untouched, but distracted</td>
+<td>3</td>
+<td>0.5</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>12</strong></td>
+<td></td>
+<td><strong>43.5</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Lost time costs 43.5 × $40,833 = <strong>$1,776,250</strong>. Assume two extra regretted departures at $200,000 each, for hiring, ramp and lost knowledge. That adds $400,000. The total cost is <strong>$2,176,250</strong>.</p>
+<p><strong>Step 6: price the return.</strong> Today, four teams each spend an assumed 20% of their time coordinating on the goal. That is 4 × 0.20 × 48 = 38.4 team-weeks a year. After the reorg, two teams spend 10%: 2 × 0.10 × 48 = 9.6 team-weeks. The saving is 28.8 team-weeks, worth 28.8 × $40,833 = <strong>$1,176,000 a year</strong>.</p>
+<p><strong>Step 7: decide.</strong> Payback is $2,176,250 ÷ $1,176,000 = <strong>1.85 years</strong>, about 22 months. Cumulative net value is −$1.0 million after one year, +$0.18 million after two and +$1.35 million after three. This count ignores the value of shipping the goal faster, which comes on top. The VP commits to keep the structure for at least three years. She would not do this reorg if another one were likely within two.</p>
+<style>
+.ba-rc{background:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;
+  padding:var(--space-6,24px) var(--space-5,20px);margin:26px 0;font-family:inherit;text-align:left}
+.ba-rc-title{font-size:var(--font-text-xs-size);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--color-text-secondary);font-weight:700;margin:0 0 4px}
+.ba-rc-sub{font-size:var(--font-text-sm-size);color:var(--color-text-secondary);margin:0 0 16px}
+.ba-rc-chart{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:stretch}
+.ba-rc-col{display:flex;flex-direction:column;align-items:center}
+.ba-rc-up,.ba-rc-down{width:100%;height:7em;display:flex;justify-content:center}
+.ba-rc-up{align-items:flex-end;border-bottom:2px solid var(--color-border-strong,var(--color-border))}
+.ba-rc-down{align-items:flex-start}
+.ba-rc-bar{width:60%;max-width:4.5em}
+.ba-rc-bar.neg{background:var(--color-background-danger-surface);border:1px solid var(--color-border-danger-outline);border-top:none;border-radius:0 0 8px 8px}
+.ba-rc-bar.pos{background:var(--color-background-success-surface);border:1px solid var(--color-border-success-surface);border-bottom:none;border-radius:8px 8px 0 0}
+.ba-rc-val{font-size:var(--font-text-sm-size);font-weight:700;color:var(--color-text);margin-top:6px}
+.ba-rc-val.neg{color:var(--color-text-danger)}
+.ba-rc-val.pos{color:var(--color-text-success)}
+.ba-rc-lab{font-size:var(--font-text-xs-size);color:var(--color-text-secondary)}
+.ba-rc-note{margin-top:14px;font-size:var(--font-text-xs-size);color:var(--color-text-secondary)}
+</style>
+<div class="ba-rc" role="img" aria-label="Bar chart of the cumulative net value of an illustrative reorg: minus 2.18 million dollars at launch, minus 1.0 million after year 1, plus 0.18 million after year 2, plus 1.35 million after year 3. Payback is about 22 months.">
+  <div class="ba-rc-title">The reorg J-curve</div>
+  <p class="ba-rc-sub">Cumulative net value, $ millions. Cost $2.18M up front; saving $1.18M a year. Illustrative, all inputs assumed.</p>
+  <div class="ba-rc-chart">
+    <div class="ba-rc-col">
+      <div class="ba-rc-up"></div>
+      <div class="ba-rc-down"><div class="ba-rc-bar neg" style="height:87%"></div></div>
+      <span class="ba-rc-val neg">−2.18</span><span class="ba-rc-lab">Launch</span>
+    </div>
+    <div class="ba-rc-col">
+      <div class="ba-rc-up"></div>
+      <div class="ba-rc-down"><div class="ba-rc-bar neg" style="height:40%"></div></div>
+      <span class="ba-rc-val neg">−1.00</span><span class="ba-rc-lab">Year 1</span>
+    </div>
+    <div class="ba-rc-col">
+      <div class="ba-rc-up"><div class="ba-rc-bar pos" style="height:7%"></div></div>
+      <div class="ba-rc-down"></div>
+      <span class="ba-rc-val pos">+0.18</span><span class="ba-rc-lab">Year 2</span>
+    </div>
+    <div class="ba-rc-col">
+      <div class="ba-rc-up"><div class="ba-rc-bar pos" style="height:54%"></div></div>
+      <div class="ba-rc-down"></div>
+      <span class="ba-rc-val pos">+1.35</span><span class="ba-rc-lab">Year 3</span>
+    </div>
+  </div>
+  <div class="ba-rc-note">Payback ≈ 1.85 years. A structure replaced within two years never pays back. The count ignores the value of shipping faster, which comes on top.</div>
+</div>
+
+<p><strong>Step 8: plan the transition.</strong> The decision engine was built by a team that no longer exists in the new structure. The VP assigns it to the underwriting team on day one. She funds a quarter of work to clean up the interfaces the old structure created. She announces structure, people and owners in the same week.</p>
+<h2 id="tradeoffs-and-decisions">Tradeoffs and decisions</h2>
+<ul>
+<li><strong>Functional vs. product line.</strong> Functional orgs raise craft standards and slow journeys. Product-line orgs speed journeys and let standards drift.</li>
+<li><strong>Narrow vs. wide spans.</strong> Narrow spans give coaching and add layers. Wide spans speed decisions and thin out support.</li>
+<li><strong>Stability vs. fit.</strong> Every reorg costs months of lost speed. Not reorganizing costs speed every day the structure mismatches the strategy. The payback test tells you which cost is larger.</li>
+<li><strong>GM ownership vs. shared control.</strong> A P&amp;L sharpens trade-offs between growth and margin. It can push a leader toward the quarter and against shared platforms.</li>
+<li><strong>Calibration rigour vs. manager time.</strong> Evidence-based calibration is fairer. It costs each manager hours of preparation every cycle.</li>
+<li><strong>Hire senior vs. grow internal.</strong> Senior hires bring speed and new ideas. Internal growth keeps knowledge and builds loyalty.</li>
+</ul>
+<h2 id="failure-modes">Failure modes</h2>
+<ul>
+<li><strong>The reorg as a fix for everything.</strong> Leaders reorganize every year. Teams never settle long enough to deliver, and no reorg pays back.</li>
+<li><strong>Boxes before criteria.</strong> The new chart fits the leaders, not the strategy. Nobody can say what it was meant to make easy.</li>
+<li><strong>The long limbo.</strong> A reorg is rumoured for two months. Work stops and the best people take outside calls.</li>
+<li><strong>The orphaned system.</strong> A reorg leaves a critical system with no owning team. It fails at night and nobody is on call.</li>
+<li><strong>The paper P&amp;L.</strong> A GM is judged on a P&amp;L whose main cost, such as credit losses, someone else sets. Blame flows, decisions do not.</li>
+<li><strong>Calibration by volume.</strong> The loudest manager wins ratings for their team. Good people on quieter teams leave over fairness.</li>
+<li><strong>Layer creep.</strong> Each promotion adds a manager. Decisions slow and nobody notices why.</li>
+<li><strong>The bottleneck leader.</strong> One senior leader approves everything. The org cannot scale past their calendar.</li>
+</ul>
+<h2 id="under-the-hood">Under the hood</h2>
+<p>The script reproduces the lesson's numbers: the layer count, the reorg cost and payback, and the calibration shares. All inputs are the illustrative assumptions above.</p>
+<pre><code class="language-python">import math
+
+# Layers and managers for N people at a given span
+def layers(n, span):
+    count, managers = 0, 0
+    while n &gt; 1:
+        n = math.ceil(n / span)
+        managers += n
+        count += 1
+    return count, managers
+
+print(layers(30, 6))  # (2, 6)
+print(layers(30, 3))  # (4, 17)
+
+# Cost of a reorg (assumed inputs)
+loaded, people, weeks = 245_000, 8, 48
+team_week = people * loaded / weeks                     # $40,833
+groups = {&quot;re-formed&quot;: (5, 6.0), &quot;re-scoped&quot;: (4, 3.0), &quot;untouched&quot;: (3, 0.5)}
+lost = sum(teams * w for teams, w in groups.values())   # 43.5 team-weeks
+attrition = 2 * 200_000
+cost = lost * team_week + attrition                     # $2,176,250
+
+# Yearly return: coordination time saved on the top goal
+saved = 4 * 0.20 * weeks - 2 * 0.10 * weeks             # 28.8 team-weeks
+saving = saved * team_week                              # $1,176,000
+print(f&quot;team-week ${team_week:,.0f}; cost ${cost:,.0f}; saving ${saving:,.0f}/yr&quot;)
+print(f&quot;payback {cost / saving:.2f} years&quot;)             # 1.85
+for year in (1, 2, 3):
+    print(f&quot;year {year}: cumulative net ${saving * year - cost:,.0f}&quot;)
+
+# Calibration: share rated &quot;exceeds&quot; before and after
+before = {&quot;A&quot;: 6, &quot;B&quot;: 1}
+after = {&quot;A&quot;: 4, &quot;B&quot;: 2}
+for label, d in ((&quot;before&quot;, before), (&quot;after&quot;, after)):
+    shares = {m: f&quot;{n / 10:.0%}&quot; for m, n in d.items()}
+    print(label, shares, f&quot;overall {sum(d.values()) / 20:.0%}&quot;)
+</code></pre>
+<p>A design-criteria file keeps the evaluation honest. Write it before you draw options.</p>
+<pre><code class="language-yaml">goal: &quot;Approve returning borrowers in under one minute&quot;
+must_pass:
+  - &quot;Credit policy stays with Credit Risk, independent of volume targets&quot;
+  - &quot;Every critical system has an owning team on day one&quot;
+weighted:
+  top_goal_in_one_team: 0.40
+  span_about_six: 0.20
+  every_system_owned: 0.20
+  low_disruption: 0.20
+min_structure_life_years: 3     # longer than the payback
+review_on: 2027-06-30
+</code></pre>
+<h2 id="practitioner-checklist">Practitioner checklist</h2>
+<ul>
+<li class="task todo">For your top goal, count how many teams must change something to move it.</li>
+<li class="task todo">Draw your org chart next to your system map. Mark where they mismatch.</li>
+<li class="task todo">Before your next reorg, write the must-pass and weighted criteria and get them agreed.</li>
+<li class="task todo">Walk your top five workflows through each structure option. Count teams and handoffs.</li>
+<li class="task todo">Price the reorg in team-weeks and attrition. Compare the payback with how long the structure will last.</li>
+<li class="task todo">Make sure every critical system has an owning team.</li>
+<li class="task todo">For each P&amp;L owner, list the levers they control and the ones they do not.</li>
+<li class="task todo">Check every leader's span. Flag any that are too wide to coach or too narrow to justify a layer.</li>
+<li class="task todo">Before your next calibration, write evidence examples for each level on your ladder.</li>
+<li class="task todo">Hold one skip-level conversation this week.</li>
+</ul>
+<h2 id="related-lessons">Related lessons</h2>
+<ul>
+<li><a href="teams-and-collaboration.html">Teams and collaboration</a> — team types, the cost of a handoff and decision rights inside the structure.</li>
+<li><a href="navigating-the-organization.html">Navigating the organization</a> — fully loaded cost, internal charges and the three lines of defence.</li>
+<li><a href="unit-economics.html">Unit economics</a> — the contribution line a GM steers by.</li>
+<li><a href="business-cases-and-valuation.html">Business cases, capital and valuation</a> — payback and net present value (NPV) for any investment, a reorg included.</li>
+<li><a href="../technical-product-sense/how-systems-are-built.html">How systems are built</a> — the architecture your org will mirror.</li>
+<li><a href="../system-design/foundations-and-framework.html">Foundations and framework</a> — how systems are designed at scale.</li>
+<li><a href="../technical-product-management/working-with-engineering.html">Working with engineering</a> — the partnership at team level.</li>
+</ul></div>
+  <div class="pagenav"><a class="navcard prev" href="teams-and-collaboration.html"><span class="lbl">← Previous</span><span class="ttl">Teams and collaboration: structures, rhythms and decision rights</span></a><a class="navcard next" href="executive-influence-and-stakeholders.html"><span class="lbl">→ Next</span><span class="ttl">Executive influence: narrative, the board and the negotiating table</span></a></div><footer class="foot"><strong>Core insight:</strong> Every product decision is a bet on unit economics and cash, and it is judged against what would have happened anyway.<br>Part of the <a href="../index.html">learning modules</a> collection.</footer>
+  </main><aside class="outline"><div class="sticky"><div class="outline-h">On this page</div><a class="h2" href="#tldr">TL;DR</a><a class="h2" href="#decision-rules-in-this-lesson">Decision rules in this lesson</a><a class="h2" href="#mental-model-the-system-mirrors-the-org">Mental model: the system mirrors the org</a><a class="h2" href="#mechanics">Mechanics</a><a class="h3" href="#managing-managers">Managing managers</a><a class="h3" href="#product-org-structures">Product org structures</a><a class="h3" href="#the-org-design-process">The org-design process</a><a class="h3" href="#the-cost-of-a-reorg">The cost of a reorg</a><a class="h3" href="#the-general-manager-model">The general-manager model</a><a class="h3" href="#hiring-leveling-and-performance">Hiring, leveling and performance</a><a class="h3" href="#scaling-the-org">Scaling the org</a><a class="h2" href="#worked-example-reorganizing-a-lending-product-org">Worked example: reorganizing a lending product org</a><a class="h2" href="#tradeoffs-and-decisions">Tradeoffs and decisions</a><a class="h2" href="#failure-modes">Failure modes</a><a class="h2" href="#under-the-hood">Under the hood</a><a class="h2" href="#practitioner-checklist">Practitioner checklist</a><a class="h2" href="#related-lessons">Related lessons</a></div></aside></div><script>
+(function(){
+  var btn=document.getElementById('sbToggle'), nav=document.getElementById('sbNav'),
+      scrim=document.getElementById('sb-scrim');
+  if(!btn||!nav) return;
+  function open(){nav.classList.add('open');if(scrim)scrim.classList.add('open');btn.setAttribute('aria-expanded','true')}
+  function close(){nav.classList.remove('open');if(scrim)scrim.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+  btn.addEventListener('click',function(){nav.classList.contains('open')?close():open()});
+  if(scrim)scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close()});
+})();
+</script><script>
+(function(){
+  var links = document.querySelectorAll('.outline a');
+  if(!links.length) return;
+  var heads = [];
+  links.forEach(function(a){
+    var el = document.getElementById(a.getAttribute('href').slice(1));
+    if(el) heads.push({el:el, link:a});
+  });
+  if(!heads.length) return;
+  function onScroll(){
+    var y = window.scrollY + 130, current = heads[0];
+    heads.forEach(function(h){ if(h.el.offsetTop <= y) current = h; });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    current.link.classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script><script type="module">
+// Load mermaid and render each diagram only when it nears the viewport, one at a time.
+// The bundle is large; fetching and running it at page load competes with the first
+// scroll on a phone. Diagrams reserve their height (see design-system/site) so nothing jumps.
+const els=[...document.querySelectorAll('pre.mermaid')];
+let lib=null;
+function boot(){
+  return lib||(lib=import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m=>{
+    const mermaid=m.default;
+    mermaid.initialize(DS.mermaidConfig());
+    window.addEventListener('ds-themechange',()=>DS.mermaidRerender(mermaid));
+    return mermaid;
+  }));
+}
+let chain=Promise.resolve();
+function renderOne(pre){
+  chain=chain.then(async()=>{ try{
+    const mermaid=await boot(); if(document.fonts&&document.fonts.ready)await document.fonts.ready; DS.mermaidRemember(pre); await mermaid.run({nodes:[pre]});
+    // fit-or-scroll: genuinely wide diagrams keep natural size and scroll in the card
+    const s=pre.querySelector('svg'); if(!s) return;
+    const w=(s.viewBox&&s.viewBox.baseVal&&s.viewBox.baseVal.width)||0;
+    const cw=pre.clientWidth||0;
+    if(cw&&w>cw*1.6){s.style.maxWidth='none';
+      const h=document.createElement('span');h.className='mm-hint';
+      h.textContent='⟷ scroll';pre.insertBefore(h,s);}
+  }catch(e){} });
+}
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){io.unobserve(e.target);renderOne(e.target);}});},{rootMargin:'900px 0px'});
+  els.forEach(p=>io.observe(p));
+}else els.forEach(renderOne);
+</script>
+<div id="rs-root">
+  <div id="rs-panel" class="Popover" role="dialog" aria-label="Reader settings">
+    <div class="rs-h">Theme</div>
+    <div class="SegmentedControl" id="rs-theme" data-size="md" data-pill role="radiogroup" aria-label="Theme">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="auto"><span class="relative">Auto</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="light"><span class="relative">Light</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="dark"><span class="relative">Dark</span></button>
+    </div>
+    <div class="rs-h">Font</div>
+    <div class="rs-fonts" role="radiogroup" aria-label="Font">
+      <button type="button" class="MenuItem" role="radio" data-f="" style="font-family:var(--font-sans)"><span>Google Sans (Default)</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="system" style="font-family:ui-sans-serif,system-ui,sans-serif"><span>System</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="tahoma" style="font-family:Tahoma,Verdana,sans-serif"><span>Tahoma</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="arial" style="font-family:Arial,'Helvetica Neue',Helvetica,sans-serif"><span>Arial</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="verdana" style="font-family:Verdana,Geneva,sans-serif"><span>Verdana</span><span class="rs-check" aria-hidden="true">✓</span></button>
+      <button type="button" class="MenuItem" role="radio" data-f="helvetica" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"><span>Helvetica</span><span class="rs-check" aria-hidden="true">✓</span></button>
+    </div>
+    <div class="rs-h">Size</div>
+    <div class="rs-row">
+      <button type="button" id="rs-sminus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Decrease font size"><span class="ButtonInner" style="font-size:var(--font-text-xs-size)">A</span></button>
+      <span class="rs-val" id="rs-sval">100%</span>
+      <button type="button" id="rs-splus" class="Button" data-variant="outline" data-color="secondary" data-size="md" data-uniform data-pill aria-label="Increase font size"><span class="ButtonInner" style="font-size:var(--font-text-lg-size)">A</span></button>
+    </div>
+    <div class="rs-h">Margins</div>
+    <div class="SegmentedControl" id="rs-margins" data-size="md" data-pill role="radiogroup" aria-label="Margins">
+      <div class="SegmentedControlThumb"></div>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="n"><span class="relative">Narrow</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value=""><span class="relative">Default</span></button>
+      <button type="button" class="SegmentedControlOption" role="radio" data-value="w"><span class="relative">Wide</span></button>
+    </div>
+    <button type="button" id="rs-reset" class="Button" data-variant="ghost" data-color="secondary" data-size="md" data-pill><span class="ButtonInner">Reset to defaults</span></button>
+  </div>
+  <button type="button" id="rs-btn" class="Button fab" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill aria-label="Reader settings" aria-expanded="false" title="Reader settings: theme, font, size, margins"><span class="ButtonInner">Aa</span></button>
+</div>
+<script id="reader-js">
+(function(){
+  var KEY='ccrReaderSettings';
+  var SIZES=[0.85,0.92,1,1.08,1.16,1.25,1.35,1.5,1.7];
+  // Allowed font keys. Reset a returning reader's stored value if it points at a font
+  // this build no longer supports, so the UI stays consistent with the CSS.
+  var ALLOWED_F={'':1,system:1,tahoma:1,arial:1,verdana:1,helvetica:1};
+  var st={f:'',s:2,m:''};
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(typeof saved.f==='string'&&ALLOWED_F.hasOwnProperty(saved.f))st.f=saved.f;
+      if(typeof saved.s==='number'&&saved.s>=0&&saved.s<SIZES.length)st.s=saved.s;
+      if(typeof saved.m==='string')st.m=saved.m;}catch(e){}
+  var h=document.documentElement,root=document.getElementById('rs-root'),
+      btn=document.getElementById('rs-btn'),panel=document.getElementById('rs-panel'),
+      sval=document.getElementById('rs-sval'),segTheme=null,segMargins=null;
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+  function apply(){
+    if(st.f)h.setAttribute('data-rf',st.f);else h.removeAttribute('data-rf');
+    if(SIZES[st.s]!==1){h.setAttribute('data-rs','1');h.style.setProperty('--rs-scale',SIZES[st.s]);}
+    else{h.removeAttribute('data-rs');h.style.removeProperty('--rs-scale');}
+    if(st.m)h.setAttribute('data-rm',st.m);else h.removeAttribute('data-rm');
+    sval.textContent=Math.round(SIZES[st.s]*100)+'%';
+    panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+      var on=b.getAttribute('data-f')===st.f;
+      if(on)b.setAttribute('data-selected','');else b.removeAttribute('data-selected');
+      b.setAttribute('aria-checked',on?'true':'false');});
+    if(segMargins)segMargins.set(st.m);
+  }
+  function setOpen(open){
+    panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open?'true':'false');
+    // the thumb needs layout, so size it once the panel is visible
+    if(open){if(segTheme)segTheme.sync();if(segMargins)segMargins.sync();}
+  }
+  function initSegments(){
+    if(!window.DS||!DS.segmented)return;
+    segTheme=DS.segmented(document.getElementById('rs-theme'),DS.theme.choice(),function(v){DS.theme.set(v)});
+    segMargins=DS.segmented(document.getElementById('rs-margins'),st.m,function(v){st.m=v;apply();save()});
+  }
+  btn.addEventListener('click',function(){setOpen(!panel.classList.contains('open'))});
+  document.addEventListener('click',function(e){if(!root.contains(e.target))setOpen(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false)});
+  panel.querySelectorAll('.rs-fonts .MenuItem').forEach(function(b){
+    b.addEventListener('click',function(){st.f=b.getAttribute('data-f');apply();save()})});
+  document.getElementById('rs-sminus').addEventListener('click',function(){
+    if(st.s>0){st.s--;apply();save()}});
+  document.getElementById('rs-splus').addEventListener('click',function(){
+    if(st.s<SIZES.length-1){st.s++;apply();save()}});
+  document.getElementById('rs-reset').addEventListener('click',function(){
+    st={f:'',s:2,m:''};apply();save();if(segTheme){DS.theme.set('auto');segTheme.set('auto')}});
+  // ds.js is deferred, so wait for it before wiring the segmented controls
+  if(window.DS)initSegments();else window.addEventListener('DOMContentLoaded',initSegments);
+  apply();
+})();
+</script>
+<a class="Button fab fab-graph" href="../graph/index.html?focus=business-acumen%2Fleading-leaders-and-org-design.md" title="Open the knowledge graph" aria-label="Open the knowledge graph" data-variant="outline" data-color="secondary" data-size="xl" data-uniform data-pill><span class="ButtonInner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" data-no-autosize><circle cx="5" cy="5" r="2.4"/><circle cx="15" cy="7" r="2.4"/><circle cx="9" cy="15" r="2.4"/><path d="M7.2 6l5.5.7M6 7.2l2.2 5.6M13.8 9l-3.4 4.2"/></svg></span></a><script>window.__glossRoot="../";window.__glossPage="business-acumen/leading-leaders-and-org-design.html"</script><script defer src="../assets/glossary.js"></script></body></html>
