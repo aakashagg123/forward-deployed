@@ -14,6 +14,36 @@ const THEME_STATIC_DIR = path.join(ROOT, 'theme', 'static');
 const LEARNING_ZONE_DIR = path.join(ROOT, 'learning-zone');
 const DIST_DIR = path.join(ROOT, 'dist');
 
+// The Learning Zone's graph page embeds its data as `const DATA = {...}`.
+// The headline figures (nodes, cross-references, tracks) are counted from it
+// on every build, so they stay true after each gatsby sync instead of being
+// typed in. "Cross-references" are the graph's 'link' edges; its 'structure'
+// edges are the track/module hierarchy.
+function readGraphStats(graphHtmlPath) {
+  if (!fs.existsSync(graphHtmlPath)) {
+    throw new Error(`Learning Zone graph data not found: ${graphHtmlPath}`);
+  }
+  const html = fs.readFileSync(graphHtmlPath, 'utf8');
+  const match = html.match(/const DATA\s*=\s*(\{.*\});?\s*$/m);
+  if (!match) throw new Error('Learning Zone graph: could not find `const DATA = {...}`');
+  const data = JSON.parse(match[1]);
+  const fmt = (n) => n.toLocaleString('en-US');
+  return {
+    nodes: fmt(data.nodes.length),
+    links: fmt(data.edges.filter((e) => e[3] === 'link').length),
+    tracks: fmt(data.tracks.length),
+  };
+}
+const LZ_STATS = readGraphStats(path.join(LEARNING_ZONE_DIR, 'graph', 'index.html'));
+
+// Tokens usable in any content markdown: {{lz_nodes}} {{lz_links}} {{lz_tracks}}.
+function fillTokens(md) {
+  return md
+    .replaceAll('{{lz_nodes}}', LZ_STATS.nodes)
+    .replaceAll('{{lz_links}}', LZ_STATS.links)
+    .replaceAll('{{lz_tracks}}', LZ_STATS.tracks);
+}
+
 const SITE = {
   title: 'Forward-deployed',
   baseUrl: 'https://forward-deployed.in',
@@ -76,16 +106,13 @@ const LANDING = {
   ],
   doctrine:
     'Put a small team of engineers and AI inside the workflow that is failing, with the authority to rewire it. Sixteen chapters on why transformation stalls inside incumbents and what to do instead.',
-  // TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
-  learningZoneBlurb:
-    'An open-source, 405-node AI & Systems Engineering reference graph (1,550 cross-references across 19 tracks), compiled by gatsby, a pure-Python + Claude Code knowledge pipeline.',
+  learningZoneBlurb: `An open-source, ${LZ_STATS.nodes}-node AI & Systems Engineering reference graph (${LZ_STATS.links} cross-references across ${LZ_STATS.tracks} tracks), compiled by gatsby, a pure-Python + Claude Code knowledge pipeline.`,
 };
 
 const ASTACK_URL = 'https://github.com/aakashagg123/astack';
 const GATSBY_URL = 'https://github.com/aakashagg123/gatsby';
 
 // Homepage "Open-Source & Builder Stack" cards: shipped artifacts, not telemetry.
-// TODO(Aakash): verify 405 nodes / 1,550 cross-references against the latest gatsby build
 const BUILDER_STACK = [
   {
     name: 'astack',
@@ -99,7 +126,7 @@ const BUILDER_STACK = [
   {
     name: 'gatsby',
     kind: 'AI Knowledge Engine',
-    body: 'A pure-Python static compiler and knowledge-graph generator behind the 405-node AI Engineering curriculum, with 1,550 cross-references.',
+    body: `A pure-Python static compiler and knowledge-graph generator behind the ${LZ_STATS.nodes}-node AI Engineering curriculum, with ${LZ_STATS.links} cross-references.`,
     links: [
       { label: 'Repo & architecture →', href: GATSBY_URL },
       { label: 'Browse the graph →', href: '/learning-zone/' },
@@ -229,9 +256,8 @@ function hashAndRename(distDir, filename) {
 // Returns a transform for the landing page's HTML, or null if the page is
 // missing (the transform itself warns when the expected hero is not found).
 const LZ_HERO_RE = /<h1>[^<]*<\/h1>\s*<p class="lede">[^<]*<\/p>/;
-// TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
 const LZ_HERO = `<h1>AI &amp; Systems Engineering Knowledge Graph</h1>
-  <p class="lede">An open-source, 405-node AI &amp; Systems Engineering reference graph (1,550 cross-references across 19 tracks)—compiled, cross-linked, and maintained via <code>gatsby</code>, a pure-Python + Claude Code knowledge pipeline built for Product Builders.</p>
+  <p class="lede">An open-source, ${LZ_STATS.nodes}-node AI &amp; Systems Engineering reference graph (${LZ_STATS.links} cross-references across ${LZ_STATS.tracks} tracks)—compiled, cross-linked, and maintained via <code>gatsby</code>, a pure-Python + Claude Code knowledge pipeline built for Product Builders.</p>
   <aside class="fd-lz-built" aria-label="How this was built">
     <p class="fd-lz-built-label">How this was built</p>
     <p>The pages in this graph are generated. <code>gatsby</code> compiles them from source content, cross-links every concept, and builds the knowledge graph. The source and architecture are public, so you can judge the pipeline.</p>
@@ -253,10 +279,8 @@ function applyLearningZoneFraming(indexPath) {
 // them to every page, so the gatsby sync stays untouched. Pages under an
 // outputs/ folder are generated artifacts (runbooks, checklists, skill files):
 // they stay reachable but are marked noindex and left out of the sitemap.
-// TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build
 const LZ_TITLE = 'AI & Systems Engineering Knowledge Graph';
-const LZ_DESCRIPTION =
-  'An open-source, 405-node AI & Systems Engineering reference graph: 1,550 cross-references across 19 tracks, compiled by gatsby.';
+const LZ_DESCRIPTION = `An open-source, ${LZ_STATS.nodes}-node AI & Systems Engineering reference graph: ${LZ_STATS.links} cross-references across ${LZ_STATS.tracks} tracks, compiled by gatsby.`;
 
 const escAttr = (t) => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 // Markup escaped by the markdown pass decodes back into tag-like text, so tags are stripped twice.
@@ -672,17 +696,25 @@ function decodeEntities(t) {
     .replace(/&amp;/g, '&');
 }
 
-// The Learning Zone's landing page is a grid of cards (paths, then modules).
-// Reading them here keeps llms.txt in step with each gatsby re-sync.
+// The Learning Zone's landing page is a series of card grids, each under a
+// <div class="group"> heading ("Choose your path", "Learn by seeing", "All
+// modules"). Reading them here keeps llms.txt, headings included, in step
+// with each gatsby re-sync.
 function readLearningZoneCards(indexPath) {
   if (!fs.existsSync(indexPath)) return [];
   const html = fs.readFileSync(indexPath, 'utf8');
-  const re = /<a class="card" href="([^"]+)">\s*<span[^>]*>([^<]*)<\/span>\s*<h3>([^<]*?)\s*(?:→)?\s*<\/h3>\s*<p>([^<]*)<\/p>/g;
+  const re = /<div class="group">([^<]*)|<a class="card" href="([^"]+)">\s*<span[^>]*>[^<]*<\/span>\s*<h3>([^<]*?)\s*(?:→)?\s*<\/h3>\s*<p>([^<]*)<\/p>/g;
   const cards = [];
+  let group = 'Modules';
   for (const m of html.matchAll(re)) {
+    if (m[1] !== undefined) {
+      const heading = decodeEntities(m[1]).trim();
+      group = heading === 'Choose your path' ? 'Learning paths' : heading === 'All modules' ? 'Modules' : heading;
+      continue;
+    }
     cards.push({
-      href: m[1].replace(/index\.html$/, ''),
-      kind: decodeEntities(m[2]).trim(),
+      href: m[2].replace(/index\.html$/, ''),
+      group,
       title: decodeEntities(m[3]).trim(),
       body: decodeEntities(m[4]).replace(/\s+/g, ' ').trim(),
     });
@@ -723,7 +755,7 @@ function writeLlmsTxt({ spaceData, lzCards }) {
     for (const page of data.pages) {
       if (page.external || page.unlisted) continue;
       lines.push(`- [${page.title}](${base}/${space}/${page.sourcePath}): ${clean(page.description || SITE.thesis)}`);
-      const raw = fs.readFileSync(path.join(data.spaceDir, page.sourcePath), 'utf8');
+      const raw = fillTokens(fs.readFileSync(path.join(data.spaceDir, page.sourcePath), 'utf8'));
       const { content } = matter(stripComments(raw));
       fullParts.push(`\n### ${base}${page.href}\n\n${content.trim()}\n`);
     }
@@ -732,16 +764,11 @@ function writeLlmsTxt({ spaceData, lzCards }) {
 
   lines.push('## AI Knowledge Graph', '');
   lines.push(`- [AI & Systems Engineering Knowledge Graph](${base}/learning-zone/): ${clean(LANDING.learningZoneBlurb)}`);
-  for (const [kind, label] of [['Path', 'Learning paths'], ['Module', 'Modules']]) {
-    const cards = lzCards.filter((c) => c.kind === kind);
-    if (!cards.length) continue;
-    lines.push('', `### ${label}`, '');
-    for (const c of cards) lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
-  }
-  const other = lzCards.filter((c) => c.kind !== 'Path' && c.kind !== 'Module');
-  if (other.length) {
-    lines.push('', '### Foundations', '');
-    for (const c of other) lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
+  for (const group of [...new Set(lzCards.map((c) => c.group))]) {
+    lines.push('', `### ${group}`, '');
+    for (const c of lzCards.filter((x) => x.group === group)) {
+      lines.push(`- [${c.title}](${base}/learning-zone/${c.href}): ${c.body}`);
+    }
   }
   lines.push(
     '',
@@ -830,7 +857,7 @@ async function build() {
       const page = pages[i];
       if (page.external) continue;
       const abs = path.join(spaceDir, page.sourcePath);
-      const raw = fs.readFileSync(abs, 'utf8');
+      const raw = fillTokens(fs.readFileSync(abs, 'utf8'));
       const { data: frontmatter, content: body } = matter(raw);
       const rendered = md.render(body);
       let { html: contentHtml, outline } = extractOutline(rendered);

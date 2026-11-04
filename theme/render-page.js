@@ -322,7 +322,6 @@ export function renderBuilderStack(items) {
   return `
   <section class="fd-build" aria-labelledby="fdBuildTitle">
     <h3 class="fd-section-label" id="fdBuildTitle">Open-Source &amp; Builder Stack</h3>
-    <!-- TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build -->
     <div class="fd-build-grid">${cards}</div>
   </section>`;
 }
@@ -365,7 +364,6 @@ export function renderLanding({ site, spaces, landing, flagshipBook, builderStac
         </a>`,
     )
     .join('') + `
-        <!-- TODO(Aakash): verify 405 nodes / 1,550 cross-references / 19 tracks against the latest gatsby build -->
         <a href="/learning-zone/">
           <h4>AI Knowledge Graph</h4>
           <p>${escapeHtml(landing.learningZoneBlurb)}</p>
